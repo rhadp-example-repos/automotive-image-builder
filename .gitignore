@@ -1,0 +1,6 @@
+site/
+image_output/
+osbuild_store/
+
+*~
+*.swp
