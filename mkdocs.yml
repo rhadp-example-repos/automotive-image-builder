@@ -1,0 +1,21 @@
+site_name: Automotive SIG documentation
+logo: custom_theme/img/centos.png
+
+copyright: © Red Hat
+nav:
+  - Home: index.md
+  - Building Images: building/index.md
+  - "Downloading Images": download_images.md
+  - Definitions: definitions.md
+
+theme:
+  name: mkdocs
+  nav_style: dark
+  navigation_depth: 4
+  custom_dir: docs/custom_theme/
+
+markdown_extensions:
+  - toc:
+      permalink: True
+  - sane_lists
+  - smarty
