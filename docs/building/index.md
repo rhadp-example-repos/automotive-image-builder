@@ -82,12 +82,12 @@ dnf install osbuild-ostree
 
 ## Finding the manifest of interest
 
-All the manifests are present on the project hosted at: https://gitlab.com/...
+All the manifests are present on the project hosted at: https://gitlab.com/redhat/automotive/automotive-sig
 
 You can thus download them all at once by doing:
 
 ```
-git clone https://gitlab.com/...
+git clone https://gitlab.com/redhat/automotive/automotive-sig.git
 ```
 
 Once cloned, you can find the manifests under the `osbuild-manifest` folder.
