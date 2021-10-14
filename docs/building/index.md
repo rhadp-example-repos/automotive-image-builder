@@ -38,14 +38,6 @@ dnf install osbuild osbuild-tools
 
 `osbuild-tools` contains the `osbuild-mpp` utility.
 
-
-* Enable the neptune copr repo
-
-```
-dnf copr enable pingou/qtappmanager-fedora
-sed -i -e 's|baseurl=https://download.copr.fedorainfracloud.org/results/pingou/qtappmanager-fedora/epel-8-$basearch/|baseurl=https://download.copr.fedorainfracloud.org/results/pingou/qtappmanager-fedora/centos-stream-8-$basearch/|' /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:pingou:qtappmanager-fedora.repo
-```
-
 * **Optional**: to build OStree-based images:
 
 ```
@@ -62,13 +54,6 @@ dnf install osbuild osbuild-tools
 ```
 
 `osbuild-tools` contains the `osbuild-mpp` utility.
-
-
-* Enable the neptune copr repo
-
-```
-dnf copr enable pingou/qtappmanager-fedora
-```
 
 * **Optional**: to build OStree-based images:
 
@@ -88,12 +73,6 @@ dnf install osbuild osbuild-tools
 `osbuild-tools` contains the `osbuild-mpp` utility.
 
 
-* Enable the neptune copr repo
-
-```
-dnf copr enable pingou/qtappmanager-fedora
-```
-
 * **Optional**: to build OStree-based images:
 
 ```
@@ -103,12 +82,12 @@ dnf install osbuild-ostree
 
 ## Finding the manifest of interest
 
-All the manifests are present on the project hosted at: https://gitlab.com/...
+All the manifests are present on the project hosted at: https://gitlab.com/redhat/automotive/automotive-sig
 
 You can thus download them all at once by doing:
 
 ```
-git clone https://gitlab.com/...
+git clone https://gitlab.com/redhat/automotive/automotive-sig.git
 ```
 
 Once cloned, you can find the manifests under the `osbuild-manifest` folder.
@@ -155,7 +134,8 @@ The basic command is:
 osbuild \
     --store <where to store intermediary outputs> \
     --output-directory <where to store outputs> \
-    --export <pre-processed osbuild manifest>
+    --export <name of pipeline to export> \
+    <pre-processed osbuild manifest>
 ```
 
 Below are two examples of the command you can run depending on the type of image

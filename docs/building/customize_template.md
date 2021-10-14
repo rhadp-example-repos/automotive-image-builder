@@ -30,6 +30,8 @@ and `homefs_size`.
 
 
 You then have two ways to tweak these variables. You can either:
+
 * directly edit the template and set their respected values
+
 * specify the variable to the `osbuild-mpp` tool using the `-D` argument
   (see `--help` for more information)
