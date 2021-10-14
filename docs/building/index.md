@@ -134,7 +134,8 @@ The basic command is:
 osbuild \
     --store <where to store intermediary outputs> \
     --output-directory <where to store outputs> \
-    --export <pre-processed osbuild manifest>
+    --export <name of pipeline to export> \
+    <pre-processed osbuild manifest>
 ```
 
 Below are two examples of the command you can run depending on the type of image
