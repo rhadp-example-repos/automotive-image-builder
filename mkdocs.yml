@@ -1,6 +1,10 @@
 site_name: Automotive SIG documentation
 logo: custom_theme/img/centos.png
 
+	
+repo_url: https://gitlab.com/redhat/automotive/automotive-sig
+repo_name: automotive-sig
+
 copyright: © Red Hat
 nav:
   - Home: index.md
@@ -13,6 +17,14 @@ theme:
   nav_style: dark
   navigation_depth: 4
   custom_dir: docs/custom_theme/
+  logo: custom_theme/img/centos.png
+  favicon: custom_theme/img/favicon.ico
+  features:
+    - navigation.expand
+    - navigation.instant
+    - navigation.tracking
+    - navigation.top
+    - toc.integrate
 
 markdown_extensions:
   - toc:
