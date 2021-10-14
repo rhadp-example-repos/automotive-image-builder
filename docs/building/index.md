@@ -38,14 +38,6 @@ dnf install osbuild osbuild-tools
 
 `osbuild-tools` contains the `osbuild-mpp` utility.
 
-
-* Enable the neptune copr repo
-
-```
-dnf copr enable pingou/qtappmanager-fedora
-sed -i -e 's|baseurl=https://download.copr.fedorainfracloud.org/results/pingou/qtappmanager-fedora/epel-8-$basearch/|baseurl=https://download.copr.fedorainfracloud.org/results/pingou/qtappmanager-fedora/centos-stream-8-$basearch/|' /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:pingou:qtappmanager-fedora.repo
-```
-
 * **Optional**: to build OStree-based images:
 
 ```
@@ -62,13 +54,6 @@ dnf install osbuild osbuild-tools
 ```
 
 `osbuild-tools` contains the `osbuild-mpp` utility.
-
-
-* Enable the neptune copr repo
-
-```
-dnf copr enable pingou/qtappmanager-fedora
-```
 
 * **Optional**: to build OStree-based images:
 
@@ -87,12 +72,6 @@ dnf install osbuild osbuild-tools
 
 `osbuild-tools` contains the `osbuild-mpp` utility.
 
-
-* Enable the neptune copr repo
-
-```
-dnf copr enable pingou/qtappmanager-fedora
-```
 
 * **Optional**: to build OStree-based images:
 
