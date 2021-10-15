@@ -1,7 +1,6 @@
 site_name: Automotive SIG documentation
 logo: custom_theme/img/centos.png
 
-	
 repo_url: https://gitlab.com/redhat/automotive/automotive-sig
 repo_name: automotive-sig
 
