@@ -19,15 +19,15 @@
               "mpp-depsolve": {
                 "architecture": "$arch",
                 "module-platform-id": "platform:el8",
-                "baseurl": "http://mirror.centos.org/centos/8-stream/BaseOS/$arch/os/",
+                "baseurl": "$cs8_baseurl/BaseOS/$arch/os/",
                 "repos": [
                   {
                     "id": "default",
-                    "baseurl": "http://mirror.centos.org/centos/8-stream/BaseOS/$arch/os/"
+                    "baseurl": "$cs8_baseurl/BaseOS/$arch/os/"
                   },
                   {
                     "id": "appstream",
-                    "baseurl": "http://mirror.centos.org/centos/8-stream/AppStream/$arch/os/"
+                    "baseurl": "$cs8_baseurl/AppStream/$arch/os/"
                   },
                   {
                     "id": "rhel8-rpi",
