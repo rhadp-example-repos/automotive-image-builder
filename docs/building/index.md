@@ -16,7 +16,7 @@ to be aware of:
   RHEL repos, it will need access to the entitlements, so building RHEL images
   can only be done on a subscribed RHEL system.
 
-As described on above you need to run osbuild on aach64 system to build an aarch64
+As described on above you need to run osbuild on aarch64 system to build an aarch64
 image. If you do not have access to a better one, you can run osbuild and create image
 on a Raspberry Pi 4 system, it will be slower than a more powerful system, but it
 works fine.
