@@ -33,7 +33,7 @@
   "pipelines": [
     {
       "mpp-import-pipeline": {
-        "path": "../cs8-build-aarch64.mpp.json",
+        "path": "../cs8-build-x86_64.mpp.json",
         "id": "build"
       },
       "runner": "org.osbuild.centos8"
@@ -63,25 +63,25 @@
               "type": "org.osbuild.files",
               "origin": "org.osbuild.source",
               "mpp-depsolve": {
-                "architecture": "aarch64",
+                "architecture": "x86_64",
                 "module-platform-id": "platform:el8",
-                "baseurl": "http://mirror.centos.org/centos/8-stream/BaseOS/aarch64/os/",
+                "baseurl": "http://mirror.centos.org/centos/8-stream/BaseOS/x86_64/os/",
                 "repos": [
                   {
                     "id": "default",
-                    "baseurl": "http://mirror.centos.org/centos/8-stream/BaseOS/aarch64/os/"
+                    "baseurl": "http://mirror.centos.org/centos/8-stream/BaseOS/x86_64/os/"
                   },
                   {
                     "id": "appstream",
-                    "baseurl": "http://mirror.centos.org/centos/8-stream/AppStream/aarch64/os/"
+                    "baseurl": "http://mirror.centos.org/centos/8-stream/AppStream/x86_64/os/"
                   },
                   {
                     "id": "extras",
-                    "baseurl": "http://mirror.centos.org/centos/8-stream/extras/aarch64/os/"
+                    "baseurl": "http://mirror.centos.org/centos/8-stream/extras/x86_64/os/"
                   },
                   {
                     "id": "copr-neptune",
-                    "baseurl": "https://download.copr.fedorainfracloud.org/results/pingou/qtappmanager-fedora/centos-stream-8-aarch64/"
+                    "baseurl": "https://download.copr.fedorainfracloud.org/results/pingou/qtappmanager-fedora/centos-stream-8-x86_64/"
                   }
                 ],
                 "packages": [
@@ -122,7 +122,7 @@
                   "greenboot-rpm-ostree-grub2",
                   "greenboot-reboot",
                   "greenboot-status",
-                  "grub2-efi-aa64",
+                  "grub2-efi-x64",
                   "gvfs-afc",
                   "gvfs-afp",
                   "gvfs-archive",
@@ -297,7 +297,7 @@
             }
           },
           "options": {
-            "ref": "cs8/aarch64/osbuild",
+            "ref": "cs8/x86_64/osbuild",
             "os_version": "8"
           }
         }
@@ -321,7 +321,7 @@
               "origin": "org.osbuild.pipeline",
               "references": {
                 "name:ostree-commit": {
-                  "ref": "cs8/aarch64/osbuild"
+                  "ref": "cs8/x86_64/osbuild"
                 }
               }
             }
@@ -359,7 +359,7 @@
           "type": "org.osbuild.ostree.deploy",
           "options": {
             "osname": "centos",
-            "ref": "cs8/aarch64/osbuild",
+            "ref": "cs8/x86_64/osbuild",
             "mounts": [
               "/boot",
               "/boot/efi"
@@ -380,7 +380,7 @@
           "options": {
             "deployment": {
               "osname": "centos",
-              "ref": "cs8/aarch64/osbuild"
+              "ref": "cs8/x86_64/osbuild"
             }
           }
         },
@@ -390,7 +390,7 @@
             "ostree": {
               "deployment": {
                 "osname": "centos",
-                "ref": "cs8/aarch64/osbuild"
+                "ref": "cs8/x86_64/osbuild"
               }
             },
             "filesystems": [
@@ -424,7 +424,7 @@
           "options": {
             "deployment": {
               "osname": "centos",
-              "ref": "cs8/aarch64/osbuild"
+              "ref": "cs8/x86_64/osbuild"
             }
           }
         },
