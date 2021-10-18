@@ -1,0 +1,169 @@
+{
+  "version": "2",
+  "pipelines": [
+    {
+      "name": "ostree-image",
+      "build": "name:build",
+      "stages": [
+        {
+          "type": "org.osbuild.truncate",
+          "options": {
+            "filename": "disk.img",
+            "size": {"mpp-format-string": "{image.size}"}
+          }
+        },
+        {
+          "type": "org.osbuild.sfdisk",
+          "devices": {
+            "device": {
+              "type": "org.osbuild.loopback",
+              "options": {
+                "filename": "disk.img"
+              }
+            }
+          },
+          "options": { "mpp-format-json": "{image.layout}"  }
+        },
+        {
+          "type": "org.osbuild.mkfs.fat",
+          "devices": {
+            "device": {
+              "type": "org.osbuild.loopback",
+              "options": {
+                "filename": "disk.img",
+                "start": {"mpp-format-int": "{image.layout['efi'].start}"},
+                "size": {"mpp-format-int": "{image.layout['efi'].size}"}
+              }
+            }
+          },
+          "options": {
+            "label": "ESP",
+            "volid": "7B7795E7"
+          }
+        },
+        {
+          "type": "org.osbuild.mkfs.ext4",
+          "devices": {
+            "device": {
+              "type": "org.osbuild.loopback",
+              "options": {
+                "filename": "disk.img",
+                "start": {"mpp-format-int": "{image.layout['boot'].start}"},
+                "size": {"mpp-format-int": "{image.layout['boot'].size}"}
+              }
+            }
+          },
+          "options": {
+            "uuid": {"mpp-format-string": "{bootfs_uuid}"},
+            "label": "boot"
+          }
+        },
+        {
+          "type": "org.osbuild.mkfs.xfs",
+          "devices": {
+            "device": {
+              "type": "org.osbuild.loopback",
+              "options": {
+                "filename": "disk.img",
+                "start": {"mpp-format-int": "{image.layout['root'].start}"},
+                "size": {"mpp-format-int": "{image.layout['root'].size}"}
+              }
+            }
+          },
+          "options": {
+            "uuid": {"mpp-format-string": "{rootfs_uuid}"},
+            "label": "root"
+          }
+        },
+        {
+          "type": "org.osbuild.copy",
+          "inputs": {
+            "tree": {
+              "type": "org.osbuild.tree",
+              "origin": "org.osbuild.pipeline",
+              "references": [
+                "name:ostree-image-tree"
+              ]
+            },
+            "build-tree": {
+              "type": "org.osbuild.tree",
+              "origin": "org.osbuild.pipeline",
+              "references": [
+                "name:build"
+              ]
+            },
+            "ostree-tree": {
+              "type": "org.osbuild.tree",
+              "origin": "org.osbuild.pipeline",
+              "references": [
+                "name:ostree-tree"
+               ]
+             }
+          },
+          "options": {
+            "paths": [
+              {
+                "from": "input://tree/",
+                "to": "mount://root/"
+              },
+              {
+                "from": "input://ostree-tree/lib/ostree-boot/efi/",
+                "to": "mount://root/boot/efi/"
+              },
+              {
+                "from": "input://build-tree/usr/share/uboot/rpi_4/u-boot.bin",
+                "to": "mount://root/boot/efi/rpi4-u-boot.bin"
+              }
+            ]
+          },
+          "devices": {
+            "efi": {
+              "type": "org.osbuild.loopback",
+              "options": {
+                "filename": "disk.img",
+                "start": {"mpp-format-int": "{image.layout['efi'].start}"},
+                "size": {"mpp-format-int": "{image.layout['efi'].size}"}
+              }
+            },
+            "boot": {
+              "type": "org.osbuild.loopback",
+              "options": {
+                "filename": "disk.img",
+                "start": {"mpp-format-int": "{image.layout['boot'].start}"},
+                "size": {"mpp-format-int": "{image.layout['boot'].size}"}
+              }
+            },
+            "root": {
+              "type": "org.osbuild.loopback",
+              "options": {
+                "filename": "disk.img",
+                "start": {"mpp-format-int": "{image.layout['root'].start}"},
+                "size": {"mpp-format-int": "{image.layout['root'].size}"}
+              }
+            }
+          },
+          "mounts": [
+            {
+              "name": "root",
+              "type": "org.osbuild.xfs",
+              "source": "root",
+              "target": "/"
+            },
+            {
+              "name": "boot",
+              "type": "org.osbuild.ext4",
+              "source": "boot",
+              "target": "/boot"
+            },
+            {
+              "name": "efi",
+              "type": "org.osbuild.fat",
+              "source": "efi",
+              "target": "/boot/efi"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
