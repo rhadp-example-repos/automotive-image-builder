@@ -124,7 +124,7 @@ targetting the Raspberry Pi 4 platform.
 #### Pre-compile the template
 
 ```
-osbuild-mpp osbuild-manifests/cs8/rpi4/ostree-neptune-tianocore.json cs8-rpi4.json
+osbuild-mpp osbuild-manifests/cs8/rpi4/ostree-neptune-tianocore.mpp.json cs8-rpi4.json
 ```
 
 #### Build the image
