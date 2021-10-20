@@ -9,7 +9,7 @@
           "type": "org.osbuild.truncate",
           "options": {
             "filename": "disk.img",
-            "size": {"mpp-format-string": "{image.size}"}
+            "size": {"mpp-eval": "image.size"}
           }
         },
         {
@@ -31,8 +31,8 @@
               "type": "org.osbuild.loopback",
               "options": {
                 "filename": "disk.img",
-                "start": {"mpp-format-int": "{image.layout['efi'].start}"},
-                "size": {"mpp-format-int": "{image.layout['efi'].size}"}
+                "start": {"mpp-eval": "image.layout['efi'].start"},
+                "size": {"mpp-eval": "image.layout['efi'].size"}
               }
             }
           },
@@ -48,13 +48,13 @@
               "type": "org.osbuild.loopback",
               "options": {
                 "filename": "disk.img",
-                "start": {"mpp-format-int": "{image.layout['boot'].start}"},
-                "size": {"mpp-format-int": "{image.layout['boot'].size}"}
+                "start": {"mpp-eval": "image.layout['boot'].start"},
+                "size": {"mpp-eval": "image.layout['boot'].size"}
               }
             }
           },
           "options": {
-            "uuid": {"mpp-format-string": "{bootfs_uuid}"},
+            "uuid": {"mpp-eval": "bootfs_uuid"},
             "label": "boot"
           }
         },
@@ -65,13 +65,13 @@
               "type": "org.osbuild.loopback",
               "options": {
                 "filename": "disk.img",
-                "start": {"mpp-format-int": "{image.layout['root'].start}"},
-                "size": {"mpp-format-int": "{image.layout['root'].size}"}
+                "start": {"mpp-eval": "image.layout['root'].start"},
+                "size": {"mpp-eval": "image.layout['root'].size"}
               }
             }
           },
           "options": {
-            "uuid": {"mpp-format-string": "{rootfs_uuid}"},
+            "uuid": {"mpp-eval": "rootfs_uuid"},
             "label": "root"
           }
         },
@@ -121,24 +121,24 @@
               "type": "org.osbuild.loopback",
               "options": {
                 "filename": "disk.img",
-                "start": {"mpp-format-int": "{image.layout['efi'].start}"},
-                "size": {"mpp-format-int": "{image.layout['efi'].size}"}
+                "start": {"mpp-eval": "image.layout['efi'].start"},
+                "size": {"mpp-eval": "image.layout['efi'].size"}
               }
             },
             "boot": {
               "type": "org.osbuild.loopback",
               "options": {
                 "filename": "disk.img",
-                "start": {"mpp-format-int": "{image.layout['boot'].start}"},
-                "size": {"mpp-format-int": "{image.layout['boot'].size}"}
+                "start": {"mpp-eval": "image.layout['boot'].start"},
+                "size": {"mpp-eval": "image.layout['boot'].size"}
               }
             },
             "root": {
               "type": "org.osbuild.loopback",
               "options": {
                 "filename": "disk.img",
-                "start": {"mpp-format-int": "{image.layout['root'].start}"},
-                "size": {"mpp-format-int": "{image.layout['root'].size}"}
+                "start": {"mpp-eval": "image.layout['root'].start"},
+                "size": {"mpp-eval": "image.layout['root'].size"}
               }
             }
           },

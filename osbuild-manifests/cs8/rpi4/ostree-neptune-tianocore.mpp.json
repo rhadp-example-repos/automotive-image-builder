@@ -47,7 +47,7 @@
         {
           "type": "org.osbuild.kernel-cmdline",
           "options": {
-            "root_fs_uuid": {"mpp-format-string": "{rootfs_uuid}"},
+            "root_fs_uuid": {"mpp-eval": "rootfs_uuid"},
             "kernel_opts": "ro biosdevname=0 net.ifnames=0"
           }
         },
@@ -55,8 +55,8 @@
           "type": "org.osbuild.rpm",
           "options": {
             "gpgkeys": [
-              { "mpp-format-string": "{centos_gpg_key}" },
-              { "mpp-format-string": "{redhat_gpg_key}" }
+              { "mpp-eval": "centos_gpg_key" },
+              { "mpp-eval": "redhat_gpg_key" }
             ],
             "disable_dracut": true
           },
@@ -203,7 +203,7 @@
           "type": "org.osbuild.dracut",
           "options": {
             "kernel": [
-              { "mpp-format-string": "{rpms['rootfs']['kernel-core'].evra}" }
+              { "mpp-eval": "rpms['rootfs']['kernel-core'].evra" }
             ],
             "add_modules": [
               "base",
