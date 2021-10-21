@@ -71,7 +71,7 @@
       ]
     },
     {
-      "name": "ostree-image-tree",
+      "name": "image-tree",
       "build": "name:build",
       "stages": [
         {
@@ -215,7 +215,7 @@
       ]
     },
     {
-      "name": "ostree-image",
+      "name": "image",
       "build": "name:build",
       "stages": [
         {
@@ -295,7 +295,7 @@
               "type": "org.osbuild.tree",
               "origin": "org.osbuild.pipeline",
               "references": [
-                "name:ostree-image-tree"
+                "name:image-tree"
               ]
             }
           },
@@ -357,7 +357,7 @@
       ]
     },
     {
-      "name": "ostree-qcow2",
+      "name": "qcow2",
       "build": "name:build",
       "stages": [
         {
@@ -367,7 +367,7 @@
               "type": "org.osbuild.files",
               "origin": "org.osbuild.pipeline",
               "references": {
-                "name:ostree-image": {
+                "name:image": {
                   "file": "disk.img"
                 }
               }

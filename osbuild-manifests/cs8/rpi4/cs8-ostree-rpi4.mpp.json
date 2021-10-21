@@ -2,7 +2,7 @@
   "version": "2",
   "pipelines": [
     {
-      "name": "ostree-image",
+      "name": "image",
       "build": "name:build",
       "stages": [
         {
@@ -82,7 +82,7 @@
               "type": "org.osbuild.tree",
               "origin": "org.osbuild.pipeline",
               "references": [
-                "name:ostree-image-tree"
+                "name:image-tree"
               ]
             },
             "build-tree": {

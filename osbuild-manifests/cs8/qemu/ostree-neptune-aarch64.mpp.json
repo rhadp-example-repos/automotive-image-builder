@@ -264,8 +264,8 @@
 
     { "mpp-import-pipeline": { "path": "../cs8-ostree-image.mpp.json", "id": "ostree-tree" } },
     { "mpp-import-pipeline": { "path": "../cs8-ostree-image.mpp.json", "id": "ostree-commit" } },
-    { "mpp-import-pipeline": { "path": "../cs8-ostree-image.mpp.json", "id": "ostree-image-tree" } },
-    { "mpp-import-pipeline": { "path": "../cs8-ostree-image.mpp.json", "id": "ostree-image" } },
-    { "mpp-import-pipeline": { "path": "../cs8-ostree-image.mpp.json", "id": "ostree-qcow2" } }
+    { "mpp-import-pipeline": { "path": "../cs8-ostree-image.mpp.json", "id": "image-tree" } },
+    { "mpp-import-pipeline": { "path": "../cs8-ostree-image.mpp.json", "id": "image" } },
+    { "mpp-import-pipeline": { "path": "../cs8-ostree-image.mpp.json", "id": "qcow2" } }
   ]
 }
