@@ -2,13 +2,24 @@
   "version": "2",
   "mpp-vars": {
     "image_rpms": [
-      "ostree-grub2",
-      "greenboot-rpm-ostree-grub2"
+      "shim"
     ]
   },
   "pipelines": [
     {
       "name": "ostree-tree",
+      "build": "name:build",
+      "stages": [
+      ]
+    },
+    {
+      "name": "ostree-commit",
+      "build": "name:build",
+      "stages": [
+      ]
+    },
+    {
+      "name": "image-tree",
       "build": "name:build",
       "stages": [
         {
@@ -32,150 +43,11 @@
           }
         },
         {
-          "type": "org.osbuild.selinux",
-          "options": {
-            "file_contexts": "etc/selinux/targeted/contexts/files/file_contexts"
-          }
-        },
-        {
-          "type": "org.osbuild.ostree.preptree",
-          "options": {
-            "etc_group_members": [
-              "wheel",
-              "docker"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "ostree-commit",
-      "build": "name:build",
-      "stages": [
-        {
-          "type": "org.osbuild.ostree.init",
-          "options": {
-            "path": "/repo"
-          }
-        },
-        {
-          "type": "org.osbuild.ostree.commit",
-          "inputs": {
-            "tree": {
-              "type": "org.osbuild.tree",
-              "origin": "org.osbuild.pipeline",
-              "references": [
-                "name:ostree-tree"
-              ]
-            }
-          },
-          "options": {
-            "ref": {"mpp-eval": "ostree_ref"},
-            "os_version": "8"
-          }
-        }
-      ]
-    },
-    {
-      "name": "image-tree",
-      "build": "name:build",
-      "stages": [
-        {
-          "type": "org.osbuild.ostree.init-fs"
-        },
-        {
-          "type": "org.osbuild.ostree.pull",
-          "options": {
-            "repo": "/ostree/repo"
-          },
-          "inputs": {
-            "commits": {
-              "type": "org.osbuild.ostree",
-              "origin": "org.osbuild.pipeline",
-              "references": {
-                "name:ostree-commit": {
-                  "ref": {"mpp-eval": "ostree_ref"}
-                }
-              }
-            }
-          }
-        },
-        {
-          "type": "org.osbuild.ostree.os-init",
-          "options": {
-            "osname": "centos"
-          }
-        },
-        {
-          "type": "org.osbuild.ostree.config",
-          "options": {
-            "repo": "/ostree/repo",
-            "config": {
-              "sysroot": {
-                "readonly": true
-              }
-            }
-          }
-        },
-        {
-          "type": "org.osbuild.mkdir",
-          "options": {
-            "paths": [
-              {
-                "path": "/boot/efi",
-                "mode": 448
-              }
-            ]
-          }
-        },
-        {
-          "type": "org.osbuild.ostree.deploy",
-          "options": {
-            "osname": "centos",
-            "ref": {"mpp-eval": "ostree_ref"},
-            "mounts": [
-              "/boot",
-              "/boot/efi"
-            ],
-            "rootfs": {
-              "label": "root"
-            },
-            "kernel_opts": [
-              "console=tty0",
-              "console=ttyS0",
-              "systemd.log_target=console",
-              "systemd.journald.forward_to_console=1"
-            ]
-          }
-        },
-        {
-          "type": "org.osbuild.ostree.fillvar",
-          "options": {
-            "deployment": {
-              "osname": "centos",
-              "ref": {"mpp-eval": "ostree_ref"}
-            }
-          }
-        },
-        {
           "type": "org.osbuild.fstab",
           "options": {
-            "ostree": {
-              "deployment": {
-                "osname": "centos",
-                "ref": {"mpp-eval": "ostree_ref"}
-              }
-            },
             "filesystems": [
               {
-                "label": "boot",
-                "vfs_type": "ext4",
-                "path": "/boot",
-                "freq": 1,
-                "passno": 1
-              },
-              {
-                "label": "root",
+                "uuid": {"mpp-eval": "rootfs_uuid"},
                 "vfs_type": "xfs",
                 "path": "/",
                 "freq": 1,
@@ -185,37 +57,42 @@
                 "label": "ESP",
                 "vfs_type": "vfat",
                 "path": "/boot/efi",
-                "options": "umask=0077,shortname=winnt",
-                "freq": 0,
-                "passno": 2
+                "freq": 1,
+                "passno": 1
+              },
+              {
+                "uuid": {"mpp-eval": "bootfs_uuid"},
+                "vfs_type": "ext4",
+                "path": "/boot",
+                "freq": 1,
+                "passno": 1
               }
             ]
           }
         },
         {
-          "type": "org.osbuild.ostree.selinux",
-          "options": {
-            "deployment": {
-              "osname": "centos",
-              "ref": {"mpp-eval": "ostree_ref"}
-            }
-          }
-        },
-        {
           "type": "org.osbuild.grub2",
           "options": {
-            "rootfs": {
-              "label": "root"
-            },
-            "bootfs": {
-              "label": "boot"
-            },
+            "root_fs_uuid": {"mpp-eval": "rootfs_uuid"},
+            "boot_fs_uuid": {"mpp-eval": "bootfs_uuid"},
+            "kernel_opts": {"mpp-format-string": "console=tty0 console=ttyAMA0,115200"},
             "uefi": {
-              "vendor": "centos",
-              "install": true
+              "vendor": "centos"
             },
             "legacy": {"mpp-eval": "grub_legacy"},
             "write_defaults": false
+          }
+        },
+        {
+          "type": "org.osbuild.fix-bls",
+          "options": {
+            "prefix": "/"
+          }
+        },
+        {
+          "type": "org.osbuild.selinux",
+          "options": {
+            "file_contexts": "etc/selinux/targeted/contexts/files/file_contexts"
           }
         }
       ]
