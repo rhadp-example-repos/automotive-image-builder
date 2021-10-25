@@ -180,15 +180,32 @@
               "references": [
                 "name:image-tree"
               ]
-            }
+            },
+            "build-tree": {
+              "type": "org.osbuild.tree",
+              "origin": "org.osbuild.pipeline",
+              "references": [
+                "name:build"
+              ]
+            },
+            "ostree-tree": {
+              "type": "org.osbuild.tree",
+              "origin": "org.osbuild.pipeline",
+              "references": [
+                "name:ostree-tree"
+               ]
+             }
           },
           "options": {
-            "paths": [
-              {
-                "from": "input://tree/",
-                "to": "mount://root/"
-              }
-            ]
+            "paths": { "mpp-join": [
+              [
+                {
+                  "from": "input://tree/",
+                  "to": "mount://root/"
+                }
+              ],
+              { "mpp-eval": "extra_image_copy if 'extra_image_copy' in locals() else []" }
+            ]}
           },
           "devices": {
             "efi": {
