@@ -3,6 +3,10 @@
   "mpp-vars": {
     "image_rpms": [
       "ostree-grub2",
+      "greenboot",
+      "greenboot-grub2",
+      "greenboot-reboot",
+      "greenboot-status",
       "greenboot-rpm-ostree-grub2"
     ]
   },
@@ -28,6 +32,19 @@
                 "from": "input://tree/",
                 "to": "tree:///"
               }
+            ]
+          }
+        },
+        {
+          "type": "org.osbuild.systemd",
+          "options": {
+            "enabled_services": [
+              "greenboot-grub2-set-counter.service",
+              "greenboot-grub2-set-success.service",
+              "greenboot-healthcheck.service",
+              "greenboot-rpm-ostree-grub2-check-fallback.service",
+              "greenboot-status.service",
+              "greenboot-task-runner.service"
             ]
           }
         },
