@@ -36,10 +36,9 @@ For example:
         ├── cs8-build-aarch64.mpp.json
         ├── cs8-build-x86_64.mpp.json
         ├── qemu
-        │   ├── ostree-neptune-aarch64.mpp.json
-        │   └── ostree-neptune-x86_64.mpp.json
+        │   └── neptune.mpp.json
         └── rpi4
-            └── ostree-neptune-tianocore.mpp.json
+            └── neptune-tianocore.mpp.json
 ```
 
 Each of these manifests can be built using [osbuild](https://www.osbuild.org/).

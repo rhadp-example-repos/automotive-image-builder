@@ -101,10 +101,9 @@ For example:
         ├── cs8-build-aarch64.mpp.json
         ├── cs8-build-x86_64.mpp.json
         ├── qemu
-        │   ├── ostree-neptune-aarch64.mpp.json
-        │   └── ostree-neptune-x86_64.mpp.json
+        │   └── neptune.mpp.json
         └── rpi4
-            └── ostree-neptune-tianocore.mpp.json
+            └── neptune-tianocore.mpp.json
 ```
 
 Each folder may, in addition, include a `README` file with more information
@@ -124,8 +123,12 @@ targetting the Raspberry Pi 4 platform.
 #### Pre-compile the template
 
 ```
-osbuild-mpp osbuild-manifests/cs8/rpi4/ostree-neptune-tianocore.mpp.json cs8-rpi4.json
+osbuild-mpp osbuild-manifests/cs8/rpi4/neptune-tianocore.mpp.json cs8-rpi4.json
 ```
+
+By default the generated manifes is based on ostree, but you can also
+create a non-ostree image if you pass `-D image_type=\"regular\"` to
+osbuild-mpp.
 
 #### Build the image
 
