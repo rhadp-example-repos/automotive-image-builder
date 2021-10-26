@@ -101,6 +101,7 @@ For example:
         ├── cs8-build-aarch64.mpp.json
         ├── cs8-build-x86_64.mpp.json
         ├── qemu
+        │   ├── minimal.mpp.json
         │   └── neptune.mpp.json
         └── rpi4
             └── neptune-tianocore.mpp.json
