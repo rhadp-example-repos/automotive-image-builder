@@ -37,6 +37,8 @@
     }
   },
   "pipelines": [
+    { "mpp-import-pipeline": { "path": "cs8-rpi4.mpp.json", "id": "rpi4" } },
+
     {
       "mpp-import-pipeline": { "path": "../cs8-build-$arch.mpp.json", "id": "build" },
       "runner": "org.osbuild.centos8"
@@ -70,29 +72,16 @@
                 "architecture": "$arch",
                 "module-platform-id": "platform:el8",
                 "baseurl": "$cs8_baseurl/BaseOS/$arch/os/",
-                "repos": [
-                  {
-                    "id": "default",
-                    "baseurl": "$cs8_baseurl/BaseOS/$arch/os/"
-                  },
-                  {
-                    "id": "appstream",
-                    "baseurl": "$cs8_baseurl/AppStream/$arch/os/"
-                  },
-                  {
-                    "id": "cs8-rpi",
-                    "baseurl": "https://download.copr.fedorainfracloud.org/results/alexl/rhel8-rpi/centos-stream-8-$arch/"
-                  },
-                  {
-                    "id": "fedora-kernel",
-                    "baseurl": "https://download.copr.fedorainfracloud.org/results/alexl/fedora-kernel/fedora-34-$arch/",
-                    "priority": 60
-                  },
-                  {
-                    "id": "copr-neptune",
-                    "baseurl": "https://download.copr.fedorainfracloud.org/results/pingou/qtappmanager-fedora/centos-stream-8-$arch/"
-                  }
-                ],
+                "repos": { "mpp-join": [
+                  { "mpp-eval": "cs8_repos" },
+                  { "mpp-eval": "cs8_rpi_repos" },
+                  [
+                    {
+                      "id": "copr-neptune",
+                      "baseurl": "https://download.copr.fedorainfracloud.org/results/pingou/qtappmanager-fedora/centos-stream-8-$arch/"
+                    }
+                  ]
+                ]},
                 "packages": { "mpp-join": [
                   { "mpp-eval": "base_rpms" },
                   { "mpp-eval": "image_rpms" },
@@ -247,7 +236,6 @@
       ]
     },
 
-    { "mpp-import-pipeline": { "path": "cs8-image-rpi4.mpp.json", "id": "rpi4" } },
     { "mpp-import-pipeline": { "path": "../cs8-$image_type-image.mpp.json", "id": "ostree-tree" } },
     { "mpp-import-pipeline": { "path": "../cs8-$image_type-image.mpp.json", "id": "ostree-commit" } },
     { "mpp-import-pipeline": { "path": "../cs8-$image_type-image.mpp.json", "id": "image-tree" } },

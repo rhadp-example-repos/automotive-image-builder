@@ -68,24 +68,15 @@
                 "architecture": "$arch",
                 "module-platform-id": "platform:el8",
                 "baseurl": "$cs8_baseurl/BaseOS/$arch/os/",
-                "repos": [
-                  {
-                    "id": "default",
-                    "baseurl": "$cs8_baseurl/BaseOS/$arch/os/"
-                  },
-                  {
-                    "id": "appstream",
-                    "baseurl": "$cs8_baseurl/AppStream/$arch/os/"
-                  },
-                  {
-                    "id": "extras",
-                    "baseurl": "$cs8_baseurl/extras/$arch/os/"
-                  },
-                  {
-                    "id": "copr-neptune",
-                    "baseurl": "https://download.copr.fedorainfracloud.org/results/pingou/qtappmanager-fedora/centos-stream-8-$arch/"
-                  }
-                ],
+                "repos": { "mpp-join": [
+                  { "mpp-eval": "cs8_repos" },
+                  [
+                    {
+                      "id": "copr-neptune",
+                      "baseurl": "https://download.copr.fedorainfracloud.org/results/pingou/qtappmanager-fedora/centos-stream-8-$arch/"
+                    }
+                  ]
+                ]},
                 "packages": { "mpp-join": [
                   { "mpp-eval": "base_rpms" },
                   { "mpp-eval": "image_rpms" },
