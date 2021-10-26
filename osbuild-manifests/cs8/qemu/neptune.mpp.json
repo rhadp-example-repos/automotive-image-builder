@@ -123,7 +123,6 @@
                     "iptables-ebtables",
                     "kexec-tools",
                     "langpacks-en",
-                    "nss-altfiles",
                     "less",
                     "libcanberra-gtk3",
                     "libproxy-webkitgtk4",

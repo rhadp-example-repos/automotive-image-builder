@@ -2,6 +2,7 @@
   "version": "2",
   "mpp-vars": {
     "image_rpms": [
+      "nss-altfiles",
       "ostree-grub2",
       "greenboot",
       "greenboot-grub2",
