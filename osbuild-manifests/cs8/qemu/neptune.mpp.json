@@ -200,8 +200,6 @@
               "usrmount"
             ],
             "add_drivers": [
-              "bcm2835",
-              "sdhci"
             ],
             "install": [
               "/.buildstamp"

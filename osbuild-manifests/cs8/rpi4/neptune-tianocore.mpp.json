@@ -208,10 +208,7 @@
               "udev-rules",
               "usrmount"
             ],
-            "add_drivers": [
-              "bcm2835",
-              "sdhci"
-            ],
+            "add_drivers": { "mpp-eval": "rpi_dracut_drivers" },
             "install": [
               "/.buildstamp"
             ]

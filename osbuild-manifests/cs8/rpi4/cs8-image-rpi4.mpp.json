@@ -10,7 +10,8 @@
         "from": "input://build-tree/usr/share/uboot/rpi_4/u-boot.bin",
         "to": "mount://root/boot/efi/rpi4-u-boot.bin"
       }
-    ]
+    ],
+    "rpi_dracut_drivers": [ "bcm2835", "sdhci"  ]
   },
   "pipelines": [
     {
