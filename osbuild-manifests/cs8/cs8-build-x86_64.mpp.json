@@ -1,7 +1,6 @@
 {
   "version": "2",
   "mpp-vars": {
-    "grub_legacy": "i386-pc",
     "cs8_baseurl": "http://mirror.centos.org/centos/8-stream",
     "cs8_repos": [
       {

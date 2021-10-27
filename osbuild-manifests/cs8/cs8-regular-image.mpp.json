@@ -75,7 +75,7 @@
             "uefi": {
               "vendor": "centos"
             },
-            "legacy": {"mpp-eval": "grub_legacy"},
+            "legacy": false,
             "write_defaults": false
           }
         },
