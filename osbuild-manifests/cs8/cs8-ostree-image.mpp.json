@@ -158,12 +158,7 @@
             "rootfs": {
               "label": "root"
             },
-            "kernel_opts": [
-              "console=tty0",
-              "console=ttyS0",
-              "systemd.log_target=console",
-              "systemd.journald.forward_to_console=1"
-            ]
+            "kernel_opts": { "mpp-eval": "kernel_opts" }
           }
         },
         {

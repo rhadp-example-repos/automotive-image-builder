@@ -6,7 +6,14 @@
     "rootfs_uuid": "76a22bf4-f153-4541-b6c7-0332c0dfaeac",
     "bootfs_uuid": "156f0420-627b-4151-ae6f-fda298097515",
     "extra_rpms": [],
-    "image_type": "ostree"
+    "image_type": "ostree",
+    "kernel_opts": [
+      "ro",
+      "console=tty0",
+      "console=ttyS0",
+      "systemd.log_target=console",
+      "systemd.journald.forward_to_console=1"
+    ]
   },
   "mpp-define-image": {
     "size": "$image_size",
@@ -47,8 +54,7 @@
         {
           "type": "org.osbuild.kernel-cmdline",
           "options": {
-            "root_fs_uuid": {"mpp-eval": "rootfs_uuid"},
-            "kernel_opts": "ro biosdevname=0 net.ifnames=0"
+            "root_fs_uuid": {"mpp-eval": "rootfs_uuid"}
           }
         },
         {

@@ -79,7 +79,7 @@
           "options": {
             "root_fs_uuid": {"mpp-eval": "rootfs_uuid"},
             "boot_fs_uuid": {"mpp-eval": "bootfs_uuid"},
-            "kernel_opts": {"mpp-format-string": "console=tty0 console=ttyAMA0,115200"},
+            "kernel_opts": { "mpp-eval": "' ' .join(kernel_opts)" },
             "uefi": {
               "vendor": "centos"
             },
