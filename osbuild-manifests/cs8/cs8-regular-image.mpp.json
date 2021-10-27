@@ -8,19 +8,11 @@
   "pipelines": [
     {
       "name": "ostree-tree",
-      "build": "name:build",
-      "stages": [
-        {
-          "type": "org.osbuild.kernel-cmdline",
-          "options": {}
-        }
-      ]
+      "stages": [ { "type": "org.osbuild.noop" } ]
     },
     {
       "name": "ostree-commit",
-      "build": "name:build",
-      "stages": [
-      ]
+      "stages": [ { "type": "org.osbuild.noop" } ]
     },
     {
       "name": "image-tree",
