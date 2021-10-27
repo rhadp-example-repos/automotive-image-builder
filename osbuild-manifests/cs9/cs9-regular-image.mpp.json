@@ -1,0 +1,97 @@
+{
+  "version": "2",
+  "mpp-vars": {
+    "image_rpms": [
+      "shim"
+    ]
+  },
+  "pipelines": [
+    {
+      "name": "ostree-tree",
+      "stages": [ { "type": "org.osbuild.noop" } ]
+    },
+    {
+      "name": "ostree-commit",
+      "stages": [ { "type": "org.osbuild.noop" } ]
+    },
+    {
+      "name": "image-tree",
+      "build": "name:build",
+      "stages": [
+        {
+          "type": "org.osbuild.copy",
+          "inputs": {
+            "tree": {
+              "type": "org.osbuild.tree",
+              "origin": "org.osbuild.pipeline",
+              "references": [
+                "name:rootfs"
+              ]
+            }
+          },
+          "options": {
+            "paths": [
+              {
+                "from": "input://tree/",
+                "to": "tree:///"
+              }
+            ]
+          }
+        },
+        {
+          "type": "org.osbuild.fstab",
+          "options": {
+            "filesystems": [
+              {
+                "uuid": {"mpp-eval": "rootfs_uuid"},
+                "vfs_type": "xfs",
+                "path": "/",
+                "freq": 1,
+                "passno": 1
+              },
+              {
+                "label": "ESP",
+                "vfs_type": "vfat",
+                "path": "/boot/efi",
+                "freq": 1,
+                "passno": 1
+              },
+              {
+                "uuid": {"mpp-eval": "bootfs_uuid"},
+                "vfs_type": "ext4",
+                "path": "/boot",
+                "freq": 1,
+                "passno": 1
+              }
+            ]
+          }
+        },
+        {
+          "type": "org.osbuild.grub2",
+          "options": {
+            "root_fs_uuid": {"mpp-eval": "rootfs_uuid"},
+            "boot_fs_uuid": {"mpp-eval": "bootfs_uuid"},
+            "kernel_opts": { "mpp-eval": "' ' .join(kernel_opts)" },
+            "uefi": {
+              "vendor": "centos"
+            },
+            "legacy": false,
+            "write_defaults": false
+          }
+        },
+        {
+          "type": "org.osbuild.fix-bls",
+          "options": {
+            "prefix": "/"
+          }
+        },
+        {
+          "type": "org.osbuild.selinux",
+          "options": {
+            "file_contexts": "etc/selinux/targeted/contexts/files/file_contexts"
+          }
+        }
+      ]
+    }
+  ]
+}
