@@ -41,6 +41,15 @@
       ]
     }
   },
+  "sources": {
+    "org.osbuild.curl": {
+      "items": {
+        "sha256:7337dba8727b43b5e4d7482433a9244c22318186a88f815608d306ce75bcbbea": "https://gitlab.com/redhat/automotive/automotive-sig/-/raw/main/osbuild-manifests/files/custom.conf?inline=false",
+        "sha256:5040625b1fb6fa4af07226683f6e6003b29e5e70b16f8cfb24be7a752393f0ee": "https://gitlab.com/redhat/automotive/automotive-sig/-/raw/main/osbuild-manifests/files/gnome-initial-setup-done?inline=false",
+        "sha256:8e3ff8c6c8523ae90f258737cc2b042bfb09dce9128fb512dc61b9ba3a53e58e": "https://gitlab.com/redhat/automotive/automotive-sig/-/raw/main/osbuild-manifests/files/neptune3-ui.desktop?inline=false"
+      }
+    }
+  },
   "pipelines": [
     {
       "mpp-import-pipeline": { "path": "../cs8-build-$arch.mpp.json", "id": "build" },
@@ -156,10 +165,54 @@
               },
               "guest": {
                 "password": "$6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU."
+              },
+              "neptune": {
+                "password": ""
               }
             }
           }
         },
+        {
+          "type": "org.osbuild.copy",
+          "inputs": {
+            "inlinefile": {
+              "type": "org.osbuild.files",
+              "origin": "org.osbuild.source",
+              "references": {
+                "sha256:7337dba8727b43b5e4d7482433a9244c22318186a88f815608d306ce75bcbbea": {}
+              }
+            }
+          },
+          "options": {
+            "paths": [
+              {
+                "from": "input://inlinefile/sha256:7337dba8727b43b5e4d7482433a9244c22318186a88f815608d306ce75bcbbea",
+                "to": "tree:///etc/gdm/custom.conf"
+              }
+            ]
+          }
+        },
+        {
+          "type": "org.osbuild.copy",
+          "inputs": {
+            "inlinefile": {
+              "type": "org.osbuild.files",
+              "origin": "org.osbuild.source",
+              "references": {
+                "sha256:8e3ff8c6c8523ae90f258737cc2b042bfb09dce9128fb512dc61b9ba3a53e58e": {}
+              }
+            }
+          },
+          "options": {
+            "paths": [
+              {
+                "from": "input://inlinefile/sha256:8e3ff8c6c8523ae90f258737cc2b042bfb09dce9128fb512dc61b9ba3a53e58e",
+                "to": "tree:///etc/xdg/autostart/neptune3-ui.desktop"
+              }
+            ]
+          }
+        },
+
         {
           "type": "org.osbuild.systemd",
           "options": {
