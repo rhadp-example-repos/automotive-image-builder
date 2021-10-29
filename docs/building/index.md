@@ -97,14 +97,24 @@ They are organized by OS, then target platform.
 For example:
 ```
     osbuild-manifests
-    └── cs8
-        ├── cs8-build-aarch64.mpp.json
-        ├── cs8-build-x86_64.mpp.json
+    ├── cs8
+    │   ├── cs8-build-aarch64.mpp.json
+    │   ├── cs8-build-x86_64.mpp.json
+    │   ├── qemu
+    │   │   ├── minimal.mpp.json
+    │   │   └── neptune.mpp.json
+    │   └── rpi4
+    │       ├── rpi4-minimal.mpp.json
+    │       └── rpi4-neptune.mpp.json
+    └── cs9
+        ├── cs9-build-aarch64.mpp.json
+        ├── cs9-build-x86_64.mpp.json
         ├── qemu
         │   ├── minimal.mpp.json
         │   └── neptune.mpp.json
         └── rpi4
-            └── neptune-tianocore.mpp.json
+            ├── rpi4-minimal.mpp.json
+            └── rpi4-neptune.mpp.json
 ```
 
 Each folder may, in addition, include a `README` file with more information
@@ -124,7 +134,7 @@ targetting the Raspberry Pi 4 platform.
 #### Pre-compile the template
 
 ```
-osbuild-mpp osbuild-manifests/cs8/rpi4/neptune-tianocore.mpp.json cs8-rpi4.json
+osbuild-mpp osbuild-manifests/cs8/rpi4/rpi4-neptune.mpp.json cs8-rpi4.json
 ```
 
 By default the generated manifes is based on ostree, but you can also
