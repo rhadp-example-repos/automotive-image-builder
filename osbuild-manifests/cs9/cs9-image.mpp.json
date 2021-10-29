@@ -108,7 +108,8 @@
                   "to": "mount://root/"
                 }
               ],
-              { "mpp-eval": "extra_image_copy if 'extra_image_copy' in locals() else []" }
+              { "mpp-eval": "locals().get('extra_image_copy', [])" },
+              { "mpp-eval": "locals().get('extra_image_copy_' + image_type, [])"}
             ]}
           },
           "devices": {
