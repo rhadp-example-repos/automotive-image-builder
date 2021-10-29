@@ -1,0 +1,188 @@
+{
+  "version": "2",
+  "mpp-vars": {
+    "arch": "aarch64",
+    "ostree_ref": "cs9/$arch/rpi4-minimal",
+    "image_size": "4294967296",
+    "rootfs_uuid": "76a22bf4-f153-4541-b6c7-0332c0dfaeac",
+    "bootfs_uuid": "156f0420-627b-4151-ae6f-fda298097515",
+    "extra_rpms": [],
+    "image_type": "ostree",
+    "kernel_opts": [
+      "ro",
+      "console=tty0",
+      "console=ttyS0",
+      "systemd.log_target=console",
+      "systemd.journald.forward_to_console=1"
+    ]
+  },
+  "mpp-define-image": {
+    "size": "$image_size",
+    "table": {
+      "uuid": "D209C89E-EA5E-4FBD-B161-B461CCE297E0",
+      "label": "dos",
+      "partitions": [
+        {
+          "id": "efi",
+          "start": 2048,
+          "size": 204800,
+          "type": "ef",
+          "uuid": "68B2905B-DF3E-4FB3-80FA-49D1E773AA33"
+        },
+        {
+          "id": "boot",
+          "size": 409600,
+          "type": "83",
+          "uuid": "61B2905B-DF3E-4FB3-80FA-49D1E773AA32"
+        },
+        {
+          "id": "root",
+          "type": "83",
+          "uuid": "6264D520-3FB9-423F-8AB8-7A0A8E3D3562"
+        }
+      ]
+    }
+  },
+  "pipelines": [
+    {
+      "mpp-import-pipeline": { "path": "../cs9-build-$arch.mpp.json", "id": "build" },
+      "runner": "org.osbuild.centos8"
+    },
+
+    { "mpp-import-pipeline": { "path": "cs9-rpi4-variables.mpp.json", "id": "rpi4" } },
+
+    {
+      "name": "rootfs",
+      "build": "name:build",
+      "stages": [
+        {
+          "type": "org.osbuild.kernel-cmdline",
+          "options": {
+            "root_fs_uuid": {"mpp-eval": "rootfs_uuid"}
+          }
+        },
+        {
+          "type": "org.osbuild.rpm",
+          "options": {
+            "gpgkeys": [
+              { "mpp-eval": "centos_gpg_key" },
+              { "mpp-eval": "redhat_gpg_key" }
+            ],
+            "disable_dracut": true
+          },
+          "inputs": {
+            "packages": {
+              "type": "org.osbuild.files",
+              "origin": "org.osbuild.source",
+              "mpp-depsolve": {
+                "architecture": "$arch",
+                "module-platform-id": "platform:el9",
+                "baseurl": "$cs9_baseurl/BaseOS/$arch/os/",
+                "repos": { "mpp-join": [
+                  { "mpp-eval": "cs9_repos" },
+                  { "mpp-eval": "cs9_rpi_repos" },
+                  [
+                    {
+                      "id": "copr-neptune",
+                      "baseurl": "https://download.copr.fedorainfracloud.org/results/pingou/qtappmanager-fedora/centos-stream-8-$arch/"
+                    }
+                  ]
+                ]},
+                "packages": { "mpp-join": [
+                  { "mpp-eval": "base_rpms" },
+                  { "mpp-eval": "image_rpms" },
+                  { "mpp-eval": "extra_rpms" },
+                  [
+                    "dnf",
+                    "firewalld",
+                    "gdm",
+                    "gnome-control-center",
+                    "gnome-session-xsession",
+                    "gnome-shell",
+                    "gnome-terminal",
+                    "langpacks-en",
+                    "neptune3-ui",
+                    "openssh-clients",
+                    "openssh-server",
+                    "plymouth",
+                    "polkit",
+                    "sudo",
+
+                    "pi4-firmware-blob"
+                  ]
+                ]},
+                "excludes": [
+                  "dracut-config-rescue"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "type": "org.osbuild.dracut",
+          "options": {
+            "kernel": [
+              { "mpp-eval": "rpms['rootfs']['kernel-core'].evra" }
+            ],
+            "add_modules": [
+              "base",
+              "bash",
+              "dracut-systemd",
+              "fs-lib",
+              "i18n",
+              "kernel-modules",
+              "kernel-modules-extra",
+              "rootfs-block",
+              "shutdown",
+              "systemd",
+              "systemd-initrd",
+              "terminfo",
+              "udev-rules",
+              "usrmount"
+            ],
+            "add_drivers": { "mpp-eval": "rpi_dracut_drivers" },
+            "install": [
+              "/.buildstamp"
+            ]
+          }
+        },
+        {
+          "type": "org.osbuild.locale",
+          "options": {
+            "language": "en_US.UTF-8"
+          }
+        },
+        {
+          "type": "org.osbuild.users",
+          "options": {
+            "users": {
+              "root": {
+                "password": "$6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU."
+              },
+              "guest": {
+                "password": "$6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU."
+              }
+            }
+          }
+        },
+        {
+          "type": "org.osbuild.systemd",
+          "options": {
+            "enabled_services": [
+              "NetworkManager.service",
+              "firewalld.service",
+              "rngd.service",
+              "sshd.service"
+            ]
+          }
+        }
+      ]
+    },
+
+    { "mpp-import-pipeline": { "path": "../cs9-$image_type-image.mpp.json", "id": "ostree-tree" } },
+    { "mpp-import-pipeline": { "path": "../cs9-$image_type-image.mpp.json", "id": "ostree-commit" } },
+    { "mpp-import-pipeline": { "path": "../cs9-$image_type-image.mpp.json", "id": "image-tree" } },
+    { "mpp-import-pipeline": { "path": "../cs9-image.mpp.json", "id": "image" } },
+    { "mpp-import-pipeline": { "path": "../cs9-image.mpp.json", "id": "qcow2" } }
+  ]
+}
