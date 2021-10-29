@@ -2,7 +2,7 @@
   "version": "2",
   "mpp-vars": {
     "arch": "aarch64",
-    "ostree_ref": "cs9/$arch/rpi4-minimal",
+    "ostree_ref": "cs9/$arch/rpi4-neptune",
     "image_size": "4294967296",
     "rootfs_uuid": "76a22bf4-f153-4541-b6c7-0332c0dfaeac",
     "bootfs_uuid": "156f0420-627b-4151-ae6f-fda298097515",
