@@ -53,16 +53,7 @@
                 "architecture": "$arch",
                 "module-platform-id": "platform:el9",
                 "baseurl": "$cs9_baseurl/BaseOS/$arch/os/",
-                "repos": [
-                  {
-                    "id": "default",
-                    "baseurl": "$cs9_baseurl/BaseOS/$arch/os/"
-                  },
-                  {
-                    "id": "appstream",
-                    "baseurl": "$cs9_baseurl/AppStream/$arch/os/"
-                  }
-                ],
+                "repos": { "mpp-eval": "cs9_repos" },
                 "packages": [
                   "dnf",
                   "dosfstools",

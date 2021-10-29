@@ -1,17 +1,6 @@
 {
   "version": "2",
   "mpp-vars": {
-    "cs8_rpi_repos": [
-      {
-        "id": "cs8-rpi",
-        "baseurl": "https://download.copr.fedorainfracloud.org/results/alexl/rhel8-rpi/centos-stream-8-$arch/"
-      },
-      {
-        "id": "fedora-kernel",
-        "baseurl": "https://download.copr.fedorainfracloud.org/results/alexl/fedora-kernel/fedora-34-$arch/",
-        "priority": 60
-      }
-    ],
     "extra_image_copy": [
       {
         "from": "input://ostree-tree/lib/ostree-boot/efi/",
