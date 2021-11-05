@@ -64,6 +64,11 @@
               { "mpp-eval": "locals().get('extra_dracut_drivers', [])" },
               []
             ]},
+            "filesystems": [
+              "xfs",
+              "vfat",
+              "ext4"
+            ],
             "install": [
               "/.buildstamp"
             ]
