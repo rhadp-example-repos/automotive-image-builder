@@ -57,6 +57,16 @@
               "udev-rules",
               "usrmount"
             ],
+            "omit_modules": [
+              "dm",
+              "lunmask",
+              "mdraid",
+              "memstrack",
+              "nss-softokn",
+              "nvdimm",
+              "resume",
+              "terminfo"
+            ],
             "add_drivers": {"mpp-join": [
               { "mpp-eval": "locals().get('extra_dracut_drivers', [])" },
               []
