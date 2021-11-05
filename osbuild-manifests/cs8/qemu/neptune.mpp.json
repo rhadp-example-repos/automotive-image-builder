@@ -122,35 +122,6 @@
           }
         },
         {
-          "type": "org.osbuild.dracut",
-          "options": {
-            "kernel": [
-              { "mpp-eval": "rpms['rootfs']['kernel-core'].evra" }
-            ],
-            "add_modules": [
-              "base",
-              "bash",
-              "dracut-systemd",
-              "fs-lib",
-              "i18n",
-              "kernel-modules",
-              "kernel-modules-extra",
-              "rootfs-block",
-              "shutdown",
-              "systemd",
-              "systemd-initrd",
-              "terminfo",
-              "udev-rules",
-              "usrmount"
-            ],
-            "add_drivers": [
-            ],
-            "install": [
-              "/.buildstamp"
-            ]
-          }
-        },
-        {
           "type": "org.osbuild.locale",
           "options": {
             "language": "en_US.UTF-8"
