@@ -113,7 +113,8 @@
                   ]
                 ]},
                 "excludes": [
-                  "dracut-config-rescue"
+                  "dracut-config-rescue",
+                  "gnome-tour"
                 ]
               }
             }
