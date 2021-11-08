@@ -1,11 +1,10 @@
 # Welcome to the Automotive SIG
 
-This is the on-going documentation for the Automotive SIG. It contains receipes
-for building the images, information on how to download them as well as references
-on how the SIG works.
+This is the documentation for the Automotive SIG. It contains instructions
+about how to build and download images and information about how
+the SIG works.
 
-If you are curious about the SIG's charter, members or goal, you will be able to
-find this information on the
+For more information about the SIG's charter, members, or goal, see the
 [Automotive SIG page on the CentOS wiki](https://wiki.centos.org/SpecialInterestGroup/Automotive).
 
 
@@ -13,15 +12,15 @@ find this information on the
 
 * The CentOS-Automotive-SIG mailing list:
   <https://lists.centos.org/mailman/listinfo/centos-automotive-sig>
-* The IRC channel: `#centos-automotive` on `irc.libera.chat` (More information
+* The IRC channel: `#centos-automotive` on `irc.libera.chat` (more information
   on <https://libera.chat/>)
-* Monthly meetings on the third Thursday, 1500 UTC, or as decided by the group
+* Monthly meetings on the third Thursday at 1500 UTC, or as decided by the group
 
 
 ## Artifacts
 
-Currently the SIG has manifests for different Operating Systems and platforms.
-You can find them in the `osbuild-manifests` folder using the following
+The SIG currently has manifests for different operating systems and platforms.
+You can find them in the `osbuild-manifests` folder organized in the following
 structure:
 ```
     osbuild-manifests/
@@ -52,6 +51,5 @@ For example:
             └── rpi4-neptune.mpp.json
 ```
 
-Each of these manifests can be built using [osbuild](https://www.osbuild.org/).
-The instructions are available under the `Building Images` section of the menu
-in the top bar.
+Each of these manifests can be built using [OSBuild](https://www.osbuild.org/).
+The instructions are available on the [Building Images](https://sigs.centos.org/automotive/building/) page.

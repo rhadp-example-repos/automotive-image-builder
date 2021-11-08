@@ -30,3 +30,4 @@ markdown_extensions:
       permalink: True
   - sane_lists
   - smarty
+  - admonition

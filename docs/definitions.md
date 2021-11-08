@@ -1,21 +1,26 @@
-# Vocabulary and definitions used by the Automotive SIG
+# Automotive SIG Vocabulary
 
-This page tries to define vocabulary and terms used by the Automotive SIG which
-can sometime be new to the reader or subject to different interpretation.
+This page defines terms used by the Automotive SIG that
+might be new to the reader or subject to different interpretation.
 
-If you feel that something is not clear, please let us know, we will gladly
-improve our wording, add it to this list or both :)
+If something is not clear, let us know.
 
-## OSBuild Manifests
+## CentOS Stream
 
-OSBuild Manifests are JSON files used instruct [osbuild](https://www.osbuild.org/)
+CentOS Stream is a continuously delivered distribution that tracks just ahead
+of Red Hat Enterprise Linux (RHEL) development, positioned as a midstream 
+between Fedora and RHEL.
+
+## OSBuild manifests
+
+OSBuild manifests are JSON files that instruct [OSBuild](https://www.osbuild.org/)
 on how to build images.
 
-## SIG / Special Interest Group
+## Special Interest Group (SIG)
 
-A SIG or Special Interest Group is a group of person interested in the same topic
-and willing to collaborate together to move this topic further.
-In the case of the CentOS Automotive SIG, we are a group of person interested
-in developing an Operating System (OS) based on CentOS-Stream that could be used
-in an automotive environment. However, this OS will not be safety certified and
-should be considered as a research project or a Proof Of Concept (POC).
+A SIG is a group of people who are interested in the same goal
+and willing to collaborate to move objectives that support the goal further.
+The CentOS Automotive SIG is a group of people who are interested
+in developing an operating system (OS) based on CentOS Stream that could be used
+in an automotive environment. This OS will not be safety certified, however, and
+should be considered as a research project or a proof of concept (POC).
