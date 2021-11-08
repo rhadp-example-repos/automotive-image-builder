@@ -84,7 +84,7 @@
                   [
                     {
                       "id": "copr-neptune",
-                      "baseurl": "https://download.copr.fedorainfracloud.org/results/pingou/qtappmanager-fedora/centos-stream-8-$arch/"
+                      "baseurl": "https://download.copr.fedorainfracloud.org/results/pingou/qtappmanager-fedora/centos-stream-9-$arch/"
                     }
                   ]
                 ]},
