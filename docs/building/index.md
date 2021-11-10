@@ -3,7 +3,9 @@
 The Automotive SIG uses [OSBuild](https://www.osbuild.org/) as the tool to build
 its images on CentOS Stream, Fedora, or RHEL hosts, with the option to build immutable images using [OSTree](https://ostreedev.github.io/ostree/introduction/).
 
-> **NOTE:** For all hosts, installing `osbuild-tools` provides the `osbuild-mpp` utility.
+!!! note
+
+    For all hosts, installing `osbuild-tools` provides the `osbuild-mpp` utility.
 
 ## Prerequisites
 
@@ -24,47 +26,47 @@ its images on CentOS Stream, Fedora, or RHEL hosts, with the option to build imm
 
 1. Install OSBuild.
 
- ```
- dnf copr enable @osbuild/osbuild
- sed -i -e 's|baseurl=https://download.copr.fedorainfracloud.org/results/@osbuild/osbuild/epel-8-$basearch/|baseurl=https://download.copr.fedorainfracloud.org/results/@osbuild/osbuild/centos-stream-8-$basearch/|' /etc/yum.repos.d/_copr\:copr.fedorainfracloud.org\:group_osbuild\:osbuild.repo
- dnf install osbuild osbuild-tools
- ```
+     ```
+     dnf copr enable @osbuild/osbuild
+     sed -i -e 's|baseurl=https://download.copr.fedorainfracloud.org/results/@osbuild/osbuild/epel-8-$basearch/|baseurl=https://download.copr.fedorainfracloud.org/results/@osbuild/osbuild/centos-stream-8-$basearch/|' /etc/yum.repos.d/_copr\:copr.fedorainfracloud.org\:group_osbuild\:osbuild.repo
+     dnf install osbuild osbuild-tools
+     ```
 
 1. **Optional**: Install support for OSTree.
 
- ```
- dnf install osbuild-ostree
- ```
+     ```
+     dnf install osbuild-ostree
+     ```
 
 ### On a Fedora host
 
 1. Install OSBuild.
 
- ```
- dnf copr enable @osbuild/osbuild
- dnf install osbuild osbuild-tools
- ```
+     ```
+     dnf copr enable @osbuild/osbuild
+     dnf install osbuild osbuild-tools
+     ```
 
 1. **Optional**: Install support for OSTree.
 
- ```
- dnf install osbuild-ostree
- ```
+     ```
+     dnf install osbuild-ostree
+     ```
 
 ### On a RHEL host
 
 1. Install OSBuild.
 
- ```
- dnf copr enable @osbuild/osbuild
- dnf install osbuild osbuild-tools
- ```
+     ```
+     dnf copr enable @osbuild/osbuild
+     dnf install osbuild osbuild-tools
+     ```
 
 1. **Optional**: Install support for OSTree.
 
- ```
- dnf install osbuild-ostree
- ```
+     ```
+     dnf install osbuild-ostree
+     ```
 
 
 ## Finding the manifest of interest
@@ -104,7 +106,6 @@ They are organized by OS, then target platform. For example:
 Each folder may include a `README` file with more information
 about the differences between the files.
 
-
 ## Building the image
 
 Once you select an image to build, you must preprocess the
@@ -116,67 +117,68 @@ targeting the Raspberry Pi 4 platform.
 
 1. Precompile the template.
 
-```
-osbuild-mpp osbuild-manifests/cs8/rpi4/rpi4-neptune.mpp.json cs8-rpi4.json
-```
+    ```
+    osbuild-mpp osbuild-manifests/cs8/rpi4/rpi4-neptune.mpp.json cs8-rpi4.json
+    ```
 
-  > **NOTE:** By default, the generated manifest is based on OSTree, but you can also
-  create a non-OSTree image if you pass `-D image_type=\"regular\"` to
-  `osbuild-mpp`.
+    !!! note
+
+        By default, the generated manifest is based on OSTree, but you can also create a non-OSTree image if you pass `-D image_type=\"regular\"` to `osbuild-mpp`.
 
 1. Either build a raw image or a qcow2 image.
 
- ```
- osbuild \
-     --store <where to store intermediary outputs> \
-     --output-directory <where to store outputs> \
-     --export <name of pipeline to export> \
-     <pre-processed osbuild manifest>
- ```
+     ```
+     osbuild \
+         --store <where to store intermediary outputs> \
+         --output-directory <where to store outputs> \
+         --export <name of pipeline to export> \
+         <pre-processed osbuild manifest>
+     ```
 
-   1. To build a raw image that you can then flash upon an SD card to boot
-a board, run the following command:
+       1. To build a raw image that you can then flash upon an SD card to boot
+    a board, run the following command:
 
-    ```
-    osbuild \
-    --store osbuild_store \
-    --output-directory image_output \
-    --export image cs8-rpi4.json
-    ```
+        ```
+        osbuild \
+        --store osbuild_store \
+        --output-directory image_output \
+        --export image cs8-rpi4.json
+        ```
 
-  1. To build a qcow2 image that you can then boot as a virtual machine, run the following command:
+      1. To build a qcow2 image that you can then boot as a virtual machine, run the following command:
 
-    ```
-    osbuild \
-    --store osbuild_store \
-    --output-directory image_output \
-    --export qcow2 cs8-rpi4.json
-    ```
+        ```
+        osbuild \
+        --store osbuild_store \
+        --output-directory image_output \
+        --export qcow2 cs8-rpi4.json
+        ```
 
 1. Either run the image in qemu/kvm or flash the image onto an SD card.
 
-  1. To boot the image in qemu/kvm, boot the qcow2 image in `virt-manager` or run it
-  directly through `qemu`. For example:
+      1. To boot the image in qemu/kvm, boot the qcow2 image in `virt-manager` or run it
+      directly through `qemu`. For example:
 
-    ```
-    qemu-system-x86_64 \
-        -machine q35 \
-        -enable-kvm \
-        -snapshot \
-        -m 2048 \
-        -drive file=image_output/qcow2/disk.qcow2 \
-        -device virtio-net-pci,netdev=n0,mac=FE:45:5b:75:69:d5 \
-        -netdev user,id=n0,net=10.0.2.0/24,hostfwd=tcp::2222-:22
-    ```
+        ```
+        qemu-system-x86_64 \
+            -machine q35 \
+            -enable-kvm \
+            -snapshot \
+            -m 2048 \
+            -drive file=image_output/qcow2/disk.qcow2 \
+            -device virtio-net-pci,netdev=n0,mac=FE:45:5b:75:69:d5 \
+            -netdev user,id=n0,net=10.0.2.0/24,hostfwd=tcp::2222-:22
+        ```
 
-   1. To flash the image onto an SD card, run the following command:
+       1. To flash the image onto an SD card, run the following command:
 
-    **/!\\** Change the block device, shown as _``/dev/sda``_ in
-    the following example, according to your system.
+        !!! important
 
-    ```
-    dd if=image_output/image/disk.img of=/dev/sda status=progress bs=4M
-    ```
+            Change the block device, shown as _``/dev/sda``_ in the following example, according to your system.
+
+        ```
+        dd if=image_output/image/disk.img of=/dev/sda status=progress bs=4M
+        ```
 
 ## Going further
 

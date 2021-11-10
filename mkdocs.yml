@@ -12,7 +12,7 @@ nav:
   - Definitions: definitions.md
 
 theme:
-  name: mkdocs
+  name: material
   nav_style: dark
   navigation_depth: 4
   custom_dir: docs/custom_theme/

@@ -1,4 +1,4 @@
-# Customize the OSbuild templates
+# Customizing the OSbuild templates
 
 The manifests currently include a number of variables, which appear in the `mpp-vars` section of the OSbuild template manifests.
 
@@ -18,10 +18,10 @@ and `homefs_size`.
 * `rootfs_uuid` and `bootfs_uuid` dynamically generate when you run the equivalent of the following
   python code:
 
- ```python
-    import uuid
-    uuid.uuid1()
- ```
+     ``` python
+        import uuid
+        uuid.uuid1()
+     ```
 
 * `rootfs_size` is hardcoded to `4294967296` bytes.
 
