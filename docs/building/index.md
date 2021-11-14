@@ -156,6 +156,7 @@ To flash the image onto an SD card, run the following command:
 !!! important
 
     Change the block device, shown as _``/dev/sda``_ in the following example, according to your system.
+    In case needed add `-bios /usr/share/OVMF/OVMF_CODE.fd` to qemu command
 
 ```
 dd if=cs9-minimal-regular.img of=/dev/sda status=progress bs=4M
