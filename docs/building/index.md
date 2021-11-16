@@ -29,14 +29,9 @@ its images on CentOS Stream, Fedora, or RHEL hosts, with the option to build imm
      ```
      dnf copr enable @osbuild/osbuild
      sed -i -e 's|baseurl=https://download.copr.fedorainfracloud.org/results/@osbuild/osbuild/epel-8-$basearch/|baseurl=https://download.copr.fedorainfracloud.org/results/@osbuild/osbuild/centos-stream-8-$basearch/|' /etc/yum.repos.d/_copr\:copr.fedorainfracloud.org\:group_osbuild\:osbuild.repo
-     dnf install osbuild osbuild-tools
+     dnf install osbuild osbuild-tools osbuild-ostree
      ```
 
-1. **Optional**: Install support for OSTree.
-
-     ```
-     dnf install osbuild-ostree
-     ```
 
 ### On a Fedora host
 
@@ -44,14 +39,9 @@ its images on CentOS Stream, Fedora, or RHEL hosts, with the option to build imm
 
      ```
      dnf copr enable @osbuild/osbuild
-     dnf install osbuild osbuild-tools
+     dnf install osbuild osbuild-tools osbuild-ostree
      ```
 
-1. **Optional**: Install support for OSTree.
-
-     ```
-     dnf install osbuild-ostree
-     ```
 
 ### On a RHEL host
 
@@ -59,13 +49,7 @@ its images on CentOS Stream, Fedora, or RHEL hosts, with the option to build imm
 
      ```
      dnf copr enable @osbuild/osbuild
-     dnf install osbuild osbuild-tools
-     ```
-
-1. **Optional**: Install support for OSTree.
-
-     ```
-     dnf install osbuild-ostree
+     dnf install osbuild osbuild-tools osbuild-ostree
      ```
 
 
