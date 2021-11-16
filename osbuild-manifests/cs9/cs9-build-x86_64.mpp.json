@@ -1,6 +1,7 @@
 {
   "version": "2",
   "mpp-vars": {
+    "efiarch": "x64",
     "cs9_baseurl": "http://mirror.stream.centos.org/9-stream",
     "cs9_repos": [
       {
