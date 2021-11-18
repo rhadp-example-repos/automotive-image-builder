@@ -76,6 +76,7 @@
                 "baseurl": "$cs9_baseurl/BaseOS/$arch/os/",
                 "repos": { "mpp-join": [
                   { "mpp-eval": "cs9_repos" },
+                  { "mpp-eval": "cs9_automotive_repos" },
                   [ ]
                 ]},
                 "packages": { "mpp-join": [

@@ -4,12 +4,38 @@
     "cs9_baseurl": "http://mirror.stream.centos.org/9-stream",
     "cs9_repos": [
       {
-        "id": "default",
+        "id": "baseos",
         "baseurl": "$cs9_baseurl/BaseOS/$arch/os/"
       },
       {
         "id": "appstream",
         "baseurl": "$cs9_baseurl/AppStream/$arch/os/"
+      }
+    ],
+    "cs9_automotive_repos": [
+      {
+        "id": "automotive",
+        "baseurl": "https://buildlogs.centos.org/9-stream/automotive/$arch/packages-main/"
+      }
+    ],
+    "cs9_crb_repos": [
+      {
+        "id": "crb",
+        "baseurl": "$cs9_baseurl/CRB/$arch/os/"
+      }
+    ],
+    "cs9_debug_repos": [
+      {
+        "id": "baseos-debug",
+        "baseurl": "$cs9_baseurl/BaseOS/$arch/debug/tree/"
+      },
+      {
+        "id": "appstream-debug",
+        "baseurl": "$cs9_baseurl/AppStream/$arch/debug/tree/"
+      },
+      {
+        "id": "crb-debug",
+        "baseurl": "$cs9_baseurl/CRB/$arch/debug/tree/"
       }
     ],
     "cs9_rpi_repos": [
