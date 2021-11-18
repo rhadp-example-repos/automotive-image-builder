@@ -59,7 +59,7 @@
           }
         },
         {
-          "type": "org.osbuild.mkfs.xfs",
+          "type": "org.osbuild.mkfs.ext4",
           "devices": {
             "device": {
               "type": "org.osbuild.loopback",
@@ -141,7 +141,7 @@
           "mounts": [
             {
               "name": "root",
-              "type": "org.osbuild.xfs",
+              "type": "org.osbuild.ext4",
               "source": "root",
               "target": "/"
             },

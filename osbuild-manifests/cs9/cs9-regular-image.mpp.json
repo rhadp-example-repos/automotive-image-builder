@@ -75,7 +75,6 @@
               []
             ]},
             "filesystems": [
-              "xfs",
               "vfat",
               "ext4"
             ],
@@ -90,7 +89,7 @@
             "filesystems": [
               {
                 "uuid": {"mpp-eval": "rootfs_uuid"},
-                "vfs_type": "xfs",
+                "vfs_type": "ext4",
                 "path": "/",
                 "freq": 1,
                 "passno": 1
