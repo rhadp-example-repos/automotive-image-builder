@@ -38,7 +38,7 @@
                 "repos": { "mpp-join": [
                   { "mpp-eval": "cs9_repos" },
                   { "mpp-eval": "cs9_automotive_repos" },
-                 [
+                  [
                     {
                       "id": "cs9-shim",
                       "baseurl": "https://download.copr.fedorainfracloud.org/results/alexl/cs9-shim/fedora-35-$arch/"
@@ -49,7 +49,7 @@
                   { "mpp-eval": "base_rpms" },
                   { "mpp-eval": "boot_rpms" },
                   [
-                    "shim"
+                    "shim-unsigned-$efiarch"
                   ]
                 ]},
                 "excludes": [
