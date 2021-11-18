@@ -39,7 +39,7 @@
           "type": "org.osbuild.dracut",
           "options": {
             "kernel": [
-              { "mpp-eval": "rpms['rootfs']['kernel-core'].evra" }
+              { "mpp-eval": "rpms['rootfs'][kernel_rpm + '-core'].evra" }
             ],
             "add_modules": [
               "base",

@@ -8,6 +8,7 @@
     "bootfs_uuid": "156f0420-627b-4151-ae6f-fda298097515",
     "extra_rpms": [],
     "image_type": "ostree",
+    "kernel_rpm": "kernel-auto",
     "kernel_opts": [
       "ro",
       "console=tty0",
