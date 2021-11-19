@@ -49,7 +49,7 @@
 
     {
       "mpp-import-pipeline": { "path": "../cs9-build-$arch.mpp.json", "id": "build" },
-      "runner": "org.osbuild.centos8"
+      "runner": "org.osbuild.centos9"
     },
 
     {
