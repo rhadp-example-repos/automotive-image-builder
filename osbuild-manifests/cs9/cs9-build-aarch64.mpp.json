@@ -83,10 +83,7 @@
                 "architecture": "$arch",
                 "module-platform-id": "platform:el9",
                 "baseurl": "$cs9_baseurl/BaseOS/$arch/os/",
-                "repos": { "mpp-join": [
-                  { "mpp-eval": "cs9_repos" },
-                  { "mpp-eval": "cs9_rpi_repos" }
-                ]},
+                "repos": { "mpp-eval": "cs9_repos" },
                 "packages": [
                   "dnf",
                   "dosfstools",
@@ -107,7 +104,6 @@
                   "shim-aa64",
                   "squashfs-tools",
                   "systemd",
-                  "uboot-images-armv8",
                   "tar",
                   "xfsprogs",
                   "xorriso",

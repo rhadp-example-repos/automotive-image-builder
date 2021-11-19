@@ -1,12 +1,7 @@
 {
   "version": "2",
   "mpp-vars": {
-    "extra_image_copy": [
-      {
-        "from": "input://build-tree/usr/share/uboot/rpi_4/u-boot.bin",
-        "to": "mount://root/boot/efi/rpi4-u-boot.bin"
-      }
-    ],
+    "extra_image_copy": [ ],
     "extra_image_copy_ostree": [
       {
         "from": "input://ostree-tree/lib/ostree-boot/efi/",
