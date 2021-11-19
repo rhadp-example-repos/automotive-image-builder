@@ -45,7 +45,7 @@
   "pipelines": [
     {
       "mpp-import-pipeline": { "path": "../cs9-build-$arch.mpp.json", "id": "build" },
-      "runner": "org.osbuild.rhel90"
+      "runner": "org.osbuild.centos9"
     },
 
     {
