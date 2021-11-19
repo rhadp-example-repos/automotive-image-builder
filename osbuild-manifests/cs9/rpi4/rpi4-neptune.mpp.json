@@ -45,12 +45,12 @@
     }
   },
   "pipelines": [
+    { "mpp-import-pipeline": { "path": "cs9-rpi4-variables.mpp.json", "id": "rpi4" } },
+
     {
       "mpp-import-pipeline": { "path": "../cs9-build-$arch.mpp.json", "id": "build" },
       "runner": "org.osbuild.centos8"
     },
-
-    { "mpp-import-pipeline": { "path": "cs9-rpi4-variables.mpp.json", "id": "rpi4" } },
 
     {
       "name": "rootfs",
