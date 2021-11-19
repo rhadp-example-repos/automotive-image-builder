@@ -77,18 +77,21 @@ They are organized by OS, then target platform. For example:
     │       ├── rpi4-minimal.mpp.json
     │       └── rpi4-neptune.mpp.json
     └── cs9
-        ├── cs9-build-aarch64.mpp.json
-        ├── cs9-build-x86_64.mpp.json
+        ├── cs9-build-aarch64.mpp.yml
+        ├── cs9-build-x86_64.mpp.yml
         ├── qemu
-        │   ├── minimal.mpp.json
-        │   └── neptune.mpp.json
+        │   ├── minimal.mpp.yml
+        │   └── neptune.mpp.yml
         └── rpi4
-            ├── rpi4-minimal.mpp.json
-            └── rpi4-neptune.mpp.json
+            ├── rpi4-minimal.mpp.yml
+            └── rpi4-neptune.mpp.yml
 ```
 
 Each folder may include a `README` file with more information
 about the differences between the files.
+
+Note that the cs8 manifests are in an older json format, whereas the
+cs9 manifests are in yaml.
 
 ## Building the image
 
@@ -102,7 +105,7 @@ targeting the Raspberry Pi 4 platform.
 1. Precompile the template.
 
     ```
-    osbuild-mpp osbuild-manifests/cs8/rpi4/rpi4-neptune.mpp.json cs8-rpi4.json
+    osbuild-mpp osbuild-manifests/cs9/rpi4/rpi4-neptune.mpp.yml cs9-rpi4.json
     ```
 
     !!! note
@@ -126,7 +129,7 @@ targeting the Raspberry Pi 4 platform.
         osbuild \
         --store osbuild_store \
         --output-directory image_output \
-        --export image cs8-rpi4.json
+        --export image cs9-rpi4.json
         ```
 
       1. To build a qcow2 image that you can then boot as a virtual machine, run the following command:
@@ -135,7 +138,7 @@ targeting the Raspberry Pi 4 platform.
         osbuild \
         --store osbuild_store \
         --output-directory image_output \
-        --export qcow2 cs8-rpi4.json
+        --export qcow2 cs9-rpi4.json
         ```
 
 1. Either run the image in qemu/kvm or flash the image onto an SD card.

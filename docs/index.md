@@ -41,14 +41,14 @@ For example:
     │       ├── rpi4-minimal.mpp.json
     │       └── rpi4-neptune.mpp.json
     └── cs9
-        ├── cs9-build-aarch64.mpp.json
-        ├── cs9-build-x86_64.mpp.json
+        ├── cs9-build-aarch64.mpp.yml
+        ├── cs9-build-x86_64.mpp.yml
         ├── qemu
-        │   ├── minimal.mpp.json
-        │   └── neptune.mpp.json
+        │   ├── minimal.mpp.yml
+        │   └── neptune.mpp.yml
         └── rpi4
-            ├── rpi4-minimal.mpp.json
-            └── rpi4-neptune.mpp.json
+            ├── rpi4-minimal.mpp.yml
+            └── rpi4-neptune.mpp.yml
 ```
 
 Each of these manifests can be built using [OSBuild](https://www.osbuild.org/).

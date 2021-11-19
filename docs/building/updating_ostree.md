@@ -26,13 +26,13 @@
       1. Precompile the template.
 
         ```
-        osbuild-mpp cs8-commit-neptune-ostree.mpp.json cs8-commit-neptune-ostree.img.json
+        osbuild-mpp cs9-commit-neptune-ostree.mpp.yml cs9-commit-neptune-ostree.img.json
         ```
 
       1. Build the commit.
 
         ```
-        osbuild --store osbuild_store --output-directory image_output cs8-commit-neptune-ostree.img.json --checkpoint=ostree-commit
+        osbuild --store osbuild_store --output-directory image_output cs9-commit-neptune-ostree.img.json --checkpoint=ostree-commit
         ```
 
 1. Make the new commit available to the VM somewhere through apache.
@@ -65,7 +65,7 @@
   is the ref created in manifest.
 
       ```
-      ostree admin switch upstream:cs8/x86_64/osbuild
+      ostree admin switch upstream:cs9/x86_64/neptune
       ```
 
 1. Verify the new update has been pulled and deployed.
