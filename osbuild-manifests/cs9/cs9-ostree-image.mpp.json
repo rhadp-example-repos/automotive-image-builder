@@ -1,14 +1,17 @@
 {
   "version": "2",
   "mpp-vars": {
-    "image_rpms": [
-      "nss-altfiles",
-      "greenboot",
-      "greenboot-grub2",
-      "greenboot-reboot",
-      "greenboot-status",
-      "greenboot-rpm-ostree-grub2"
-    ]
+    "image_rpms": { "mpp-join": [
+      {"mpp-eval": "locals().get('extra_image_rpms', [])"},
+      [
+        "nss-altfiles",
+        "greenboot",
+        "greenboot-grub2",
+        "greenboot-reboot",
+        "greenboot-status",
+        "greenboot-rpm-ostree-grub2"
+      ]
+    ]}
   },
   "pipelines": [
     {
