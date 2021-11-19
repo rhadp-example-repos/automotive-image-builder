@@ -137,8 +137,53 @@
               },
               "guest": {
                 "password": "$6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU."
+              },
+              "neptune": {
+                "password": ""
               }
             }
+          }
+        },
+        {
+          "type": "org.osbuild.copy",
+          "inputs": {
+            "inlinefile": {
+              "type": "org.osbuild.files",
+              "origin": "org.osbuild.source",
+              "mpp-embed": {
+                "id": "custom.conf",
+                "path": "../../files/custom.conf"
+              }
+            }
+          },
+          "options": {
+            "paths": [
+              {
+                "from": {"mpp-format-string": "input://inlinefile/{embedded['custom.conf']}"},
+                "to": "tree:///etc/gdm/custom.conf"
+              }
+            ]
+          }
+        },
+        {
+          "type": "org.osbuild.copy",
+          "inputs": {
+            "inlinefile": {
+              "type": "org.osbuild.files",
+              "origin": "org.osbuild.source",
+              "mpp-embed": {
+                "id": "neptune3-ui.desktop",
+                "path": "../../files/neptune3-ui.desktop"
+              }
+            }
+          },
+          "options": {
+            "paths": [
+              {
+                "from": {"mpp-format-string": "input://inlinefile/{embedded['neptune3-ui.desktop']}"},
+                "to": "tree:///etc/xdg/autostart/neptune3-ui.desktop"
+              }
+            ]
           }
         },
         {
