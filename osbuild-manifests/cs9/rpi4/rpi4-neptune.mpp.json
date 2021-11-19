@@ -109,9 +109,7 @@
                     "plymouth",
                     "polkit",
                     "sudo",
-                    "xorg-x11-drv-fbdev",
-
-                    "pi4-firmware-blob"
+                    "xorg-x11-drv-fbdev"
                   ]
                 ]},
                 "excludes": [

@@ -89,7 +89,6 @@
                   { "mpp-eval": "image_rpms" },
                   { "mpp-eval": "extra_rpms" },
                   [
-                    "pi4-firmware-blob"
                   ]
                 ]},
                 "excludes": [
