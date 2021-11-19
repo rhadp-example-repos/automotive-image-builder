@@ -1,0 +1,14 @@
+version: '2'
+mpp-vars:
+  extra_image_copy: []
+  extra_image_copy_ostree:
+  - from: input://ostree-tree/lib/ostree-boot/efi/
+    to: mount://root/boot/efi/
+  extra_image_rpms:
+  - pi4-firmware-blob
+  extra_dracut_drivers:
+  - bcm2835
+  - sdhci
+pipelines:
+- name: rpi4
+  runner: org.osbuild.centos9
