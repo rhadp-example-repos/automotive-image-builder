@@ -156,8 +156,7 @@ pipelines:
           references:
             name:ostree-tree:
               file:
-                mpp-format-string: boot/vmlinuz-{rpms['ostree-tree'][kernel_rpm +
-                  '-core'].evra}
+                mpp-format-string: boot/vmlinuz-{rpms['ostree-tree'][kernel_rpm + '-core'].evra}
       options:
         path: /boot/efi/EFI/Linux/linux.efi
     else:
@@ -171,8 +170,7 @@ pipelines:
       options:
         paths:
         - from:
-            mpp-format-string: input://kernel/boot/vmlinuz-{rpms['ostree-tree'][kernel_rpm
-              + '-core'].evra}
+            mpp-format-string: input://kernel/boot/vmlinuz-{rpms['ostree-tree'][kernel_rpm + '-core'].evra}
           to: tree:///boot/efi/EFI/Linux/linux.efi
   - type: org.osbuild.fstab
     options:
