@@ -159,6 +159,7 @@ mpp-vars:
   - microcode_ctl
 pipelines:
 - name: build
+  runner: org.osbuild.centos9
   stages:
   - type: org.osbuild.rpm
     inputs:

@@ -69,17 +69,18 @@ pipelines:
         origin: org.osbuild.pipeline
         references:
         - name:build
-      ostree-tree:
-        type: org.osbuild.tree
-        origin: org.osbuild.pipeline
-        references:
-        - name:ostree-tree
+      extra-tree:
+        mpp-if: "'extra_image_source_' + image_type in locals()"
+        then:
+          type: org.osbuild.tree
+          origin: org.osbuild.pipeline
+          references:
+            - mpp-format-string: "name:{locals().get('extra_image_source_' + image_type)}"
     options:
       paths:
         mpp-join:
         - - from: input://tree/
             to: mount://root/
-        - mpp-eval: locals().get('extra_image_copy', [])
         - mpp-eval: locals().get('extra_image_copy_' + image_type, [])
     devices:
       efi:

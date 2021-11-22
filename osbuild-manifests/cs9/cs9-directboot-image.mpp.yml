@@ -5,7 +5,7 @@ mpp-vars:
     - mpp-eval: locals().get('extra_image_rpms', [])
     - []
 pipelines:
-- name: ostree-tree
+- name: kernel-tree
   build: name:build
   stages:
   - type: org.osbuild.kernel-cmdline
@@ -60,7 +60,7 @@ pipelines:
   - type: org.osbuild.dracut
     options:
       kernel:
-      - mpp-eval: rpms['ostree-tree'][kernel_rpm + '-core'].evra
+      - mpp-eval: rpms['kernel-tree'][kernel_rpm + '-core'].evra
       add_modules:
       - base
       - bash
@@ -99,9 +99,6 @@ pipelines:
       - /boot/efi/EFI/Linux/initramfs.img
       - --kernel-cmdline
       - mpp-format-string: root=UUID={rootfs_uuid} {' ' .join(kernel_opts)}
-- name: ostree-commit
-  stages:
-  - type: org.osbuild.noop
 - name: image-tree
   build: name:build
   stages:
@@ -122,7 +119,7 @@ pipelines:
         type: org.osbuild.tree
         origin: org.osbuild.pipeline
         references:
-        - name:ostree-tree
+        - name:kernel-tree
     options:
       paths:
       - from: input://kernel/lib/modules
@@ -137,7 +134,7 @@ pipelines:
         type: org.osbuild.tree
         origin: org.osbuild.pipeline
         references:
-        - name:ostree-tree
+        - name:kernel-tree
     options:
       paths:
       - from: input://kernel/lib/modules
@@ -154,9 +151,9 @@ pipelines:
           type: org.osbuild.files
           origin: org.osbuild.pipeline
           references:
-            name:ostree-tree:
+            name:kernel-tree:
               file:
-                mpp-format-string: boot/vmlinuz-{rpms['ostree-tree'][kernel_rpm + '-core'].evra}
+                mpp-format-string: boot/vmlinuz-{rpms['kernel-tree'][kernel_rpm + '-core'].evra}
       options:
         path: /boot/efi/EFI/Linux/linux.efi
     else:
@@ -166,11 +163,11 @@ pipelines:
           type: org.osbuild.tree
           origin: org.osbuild.pipeline
           references:
-          - name:ostree-tree
+          - name:kernel-tree
       options:
         paths:
         - from:
-            mpp-format-string: input://kernel/boot/vmlinuz-{rpms['ostree-tree'][kernel_rpm + '-core'].evra}
+            mpp-format-string: input://kernel/boot/vmlinuz-{rpms['kernel-tree'][kernel_rpm + '-core'].evra}
           to: tree:///boot/efi/EFI/Linux/linux.efi
   - type: org.osbuild.fstab
     options:

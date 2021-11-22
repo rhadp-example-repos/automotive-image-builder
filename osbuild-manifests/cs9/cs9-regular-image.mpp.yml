@@ -6,12 +6,6 @@ mpp-vars:
     - mpp-eval: boot_rpms
     - - shim
 pipelines:
-- name: ostree-tree
-  stages:
-  - type: org.osbuild.noop
-- name: ostree-commit
-  stages:
-  - type: org.osbuild.noop
 - name: image-tree
   build: name:build
   stages:

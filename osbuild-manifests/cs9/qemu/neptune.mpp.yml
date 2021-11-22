@@ -31,10 +31,8 @@ mpp-define-image:
       type: 0FC63DAF-8483-4772-8E79-3D69D8477DE4
       uuid: 6264D520-3FB9-423F-8AB8-7A0A8E3D3562
 pipelines:
-- mpp-import-pipeline:
+- mpp-import-pipelines:
     path: ../cs9-build-$arch.mpp.yml
-    id: build
-  runner: org.osbuild.centos9
 - name: rootfs
   build: name:build
   stages:
@@ -129,18 +127,7 @@ pipelines:
       - firewalld.service
       - rngd.service
       - sshd.service
-- mpp-import-pipeline:
+- mpp-import-pipelines:
     path: ../cs9-$image_type-image.mpp.yml
-    id: ostree-tree
-- mpp-import-pipeline:
-    path: ../cs9-$image_type-image.mpp.yml
-    id: ostree-commit
-- mpp-import-pipeline:
-    path: ../cs9-$image_type-image.mpp.yml
-    id: image-tree
-- mpp-import-pipeline:
+- mpp-import-pipelines:
     path: ../cs9-image.mpp.yml
-    id: image
-- mpp-import-pipeline:
-    path: ../cs9-image.mpp.yml
-    id: qcow2
