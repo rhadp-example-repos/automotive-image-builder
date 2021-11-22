@@ -32,7 +32,7 @@ mpp-define-image:
       uuid: 6264D520-3FB9-423F-8AB8-7A0A8E3D3562
 pipelines:
 - mpp-import-pipelines:
-    path: ../cs9-build-$arch.mpp.yml
+    path: ../cs9-build.mpp.yml
 - name: rootfs
   build: name:build
   stages:
@@ -82,7 +82,5 @@ pipelines:
       enabled_services:
       - NetworkManager.service
       - rngd.service
-- mpp-import-pipelines:
-    path: ../cs9-$image_type-image.mpp.yml
 - mpp-import-pipelines:
     path: ../cs9-image.mpp.yml

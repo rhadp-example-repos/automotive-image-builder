@@ -36,7 +36,7 @@ pipelines:
 - mpp-import-pipelines:
     path: cs9-rpi4-variables.mpp.yml
 - mpp-import-pipelines:
-    path: ../cs9-build-$arch.mpp.yml
+    path: ../cs9-build.mpp.yml
 - name: rootfs
   build: name:build
   stages:
@@ -86,7 +86,5 @@ pipelines:
       enabled_services:
       - NetworkManager.service
       - rngd.service
-- mpp-import-pipelines:
-    path: ../cs9-$image_type-image.mpp.yml
 - mpp-import-pipelines:
     path: ../cs9-image.mpp.yml
