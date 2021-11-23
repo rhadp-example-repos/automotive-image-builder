@@ -67,15 +67,6 @@ Once cloned, you can find the manifests under the `osbuild-manifest` folder.
 They are organized by OS, then target platform. For example:
 ```
     osbuild-manifests
-    ├── cs8
-    │   ├── cs8-build-aarch64.mpp.json
-    │   ├── cs8-build-x86_64.mpp.json
-    │   ├── qemu
-    │   │   ├── minimal.mpp.json
-    │   │   └── neptune.mpp.json
-    │   └── rpi4
-    │       ├── rpi4-minimal.mpp.json
-    │       └── rpi4-neptune.mpp.json
     └── cs9
         ├── cs9-build-aarch64.mpp.yml
         ├── cs9-build-x86_64.mpp.yml
@@ -90,60 +81,71 @@ They are organized by OS, then target platform. For example:
 Each folder may include a `README` file with more information
 about the differences between the files.
 
-Note that the cs8 manifests are in an older json format, whereas the
-cs9 manifests are in yaml.
-
 ## Building the image
 
-Once you select an image to build, you must preprocess the
-template manifest with the `osbuild-mpp` script and then build the
-image with OSBuild.
+Building an image is a two step process. First the selected yaml
+manifest, among with some options are passed to the `osbuild-mpp`
+tool. This will apply all the options and resolve all the package
+names against the repositories used, producing a json manifest with a
+fully resolved versions of all the packages. This json file is fully
+self containerd and produces reproducible builds.
 
-The following example builds a basic CentOS-Stream 9 image
-targeting the Raspberry Pi 4 platform.
+The manifest have multiple options that can affect how the manifest is
+preprocessed. For example, there is an image_type variable that allows
+you to specify if you want an ostree or a rpm based system. There is also
+an extra_rpms variable that allows you to pass in some extra rpms that
+should be added to the built image.
 
-1. Precompile the template.
+After preprocessing, the resolved manifest is passed to `osbuild` which
+builds the final image in a set of step. When running `osbuild`
+you can chose which stage(s) to export. Typically we export either the
+step called "image", or the one called "qcow2". The first being a
+raw image which can be written to disk, and the second being a format
+used by qemu for image files.
 
-    ```
-    osbuild-mpp osbuild-manifests/cs9/rpi4/rpi4-neptune.mpp.yml cs9-rpi4.json
-    ```
+To avoid the need to manually do the above work the `osbuild-manifest`
+directory contains a Makefile that allows you to easily build the
+images. To use this, just run `make` from this directory with the
+right image name as target. For example:
 
-    !!! note
+```
+[osbuild-manifests]$ make cs9-minimal-ostree.qcow2
+```
 
-        By default, the generated manifest is based on OSTree, but you can also create a non-OSTree image if you pass `-D image_type=\"regular\"` to `osbuild-mpp`.
+This will preprocess and build the manifest for the current
+architecture, defining the image type to be ostree. The resultant file
+will be called `cs9-minimal-ostree.qcow2` and stored in the current
+directory. Note that the makefile uses sudo, so you may be asked for
+your password during the build.
 
-1. Either build a raw image or a qcow2 image.
+If you instead want to build a raw image you can do:
 
-     ```
-     osbuild \
-         --store <where to store intermediary outputs> \
-         --output-directory <where to store outputs> \
-         --export <name of pipeline to export> \
-         <pre-processed osbuild manifest>
-     ```
+```
+[osbuild-manifests]$ make cs9-minimal-ostree.img
+```
 
-       1. To build a raw image that you can then flash upon an SD card to boot
-    a board, run the following command:
+The full list of images available for the current architecture is available
+if you run "make help".
 
-        ```
-        osbuild \
-        --store osbuild_store \
-        --output-directory image_output \
-        --export image cs9-rpi4.json
-        ```
+You can use the `DEFINES` variable to override variables in the manifest. For
+example, to add some extra packages, use:
 
-      1. To build a qcow2 image that you can then boot as a virtual machine, run the following command:
+```
+[osbuild-manifests]$ make cs9-minimal-regular.qcow2 DEFINES='extra_rpms=["gdb","strace"]'
+```
 
-        ```
-        osbuild \
-        --store osbuild_store \
-        --output-directory image_output \
-        --export qcow2 cs9-rpi4.json
-        ```
+During the build, all the files are created in the `_build`
+directory. This contains all the generated json files, downloaded
+files (such as rpms) and cached parts of the build from previous
+builds. You can remove this directory at any time to regain disk
+space, as everything in this directory is derived from other sources.
 
-1. Either run the image in qemu/kvm or flash the image onto an SD card.
 
-      1. To boot the image in qemu/kvm, boot the qcow2 image in `virt-manager` or run it
+## Running the image
+
+You can either run the image in qemu/kvm or flash the image onto an SD card.
+
+      * To boot the image in qemu/kvm, boot the qcow2 image in `virt-manager` or run it
       directly through `qemu`. For example:
 
         ```
@@ -157,7 +159,7 @@ targeting the Raspberry Pi 4 platform.
             -netdev user,id=n0,net=10.0.2.0/24,hostfwd=tcp::2222-:22
         ```
 
-       1. To flash the image onto an SD card, run the following command:
+       * To flash the image onto an SD card, run the following command:
 
         !!! important
 

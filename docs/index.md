@@ -31,15 +31,6 @@ structure:
 For example:
 ```
     osbuild-manifests
-    ├── cs8
-    │   ├── cs8-build-aarch64.mpp.json
-    │   ├── cs8-build-x86_64.mpp.json
-    │   ├── qemu
-    │   │   ├── minimal.mpp.json
-    │   │   └── neptune.mpp.json
-    │   └── rpi4
-    │       ├── rpi4-minimal.mpp.json
-    │       └── rpi4-neptune.mpp.json
     └── cs9
         ├── cs9-build-aarch64.mpp.yml
         ├── cs9-build-x86_64.mpp.yml
