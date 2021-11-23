@@ -99,7 +99,7 @@ Once you select an image to build, you must preprocess the
 template manifest with the `osbuild-mpp` script and then build the
 image with OSBuild.
 
-The following example builds a basic CentOS-Stream 8 image
+The following example builds a basic CentOS-Stream 9 image
 targeting the Raspberry Pi 4 platform.
 
 1. Precompile the template.
