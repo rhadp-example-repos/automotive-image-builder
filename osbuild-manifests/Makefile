@@ -59,6 +59,9 @@ help:
 	@echo For example, to build a minimal qcow2 image with ostree support, run:
 	@echo '  make cs9-minimal-ostree.qcow2'
 	@echo
+	@echo Other extensions, \".commit\" and \".rootfs\" are also supported, these create directory trees as
+	@echo output rather than images.
+	@echo
 	@echo You can pass variable declarations to osbuild-mpp with the DEFINES make variable.
 	@echo For example, to add extra rpms to a minimal regular image, use:
 	@echo "  make cs9-minimal-regular.qcow2 DEFINES='extra_rpms=[\"gdb\",\"strace\"]'"

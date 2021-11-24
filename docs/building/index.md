@@ -20,37 +20,36 @@ its images on CentOS Stream, Fedora, or RHEL hosts, with the option to build imm
   RHEL repos for access to the entitlements, RHEL images
   can only be built on a subscribed RHEL system.
 
-## Setting up your system
+## Installing osbuild
+
+To set up your system you need to install osbuild and the related
+tools.  We are using a newer version of these tools than what is
+generally available in the distributions, so a custom repository must
+be configured.
 
 ### On a CentOS 8 Stream host
 
-1. Install OSBuild.
-
-     ```
-     dnf copr enable @osbuild/osbuild
-     sed -i -e 's|baseurl=https://download.copr.fedorainfracloud.org/results/@osbuild/osbuild/epel-8-$basearch/|baseurl=https://download.copr.fedorainfracloud.org/results/@osbuild/osbuild/centos-stream-8-$basearch/|' /etc/yum.repos.d/_copr\:copr.fedorainfracloud.org\:group_osbuild\:osbuild.repo
-     dnf install osbuild osbuild-tools osbuild-ostree
-     ```
+```
+dnf copr enable @osbuild/osbuild
+sed -i -e 's|baseurl=https://download.copr.fedorainfracloud.org/results/@osbuild/osbuild/epel-8-$basearch/|baseurl=https://download.copr.fedorainfracloud.org/results/@osbuild/osbuild/centos-stream-8-$basearch/|' /etc/yum.repos.d/_copr\:copr.fedorainfracloud.org\:group_osbuild\:osbuild.repo
+dnf install osbuild osbuild-tools osbuild-ostree
+```
 
 
 ### On a Fedora host
 
-1. Install OSBuild.
-
-     ```
-     dnf copr enable @osbuild/osbuild
-     dnf install osbuild osbuild-tools osbuild-ostree
-     ```
+```
+dnf copr enable @osbuild/osbuild
+dnf install osbuild osbuild-tools osbuild-ostree
+```
 
 
 ### On a RHEL host
 
-1. Install OSBuild.
-
-     ```
-     dnf copr enable @osbuild/osbuild
-     dnf install osbuild osbuild-tools osbuild-ostree
-     ```
+```
+dnf copr enable @osbuild/osbuild
+dnf install osbuild osbuild-tools osbuild-ostree
+```
 
 
 ## Finding the manifest of interest
@@ -109,7 +108,7 @@ images. To use this, just run `make` from this directory with the
 right image name as target. For example:
 
 ```
-[osbuild-manifests]$ make cs9-minimal-ostree.qcow2
+make cs9-minimal-ostree.qcow2
 ```
 
 This will preprocess and build the manifest for the current
@@ -121,7 +120,7 @@ your password during the build.
 If you instead want to build a raw image you can do:
 
 ```
-[osbuild-manifests]$ make cs9-minimal-ostree.img
+make cs9-minimal-ostree.img
 ```
 
 The full list of images available for the current architecture is available
@@ -138,55 +137,57 @@ space, as everything in this directory is derived from other sources.
 
 You can either run the image in qemu/kvm or flash the image onto an SD card.
 
-      * To boot the image in qemu/kvm, boot the qcow2 image in `virt-manager` or run it
-      directly through `qemu`. For example:
+To boot the image in qemu/kvm, boot the qcow2 image in `virt-manager` or run it
+directly through `qemu`. For example:
 
-        ```
-        qemu-system-x86_64 \
-            -machine q35 \
-            -enable-kvm \
-            -snapshot \
-            -m 2048 \
-            -drive file=cs9-minimal-regular.qcow2 \
-            -device virtio-net-pci,netdev=n0,mac=FE:45:5b:75:69:d5 \
-            -netdev user,id=n0,net=10.0.2.0/24,hostfwd=tcp::2222-:22
-        ```
+```
+qemu-system-x86_64 \
+    -machine q35 \
+    -enable-kvm \
+    -snapshot \
+    -m 2048 \
+    -drive file=cs9-minimal-regular.qcow2 \
+    -device virtio-net-pci,netdev=n0,mac=FE:45:5b:75:69:d5 \
+    -netdev user,id=n0,net=10.0.2.0/24,hostfwd=tcp::2222-:22
+```
 
-       * To flash the image onto an SD card, run the following command:
+To flash the image onto an SD card, run the following command:
 
-        !!! important
+!!! important
 
-            Change the block device, shown as _``/dev/sda``_ in the following example, according to your system.
+    Change the block device, shown as _``/dev/sda``_ in the following example, according to your system.
 
-        ```
-        dd if=cs9-minimal-regular.img of=/dev/sda status=progress bs=4M
-        ```
+```
+dd if=cs9-minimal-regular.img of=/dev/sda status=progress bs=4M
+```
 
 ## Other features
 
-You can use the `DEFINES` variable to override variables in the manifest. For
-example, to add some extra packages, use:
+You can use the `DEFINES` variable to override variables in the manifest. This
+variable contains a space separated list items in `variable=json-data` form.
+For example, to add some extra packages, use:
 
 ```
-[osbuild-manifests]$ make cs9-minimal-regular.qcow2 DEFINES='extra_rpms=["gdb","strace"]'
+make cs9-minimal-regular.qcow2 DEFINES='extra_rpms=["gdb","strace"]'
 ```
 
 Variables that may be interesting to override are:
-  * `extra_rpms`: List of edditional rpms installed in most images,
-    defaults to empty.
-  * `arch`: The archticture to resolve against, allows preprocessing
-    against a non-native architecture.
-  * `kernel_rpm`: The name of the kernel package used, defaults to
-    `kernel-auto`.
-  * `ostree_ref`: Name used for the ref when commiting an ostree repo
-  * `image_size`: The total size of the disk image.
-  * `cs9_baseurl`: The base url of the centos9 repo, can be overridden
-    to use a local mirror.
 
-You can use `make manifests` to pre-process all the existing
-manifests. This can be useful to ensure that all combination of
-options still work after a change. The manifests will not be built
-though.
+* `arch`: The archticture to resolve against, allows preprocessing
+    against a non-native architecture.
+* `cs9_baseurl`: The base url of the centos9 repo, can be overridden
+    to use a local mirror.
+* `extra_rpms`: List of edditional rpms installed in most images,
+    defaults to empty.
+* `image_size`: The total size of the disk image.
+* `kernel_rpm`: The name of the kernel package used, defaults to
+    `kernel-auto`.
+* `ostree_ref`: Name used for the ref when commiting an ostree repo
+
+You can use `make manifests` to pre-process all the existing manifests
+without building them. This can be useful to ensure that all
+combination of options still work after a change, or to inspect
+the resulting manifests.
 
 Other than the image types `*.img` and `*.qcow2` the Makefile also
 supports `*.rootfs` and `*.repo` targets.  These produce as output
