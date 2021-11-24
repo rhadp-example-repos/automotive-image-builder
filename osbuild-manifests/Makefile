@@ -26,7 +26,7 @@ MANIFESTS := \
 CHECKPOINTS=build rootfs
 
 IMAGETYPES := regular ostree direct
-FORMATS := img qcow2
+FORMATS := img qcow2 repo rootfs
 
 manifest-get-name = $(basename $(basename $(notdir $1)))
 manifest-get-dir = $(notdir $(patsubst %/,%,$(dir $1)))
@@ -36,10 +36,20 @@ image-name = cs9-$(call manifest-get-name,$1)-$2
 regular_IMAGETYPE := regular
 ostree_IMAGETYPE := ostree
 direct_IMAGETYPE := directboot
+direct_IMAGETYPE := rootfs
 
 # export names for FORMATS
+img_EXPORTFILE := disk.img
+qcow2_EXPORTFILE := disk.qcow2
+repo_EXPORTFILE := repo
+rootfs_EXPORTFILE :=
+
+repo_CHOWNARGS := -R
+
 img_EXPORT := image
 qcow2_EXPORT := qcow2
+repo_EXPORT := ostree-commit
+rootfs_EXPORT := rootfs
 
 help:
 	@echo This is a wrapper around osbuild-mpp and osbuild to easily build images
@@ -86,8 +96,9 @@ define image-rule
 $(call image-name,$1,$2).$3: $(BUILDDIR)/$(call image-name,$1,$2).json
 	@mkdir -p $(OUTPUTDIR)/$4
 	sudo osbuild $(foreach cp,$(CHECKPOINTS),--checkpoint $(cp)) --store $(STOREDIR) --output-directory $(OUTPUTDIR) --export $4 $$<
-	sudo chown $(CURRENT_UIDGID) $(OUTPUTDIR)/$4/disk.$3
-	sudo mv $(OUTPUTDIR)/$4/disk.$3 $$@
+	sudo chown $($3_CHOWNARGS) $(CURRENT_UIDGID) $(OUTPUTDIR)/$4/$($3_EXPORTFILE)
+	@rm -rf $$@
+	sudo mv $(OUTPUTDIR)/$4/$($3_EXPORTFILE) $$@
 endef
 
 $(foreach m, $(MANIFESTS), \
