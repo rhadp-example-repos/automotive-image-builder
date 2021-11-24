@@ -23,28 +23,22 @@
 
       1. Edit the template to set the commit hash of the commit to update.
 
-      1. Precompile the template.
+      1. Build the repo.
 
         ```
-        osbuild-mpp cs9-commit-neptune-ostree.mpp.yml cs9-commit-neptune-ostree.img.json
-        ```
-
-      1. Build the commit.
-
-        ```
-        osbuild --store osbuild_store --output-directory image_output cs9-commit-neptune-ostree.img.json --checkpoint=ostree-commit
+        make cs9-neptune-osbuild.repo
         ```
 
 1. Make the new commit available to the VM somewhere through apache.
 
-      1. Locate the new commit under: `osbuild_store/.../repo`.
+      1. The new commit is in repo directory called `cs9-neptune-osbuild.repo`.
 
       1. Make the new commit available at _`http://ip_address/repo`_ by entering a command like the following:
       ```
       dnf install httpd
       systemctl start httpd
       firewall-cmd --add-port=80/tcp
-      cp -r osbuild_store/.../repo /var/www/html/
+      cp -r cs9-neptune-osbuild.repo /var/www/html/repo
       ```
 
 1. Update the VM.
@@ -61,7 +55,7 @@
       ostree remote add --no-gpg-verify  upstream http://ip_address/repo/
       ```
 
-1. Make OSTree follow the new repo as shown in the following example, where _`upstream`_ is the name of the remote as defined above and _`cs8/x86_64/osbuild`_
+1. Make OSTree follow the new repo as shown in the following example, where _`upstream`_ is the name of the remote as defined above and _`cs9/x86_64/neptune`_
   is the ref created in manifest.
 
       ```

@@ -22,7 +22,7 @@ its images on CentOS Stream, Fedora, or RHEL hosts, with the option to build imm
 
 ## Setting up your system
 
-### On a CentOS Stream host
+### On a CentOS 8 Stream host
 
 1. Install OSBuild.
 
@@ -86,22 +86,22 @@ about the differences between the files.
 Building an image is a two step process. First the selected yaml
 manifest, among with some options are passed to the `osbuild-mpp`
 tool. This will apply all the options and resolve all the package
-names against the repositories used, producing a json manifest with a
+names against the repositories used, producing a json manifest with
 fully resolved versions of all the packages. This json file is fully
-self containerd and produces reproducible builds.
+self contained and produces reproducible builds.
 
 The manifest have multiple options that can affect how the manifest is
-preprocessed. For example, there is an image_type variable that allows
-you to specify if you want an ostree or a rpm based system. There is also
-an extra_rpms variable that allows you to pass in some extra rpms that
-should be added to the built image.
+preprocessed. For example, there is an `image_type` variable that
+allows you to specify if you want an ostree or a dnf based
+system. There is also an `extra_rpms` variable that allows you to pass
+in extra rpms that should be added to the built image.
 
-After preprocessing, the resolved manifest is passed to `osbuild` which
-builds the final image in a set of step. When running `osbuild`
-you can chose which stage(s) to export. Typically we export either the
-step called "image", or the one called "qcow2". The first being a
-raw image which can be written to disk, and the second being a format
-used by qemu for image files.
+After preprocessing, the resolved manifest is passed to `osbuild`
+which builds the image in a series of steps. When running `osbuild`
+you can chose which step(s) to export. Typically we export either the
+step called "image", or the one called "qcow2". The first being a raw
+image which can be written to disk, and the second being a format used
+by qemu for image files.
 
 To avoid the need to manually do the above work the `osbuild-manifest`
 directory contains a Makefile that allows you to easily build the
@@ -127,13 +127,6 @@ If you instead want to build a raw image you can do:
 The full list of images available for the current architecture is available
 if you run "make help".
 
-You can use the `DEFINES` variable to override variables in the manifest. For
-example, to add some extra packages, use:
-
-```
-[osbuild-manifests]$ make cs9-minimal-regular.qcow2 DEFINES='extra_rpms=["gdb","strace"]'
-```
-
 During the build, all the files are created in the `_build`
 directory. This contains all the generated json files, downloaded
 files (such as rpms) and cached parts of the build from previous
@@ -154,7 +147,7 @@ You can either run the image in qemu/kvm or flash the image onto an SD card.
             -enable-kvm \
             -snapshot \
             -m 2048 \
-            -drive file=image_output/qcow2/disk.qcow2 \
+            -drive file=cs9-minimal-regular.qcow2 \
             -device virtio-net-pci,netdev=n0,mac=FE:45:5b:75:69:d5 \
             -netdev user,id=n0,net=10.0.2.0/24,hostfwd=tcp::2222-:22
         ```
@@ -166,8 +159,41 @@ You can either run the image in qemu/kvm or flash the image onto an SD card.
             Change the block device, shown as _``/dev/sda``_ in the following example, according to your system.
 
         ```
-        dd if=image_output/image/disk.img of=/dev/sda status=progress bs=4M
+        dd if=cs9-minimal-regular.img of=/dev/sda status=progress bs=4M
         ```
+
+## Other features
+
+You can use the `DEFINES` variable to override variables in the manifest. For
+example, to add some extra packages, use:
+
+```
+[osbuild-manifests]$ make cs9-minimal-regular.qcow2 DEFINES='extra_rpms=["gdb","strace"]'
+```
+
+Variables that may be interesting to override are:
+  * `extra_rpms`: List of edditional rpms installed in most images,
+    defaults to empty.
+  * `arch`: The archticture to resolve against, allows preprocessing
+    against a non-native architecture.
+  * `kernel_rpm`: The name of the kernel package used, defaults to
+    `kernel-auto`.
+  * `ostree_ref`: Name used for the ref when commiting an ostree repo
+  * `image_size`: The total size of the disk image.
+  * `cs9_baseurl`: The base url of the centos9 repo, can be overridden
+    to use a local mirror.
+
+You can use `make manifests` to pre-process all the existing
+manifests. This can be useful to ensure that all combination of
+options still work after a change. The manifests will not be built
+though.
+
+Other than the image types `*.img` and `*.qcow2` the Makefile also
+supports `*.rootfs` and `*.repo` targets.  These produce as output
+full directories containering the files from the rootfs, and the
+ostree repo with the commit respectively. These are useful e.g. during
+development and testing.
+
 
 ## Going further
 
