@@ -51,7 +51,7 @@ pipelines:
         origin: org.osbuild.source
         mpp-embed:
           id: directboot.csv
-          path: ../directboot.csv
+          path: directboot.csv
     options:
       paths:
       - from:

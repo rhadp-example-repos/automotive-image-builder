@@ -10,4 +10,7 @@ mpp-vars:
   - bcm2835
   - sdhci
   partition_label: dos
+  target_repos:
+  - id: cs9-rpi4-fw
+    baseurl: https://download.copr.fedorainfracloud.org/results/alexl/cs9-rpi4-fw/centos-stream-9-aarch64/
 pipelines: []

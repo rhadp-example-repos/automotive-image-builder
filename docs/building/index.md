@@ -67,14 +67,8 @@ They are organized by OS, then target platform. For example:
 ```
     osbuild-manifests
     └── cs9
-        ├── cs9-build-aarch64.mpp.yml
-        ├── cs9-build-x86_64.mpp.yml
-        ├── qemu
-        │   ├── minimal.mpp.yml
-        │   └── neptune.mpp.yml
-        └── rpi4
-            ├── rpi4-minimal.mpp.yml
-            └── rpi4-neptune.mpp.yml
+        ├── minimal.mpp.yml
+        └   neptune.mpp.yml
 ```
 
 Each folder may include a `README` file with more information
@@ -108,19 +102,19 @@ images. To use this, just run `make` from this directory with the
 right image name as target. For example:
 
 ```
-make cs9-minimal-ostree.qcow2
+make cs9-qemu-minimal-ostree.qcow2
 ```
 
 This will preprocess and build the manifest for the current
 architecture, defining the image type to be ostree. The resultant file
-will be called `cs9-minimal-ostree.qcow2` and stored in the current
+will be called `cs9-qemu-minimal-ostree.qcow2` and stored in the current
 directory. Note that the makefile uses sudo, so you may be asked for
 your password during the build.
 
 If you instead want to build a raw image you can do:
 
 ```
-make cs9-minimal-ostree.img
+make cs9-qemu-minimal-ostree.img
 ```
 
 The full list of images available for the current architecture is available
@@ -146,7 +140,7 @@ qemu-system-x86_64 \
     -enable-kvm \
     -snapshot \
     -m 2048 \
-    -drive file=cs9-minimal-regular.qcow2 \
+    -drive file=cs9-qemu-minimal-regular.qcow2 \
     -device virtio-net-pci,netdev=n0,mac=FE:45:5b:75:69:d5 \
     -netdev user,id=n0,net=10.0.2.0/24,hostfwd=tcp::2222-:22
 ```
@@ -159,7 +153,7 @@ To flash the image onto an SD card, run the following command:
     In case needed add `-bios /usr/share/OVMF/OVMF_CODE.fd` to qemu command
 
 ```
-dd if=cs9-minimal-regular.img of=/dev/sda status=progress bs=4M
+dd if=cs9-qemu-minimal-regular.img of=/dev/sda status=progress bs=4M
 ```
 
 ## Other features
@@ -169,7 +163,7 @@ variable contains a space separated list items in `variable=json-data` form.
 For example, to add some extra packages, use:
 
 ```
-make cs9-minimal-regular.qcow2 DEFINES='extra_rpms=["gdb","strace"]'
+make cs9-qemu-minimal-regular.qcow2 DEFINES='extra_rpms=["gdb","strace"]'
 ```
 
 Variables that may be interesting to override are:

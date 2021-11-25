@@ -32,14 +32,8 @@ For example:
 ```
     osbuild-manifests
     └── cs9
-        ├── cs9-build-aarch64.mpp.yml
-        ├── cs9-build-x86_64.mpp.yml
-        ├── qemu
-        │   ├── minimal.mpp.yml
-        │   └── neptune.mpp.yml
-        └── rpi4
-            ├── rpi4-minimal.mpp.yml
-            └── rpi4-neptune.mpp.yml
+        ├── minimal.mpp.yml
+        └── neptune.mpp.yml
 ```
 
 Each of these manifests can be built using [OSBuild](https://www.osbuild.org/).

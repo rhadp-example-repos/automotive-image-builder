@@ -26,19 +26,19 @@ ostree config set bootloader.backend none
 1. Build the repo.
 
 ```
-make cs9-neptune-osbuild.repo
+make cs9-qemu-neptune-osbuild.repo
 ```
 
 ## Make the new commit available to the VM somewhere through apache.
 
-1. The new commit is in repo directory called `cs9-neptune-osbuild.repo`.
+1. The new commit is in repo directory called `cs9-qemu-neptune-osbuild.repo`.
 
 1. Make the new commit available at _`http://ip_address/repo`_ by entering a command like the following:
 ```
 dnf install httpd
 systemctl start httpd
 firewall-cmd --add-port=80/tcp
-cp -r cs9-neptune-osbuild.repo /var/www/html/repo
+cp -r cs9-qemu-neptune-osbuild.repo /var/www/html/repo
 ```
 
 ## Update the VM.

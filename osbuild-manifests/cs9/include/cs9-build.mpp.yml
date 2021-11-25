@@ -1,5 +1,19 @@
 version: '2'
 mpp-vars:
+  target:
+    mpp-eval: locals().get('target', 'qemu')
+  image_type:
+    mpp-eval: locals().get('image_type', 'ostree')
+  kernel_rpm:
+    mpp-eval: locals().get('kernel_rpm', 'kernel-auto')
+  ostree_ref:
+    mpp-eval: locals().get('ostree_ref', f'cs9/{arch}/{target}-{name}')
+  partition_label:
+    mpp-eval: locals().get('partition_label', 'gpt')
+  extra_rpms:
+    mpp-eval: locals().get('extra_rpms', [])
+  target_repos:
+    mpp-eval: locals().get('target_repos', [])
   cs9_baseurl: http://mirror.stream.centos.org/9-stream
   cs9_repos:
   - id: baseos
@@ -131,7 +145,32 @@ mpp-vars:
     vt61kpkXoRGxjTlc6h+69aidSg==
     =ls8J
     -----END PGP PUBLIC KEY BLOCK-----
+mpp-define-image:
+  size: $image_size
+  table:
+    uuid: D209C89E-EA5E-4FBD-B161-B461CCE297E0
+    label:
+      mpp-eval: partition_label
+    partitions:
+    - id: efi
+      start:
+        mpp-eval: "0 if partition_label == 'gpt' else 2048"
+      size: 204800
+      type:
+        mpp-eval: "'C12A7328-F81F-11D2-BA4B-00A0C93EC93B' if partition_label == 'gpt' else 'ef'"
+      uuid: 68B2905B-DF3E-4FB3-80FA-49D1E773AA33
+    - id: boot
+      size: 409600
+      type:
+        mpp-eval: "'0FC63DAF-8483-4772-8E79-3D69D8477DE4' if partition_label == 'gpt' else '83'"
+      uuid: 61B2905B-DF3E-4FB3-80FA-49D1E773AA32
+    - id: root
+      type:
+        mpp-eval: "'0FC63DAF-8483-4772-8E79-3D69D8477DE4' if partition_label == 'gpt' else '83'"
+      uuid: 6264D520-3FB9-423F-8AB8-7A0A8E3D3562
 pipelines:
+- mpp-import-pipelines:
+    path: cs9-$target-target.mpp.yml
 - mpp-import-pipeline:
     path: cs9-build-$arch.mpp.yml
     id: build

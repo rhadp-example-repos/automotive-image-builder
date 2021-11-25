@@ -12,25 +12,21 @@ OUTPUTDIR=$(BUILDDIR)/image_output
 CURRENT_ARCH:=$(shell arch)
 CURRENT_UIDGID := $(shell id -u):$(shell id -g)
 
-aarch64_MANIFESTS := \
-	cs9/rpi4/rpi4-minimal.mpp.yml \
-	cs9/rpi4/rpi4-neptune.mpp.yml \
-	$(NULL)
-
 MANIFESTS := \
-	cs9/qemu/minimal.mpp.yml \
-	cs9/qemu/neptune.mpp.yml \
-	$($(CURRENT_ARCH)_MANIFESTS) \
+	cs9/minimal.mpp.yml \
+	cs9/neptune.mpp.yml \
 	$(NULL)
 
 CHECKPOINTS=build rootfs
 
 IMAGETYPES := regular ostree direct
 FORMATS := img qcow2 repo rootfs
+aarch64_TARGETS := rpi4
+TARGETS := qemu $($(CURRENT_ARCH)_TARGETS)
 
 manifest-get-name = $(basename $(basename $(notdir $1)))
 manifest-get-dir = $(notdir $(patsubst %/,%,$(dir $1)))
-image-name = cs9-$(call manifest-get-name,$1)-$2
+image-name = cs9-$2-$(call manifest-get-name,$1)-$3
 
 # variable name for image type
 regular_IMAGETYPE := regular
@@ -55,20 +51,20 @@ help:
 	@echo
 	@echo To build a raw image, run \"make image.img\", or to build a qcow2 image, run \"make image.qcow2\"
 	@echo
-	@echo For example, to build a minimal qcow2 image with ostree support, run:
-	@echo '  make cs9-minimal-ostree.qcow2'
+	@echo For example, to build a minimal qcow2 image with ostree support targeting qemu, run:
+	@echo '  make cs9-qemu-minimal-ostree.qcow2'
 	@echo
 	@echo Other extensions, \".commit\" and \".rootfs\" are also supported, these create directory trees as
 	@echo output rather than images.
 	@echo
 	@echo You can pass variable declarations to osbuild-mpp with the DEFINES make variable.
 	@echo For example, to add extra rpms to a minimal regular image, use:
-	@echo "  make cs9-minimal-regular.qcow2 DEFINES='extra_rpms=[\"gdb\",\"strace\"]'"
+	@echo "  make cs9-qemu-minimal-regular.qcow2 DEFINES='extra_rpms=[\"gdb\",\"strace\"]'"
 	@echo
 	@echo You also run \"make manifests\" to generate resolved json manifests for all images without building them.
 	@echo
 	@echo Available images are:
-	@echo " " $(foreach m, $(MANIFESTS), $(foreach i,$(IMAGETYPES), $(call image-name,$m,$i)))
+	@echo " " $(foreach m, $(MANIFESTS), $(foreach t, $(TARGETS), $(foreach i,$(IMAGETYPES), $(call image-name,$m,$t,$i))))
 
 # We pre-create all the toplevel dirs, so that they are owned by the user, not root (when created under sudo)
 $(BUILDDIR):
@@ -78,35 +74,38 @@ $(BUILDDIR):
 
 # Template rule for producing osbuild json manifest from mpp yaml and image type
 # $1 == yaml manifest path
-# $2 == Image type
+# $2 == Target name
+# $3 == Image type
 define json-rule
-$(BUILDDIR)/$(call image-name,$1,$2).json: $1 $(BUILDDIR)
-	osbuild-mpp -D image_type="\"$($2_IMAGETYPE)\"" $(foreach def,$(DEFINES),-D '$(def)') $(MPP_ARGS) $$< $$@
-.PHONY: $(BUILDDIR)/$(call image-name,$1,$2).json
+$(BUILDDIR)/$(call image-name,$1,$2,$3).json: $1 $(BUILDDIR)
+	$(OSBUILD_MPP) -D image_type="\"$($3_IMAGETYPE)\"" -D target="\"$2\"" $(foreach def,$(DEFINES),-D '$(def)') $(MPP_ARGS) $$< $$@
+.PHONY: $(BUILDDIR)/$(call image-name,$1,$2,$3).json
 endef
 
 $(foreach m, $(MANIFESTS), \
- $(foreach i,$(IMAGETYPES), \
-   $(eval $(call json-rule,$m,$i))))
+ $(foreach t,$(TARGETS), \
+   $(foreach i,$(IMAGETYPES), \
+     $(eval $(call json-rule,$m,$t,$i)))))
 
 # Template rule for producing image from json manifest
 # $1 == Manifest path
-# $2 == Image type
-# $3 == Export format (extension)
-# $4 == Export name (name in manifests)
+# $2 == Target
+# $3 == Image type
+# $4 == Export format (extension)
 define image-rule
-$(call image-name,$1,$2).$3: $(BUILDDIR)/$(call image-name,$1,$2).json
-	@mkdir -p $(OUTPUTDIR)/$4
-	sudo osbuild $(foreach cp,$(CHECKPOINTS),--checkpoint $(cp)) --store $(STOREDIR) --output-directory $(OUTPUTDIR) --export $4 $$<
-	sudo chown $($3_CHOWNARGS) $(CURRENT_UIDGID) $(OUTPUTDIR)/$4/$($3_EXPORTFILE)
+$(call image-name,$1,$2,$3).$4: $(BUILDDIR)/$(call image-name,$1,$2,$3).json
+	@mkdir -p $(OUTPUTDIR)/$($4_EXPORT)
+	sudo osbuild $(foreach cp,$(CHECKPOINTS),--checkpoint $(cp)) --store $(STOREDIR) --output-directory $(OUTPUTDIR) --export $($4_EXPORT) $$<
+	sudo chown $($4_CHOWNARGS) $(CURRENT_UIDGID) $(OUTPUTDIR)/$($4_EXPORT)/$($4_EXPORTFILE)
 	@rm -rf $$@
-	sudo mv $(OUTPUTDIR)/$4/$($3_EXPORTFILE) $$@
+	sudo mv $(OUTPUTDIR)/$($4_EXPORT)/$($4_EXPORTFILE) $$@
 endef
 
 $(foreach m, $(MANIFESTS), \
-  $(foreach f,$(FORMATS), \
-    $(foreach i,$(IMAGETYPES), \
-      $(eval $(call image-rule,$m,$i,$f,$($f_EXPORT))))))
+  $(foreach t, $(TARGETS), \
+    $(foreach f,$(FORMATS), \
+      $(foreach i,$(IMAGETYPES), \
+	$(eval $(call image-rule,$m,$t,$i,$f))))))
 
 # Rule to pre-generate all manifests
-manifests: $(foreach m, $(MANIFESTS), $(foreach i,$(IMAGETYPES), $(BUILDDIR)/$(call image-name,$m,$i).json))
+manifests: $(foreach m, $(MANIFESTS), $(foreach t,$(TARGETS), $(foreach i,$(IMAGETYPES), $(BUILDDIR)/$(call image-name,$m,$t,$i).json)))

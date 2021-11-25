@@ -1,9 +1,6 @@
 version: '2'
 mpp-vars:
   efiarch: aa64
-  cs9_rpi_repos:
-  - id: cs9-rpi4-fw
-    baseurl: https://download.copr.fedorainfracloud.org/results/alexl/cs9-rpi4-fw/centos-stream-9-aarch64/
   boot_rpms:
   - dracut-config-generic
   - grub2-tools-minimal
