@@ -14,24 +14,6 @@ mpp-vars:
   - console=ttyS0
   - systemd.log_target=console
   - systemd.journald.forward_to_console=1
-mpp-define-image:
-  size: $image_size
-  table:
-    uuid: D209C89E-EA5E-4FBD-B161-B461CCE297E0
-    label: dos
-    partitions:
-    - id: efi
-      start: 2048
-      size: 204800
-      type: ef
-      uuid: 68B2905B-DF3E-4FB3-80FA-49D1E773AA33
-    - id: boot
-      size: 409600
-      type: '83'
-      uuid: 61B2905B-DF3E-4FB3-80FA-49D1E773AA32
-    - id: root
-      type: '83'
-      uuid: 6264D520-3FB9-423F-8AB8-7A0A8E3D3562
 pipelines:
 - mpp-import-pipelines:
     path: cs9-rpi4-variables.mpp.yml

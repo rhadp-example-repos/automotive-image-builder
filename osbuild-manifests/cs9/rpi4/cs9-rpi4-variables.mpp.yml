@@ -9,4 +9,5 @@ mpp-vars:
   extra_dracut_drivers:
   - bcm2835
   - sdhci
+  partition_label: dos
 pipelines: []
