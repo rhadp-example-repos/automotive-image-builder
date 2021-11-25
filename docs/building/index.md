@@ -141,6 +141,7 @@ qemu-system-x86_64 \
     -snapshot \
     -m 2048 \
     -drive file=cs9-qemu-minimal-regular.x86_64.qcow2 \
+    -cpu qemu64,+ssse3,+sse4.1,+sse4.2,+popcnt \
     -device virtio-net-pci,netdev=n0,mac=FE:45:5b:75:69:d5 \
     -netdev user,id=n0,net=10.0.2.0/24,hostfwd=tcp::2222-:22
 ```

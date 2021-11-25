@@ -73,7 +73,7 @@ pipelines:
         origin: org.osbuild.source
         mpp-embed:
           id: custom.conf
-          path: ../files/custom.conf
+          path: ../files/etc/gdm/custom.conf
     options:
       paths:
       - from:
@@ -85,13 +85,65 @@ pipelines:
         type: org.osbuild.files
         origin: org.osbuild.source
         mpp-embed:
+          id: neptune-accounts-service-init.service
+          path: ../files/etc/systemd/system/neptune-accounts-service-init.service
+    options:
+      paths:
+      - from:
+          mpp-format-string: input://inlinefile/{embedded['neptune-accounts-service-init.service']}
+        to: tree:///etc/systemd/system/neptune-accounts-service-init.service
+  - type: org.osbuild.copy
+    inputs:
+      inlinefile:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: neptune-wayland.desktop
+          path: ../files/usr/share/wayland-sessions/neptune-wayland.desktop
+    options:
+      paths:
+      - from:
+          mpp-format-string: input://inlinefile/{embedded['neptune-wayland.desktop']}
+        to: tree:///usr/share/wayland-sessions/neptune-wayland.desktop
+  - type: org.osbuild.copy
+    inputs:
+      inlinefile:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: neptune.session
+          path: ../files/usr/share/gnome-session/sessions/neptune.session
+    options:
+      paths:
+      - from:
+          mpp-format-string: input://inlinefile/{embedded['neptune.session']}
+        to: tree:///usr/share/gnome-session/sessions/neptune.session
+  - type: org.osbuild.copy
+    inputs:
+      inlinefile:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: am-config-neptune.yaml
+          path: ../files/usr/lib64/neptune3/am-config-neptune.yaml
+    options:
+      paths:
+      - from:
+          mpp-format-string: input://inlinefile/{embedded['am-config-neptune.yaml']}
+        to: tree:///usr/lib64/neptune3/am-config-neptune.yaml
+  - type: org.osbuild.copy
+    inputs:
+      inlinefile:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
           id: neptune3-ui.desktop
-          path: ../files/neptune3-ui.desktop
+          path: ../files/usr/share/applications/neptune3-ui.desktop
     options:
       paths:
       - from:
           mpp-format-string: input://inlinefile/{embedded['neptune3-ui.desktop']}
-        to: tree:///etc/xdg/autostart/neptune3-ui.desktop
+        to: tree:///usr/share/applications/neptune3-ui.desktop
   - type: org.osbuild.systemd
     options:
       enabled_services:
@@ -99,5 +151,6 @@ pipelines:
       - firewalld.service
       - rngd.service
       - sshd.service
+      - neptune-accounts-service-init.service
 - mpp-import-pipelines:
     path: include/cs9-image.ipp.yml
