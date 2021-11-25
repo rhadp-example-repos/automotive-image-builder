@@ -36,7 +36,6 @@ image-name = cs9-$(call manifest-get-name,$1)-$2
 regular_IMAGETYPE := regular
 ostree_IMAGETYPE := ostree
 direct_IMAGETYPE := directboot
-rootfs_IMAGETYPE := rootfs
 
 # export names for FORMATS
 img_EXPORTFILE := disk.img
