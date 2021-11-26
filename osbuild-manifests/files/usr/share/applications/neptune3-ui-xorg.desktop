@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Exec=neptune3-ui
+StartupNotify=false
+Terminal=false
+Name[en_US]=neptune3-ui
+Comment[en_US]=Launches neptune3-ui on logging in

@@ -1,0 +1,3 @@
+[GNOME Session]
+Name=Neptune XOrg
+RequiredComponents=mutter;neptune3-ui-xorg;

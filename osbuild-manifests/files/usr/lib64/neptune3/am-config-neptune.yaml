@@ -39,7 +39,7 @@ ui:
 
 systemProperties:
     public:
-      showCluster: yes
+      showCluster: no
       showHUD: no
       devMode: yes
       enableCursorManagement: no
