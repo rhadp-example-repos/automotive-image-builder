@@ -30,36 +30,15 @@ pipelines:
       kernel:
       - mpp-eval: rpms['rootfs'][kernel_rpm + '-core'].evra
       add_modules:
-      - base
-      - bash
-      - dracut-systemd
-      - fs-lib
-      - i18n
-      - kernel-modules
-      - kernel-modules-extra
-      - rootfs-block
-      - shutdown
-      - systemd
-      - systemd-initrd
-      - terminfo
-      - udev-rules
-      - usrmount
+        mpp-eval: dracut_add_modules
       omit_modules:
-      - dm
-      - lunmask
-      - mdraid
-      - memstrack
-      - nss-softokn
-      - nvdimm
-      - resume
-      - terminfo
+        mpp-eval: dracut_omit_modules
       add_drivers:
         mpp-join:
         - mpp-eval: locals().get('extra_dracut_drivers', [])
-        - []
+        - mpp-eval: dracut_add_drivers
       filesystems:
-      - vfat
-      - ext4
+        mpp-eval: dracut_filesystems
       install:
       - /.buildstamp
   - type: org.osbuild.systemd

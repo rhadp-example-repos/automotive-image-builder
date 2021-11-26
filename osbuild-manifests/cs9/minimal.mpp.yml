@@ -1,15 +1,6 @@
 version: '2'
 mpp-vars:
   name: minimal
-  image_size: '8589934592'
-  rootfs_uuid: 76a22bf4-f153-4541-b6c7-0332c0dfaeac
-  bootfs_uuid: 156f0420-627b-4151-ae6f-fda298097515
-  kernel_opts:
-  - ro
-  - console=tty0
-  - console=ttyS0
-  - systemd.log_target=console
-  - systemd.journald.forward_to_console=1
 pipelines:
 - mpp-import-pipelines:
     path: include/cs9-build.ipp.yml
@@ -55,9 +46,13 @@ pipelines:
     options:
       users:
         root:
-          password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.
+          password:
+            mpp-eval: root_password
+          key:
+            mpp-eval: root_ssh_key
         guest:
-          password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.
+          password:
+            mpp-eval: guest_password
   - type: org.osbuild.systemd
     options:
       enabled_services:
