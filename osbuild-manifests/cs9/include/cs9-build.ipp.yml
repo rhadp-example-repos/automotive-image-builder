@@ -170,8 +170,8 @@ mpp-define-image:
       uuid: 6264D520-3FB9-423F-8AB8-7A0A8E3D3562
 pipelines:
 - mpp-import-pipelines:
-    path: cs9-$target-target.mpp.yml
+    path: cs9-$target-target.ipp.yml
 - mpp-import-pipeline:
-    path: cs9-build-$arch.mpp.yml
+    path: cs9-build-$arch.ipp.yml
     id: build
   runner: org.osbuild.centos9

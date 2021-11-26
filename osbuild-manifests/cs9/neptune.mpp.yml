@@ -12,7 +12,7 @@ mpp-vars:
   - systemd.journald.forward_to_console=1
 pipelines:
 - mpp-import-pipelines:
-    path: include/cs9-build.mpp.yml
+    path: include/cs9-build.ipp.yml
 - name: rootfs
   build: name:build
   stages:
@@ -110,4 +110,4 @@ pipelines:
       - rngd.service
       - sshd.service
 - mpp-import-pipelines:
-    path: include/cs9-image.mpp.yml
+    path: include/cs9-image.ipp.yml
