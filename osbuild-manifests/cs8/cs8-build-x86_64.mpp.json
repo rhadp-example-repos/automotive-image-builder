@@ -38,8 +38,6 @@
       "systemd-udev",
 
       "grub2-efi-x64",
-      "grub2-pc",
-      "grub2-pc-modules",
       "microcode_ctl"
     ]
   },
@@ -64,11 +62,8 @@
                   "e2fsprogs",
                   "efibootmgr",
                   "genisoimage",
-                  "grub2-efi-ia32-cdboot",
                   "grub2-efi-x64",
                   "grub2-efi-x64-cdboot",
-                  "grub2-pc",
-                  "grub2-pc-modules",
                   "grub2-tools",
                   "grub2-tools-efi",
                   "grub2-tools-extra",
@@ -81,7 +76,6 @@
                   "qemu-img",
                   "rpm-ostree",
                   "selinux-policy-targeted",
-                  "shim-ia32",
                   "shim-x64",
                   "squashfs-tools",
                   "syslinux",

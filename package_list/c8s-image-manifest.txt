@@ -223,7 +223,6 @@ groff-base-1.22.3-18.el8
 grub2-common-2.02-99.el8_4.1
 grub2-efi-aa64-2.02-99.el8_4.1
 grub2-efi-aa64-cdboot-2.02-99.el8_4.1
-grub2-pc-modules-2.02-99.el8_4.1
 grub2-tools-2.02-99.el8_4.1
 grub2-tools-extra-2.02-99.el8_4.1
 grub2-tools-minimal-2.02-99.el8_4.1
