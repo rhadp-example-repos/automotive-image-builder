@@ -122,6 +122,20 @@ pipelines:
         osname: centos
         ref:
           mpp-eval: ostree_ref
+  - type: org.osbuild.users
+    mounts:
+      - type: org.osbuild.ostree.deployment
+        name: ostree.deployment
+        options:
+          deployment:
+            osname: centos
+            ref:
+              mpp-eval: ostree_ref
+    options:
+      users:
+        root:
+          key:
+            mpp-eval: root_ssh_key
   - type: org.osbuild.fstab
     options:
       ostree:
