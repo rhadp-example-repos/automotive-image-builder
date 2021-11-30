@@ -61,7 +61,7 @@ help:
 	@echo
 	@echo There are some additional targets:
 	@echo   manifests: generates resolved json manifests for all images without building them.
-	@echo   clean_caches: Removes intermediate image build artifacts (that improve rebuild speed)
+	@echo   clean_caches: Removes intermediate image build artifacts \(that improve rebuild speed\)
 	@echo   clean_downloads: Removes files downloaded during image builds
 	@echo   clean: Run clean_caches and clean_downloads
 	@echo
