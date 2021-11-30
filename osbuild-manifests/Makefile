@@ -44,7 +44,8 @@ repo_EXPORT := ostree-commit
 rootfs_EXPORT := rootfs
 
 help:
-	@echo This is a wrapper around osbuild-mpp and osbuild to easily build images
+	@echo
+	@echo This makefile is a wrapper around osbuild-mpp and osbuild to easily build images
 	@echo
 	@echo To build a raw image, run \"make image.img\", or to build a qcow2 image, run \"make image.qcow2\"
 	@echo
@@ -58,10 +59,16 @@ help:
 	@echo For example, to add extra rpms to a minimal regular image, use:
 	@echo "  make cs9-qemu-minimal-regular.qcow2 DEFINES='extra_rpms=[\"gdb\",\"strace\"]'"
 	@echo
-	@echo You also run \"make manifests\" to generate resolved json manifests for all images without building them.
+	@echo There are some additional targets:
+	@echo   manifests: generates resolved json manifests for all images without building them.
+	@echo   clean_caches: Removes intermediate image build artifacts (that improve rebuild speed)
+	@echo   clean_downloads: Removes files downloaded during image builds
+	@echo   clean: Run clean_caches and clean_downloads
 	@echo
-	@echo Available images are:
-	@echo " " $(foreach m, $(MANIFESTS), $(foreach t, $(TARGETS), $(foreach i,$(IMAGETYPES), $(call image-name,$m,$t,$i))))
+	@echo Available image targets \(for the current architecture\) are:
+	@echo
+	@$(foreach m, $(MANIFESTS), $(foreach t, $(TARGETS), $(foreach i,$(IMAGETYPES), echo -e "   "  $(call image-name,$m,$t,$i).qcow2 '\t' $(call image-name,$m,$t,$i).img;)))
+	@echo
 
 # We pre-create all the toplevel dirs, so that they are owned by the user, not root (when created under sudo)
 $(BUILDDIR):
