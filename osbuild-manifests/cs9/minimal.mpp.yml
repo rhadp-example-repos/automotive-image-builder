@@ -45,11 +45,6 @@ pipelines:
   - type: org.osbuild.users
     options:
       users:
-        root:
-          password:
-            mpp-eval: root_password
-          key:
-            mpp-eval: root_ssh_key
         guest:
           password:
             mpp-eval: guest_password

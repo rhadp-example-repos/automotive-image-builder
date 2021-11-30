@@ -20,6 +20,14 @@ pipelines:
       paths:
       - from: input://tree/
         to: tree:///
+  - type: org.osbuild.users
+    options:
+      users:
+        root:
+          password:
+            mpp-eval: root_password
+          key:
+            mpp-eval: root_ssh_key
   - type: org.osbuild.dracut
     options:
       kernel:
