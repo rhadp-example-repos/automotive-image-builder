@@ -156,6 +156,14 @@ To flash the image onto an SD card, run the following command:
 dd if=cs9-qemu-minimal-regular.img of=/dev/sda status=progress bs=4M
 ```
 
+!!! note
+
+    Our sample images have all a dummy password hard-coded for their `root` and
+    `guest`. That password is simply: `password`.
+    That default value can be overriden at build time using:
+    `DEFINES='root_password="hash_of_new_password"'`
+
+
 ## Other features
 
 You can use the `DEFINES` variable to override variables in the manifest. This
