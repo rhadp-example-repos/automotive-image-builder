@@ -12,10 +12,7 @@ OUTPUTDIR=$(BUILDDIR)/image_output
 CURRENT_ARCH:=$(shell arch)
 CURRENT_UIDGID := $(shell id -u):$(shell id -g)
 
-MANIFESTS := \
-	cs9/minimal.mpp.yml \
-	cs9/neptune.mpp.yml \
-	$(NULL)
+MANIFESTS := $(wildcard cs9/*.mpp.yml)
 
 CHECKPOINTS=build rootfs
 
