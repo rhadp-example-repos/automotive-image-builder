@@ -119,3 +119,17 @@ packages-$(call manifest-get-name,$1).json: $1
 endef
 
 $(foreach m, $(MANIFESTS), $(eval $(call packages-rule,$m)))
+
+.PHONY: clean_downloads
+clean_downloads:
+	sudo rm -rf _build/osbuild_store/sources/org.osbuild.files/*
+
+.PHONY: clean_caches
+clean_caches:
+	sudo rm -rf _build/osbuild_store/refs/*
+	sudo rm -rf _build/osbuild_store/objects/*
+	sudo rm -rf _build/osbuild_store/tmp/*
+	sudo rm -rf _build/osbuild_store/image_output/*
+
+.PHONY: clean
+clean: clean_downloads clean_caches
