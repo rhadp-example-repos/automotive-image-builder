@@ -14,7 +14,6 @@ For more information about the SIG's charter, members, or goal, see the
   <https://lists.centos.org/mailman/listinfo/centos-automotive-sig>
 * The IRC channel: `#centos-automotive` on `irc.libera.chat` (more information
   on <https://libera.chat/>)
-* Monthly meetings on the third Thursday at 1500 UTC, or as decided by the group
 
 
 ## Artifacts
