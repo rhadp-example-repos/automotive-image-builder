@@ -1,6 +1,19 @@
 NULL=
-OSBUILD_MPP=osbuild-mpp
+
+ARCH:=$(shell arch)
+CURRENT_UIDGID := $(shell id -u):$(shell id -g)
+
+
+VM=0
+ifeq ($(VM), 1)
+SUDO=
+OSBUILD=osbuildvm/osbuildvm --arch=$(ARCH)
+else
+SUDO=sudo
 OSBUILD=osbuild
+endif
+
+OSBUILD_MPP=osbuild-mpp
 
 DEFINES=
 MPP_ARGS=
@@ -9,9 +22,6 @@ BUILDDIR=_build
 STOREDIR=$(BUILDDIR)/osbuild_store
 OUTPUTDIR=$(BUILDDIR)/image_output
 
-CURRENT_ARCH:=$(shell arch)
-CURRENT_UIDGID := $(shell id -u):$(shell id -g)
-
 MANIFESTS := $(wildcard cs9/*.mpp.yml)
 
 CHECKPOINTS=build rootfs
@@ -19,7 +29,7 @@ CHECKPOINTS=build rootfs
 IMAGETYPES := regular ostree direct
 FORMATS := img qcow2 repo rootfs
 aarch64_TARGETS := rpi4
-TARGETS := qemu $($(CURRENT_ARCH)_TARGETS)
+TARGETS := qemu $($(ARCH)_TARGETS)
 
 manifest-get-name = $(basename $(basename $(notdir $1)))
 manifest-get-dir = $(notdir $(patsubst %/,%,$(dir $1)))
@@ -71,6 +81,7 @@ help:
 	@echo
 
 # We pre-create all the toplevel dirs, so that they are owned by the user, not root (when created under sudo)
+.PHONY: $(BUILDDIR)
 $(BUILDDIR):
 	@mkdir -p $(BUILDDIR)
 	@mkdir -p $(STOREDIR)/{objects,refs,sources/org.osbuild.files,tmp}
@@ -82,7 +93,7 @@ $(BUILDDIR):
 # $3 == Image type
 define json-rule
 $(BUILDDIR)/$(call image-name,$1,$2,$3).json: $1 $(BUILDDIR)
-	$(OSBUILD_MPP) -D image_type="\"$($3_IMAGETYPE)\"" -D target="\"$2\"" $(foreach def,$(DEFINES),-D '$(def)') $(MPP_ARGS) $$< $$@
+	$(OSBUILD_MPP) -D image_type="\"$($3_IMAGETYPE)\"" -D arch=\"$(ARCH)\" -D target="\"$2\"" $(foreach def,$(DEFINES),-D '$(def)') $(MPP_ARGS) $$< $$@
 .PHONY: $(BUILDDIR)/$(call image-name,$1,$2,$3).json
 endef
 
@@ -99,10 +110,11 @@ $(foreach m, $(MANIFESTS), \
 define image-rule
 $(call image-name,$1,$2,$3).$4: $(BUILDDIR)/$(call image-name,$1,$2,$3).json
 	@mkdir -p $(OUTPUTDIR)/$($4_EXPORT)
-	sudo osbuild $(foreach cp,$(CHECKPOINTS),--checkpoint $(cp)) --store $(STOREDIR) --output-directory $(OUTPUTDIR) --export $($4_EXPORT) $$<
-	sudo chown $($4_CHOWNARGS) $(CURRENT_UIDGID) $(OUTPUTDIR)/$($4_EXPORT)/$($4_EXPORTFILE)
+	$(SUDO) $(OSBUILD) $(foreach cp,$(CHECKPOINTS),--checkpoint $(cp)) --store $(STOREDIR) --output-directory $(OUTPUTDIR) --export $($4_EXPORT) $$<
+	$(SUDO) chown $($4_CHOWNARGS) $(CURRENT_UIDGID) $(OUTPUTDIR)/$($4_EXPORT)/$($4_EXPORTFILE)
 	@rm -rf $$@
-	sudo mv $(OUTPUTDIR)/$($4_EXPORT)/$($4_EXPORTFILE) $$@
+	$(SUDO) mv $(OUTPUTDIR)/$($4_EXPORT)/$($4_EXPORTFILE) $$@
+	$(SUDO) rm -rf $(OUTPUTDIR)/$($4_EXPORT)
 endef
 
 $(foreach m, $(MANIFESTS), \
@@ -137,3 +149,12 @@ clean_caches:
 
 .PHONY: clean
 clean: clean_downloads clean_caches
+
+.PHONY: osbuildvm-images
+osbuildvm-images: $(BUILDDIR)
+	osbuild-mpp osbuildvm/osbuildvm.mpp.yml _build/osbuildvm-$(ARCH).json
+	$(SUDO) $(OSBUILD) --store $(STOREDIR) --output-directory $(OUTPUTDIR) --export osbuildvm _build/osbuildvm-$(ARCH).json
+	cp $(OUTPUTDIR)/osbuildvm/disk.qcow2 _build/osbuildvm-$(ARCH).img
+	cp $(OUTPUTDIR)/osbuildvm/initramfs _build/osbuildvm-$(ARCH).initramfs
+	cp $(OUTPUTDIR)/osbuildvm/vmlinuz _build/osbuildvm-$(ARCH).vmlinuz
+	$(SUDO) rm -rf $(OUTPUTDIR)/osbuildvm
