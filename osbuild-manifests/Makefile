@@ -29,7 +29,7 @@ OUTPUTDIR=$(BUILDDIR)/image_output
 
 MANIFESTS := $(wildcard cs9/*.mpp.yml)
 
-CHECKPOINTS=build rootfs
+CHECKPOINTS=build
 IMAGETYPES := regular ostree direct
 FORMATS := img qcow2 repo rootfs
 aarch64_TARGETS := rpi4
