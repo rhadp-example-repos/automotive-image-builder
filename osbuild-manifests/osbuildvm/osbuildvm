@@ -368,12 +368,12 @@ mkdir -p /work/osbuild_store
        continue
     fi
     obj=$(basename $(readlink /work/osbuild_store/refs/$cp))
-    tar cf /work/output/checkpoints/$cp.tar.gz --acls --selinux --xattrs -C /work/osbuild_store/ refs/$cp objects/$obj
+    tar cSf /work/output/checkpoints/$cp.tar.gz --acls --selinux --xattrs -C /work/osbuild_store/ refs/$cp objects/$obj
     echo Saved $cp
   done
 ) > /dev/virtio-ports/stdout 2>&1
 
-tar cf /dev/virtio-ports/output -C /work/output ./
+tar cSf /dev/virtio-ports/output -C /work/output ./
 
 # Signal output ended
 sleep 3
