@@ -158,10 +158,11 @@ clean_downloads:
 
 .PHONY: clean_caches
 clean_caches:
-	sudo rm -rf _build/osbuild_store/refs/*
-	sudo rm -rf _build/osbuild_store/objects/*
-	sudo rm -rf _build/osbuild_store/tmp/*
-	sudo rm -rf _build/osbuild_store/image_output/*
+	sudo rm -rf $(STOREDIR)/refs/*
+	sudo rm -rf $(STOREDIR)/refs_tars/*
+	sudo rm -rf $(STOREDIR)/objects/*
+	sudo rm -rf $(STOREDIR)/tmp/*
+	sudo rm -rf $(STOREDIR)/image_output/*
 
 .PHONY: clean
 clean: clean_downloads clean_caches
