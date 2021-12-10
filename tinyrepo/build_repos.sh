@@ -16,5 +16,5 @@ do
   popd
 
   # Update the `latest` symlink
-  ln -sf ../$d $HTMLROOT/cs9-stream/$arch/latest
+  ln -sf $d $HTMLROOT/cs9-stream/$arch/latest
 done
