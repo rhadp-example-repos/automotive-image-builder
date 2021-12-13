@@ -41,4 +41,4 @@ cp $AUTOSIGREPO/osbuild-manifests/*.xz  $HTMLROOT/images/$d/
 cp $AUTOSIGREPO/osbuild-manifests/*.tar.gz  $HTMLROOT/images/$d/
 
 # Update the `latest` symlink
-ln -sf $d $HTMLROOT/images/latest
+ln -nsf $d $HTMLROOT/images/latest
