@@ -22,6 +22,7 @@ OSBUILD_MPP=osbuild-mpp
 
 DEFINES=
 MPP_ARGS=
+OSBUILD_ARGS=
 
 BUILDDIR=_build
 STOREDIR=$(BUILDDIR)/osbuild_store
@@ -125,7 +126,7 @@ $(foreach m, $(MANIFESTS), \
 define image-rule
 $(call image-name,$1,$2,$3,$4).$5: $(BUILDDIR)/$(call image-name,$1,$2,$3,$4).json
 	@mkdir -p $(OUTPUTDIR)/$($5_EXPORT)
-	$(OSBUILD_$4) $(foreach cp,$(CHECKPOINTS),--checkpoint $(cp)) --store $(STOREDIR) --output-directory $(OUTPUTDIR) --export $($5_EXPORT) $$<
+	$(OSBUILD_$4) $(foreach cp,$(CHECKPOINTS),--checkpoint $(cp)) --store $(STOREDIR) --output-directory $(OUTPUTDIR) $(OSBUILD_ARGS) --export $($5_EXPORT) $$<
 	$(SUDO_$4) chown $($5_CHOWNARGS) $(CURRENT_UIDGID) $(OUTPUTDIR)/$($5_EXPORT)/$($5_EXPORTFILE)
 	@rm -rf $$@
 	$(SUDO_$4) mv $(OUTPUTDIR)/$($5_EXPORT)/$($5_EXPORTFILE) $$@
