@@ -1,6 +1,7 @@
 version: '2'
 mpp-vars:
   name: neptune
+  display_server: wayland
 pipelines:
 - mpp-import-pipelines:
     path: include/cs9-build.ipp.yml
@@ -73,7 +74,7 @@ pipelines:
         origin: org.osbuild.source
         mpp-embed:
           id: custom.conf
-          path: ../files/etc/gdm/custom.conf
+          path: ../files/etc/gdm/custom-$display_server.conf
     options:
       paths:
       - from:
@@ -85,13 +86,13 @@ pipelines:
         type: org.osbuild.files
         origin: org.osbuild.source
         mpp-embed:
-          id: neptune-accounts-service-init.service
-          path: ../files/etc/systemd/system/neptune-accounts-service-init.service
+          id: init-neptune-session@.service
+          path: ../files/etc/systemd/system/init-neptune-session@.service
     options:
       paths:
       - from:
-          mpp-format-string: input://inlinefile/{embedded['neptune-accounts-service-init.service']}
-        to: tree:///etc/systemd/system/neptune-accounts-service-init.service
+          mpp-format-string: input://inlinefile/{embedded['init-neptune-session@.service']}
+        to: tree:///etc/systemd/system/init-neptune-session@.service
   - type: org.osbuild.copy
     inputs:
       inlinefile:
@@ -190,6 +191,6 @@ pipelines:
       - firewalld.service
       - rngd.service
       - sshd.service
-      - neptune-accounts-service-init.service
+      - mpp-eval: "'init-neptune-session@wayland.service' if display_server == 'wayland' else 'init-neptune-session@xorg.service'"
 - mpp-import-pipelines:
     path: include/cs9-image.ipp.yml

@@ -1,12 +1,12 @@
 [Unit]
-Description=Init neptune accounts-service conf
+Description=Init neptune gdm session conf
 ConditionPathExists=!/var/lib/AccountsService/users/neptune
 Before=gdm.service
 
 [Service]
 Type=service
 ExecStart=/bin/sh -c ' \
-  echo -e "[User]\nSession=neptune-wayland\nXSession=neptune-xorg\nPasswordHint=\nIcon=/var/lib/AccountsService/icons/guest\nSystemAccount=false\n" \
+  echo -e "[User]\nSession=neptune-%i\nXSession=neptune-xorg\nPasswordHint=\nIcon=/var/lib/AccountsService/icons/guest\nSystemAccount=false\n" \
   > /var/lib/AccountsService/users/neptune'
 RemainAfterExit=yes
 

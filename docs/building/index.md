@@ -187,6 +187,7 @@ Variables that may be interesting to override are:
 * `kernel_rpm`: The name of the kernel package used, defaults to
     `kernel-auto`.
 * `ostree_ref`: Name used for the ref when commiting an ostree repo
+* `display_server`: The name of the display server, wayland or xorg. Defaults to wayland.
 
 You can use `make manifests` to pre-process all the existing manifests
 without building them. This can be useful to ensure that all
