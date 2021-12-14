@@ -8,6 +8,7 @@ mpp-vars:
   - pi4-firmware-blob
   target_dracut_drivers:
   - bcm2835
+  - bcm2835-mailbox
   - sdhci
   partition_label: dos
   target_repos:
