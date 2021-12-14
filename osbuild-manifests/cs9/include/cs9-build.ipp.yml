@@ -29,6 +29,7 @@ mpp-vars:
   default_root_password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.
   default_guest_password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.
   default_root_ssh_key: ""
+  default_ssh_permit_root_login: false
   default_image_size: '8589934592'
   default_efipart_size: 204800
   default_bootpart_size: 409600
@@ -124,6 +125,8 @@ mpp-vars:
     mpp-eval: locals().get('root_password', default_root_password)
   root_ssh_key:
     mpp-eval: locals().get('root_ssh_key', default_root_ssh_key)
+  ssh_permit_root_login:
+    mpp-eval: locals().get('ssh_permit_root_login', default_ssh_permit_root_login)
   guest_password:
     mpp-eval: locals().get('guest_password', default_guest_password)
   centos_gpg_key: |
