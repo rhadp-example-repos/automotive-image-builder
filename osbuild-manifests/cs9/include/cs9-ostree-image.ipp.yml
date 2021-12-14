@@ -35,7 +35,7 @@ pipelines:
         mpp-eval: dracut_omit_modules
       add_drivers:
         mpp-join:
-        - mpp-eval: locals().get('extra_dracut_drivers', [])
+        - mpp-eval: locals().get('target_dracut_drivers', [])
         - mpp-eval: dracut_add_drivers
       filesystems:
         mpp-eval: dracut_filesystems

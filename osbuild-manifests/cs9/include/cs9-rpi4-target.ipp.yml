@@ -6,7 +6,7 @@ mpp-vars:
     to: mount://root/boot/efi/
   extra_image_rpms:
   - pi4-firmware-blob
-  extra_dracut_drivers:
+  target_dracut_drivers:
   - bcm2835
   - sdhci
   partition_label: dos
