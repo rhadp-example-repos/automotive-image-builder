@@ -184,6 +184,11 @@ pipelines:
       - from:
           mpp-format-string: input://inlinefile/{embedded['neptune3-ui-xorg.desktop']}
         to: tree:///usr/share/applications/neptune3-ui-xorg.desktop
+  - type: org.osbuild.sshd.config
+    options:
+      config:
+        PermitRootLogin:
+          mpp-eval: ssh_permit_root_login
   - type: org.osbuild.systemd
     options:
       enabled_services:
