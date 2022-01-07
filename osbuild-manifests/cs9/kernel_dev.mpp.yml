@@ -1,0 +1,86 @@
+version: '2'
+mpp-vars:
+  name: minimal
+pipelines:
+- mpp-import-pipelines:
+    path: include/cs9-build.ipp.yml
+- name: rootfs
+  build: name:build
+  stages:
+  - type: org.osbuild.kernel-cmdline
+    options:
+      root_fs_uuid:
+        mpp-eval: rootfs_uuid
+  - type: org.osbuild.rpm
+    options:
+      gpgkeys:
+      - mpp-eval: centos_gpg_key
+      - mpp-eval: redhat_gpg_key
+      disable_dracut: true
+    inputs:
+      packages:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-depsolve:
+          architecture: $arch
+          module-platform-id: platform:el9
+          baseurl: $cs9_baseurl/BaseOS/$arch/os/
+          repos:
+            mpp-join:
+            - mpp-eval: cs9_repos
+            - mpp-eval: cs9_crb_repos
+            - mpp-eval: cs9_automotive_repos
+            - mpp-eval: target_repos
+          packages:
+            mpp-join:
+            - mpp-eval: base_rpms
+            - mpp-eval: image_rpms
+            - mpp-eval: extra_rpms
+            - - "@Development Tools"
+              # Some convenience packages
+              - bash-completion
+              - dnf
+              - emacs
+              - less
+              - strace
+              - vim
+              - git
+              - wget
+              # Dependencies to build the kernel's RPM
+              - rpm-build
+              - hostname
+              - openssl-devel
+              - bc
+              - binutils-devel
+              - bpftool
+              - clang
+              - dwarves
+              - gcc-plugin-devel
+              - libcap-devel
+              - libcap-ng-devel
+              - libmnl-devel
+              - llvm
+              - net-tools
+              - numactl-devel
+              - perl-devel
+              - python3-devel
+              - python3-docutils
+              - rsync
+          excludes:
+          - dracut-config-rescue
+  - type: org.osbuild.locale
+    options:
+      language: en_US.UTF-8
+  - type: org.osbuild.users
+    options:
+      users:
+        guest:
+          password:
+            mpp-eval: guest_password
+  - type: org.osbuild.systemd
+    options:
+      enabled_services:
+      - NetworkManager.service
+      - rngd.service
+- mpp-import-pipelines:
+    path: include/cs9-image.ipp.yml
