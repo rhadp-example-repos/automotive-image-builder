@@ -122,6 +122,7 @@ pipelines:
       type: org.osbuild.fat
       source: efi
       target: /boot/efi
+
 - name: qcow2
   build: name:build
   stages:
@@ -138,3 +139,20 @@ pipelines:
       format:
         type: qcow2
         compat: '1.1'
+
+- name: container
+  build: name:build
+  stages:
+  - type: org.osbuild.oci-archive
+    inputs:
+      base:
+        type: org.osbuild.tree
+        origin: org.osbuild.pipeline
+        references:
+        - name:rootfs
+    options:
+      filename: container.tar
+      architecture: $arch
+      config:
+        Cmd:
+        - "/usr/bin/bash"
