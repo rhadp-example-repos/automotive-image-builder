@@ -32,7 +32,7 @@ MANIFESTS := $(wildcard cs9/*.mpp.yml)
 
 CHECKPOINTS=build
 IMAGETYPES := regular ostree direct
-FORMATS := img qcow2 repo rootfs
+FORMATS := img qcow2 container repo rootfs
 aarch64_TARGETS := rpi4
 COMMON_TARGETS := qemu
 HOST_TARGETS := $(COMMON_TARGETS) $($(HOST_ARCH)_TARGETS)
@@ -51,12 +51,14 @@ direct_IMAGETYPE := directboot
 # export names for FORMATS
 img_EXPORTFILE := disk.img
 qcow2_EXPORTFILE := disk.qcow2
+container_EXPORTFILE := container.tar
 repo_EXPORTFILE := repo
 rootfs_EXPORTFILE :=
 
 repo_CHOWNARGS := -R
 
 img_EXPORT := image
+container_EXPORT := container
 qcow2_EXPORT := qcow2
 repo_EXPORT := ostree-commit
 rootfs_EXPORT := rootfs
@@ -90,7 +92,7 @@ help:
 	@echo
 	@echo Available image targets \(for $(HOST_ARCH)\) are:
 	@echo
-	@$(foreach m, $(MANIFESTS), $(foreach t, $(HOST_TARGETS), $(foreach i,$(IMAGETYPES), echo -e "   "  $(call image-name,$m,$t,$i,$(HOST_ARCH)).qcow2 '\t' $(call image-name,$m,$t,$i,$(HOST_ARCH)).img;)))
+	@$(foreach m, $(MANIFESTS), $(foreach t, $(HOST_TARGETS), $(foreach i,$(IMAGETYPES), echo -e "   "  $(call image-name,$m,$t,$i,$(HOST_ARCH)).qcow2 '\t' $(call image-name,$m,$t,$i,$(HOST_ARCH)).img'\t' $(call image-name,$m,$t,$i,$(HOST_ARCH)).container;)))
 	@echo
 
 # We pre-create all the toplevel dirs, so that they are owned by the user, not root (when created under sudo)
