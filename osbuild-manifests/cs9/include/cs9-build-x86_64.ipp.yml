@@ -48,7 +48,6 @@ pipelines:
           - grub2-efi-x64-cdboot
           - grub2-tools
           - grub2-tools-efi
-          - grub2-tools-extra
           - grub2-tools-minimal
           - policycoreutils
           - python3-iniparse
