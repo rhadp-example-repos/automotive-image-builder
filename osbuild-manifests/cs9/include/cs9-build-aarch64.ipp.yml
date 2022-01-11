@@ -47,8 +47,6 @@ pipelines:
           - grub2-efi-aa64-cdboot
           - grub2-tools
           - grub2-tools-minimal
-          - isomd5sum
-          - lorax-templates-generic
           - policycoreutils
           - python3-iniparse
           - python3
@@ -56,11 +54,8 @@ pipelines:
           - rpm-ostree
           - selinux-policy-targeted
           - shim-aa64
-          - squashfs-tools
           - systemd
           - tar
-          - xfsprogs
-          - xorriso
           - xz
     options:
       gpgkeys:
