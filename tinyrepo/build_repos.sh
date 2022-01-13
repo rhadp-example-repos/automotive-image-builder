@@ -5,7 +5,7 @@ AUTOSIGREPO=$1
 HTMLROOT=$2
 
 python $AUTOSIGREPO/tinyrepo/initiate_repo.py \
-    HTMLROOT/cs9-stream/ \
+    $HTMLROOT/cs9-stream/ \
     --pkgslist=$HTMLROOT/cs9-stream/pkgslist_$d
 
 for arch in aarch64 x86_64
