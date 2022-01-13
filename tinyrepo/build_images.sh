@@ -20,10 +20,10 @@ dnf clean all
 sudo dnf clean all
 
 # Build all images
-make cs9-rpi4-neptune-ostree.aarch64.img > cs9-rpi4-neptune-ostree.aarch64.log
-make cs9-rpi4-neptune-regular.aarch64.img > cs9-rpi4-neptune-regular.aarch64.log
-make cs9-qemu-osbuilder-regular.aarch64.qcow2 > cs9-qemu-osbuilder-regular.aarch64.log
-make osbuildvm-images > osbuildvm-images.log
+sudo make cs9-rpi4-neptune-ostree.aarch64.img > cs9-rpi4-neptune-ostree.aarch64.log
+sudo make cs9-rpi4-neptune-regular.aarch64.img > cs9-rpi4-neptune-regular.aarch64.log
+sudo make cs9-qemu-osbuilder-regular.aarch64.qcow2 > cs9-qemu-osbuilder-regular.aarch64.log
+sudo make osbuildvm-images > osbuildvm-images.log
 
 # Compact them
 xz cs9-rpi4-neptune-ostree.aarch64.img &
