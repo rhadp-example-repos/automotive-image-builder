@@ -73,7 +73,8 @@ pipelines:
       kernel_opts:
         mpp-eval: ''' '' .join(kernel_opts)'
       uefi:
-        vendor: centos
+        vendor:
+          mpp-eval: uefi_vendor
       legacy: false
       write_defaults: false
   - type: org.osbuild.fix-bls

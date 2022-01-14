@@ -175,7 +175,8 @@ pipelines:
       bootfs:
         label: boot
       uefi:
-        vendor: centos
+        vendor:
+          mpp-eval: uefi_vendor
         install: true
       legacy: false
       write_defaults: false
