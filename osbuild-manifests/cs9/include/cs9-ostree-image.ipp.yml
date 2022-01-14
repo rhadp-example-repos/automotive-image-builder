@@ -92,7 +92,8 @@ pipelines:
               mpp-eval: ostree_ref
   - type: org.osbuild.ostree.os-init
     options:
-      osname: centos
+      osname:
+        mpp-eval: osname
   - type: org.osbuild.ostree.config
     options:
       repo: /ostree/repo
@@ -106,7 +107,8 @@ pipelines:
         mode: 448
   - type: org.osbuild.ostree.deploy
     options:
-      osname: centos
+      osname:
+        mpp-eval: osname
       ref:
         mpp-eval: ostree_ref
       mounts:
@@ -119,7 +121,8 @@ pipelines:
   - type: org.osbuild.ostree.fillvar
     options:
       deployment:
-        osname: centos
+        osname:
+          mpp-eval: osname
         ref:
           mpp-eval: ostree_ref
   - type: org.osbuild.users
@@ -128,7 +131,8 @@ pipelines:
         name: ostree.deployment
         options:
           deployment:
-            osname: centos
+            osname:
+              mpp-eval: osname
             ref:
               mpp-eval: ostree_ref
     options:
@@ -142,7 +146,8 @@ pipelines:
     options:
       ostree:
         deployment:
-          osname: centos
+          osname:
+            mpp-eval: osname
           ref:
             mpp-eval: ostree_ref
       filesystems:
@@ -165,7 +170,8 @@ pipelines:
   - type: org.osbuild.ostree.selinux
     options:
       deployment:
-        osname: centos
+        osname:
+          mpp-eval: osname
         ref:
           mpp-eval: ostree_ref
   - type: org.osbuild.grub2
