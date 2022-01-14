@@ -195,10 +195,9 @@ combination of options still work after a change, or to inspect
 the resulting manifests.
 
 Other than the image types `*.img` and `*.qcow2` the Makefile also
-supports `*.rootfs` and `*.repo` targets.  These produce as output
-full directories containering the files from the rootfs, and the
-ostree repo with the commit respectively. These are useful e.g. during
-development and testing.
+supports other targets like, `*.rootfs`, `*.repo` targets, `*.tar`,
+`*.container`, and `*.ext4`. These are useful e.g. during development
+and testing.  See the output of `make help for more details.
 
 ## Building in a virtual machine
 

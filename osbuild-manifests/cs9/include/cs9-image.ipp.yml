@@ -156,3 +156,65 @@ pipelines:
       config:
         Cmd:
         - "/usr/bin/bash"
+
+- name: ext4
+  build: name:build
+  stages:
+  - type: org.osbuild.truncate
+    options:
+      filename: rootfs.ext4
+      size:
+        mpp-eval: image.size
+  - type: org.osbuild.mkfs.ext4
+    devices:
+      device:
+        type: org.osbuild.loopback
+        options:
+          filename: rootfs.ext4
+          start: 0
+          size:
+            mpp-format-int: "{int(image.size) // 512}"
+    options:
+      uuid:
+        mpp-eval: rootfs_uuid
+      label: root
+  - type: org.osbuild.copy
+    inputs:
+      tree:
+        type: org.osbuild.tree
+        origin: org.osbuild.pipeline
+        references:
+        - name:image-tree
+    options:
+      paths:
+        mpp-join:
+        - - from: input://tree/
+            to: mount://root/
+        - mpp-eval: locals().get('extra_image_copy_' + image_type, [])
+    devices:
+      root:
+        type: org.osbuild.loopback
+        options:
+          filename: rootfs.ext4
+          start: 0
+          size:
+            mpp-format-int: "{int(image.size) // 512}"
+    mounts:
+    - name: root
+      type: org.osbuild.ext4
+      source: root
+      target: /
+
+- name: tar
+  build: name:build
+  stages:
+  - type: org.osbuild.tar
+    inputs:
+      tree:
+        type: org.osbuild.tree
+        origin: org.osbuild.pipeline
+        references:
+        - name:rootfs
+    options:
+      filename: rootfs.tar.gz
+      root-node: omit

@@ -1,4 +1,7 @@
 NULL=
+EMPTY :=
+SPACE := $(EMPTY) $(EMPTY)
+COMMA := ,
 
 HOST_ARCH:=$(shell arch)
 CURRENT_UIDGID := $(shell id -u):$(shell id -g)
@@ -32,7 +35,7 @@ MANIFESTS := $(wildcard cs9/*.mpp.yml)
 
 CHECKPOINTS=build
 IMAGETYPES := regular ostree direct
-FORMATS := img qcow2 container repo rootfs
+FORMATS := img qcow2 container repo rootfs ext4 tar
 aarch64_TARGETS := rpi4
 COMMON_TARGETS := qemu
 HOST_TARGETS := $(COMMON_TARGETS) $($(HOST_ARCH)_TARGETS)
@@ -54,6 +57,8 @@ qcow2_EXPORTFILE := disk.qcow2
 container_EXPORTFILE := container.tar
 repo_EXPORTFILE := repo
 rootfs_EXPORTFILE :=
+ext4_EXPORTFILE := rootfs.ext4
+tar_EXPORTFILE := rootfs.tar
 
 repo_CHOWNARGS := -R
 
@@ -62,6 +67,8 @@ container_EXPORT := container
 qcow2_EXPORT := qcow2
 repo_EXPORT := ostree-commit
 rootfs_EXPORT := rootfs
+ext4_EXPORT := ext4
+tar_EXPORT := tar
 
 help:
 	@echo
@@ -72,8 +79,12 @@ help:
 	@echo For example, to build a minimal qcow2 image with ostree support targeting qemu, run:
 	@echo '  make cs9-qemu-minimal-ostree.$(HOST_ARCH).qcow2'
 	@echo
-	@echo Other extensions, \".commit\" and \".rootfs\" are also supported, these create directory trees as
-	@echo output rather than images.
+	@echo Other extensions are also supported:
+	@echo \ \* .repo: Generate a repo with an ostree commit \(only works for ostree targets\)
+	@echo \ \* .rootfs: Generate a directory with the rootfs content
+	@echo \ \* .tar: Generate a tar file with the rootfs content
+	@echo \ \* .ext4: Generate an ext4 filesystem with the rootfs content  \(size from \"image_size\"\)
+	@echo \ \* .container: Generate an oci container image with the rootfs content
 	@echo
 	@echo You can pass variable declarations to osbuild-mpp with the DEFINES make variable.
 	@echo For example, to add extra rpms to a minimal regular image, use:
@@ -92,7 +103,7 @@ help:
 	@echo
 	@echo Available image targets \(for $(HOST_ARCH)\) are:
 	@echo
-	@$(foreach m, $(MANIFESTS), $(foreach t, $(HOST_TARGETS), $(foreach i,$(IMAGETYPES), echo -e "   "  $(call image-name,$m,$t,$i,$(HOST_ARCH)).qcow2 '\t' $(call image-name,$m,$t,$i,$(HOST_ARCH)).img'\t' $(call image-name,$m,$t,$i,$(HOST_ARCH)).container;)))
+	@$(foreach m, $(MANIFESTS), $(foreach t, $(HOST_TARGETS), $(foreach i,$(IMAGETYPES), echo -e "   "  $(call image-name,$m,$t,$i,$(HOST_ARCH)).[$(subst $(SPACE),$(COMMA),$(FORMATS))];)))
 	@echo
 
 # We pre-create all the toplevel dirs, so that they are owned by the user, not root (when created under sudo)
