@@ -216,5 +216,5 @@ pipelines:
         references:
         - name:rootfs
     options:
-      filename: rootfs.tar.gz
+      filename: rootfs.tar
       root-node: omit
