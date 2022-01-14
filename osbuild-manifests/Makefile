@@ -2,6 +2,12 @@ NULL=
 EMPTY :=
 SPACE := $(EMPTY) $(EMPTY)
 COMMA := ,
+ESCAPEDSPACE := \$(SPACE)
+ESCAPEDSPACE_REPLACEMENT := @@SPACE@@
+
+# This is useful to handle space in forech rules
+handle-escaped-space = $(subst $(ESCAPEDSPACE),$(ESCAPEDSPACE_REPLACEMENT),$1)
+apply-escaped-space = $(subst $(ESCAPEDSPACE_REPLACEMENT),$(SPACE),$1)
 
 HOST_ARCH:=$(shell arch)
 CURRENT_UIDGID := $(shell id -u):$(shell id -g)
@@ -24,6 +30,7 @@ endif
 OSBUILD_MPP=osbuild-mpp
 
 DEFINES=
+DEFINES_ARGS:=$(foreach def,$(call handle-escaped-space,$(DEFINES)),-D '$(call apply-escaped-space,$(def))')
 MPP_ARGS=
 OSBUILD_ARGS=
 
@@ -87,6 +94,7 @@ help:
 	@echo \ \* .container: Generate an oci container image with the rootfs content
 	@echo
 	@echo You can pass variable declarations to osbuild-mpp with the DEFINES make variable.
+	@echo Multiple defines are separated by space, if you need a space inside a value escape it using \"\\ \".
 	@echo For example, to add extra rpms to a minimal regular image, use:
 	@echo "  make cs9-qemu-minimal-regular.$(HOST_ARCH).qcow2 DEFINES='extra_rpms=[\"gdb\",\"strace\"]'"
 	@echo
@@ -120,7 +128,7 @@ $(BUILDDIR):
 # $4 == Arch
 define json-rule
 $(BUILDDIR)/$(call image-name,$1,$2,$3,$4).json: $1 $(BUILDDIR)
-	$(OSBUILD_MPP) -D image_type="\"$($3_IMAGETYPE)\"" -D arch=\"$4\" -D target="\"$2\"" $(foreach def,$(DEFINES),-D '$(def)') $(MPP_ARGS) $$< $$@
+	$(OSBUILD_MPP) -D image_type="\"$($3_IMAGETYPE)\"" -D arch=\"$4\" -D target="\"$2\"" $(DEFINES_ARGS) $(MPP_ARGS) $$< $$@
 .PHONY: $(BUILDDIR)/$(call image-name,$1,$2,$3,$4).json
 endef
 
