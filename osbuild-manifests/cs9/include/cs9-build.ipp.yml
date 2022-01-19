@@ -247,6 +247,25 @@ mpp-vars:
     vt61kpkXoRGxjTlc6h+69aidSg==
     =ls8J
     -----END PGP PUBLIC KEY BLOCK-----
+  fstab:
+    - uuid:
+        mpp-eval: rootfs_uuid
+      vfs_type: ext4
+      path: /
+      freq: 1
+      passno: 1
+    - label: ESP
+      vfs_type: vfat
+      path: /boot/efi
+      freq: 1
+      passno: 1
+    - uuid:
+        mpp-eval: bootfs_uuid
+      vfs_type: ext4
+      path: /boot
+      freq: 1
+      passno: 1
+
 mpp-define-image:
   size: $image_size
   table:

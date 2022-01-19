@@ -151,22 +151,7 @@ pipelines:
           ref:
             mpp-eval: ostree_ref
       filesystems:
-      - label: boot
-        vfs_type: ext4
-        path: /boot
-        freq: 1
-        passno: 1
-      - label: root
-        vfs_type: ext4
-        path: /
-        freq: 1
-        passno: 1
-      - label: ESP
-        vfs_type: vfat
-        path: /boot/efi
-        options: umask=0077,shortname=winnt
-        freq: 0
-        passno: 2
+        mpp-eval: fstab
   - type: org.osbuild.ostree.selinux
     options:
       deployment:
