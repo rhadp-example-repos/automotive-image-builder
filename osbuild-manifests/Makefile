@@ -99,11 +99,16 @@ help:
 	@echo "  make cs9-qemu-minimal-regular.$(HOST_ARCH).qcow2 DEFINES='extra_rpms=[\"gdb\",\"strace\"]'"
 	@echo
 	@echo There are some additional targets:
-	@echo   manifests: generates resolved json manifests for all images without building them.
-	@echo   clean_caches: Removes intermediate image build artifacts \(that improve rebuild speed\)
-	@echo   clean_downloads: Removes files downloaded during image builds
-	@echo   clean: Run clean_caches and clean_downloads
-	@echo   osbuildvm-images: Build a image that can be used to build images inside a VM
+	@echo  \ \ manifests: generates resolved json manifests for all images without building them.
+	@echo  \ \ clean_caches: Removes intermediate image build artifacts \(that improve rebuild speed\)
+	@echo  \ \ clean_downloads: Removes files downloaded during image builds
+	@echo  \ \ clean: Run clean_caches and clean_downloads
+	@echo  \ \ osbuildvm-images: Build a image that can be used to build images inside a VM
+	@echo
+	@echo There are also some common conversion rules:
+	@echo  \ \ foo.ext4.simg will build foo.ext4 and then convert it with img2simg
+	@echo  \ \ foo.simg will build foo.img and then convert it with img2simg
+	@echo  \ \ foo.tar.gz will build $foo.tar and then gzip it
 	@echo
 	@echo If you pass VM=1, then the images used from \"make osbuildvm-images\" will be used to do the
 	@echo actual building. This means that you don\'t need sudo rights to run osbuild, and it means
@@ -197,3 +202,14 @@ osbuildvm-images: $(BUILDDIR)
 	cp $(OUTPUTDIR)/osbuildvm/initramfs _build/osbuildvm-$(HOST_ARCH).initramfs
 	cp $(OUTPUTDIR)/osbuildvm/vmlinuz _build/osbuildvm-$(HOST_ARCH).vmlinuz
 	$(SUDO_$(HOST_ARCH)) rm -rf $(OUTPUTDIR)/osbuildvm
+
+%.ext4.simg : %.ext4
+	img2simg $< $@
+	rm $<
+
+%.simg : %.img
+	img2simg $< $@
+	rm $<
+
+%.tar.gz : %.tar
+	gzip -f $<
