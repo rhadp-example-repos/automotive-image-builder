@@ -146,6 +146,11 @@ qemu-system-x86_64 \
     -netdev user,id=n0,net=10.0.2.0/24,hostfwd=tcp::2222-:22
 ```
 
+For qemu-system-x86_64 target add this qemu command line option to enable booting with UEFI
+```
+-bios /usr/share/OVMF/OVMF_CODE.fd
+```
+
 To flash the image onto an SD card, run the following command:
 
 !!! important
@@ -181,7 +186,7 @@ Variables that may be interesting to override are:
     against a non-native architecture.
 * `cs9_baseurl`: The base url of the centos9 repo, can be overridden
     to use a local mirror.
-* `extra_rpms`: List of edditional rpms installed in most images,
+* `extra_rpms`: List of additional rpms installed in most images,
     defaults to empty.
 * `image_size`: The total size of the disk image.
 * `kernel_rpm`: The name of the kernel package used, defaults to
