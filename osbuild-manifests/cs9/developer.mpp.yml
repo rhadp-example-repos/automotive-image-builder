@@ -75,6 +75,10 @@ pipelines:
               - rsync
               - iputils
               - qemu-kvm
+              # Container tools
+              - podman
+              - buildah
+              - skopeo
           excludes:
           - dracut-config-rescue
   - type: org.osbuild.locale
