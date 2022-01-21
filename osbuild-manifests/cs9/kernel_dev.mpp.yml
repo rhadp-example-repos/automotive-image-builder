@@ -62,6 +62,8 @@ pipelines:
               - llvm
               - net-tools
               - numactl-devel
+              - openssh-clients
+              - openssh-server
               - perl-devel
               - python3-devel
               - python3-docutils
@@ -77,10 +79,16 @@ pipelines:
         guest:
           password:
             mpp-eval: guest_password
+  - type: org.osbuild.sshd.config
+    options:
+      config:
+        PermitRootLogin:
+          mpp-eval: ssh_permit_root_login
   - type: org.osbuild.systemd
     options:
       enabled_services:
       - NetworkManager.service
       - rngd.service
+      - sshd.service
 - mpp-import-pipelines:
     path: include/cs9-image.ipp.yml
