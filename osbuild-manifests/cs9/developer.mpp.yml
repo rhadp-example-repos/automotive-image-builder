@@ -73,6 +73,7 @@ pipelines:
               - python3-devel
               - python3-docutils
               - rsync
+              - iputils
               - qemu-kvm
           excludes:
           - dracut-config-rescue
