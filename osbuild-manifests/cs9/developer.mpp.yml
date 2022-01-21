@@ -42,7 +42,7 @@ pipelines:
               # Some convenience packages
               - bash-completion
               - dnf
-              - emacs
+              - emacs-nox
               - less
               - strace
               - sudo
