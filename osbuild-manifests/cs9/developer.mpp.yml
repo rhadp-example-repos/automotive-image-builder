@@ -31,6 +31,8 @@ pipelines:
             - mpp-eval: cs9_crb_repos
             - mpp-eval: cs9_automotive_repos
             - mpp-eval: target_repos
+            - - id: osbuild
+                baseurl: https://download.copr.fedorainfracloud.org/results/@osbuild/osbuild/centos-stream-9-$arch
           packages:
             mpp-join:
             - mpp-eval: base_rpms
@@ -43,10 +45,11 @@ pipelines:
               - emacs
               - less
               - strace
+              - sudo
               - vim
               - git
               - wget
-              # Dependencies to build the kernel's RPM
+              # Dependencies to build RPMs and images
               - rpm-build
               - hostname
               - openssl-devel
@@ -62,12 +65,15 @@ pipelines:
               - llvm
               - net-tools
               - numactl-devel
+              - osbuild-ostree
+              - osbuild-tools
               - openssh-clients
               - openssh-server
               - perl-devel
               - python3-devel
               - python3-docutils
               - rsync
+              - qemu-kvm
           excludes:
           - dracut-config-rescue
   - type: org.osbuild.locale

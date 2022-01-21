@@ -22,13 +22,13 @@ sudo dnf clean all
 # Build all images
 sudo make cs9-rpi4-neptune-ostree.aarch64.img > cs9-rpi4-neptune-ostree.aarch64.log
 sudo make cs9-rpi4-neptune-regular.aarch64.img > cs9-rpi4-neptune-regular.aarch64.log
-sudo make cs9-qemu-osbuilder-regular.aarch64.qcow2 > cs9-qemu-osbuilder-regular.aarch64.log
+sudo make cs9-qemu-developer-regular.aarch64.qcow2 > cs9-qemu-developer-regular.aarch64.log
 sudo make osbuildvm-images > osbuildvm-images.log
 
 # Compact them
 xz cs9-rpi4-neptune-ostree.aarch64.img &
 xz cs9-rpi4-neptune-regular.aarch64.img &
-xz cs9-qemu-osbuilder-regular.aarch64.qcow2 &
+xz cs9-qemu-developer-regular.aarch64.qcow2 &
 tar cfz osbuildvm-images.tar.gz _build/osbuildvm-aarch64.* &
 
 wait
