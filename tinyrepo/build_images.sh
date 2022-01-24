@@ -23,6 +23,7 @@ sudo dnf clean all
 sudo make cs9-rpi4-neptune-ostree.aarch64.img > cs9-rpi4-neptune-ostree.aarch64.log
 sudo make cs9-rpi4-neptune-regular.aarch64.img > cs9-rpi4-neptune-regular.aarch64.log
 sudo make cs9-qemu-developer-regular.aarch64.qcow2 > cs9-qemu-developer-regular.aarch64.log
+sudo make cs9-qemu-developer-regular.aarch64.container > cs9-qemu-developer-regular.aarch64.container.log
 sudo make osbuildvm-images > osbuildvm-images.log
 
 # Compact them
@@ -38,6 +39,7 @@ popd
 # Move the images to apache
 mkdir -p $HTMLROOT/images/$d
 cp $AUTOSIGREPO/osbuild-manifests/*.xz  $HTMLROOT/images/$d/
+cp $AUTOSIGREPO/osbuild-manifests/*.tar  $HTMLROOT/images/$d/
 cp $AUTOSIGREPO/osbuild-manifests/*.tar.gz  $HTMLROOT/images/$d/
 
 # Update the `latest` symlink
