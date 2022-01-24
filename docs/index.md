@@ -19,6 +19,9 @@ For more information about the SIG's charter, members, or goal, see the
 ## Artifacts
 
 The SIG currently has manifests for different operating systems and platforms.
+
+The latest product build (http://auto-product-build.s3-website-eu-west-1.amazonaws.com/latest/cs9/) contains RPMs for aarch64 and x86_64 from Appstream, BaseOS, and CRB.
+
 You can find them in the `osbuild-manifests` folder organized in the following
 structure:
 ```
