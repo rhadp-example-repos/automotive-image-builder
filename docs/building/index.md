@@ -1,7 +1,7 @@
 # Building Images
 
 The Automotive SIG uses [OSBuild](https://www.osbuild.org/) as the tool to build
-its images on CentOS Stream, Fedora, or RHEL hosts, with the option to build immutable images using [OSTree](https://ostreedev.github.io/ostree/introduction/).
+its images on CentOS Stream, Fedora, and RHEL hosts, with the option to build immutable images using [OSTree](https://ostreedev.github.io/ostree/introduction/).
 
 !!! note
 
@@ -77,13 +77,13 @@ about the differences between the files.
 ## Building the image
 
 Building an image is a two step process. First the selected yaml
-manifest, among with some options are passed to the `osbuild-mpp`
+manifest, along with some options, are passed to the `osbuild-mpp`
 tool. This will apply all the options and resolve all the package
 names against the repositories used, producing a json manifest with
 fully resolved versions of all the packages. This json file is fully
 self contained and produces reproducible builds.
 
-The manifest have multiple options that can affect how the manifest is
+The manifest has multiple options that can affect how the manifest is
 preprocessed. For example, there is an `image_type` variable that
 allows you to specify if you want an ostree or a dnf based
 system. There is also an `extra_rpms` variable that allows you to pass
@@ -182,7 +182,7 @@ make cs9-qemu-minimal-regular.x86_64.qcow2 DEFINES='extra_rpms=["gdb","strace"]'
 
 Variables that may be interesting to override are:
 
-* `arch`: The archticture to resolve against, allows preprocessing
+* `arch`: The architecture to resolve against, allows preprocessing
     against a non-native architecture.
 * `cs9_baseurl`: The base url of the centos9 repo, can be overridden
     to use a local mirror.
@@ -202,18 +202,18 @@ the resulting manifests.
 Other than the image types `*.img` and `*.qcow2` the Makefile also
 supports other targets like, `*.rootfs`, `*.repo` targets, `*.tar`,
 `*.container`, and `*.ext4`. These are useful e.g. during development
-and testing.  See the output of `make help for more details.
+and testing.  See the output of `make help` for more details.
 
 ## Building in a virtual machine
 
 The makefile setup supports running osbuild inside a virtual machine.
 There are two reasons you might want to do this. First of all, regular
 osbuild requires root/sudo permissions, as it does some system level
-operations like loopback mounts. Running it in a VM allows you do run
+operations like loopback mounts. Running it in a VM allows you to run
 it non-privileged. Secondly, if you are building an image for a
 different architecture, you can use qemu software emulation to make
 this work. Software emulation is slower than native, but for some
-usecases it can be fast enough.
+use cases it can be fast enough.
 
 Running `make osbuildvm-images` will use osbuild on the host to build
 the supporting image files (`_build/osbuildvm-*`) needed for
