@@ -42,7 +42,7 @@ MANIFESTS := $(wildcard cs9/*.mpp.yml)
 
 CHECKPOINTS=build
 IMAGETYPES := regular ostree direct
-FORMATS := img qcow2 container repo rootfs ext4 tar
+FORMATS := img qcow2 oci.tar repo rootfs ext4 tar
 aarch64_TARGETS := rpi4
 COMMON_TARGETS := qemu
 HOST_TARGETS := $(COMMON_TARGETS) $($(HOST_ARCH)_TARGETS)
@@ -61,7 +61,7 @@ direct_IMAGETYPE := directboot
 # export names for FORMATS
 img_EXPORTFILE := disk.img
 qcow2_EXPORTFILE := disk.qcow2
-container_EXPORTFILE := container.tar
+oci.tar_EXPORTFILE := container.tar
 repo_EXPORTFILE := repo
 rootfs_EXPORTFILE :=
 ext4_EXPORTFILE := rootfs.ext4
@@ -70,7 +70,7 @@ tar_EXPORTFILE := rootfs.tar
 repo_CHOWNARGS := -R
 
 img_EXPORT := image
-container_EXPORT := container
+oci.tar_EXPORT := container
 qcow2_EXPORT := qcow2
 repo_EXPORT := ostree-commit
 rootfs_EXPORT := rootfs
@@ -91,7 +91,7 @@ help:
 	@echo \ \* .rootfs: Generate a directory with the rootfs content
 	@echo \ \* .tar: Generate a tar file with the rootfs content
 	@echo \ \* .ext4: Generate an ext4 filesystem with the rootfs content  \(size from \"image_size\"\)
-	@echo \ \* .container: Generate an oci container image with the rootfs content
+	@echo \ \* oci.tar: Generate an oci container image with the rootfs content
 	@echo
 	@echo You can pass variable declarations to osbuild-mpp with the DEFINES make variable.
 	@echo Multiple defines are separated by space, if you need a space inside a value escape it using \"\\ \".
