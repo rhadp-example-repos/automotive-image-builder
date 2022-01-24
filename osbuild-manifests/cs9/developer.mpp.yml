@@ -74,6 +74,7 @@ pipelines:
               - python3-docutils
               - rsync
               - iputils
+              - iproute
               - qemu-kvm
               # Container tools
               - podman
