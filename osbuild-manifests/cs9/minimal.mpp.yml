@@ -17,6 +17,8 @@ pipelines:
       - mpp-eval: centos_gpg_key
       - mpp-eval: redhat_gpg_key
       disable_dracut: true
+      exclude:
+        docs: true
     inputs:
       packages:
         type: org.osbuild.files
