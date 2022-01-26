@@ -20,7 +20,7 @@ For more information about the SIG's charter, members, or goal, see the
 
 The SIG currently has manifests for different operating systems and platforms.
 
-The latest product build (http://auto-product-build.s3-website-eu-west-1.amazonaws.com/latest/cs9/) contains RPMs for aarch64 and x86_64 from Appstream, BaseOS, and CRB.
+The [latest product build] (http://auto-product-build.s3-website-eu-west-1.amazonaws.com/latest/cs9/) is defined by the manifests on the main branch based on the latest successful build from automotive-sig/main, and it contains RPMs for aarch64 and x86_64 from Appstream, BaseOS, and CRB.
 
 You can find them in the `osbuild-manifests` folder organized in the following
 structure:
