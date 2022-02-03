@@ -78,6 +78,8 @@ pipelines:
               - iputils
               - iproute
               - qemu-kvm
+              - fuse-devel
+              - kernel-rpm-macros
               # Container tools
               - podman
               - buildah
