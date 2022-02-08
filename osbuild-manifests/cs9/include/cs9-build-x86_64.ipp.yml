@@ -56,6 +56,7 @@ pipelines:
           - rpm-ostree
           - selinux-policy-targeted
           - shim-x64
+          - skopeo
           - systemd
           - tar
           - xz
