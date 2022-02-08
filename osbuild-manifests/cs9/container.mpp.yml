@@ -1,0 +1,105 @@
+version: '2'
+mpp-vars:
+  name: minimal
+pipelines:
+- mpp-import-pipelines:
+    path: include/cs9-build.ipp.yml
+- name: rootfs
+  build: name:build
+  stages:
+  - type: org.osbuild.kernel-cmdline
+    options:
+      root_fs_uuid:
+        mpp-eval: rootfs_uuid
+      kernel_opts:
+        mpp-eval: ''' '' .join(kernel_opts)'
+  - type: org.osbuild.rpm
+    options:
+      gpgkeys:
+      - mpp-eval: centos_gpg_key
+      - mpp-eval: redhat_gpg_key
+      disable_dracut: true
+    inputs:
+      packages:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-depsolve:
+          architecture: $arch
+          module-platform-id: platform:el9
+          baseurl: $cs9_baseurl/BaseOS/$arch/os/
+          repos:
+            mpp-join:
+            - mpp-eval: cs9_repos
+            - mpp-eval: cs9_automotive_repos
+            - mpp-eval: target_repos
+            - - id: copr-quadlet
+                baseurl: https://download.copr.fedorainfracloud.org/results/alexl/quadlet/centos-stream-9-$arch/
+          packages:
+            mpp-join:
+            - mpp-eval: base_rpms
+            - mpp-eval: image_rpms
+            - mpp-eval: extra_rpms
+            - - podman
+              - quadlet
+              - curl
+              - emacs
+              - dnf
+          excludes:
+          - dracut-config-rescue
+  - type: org.osbuild.skopeo
+    inputs:
+      images:
+        type: org.osbuild.containers
+        origin: org.osbuild.source
+        mpp-resolve-images:
+          images:
+            - source: registry.access.redhat.com/ubi8/nginx-120
+              name: localhost/ubi8-nginx
+    options:
+      destination:
+        type: containers-storage
+  - type: org.osbuild.mkdir
+    options:
+      paths:
+      - path: /etc/containers/systemd
+        parents: true
+      - path: /srv/www
+        parents: true
+  - type: org.osbuild.copy
+    inputs:
+      inlinefile:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: ubi8-nginx.container
+          path: ../files/ubi8-nginx.container
+      inlinefile2:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: hello.html
+          text: "<html><body>Hello, world!</body></html>"
+    options:
+      paths:
+      - from:
+          mpp-format-string: input://inlinefile/{embedded['ubi8-nginx.container']}
+        to: tree:///etc/containers/systemd/ubi8-nginx.container
+      - from:
+          mpp-format-string: input://inlinefile2/{embedded['hello.html']}
+        to: tree:///srv/www/hello.html
+  - type: org.osbuild.locale
+    options:
+      language: en_US.UTF-8
+  - type: org.osbuild.users
+    options:
+      users:
+        guest:
+          password:
+            mpp-eval: guest_password
+  - type: org.osbuild.systemd
+    options:
+      enabled_services:
+      - NetworkManager.service
+      - rngd.service
+- mpp-import-pipelines:
+    path: include/cs9-image.ipp.yml

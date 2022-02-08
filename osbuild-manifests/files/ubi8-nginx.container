@@ -1,0 +1,16 @@
+[Unit]
+Description=UBI8 based nginx container
+
+[Container]
+Image=ubi8-nginx
+Exec=nginx -g "daemon off;"
+Volume=/srv/www:/opt/app-root/src:Z
+PublishPort=8080:8080
+User=1001
+Timezone=UTC
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
