@@ -44,6 +44,19 @@ pipelines:
               - curl
           excludes:
           - dracut-config-rescue
+  - type: org.osbuild.copy
+    inputs:
+      inlinefile:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: storage.conf
+          path: ../files/storage.conf
+    options:
+      paths:
+      - from:
+          mpp-format-string: input://inlinefile/{embedded['storage.conf']}
+        to: tree:///etc/containers/storage.conf
   - type: org.osbuild.skopeo
     inputs:
       images:
@@ -56,6 +69,7 @@ pipelines:
     options:
       destination:
         type: containers-storage
+        storage-path: /usr/share/containers/storage
   - type: org.osbuild.mkdir
     options:
       paths:
