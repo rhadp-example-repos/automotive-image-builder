@@ -169,6 +169,7 @@ Some variables you might want to override include:
 * `kernel_rpm`: The name of the kernel package used; defaults to `kernel-auto`.
 * `ostree_ref`: The name used for the ref when you commit to an `ostree` repo.
 * `display_server`: The name of the display server (wayland or xorg); defaults to wayland.
+* `static_uuids`: Set to true to use static default uuids for fileystems rather than generated
 
 ## Using `make manifests`
 
