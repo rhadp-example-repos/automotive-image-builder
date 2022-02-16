@@ -7,8 +7,9 @@ repo_name: automotive-sig
 copyright: © Red Hat
 nav:
   - Home: index.md
-  - Building Images: building/index.md
-  - "Downloading Images": download_images.md
+  - Contributing to the repository: contributing/contributing-to-auto-sig-repo.md
+  - Building images: building/index.md
+  - "Downloading images": download_images.md
   - Definitions: definitions.md
 
 theme:
