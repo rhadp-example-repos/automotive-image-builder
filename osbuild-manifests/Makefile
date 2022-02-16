@@ -46,7 +46,7 @@ FORMATS := img qcow2 oci.tar repo rootfs ext4 tar
 aarch64_TARGETS := rpi4
 COMMON_TARGETS := qemu
 HOST_TARGETS := $(COMMON_TARGETS) $($(HOST_ARCH)_TARGETS)
-ALL_TARGETS := $(aarch64_TARGETS) $(COMMON_TARGETS)
+ALL_TARGETS := $(COMMON_TARGETS) $(foreach a,$(ARCHES), $($(a)_TARGETS))
 
 manifest-get-name = $(basename $(basename $(notdir $1)))
 manifest-get-dir = $(notdir $(patsubst %/,%,$(dir $1)))
@@ -138,10 +138,10 @@ $(BUILDDIR)/$(call image-name,$1,$2,$3,$4).json: $1 $(BUILDDIR)
 endef
 
 $(foreach m, $(MANIFESTS), \
- $(foreach t,$(ALL_TARGETS), \
+ $(foreach a,$(ARCHES), \
+  $(foreach t,$(COMMON_TARGETS) $($(a)_TARGETS), \
    $(foreach i,$(IMAGETYPES), \
-    $(foreach a,$(ARCHES), \
-     $(eval $(call json-rule,$m,$t,$i,$a))))))
+    $(eval $(call json-rule,$m,$t,$i,$a))))))
 
 # Template rule for producing image from json manifest
 # $1 == Manifest path
@@ -160,14 +160,14 @@ $(call image-name,$1,$2,$3,$4).$5: $(BUILDDIR)/$(call image-name,$1,$2,$3,$4).js
 endef
 
 $(foreach m, $(MANIFESTS), \
-  $(foreach t, $(ALL_TARGETS), \
-    $(foreach f,$(FORMATS), \
-     $(foreach a,$(ARCHES), \
-       $(foreach i,$(IMAGETYPES), \
-	$(eval $(call image-rule,$m,$t,$i,$a,$f)))))))
+ $(foreach a,$(ARCHES), \
+  $(foreach t, $(COMMON_TARGETS) $($(a)_TARGETS), \
+   $(foreach f,$(FORMATS), \
+    $(foreach i,$(IMAGETYPES), \
+     $(eval $(call image-rule,$m,$t,$i,$a,$f)))))))
 
 # Rule to pre-generate all manifests
-manifests: $(foreach m, $(MANIFESTS), $(foreach t,$(ALL_TARGETS), $(foreach i,$(IMAGETYPES), $(foreach a,$(ARCHES), $(BUILDDIR)/$(call image-name,$m,$t,$i,$a).json))))
+manifests: $(foreach m, $(MANIFESTS), $(foreach a,$(ARCHES), $(foreach t, $(COMMON_TARGETS) $($(a)_TARGETS), $(foreach i,$(IMAGETYPES), $(BUILDDIR)/$(call image-name,$m,$t,$i,$a).json))))
 
 define packages-rule
 .PHONY: packages-$(call manifest-get-name,$1).json
