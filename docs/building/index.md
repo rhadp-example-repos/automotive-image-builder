@@ -62,23 +62,25 @@ Each folder may include a `README` file with information about the differences b
 
 ## Building the image
 
-You can build an image manually or by using makefile. 
+You can build an image manually or by using makefile.
 
 ### Building the image manually
 
-Building an image manually is a two-step process. 
+Building an image manually is a two-step process.
 
 1. Pass the selected YAML manifest and some options to the `osbuild-mpp` tool.
 
-   This applies the options and resolves the package names against the repositories used to produce a JSON manifest with fully resolved versions of all the packages. This JSON file is fully self contained and produces reproducible builds.
+ This applies the options and resolves the package names against the repositories used to produce a JSON manifest with fully resolved versions of all the packages. This JSON file is fully self contained and produces reproducible builds.
 
-   The manifest has multiple options that can affect how the manifest is preprocessed, for example:
+ The manifest has multiple options that can affect how the manifest is preprocessed, for example:
+
       * `image_type` specifies whether the system is `ostree` or `dnf` based.
       * `extra_rpms` passes extra RPMs to the built image.
 
 2. After preprocessing, pass the resolved manifest to osbuild, which builds the image in a series of steps.
 
-   When you run osbuild you can choose which steps to export. Typically, we export either the step called _image_ or the step called _qcow2_:
+ When you run osbuild you can choose which steps to export. Typically, we export either the step called _image_ or the step called _qcow2_:
+
       * Image is a raw image that can be written to disk.
       * QCOW2 is a format used by QEMU for image files.
 
@@ -94,7 +96,7 @@ You can simplify the build process by using makefile.
 ```
 make cs9-qemu-minimal-ostree.x86_64.qcow2
 ```
-This command preprocesses and builds the manifest for the current architecture and defines the image type to be `ostree`. This results in a file named `cs9-qemu-minimal-ostree.x86_64.qcow2`, which is stored in the current directory.
+ This command preprocesses and builds the manifest for the current architecture and defines the image type to be `ostree`. This results in a file named `cs9-qemu-minimal-ostree.x86_64.qcow2`, which is stored in the current directory.
 
 2. You can use makefile to build RAW images as well. To see the full list of images available for the current architecture:
 ```
