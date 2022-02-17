@@ -1,0 +1,18 @@
+[Unit]
+Description=Demo nginx container
+
+[Container]
+Image=localhost/nginx
+PublishPort=80:80
+User=0
+AddCapability=SETUID
+AddCapability=SETGID
+AddCapability=CHOWN
+AddCapability=NET_BIND_SERVICE
+Timezone=UTC
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

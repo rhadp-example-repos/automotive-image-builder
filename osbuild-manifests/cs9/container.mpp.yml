@@ -65,8 +65,9 @@ pipelines:
         origin: org.osbuild.source
         mpp-resolve-images:
           images:
-            - source: registry.access.redhat.com/ubi8/nginx-120
-              name: localhost/ubi8-nginx
+            - source: registry.gitlab.com/redhat/automotive/automotive-sig/demo/nginx
+              tag: latest
+              name: localhost/nginx
     options:
       destination:
         type: containers-storage
@@ -76,30 +77,19 @@ pipelines:
       paths:
       - path: /etc/containers/systemd
         parents: true
-      - path: /srv/www
-        parents: true
   - type: org.osbuild.copy
     inputs:
       inlinefile:
         type: org.osbuild.files
         origin: org.osbuild.source
         mpp-embed:
-          id: ubi8-nginx.container
-          path: ../files/ubi8-nginx.container
-      inlinefile2:
-        type: org.osbuild.files
-        origin: org.osbuild.source
-        mpp-embed:
-          id: hello.html
-          text: "<html><body>Hello, world!</body></html>"
+          id: nginx.container
+          path: ../files/nginx.container
     options:
       paths:
       - from:
-          mpp-format-string: input://inlinefile/{embedded['ubi8-nginx.container']}
-        to: tree:///etc/containers/systemd/ubi8-nginx.container
-      - from:
-          mpp-format-string: input://inlinefile2/{embedded['hello.html']}
-        to: tree:///srv/www/hello.html
+          mpp-format-string: input://inlinefile/{embedded['nginx.container']}
+        to: tree:///etc/containers/systemd/nginx.container
   - type: org.osbuild.locale
     options:
       language: en_US.UTF-8

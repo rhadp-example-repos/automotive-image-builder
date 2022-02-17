@@ -1,0 +1,17 @@
+PREFIX=registry.gitlab.com/redhat/automotive/automotive-sig
+IMAGE=${PREFIX}/demo/nginx
+
+build:
+	podman build --squash -t ${IMAGE}:latest-$$(arch) .
+
+push:
+	podman push ${IMAGE}:latest-$$(arch)
+
+multiarch:
+	podman pull ${IMAGE}:latest-aarch64
+	podman pull ${IMAGE}:latest-x86_64
+	podman manifest rm ${IMAGE}:latest || true
+	podman manifest create ${IMAGE}:latest ${IMAGE}:latest-x86_64 ${IMAGE}:latest-aarch64
+
+push-multiarch:
+	podman manifest push --all --format v2s2 ${IMAGE}:latest docker://${IMAGE}:latest

@@ -1,0 +1,8 @@
+FROM centos:stream9-development
+
+RUN dnf install -y nginx
+
+COPY hello.html /usr/share/nginx/html
+EXPOSE 70
+
+CMD ["/usr/sbin/nginx", "-g", "daemon off;"]
