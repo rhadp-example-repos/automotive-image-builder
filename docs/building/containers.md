@@ -56,7 +56,7 @@ container at system boot, you just put a file in `/etc/containers/systemd`
 The `containers` directory has some example containers that are used
 in the sample images. They are currently manually built, and then
 stored in the [automotive-sig
-registry])(https://gitlab.com/redhat/automotive/automotive-sig/container_registry)
+registry](https://gitlab.com/redhat/automotive/automotive-sig/container_registry)
 for use by the sample manifests.
 
 Currently the container demoed are:
