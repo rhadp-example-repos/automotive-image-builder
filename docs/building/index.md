@@ -206,3 +206,4 @@ For more information, see:
 
 * [Updating an OSTree-based image](updating_ostree.md)
 * [Customizing your OSBuild template](customize_template.md)
+* [Embedding Containers in images](containers.md)
