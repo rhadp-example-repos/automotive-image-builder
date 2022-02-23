@@ -10,6 +10,7 @@ nav:
   - Contributing to the repository: contributing/contributing-to-auto-sig-repo.md
   - Building images: building/index.md
   - "Downloading images": download_images.md
+  - "Downloading RPMs": downlading_rpms.md
   - Definitions: definitions.md
 
 theme:
