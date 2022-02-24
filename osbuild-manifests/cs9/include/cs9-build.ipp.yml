@@ -24,7 +24,7 @@ mpp-vars:
   default_ostree_ref: cs9/$arch/$target-$name
   default_osname: centos
   default_uefi_vendor: centos
-  default_kernel_rpm: kernel-auto
+  default_kernel_rpm: kernel-automotive
   default_partition_label: gpt
   default_extra_rpms: []
   default_target_repos: []
