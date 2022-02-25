@@ -8,6 +8,7 @@ copyright: © Red Hat
 nav:
   - Home: index.md
   - Contributing to the repository: contributing/contributing-to-auto-sig-repo.md
+  - Content definition: content_definition.md
   - Building images: building/index.md
   - "Downloading images": download_images.md
   - "Downloading RPMs": downloading_rpms.md
