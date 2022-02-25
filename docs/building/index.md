@@ -1,4 +1,4 @@
-# Building Images
+# Building images
 
 The Automotive SIG uses [OSBuild](https://www.osbuild.org/) as the tool to build
 its images on CentOS Stream, Fedora, and RHEL hosts, with the option to build immutable images using [OSTree](https://ostreedev.github.io/ostree/introduction/).
@@ -189,6 +189,7 @@ These targets are useful during development and testing. For more information, r
 ## Building in a virtual machine
 
 The makefile configuration supports running osbuild inside a virtual machine. There are two scenarios in which this is beneficial:
+
 * Standard osbuild requires root/sudo permissions, because it performs some system-level operations such as loopback mounts. Running osbuild in a VM allows you to run it non-privileged.
 * When you build an image for a different architecture, you can use QEMU software emulation to make this work. Software emulation is slower than native, but for some use cases it is sufficient.
 
