@@ -61,10 +61,10 @@ The Automotive SIG repositories can be browsed at:
 [https://buildlogs.centos.org/9-stream/automotive/](https://buildlogs.centos.org/9-stream/automotive/).
 
 They will include packages that are not part of Red Hat's automotive offering but
-are of interest to SIG members. These packages may be on work in progress that
-is being worked on with the idea that it will land in the Automotive Stream
-Distribution (and thus Red Hat's automotive offering) or purely R&D, experimental
-or integration work that will remain outside of the Automotive Stream Distribution.
+are of interest to SIG members. These packages may be a work in progress with
+the idea that it will land in the Automotive Stream Distribution (and thus Red
+Hat's automotive offering) or purely R&D, experimental or integration work that
+will remain outside of the Automotive Stream Distribution.
 
 Any and every SIG members can ask for packages to be distributed via these
 repositories as long as they meet [CentOS' requirements for SIG](https://wiki.centos.org/SpecialInterestGroup#Requirements)
