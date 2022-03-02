@@ -13,7 +13,7 @@ The Automotive SIG is working on several artifacts:
 
 * The Automotive Stream Distribution, this project is a binary distribution
   developed within the SIG that serves as a public, in-development preview of
-  the upcoming Red Hat in-vehicle OS.
+  the upcoming Red Hat In-Vehicle Operating System.
 * The Automotive SIG repositories, these are RPM repositories produced by the SIG
   to enhance the Automotive Stream Distribution. New packages or features can be
   developed and hosted there and thus expand the capabilities of the Automotive
