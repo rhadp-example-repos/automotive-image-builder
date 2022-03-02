@@ -40,10 +40,10 @@ product down the line. Like CentOS Stream, Automotive Stream Distribution will
 be opened to contributions, using similar mechanisms.
 
 You can learn more about how the content of the Automotive Stream Distribution
-is gathered in our page about [Content Definition](https://54.247.135.67/automotive/content_definition/).
+is gathered in our page about [Content Definition](http://54.247.135.67/automotive/content_definition/).
 
 You can browse the latest version of the Automotive Stream Distribution at:
-[https://54.247.135.67](https://54.247.135.67).
+[http://54.247.135.67](http://54.247.135.67).
 
 You can also download a local copy of this repository using `wget`:
 
