@@ -11,7 +11,6 @@ nav:
   - Content definition: content_definition.md
   - Building images: building/index.md
   - "Downloading images": download_images.md
-  - "Downloading RPMs": downloading_rpms.md
   - Definitions: definitions.md
 
 theme:
