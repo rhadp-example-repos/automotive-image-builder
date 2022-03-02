@@ -26,8 +26,8 @@ The Automotive SIG is working on several artifacts:
 
 ### The Automotive Stream Distribution
 
-The Automotive Stream Distribution is an upstream to the Red Hat automotive
-product, just as CentOS Stream is to RHEL. The Automotive Stream Distribution
+The Automotive Stream Distribution (AutoSD) is an upstream to the Red Hat
+automotive product, just as CentOS Stream is to RHEL. The Automotive Stream Distribution
 will be based on CentOS Stream with a few divergences where it makes sense/is
 required. The first of these divergences will be the Linux kernel. AutoSD will
 rely on the kernel-automotive package rather than CentOS Stream's kernel package.
