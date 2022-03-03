@@ -1,0 +1,11 @@
+*.src.rpm
+*~
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+radio-client
+radio-service
+engine-service
+auto-apps-*.tar.gz
+auto-apps.spec
+Makefile
