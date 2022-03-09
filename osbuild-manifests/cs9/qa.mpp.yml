@@ -30,6 +30,8 @@ pipelines:
           baseurl: $cs9_baseurl/BaseOS/$arch/os/
           repos:
             mpp-join:
+            - - id: EPEL
+                baseurl: https://dl.fedoraproject.org/pub/epel/9/Everything/$arch/
             - mpp-eval: cs9_repos
             - mpp-eval: cs9_automotive_repos
             - mpp-eval: target_repos
@@ -39,10 +41,17 @@ pipelines:
             - mpp-eval: base_rpms
             - mpp-eval: image_rpms
             - mpp-eval: extra_rpms
-            - - dnf
-              - sudo
+            - - sudo
               - openssh-clients
               - openssh-server
+              - dnf
+              - rsync
+              - wget
+              - git
+              - time
+              - nfs-utils
+              - ncurses
+              - beakerlib
           excludes:
           - dracut-config-rescue
   - type: org.osbuild.locale
