@@ -62,6 +62,8 @@ git push myfork my-branch
 3. From the Automotive-SIG repository, click *New merge request*.
 4. Select the main branch of the Automotive-SIG repository as the target.
 5. Select the following merge options:
+
   - Delete source branch when merge request is accepted.
   - Squash commits when merge request is accepted.
+  
 6. Request a review from someone with maintainer rights so that they can review and merge your changes.
