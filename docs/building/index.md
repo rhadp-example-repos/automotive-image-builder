@@ -17,7 +17,7 @@ its images on CentOS Stream, Fedora, and RHEL hosts, with the option to build im
 
 To configure your system you must install osbuild and the related tools. We use a newer version of these tools than what is generally available in the distributions, so you must configure a custom repository.
 
-## Using make manifests
+### Installing osbuild on CentOS Stream 8
 
 1. Enable the osbuild repo:
 ```
