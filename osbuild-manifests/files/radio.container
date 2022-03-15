@@ -1,0 +1,16 @@
+[Unit]
+Description=Demo radio service container
+Requires=routingmanagerd.socket
+Wants=engine.service
+
+[Container]
+Image=localhost/auto-apps
+Volume=/run/vsomeip:/run/vsomeip
+Exec=/usr/bin/radio-service
+Timezone=
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

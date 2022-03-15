@@ -35,6 +35,8 @@ pipelines:
             - mpp-eval: target_repos
             - - id: copr-quadlet
                 baseurl: https://download.copr.fedorainfracloud.org/results/alexl/quadlet/centos-stream-9-$arch/
+            - - id: copr-sample-apps
+                baseurl: https://download.copr.fedorainfracloud.org/results/alexl/cs9-sample-images/centos-stream-9-$arch/
           packages:
             mpp-join:
             - mpp-eval: base_rpms
@@ -43,6 +45,8 @@ pipelines:
             - - podman
               - quadlet
               - curl
+              - vsomeip3-routingmanager
+              - auto-apps
           excludes:
           - dracut-config-rescue
   - type: org.osbuild.copy
@@ -65,9 +69,9 @@ pipelines:
         origin: org.osbuild.source
         mpp-resolve-images:
           images:
-            - source: registry.gitlab.com/redhat/automotive/automotive-sig/demo/nginx
+            - source: registry.gitlab.com/redhat/automotive/automotive-sig/demo/auto-apps
               tag: latest
-              name: localhost/nginx
+              name: localhost/auto-apps
     options:
       destination:
         type: containers-storage
@@ -83,13 +87,22 @@ pipelines:
         type: org.osbuild.files
         origin: org.osbuild.source
         mpp-embed:
-          id: nginx.container
-          path: ../files/nginx.container
+          id: radio.container
+          path: ../files/radio.container
+      inlinefile2:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: engine.container
+          path: ../files/engine.container
     options:
       paths:
       - from:
-          mpp-format-string: input://inlinefile/{embedded['nginx.container']}
-        to: tree:///etc/containers/systemd/nginx.container
+          mpp-format-string: input://inlinefile/{embedded['radio.container']}
+        to: tree:///etc/containers/systemd/radio.container
+      - from:
+          mpp-format-string: input://inlinefile2/{embedded['engine.container']}
+        to: tree:///etc/containers/systemd/engine.container
   - type: org.osbuild.locale
     options:
       language: en_US.UTF-8
