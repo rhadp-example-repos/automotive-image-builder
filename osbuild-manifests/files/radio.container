@@ -7,7 +7,6 @@ Wants=engine.service
 Image=localhost/auto-apps
 Volume=/run/vsomeip:/run/vsomeip
 Exec=/usr/bin/radio-service
-Timezone=
 
 [Service]
 Restart=always

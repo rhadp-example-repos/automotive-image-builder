@@ -6,7 +6,6 @@ Requires=routingmanagerd.socket
 Image=localhost/auto-apps
 Volume=/run/vsomeip:/run/vsomeip
 Exec=/usr/bin/engine-service
-Timezone=
 
 [Service]
 Restart=always
