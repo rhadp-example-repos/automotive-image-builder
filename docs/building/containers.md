@@ -3,21 +3,22 @@
 ## Background
 
 The automotive industry is moving towards a new architectural concept
-called "Software Defined Vehicles" (SDV). Part of this is a software model
-that is similar to the micro-server architecture used in the cloud. In
-this model, the various services and application running in the car
-are separate, isolated entities that expose a well defined
+called "Software Defined Vehicles" (SDV). Part of this is a software
+model that is similar to the micro-server architecture used in the
+cloud. In this model, the various services and application running in
+the car are separate, isolated entities that expose well defined
 interfaces. The whole system is then made of a large collection of
-such services which interact using some form of networking protocol,
-most commonly [SOME/IP](https://some-ip.com/), which is a message
-based protocol with a [pub/sub
+such services which interact using some form of networking
+protocol. In automotive this most commonly uses
+[SOME/IP](https://some-ip.com/), which is a message based protocol
+with a [pub/sub
 model](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern)
 running on top of IP and/or unix domain sockets.
 
 While the SDV model can be implemented with traditional methods, it
-(similarly to micro-services) lends itself extremely well to the use of
-containers, because the isolation aspects of containers matches well
-to the separated services and the requirement of well-defined declared
+(similarly to micro-services) lends itself extremely well to the use
+of containers, because the isolation aspects of containers matches
+well to the separated services and the requirement of well-defined
 interfaces between containers.
 
 In addition, containers have other advantages, such as the ability for
