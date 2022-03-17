@@ -44,10 +44,11 @@ There is also a makefile that allows building rpms and srpms:
 ```
 
 These rpms, in addition to required dependencies (dlt-daemon,
-vsomeip3) are pre-build for cs9 it [this copr
+vsomeip3) are pre-build for cs9 it in [this copr
 repo](https://copr.fedorainfracloud.org/coprs/alexl/cs9-sample-images/packages/).
 
-Additionally, there is a [Containerfile.auto-apps] file that allows
+Additionally, there is a
+[Containerfile.auto-apps](Containerfile.auto-apps) file that allows
 installing these apps into a container, using the above rpms. You can
 build it like this:
 

@@ -38,11 +38,13 @@ parts of the car. There is also a command line application
 `radio-client` which talks to the services displaying the current
 status and allowing you to control the radio. For more details about
 these apps, see the
-[README](https://gitlab.com/redhat/automotive/automotive-sig/-/blob/someip-samples/sample-apps/README.md).
+[README](https://gitlab.com/redhat/automotive/automotive-sig/-/blob/main/sample-apps/README.md).
 
 The image uses the [COVESA vsomeip](https://github.com/COVESA/vsomeip)
 implementation of SOME/IP as [packaged in
-Fedora](https://src.fedoraproject.org/rpms/vsomeip3/tree/rawhide). In
+Fedora](https://src.fedoraproject.org/rpms/vsomeip3/tree/rawhide), and
+rebuilt in
+[COPR](https://copr.fedorainfracloud.org/coprs/alexl/cs9-sample-images/). In
 particular, the image starts the vsomeip routing manager
 (non-contained), using systemd socket activation with a custom
 [SELinux
@@ -53,18 +55,19 @@ After boot there are two container-based systemd services running,
 `radio.service` and `engine.service`, which are running the two sample
 services.
 
-To test the image, log in and run the `radio-client` tool from a
-terminal. In addition you can check the status of the services with
-systemctl and journalctl.
+To test the services run the `radio-client` tool from a terminal. In
+addition you can check the status of the services with systemctl and
+journalctl.
 
-To build the sample image (on x86) into a qemu image you can do:
+To build and run the sample image (on x86) into a qemu image, run this:
 
 ```
 $ cd osbuild-manifests
 $ make cs9-qemu-container-regular.x86_64.qcow2
+$ ./runvm cs9-qemu-container-regular.x86_64.qcow2
 ```
 
-Then boot the image in a VM and try some of these commands:
+Then log in as user `root`, password `password` and try some of these commands:
 
 ```
 # radio-client
@@ -122,4 +125,4 @@ unit file. Using this makes it very easy to automatically start a
 container at system boot, you just put a file in `/etc/containers/systemd`
 
 As an example of a quadlet container file, here is the [radio service
-config](https://gitlab.com/redhat/automotive/automotive-sig/-/blob/someip-samples/osbuild-manifests/files/radio.container).
+config](https://gitlab.com/redhat/automotive/automotive-sig/-/blob/main/osbuild-manifests/files/radio.container).
