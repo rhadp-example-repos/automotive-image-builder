@@ -98,6 +98,9 @@ help:
 	@echo For example, to add extra rpms to a minimal regular image, use:
 	@echo "  make cs9-qemu-minimal-regular.$(HOST_ARCH).qcow2 DEFINES='extra_rpms=[\"gdb\",\"strace\"]'"
 	@echo
+	@echo To easily run the image with qemu, you can use the included runvm tool, like:
+	@echo \ \ ./runvm cs9-qemu-minimal-regular.$(HOST_ARCH).qcow2
+	@echo
 	@echo There are some additional targets:
 	@echo  \ \ manifests: generates resolved json manifests for all images without building them.
 	@echo  \ \ clean_caches: Removes intermediate image build artifacts \(that improve rebuild speed\)

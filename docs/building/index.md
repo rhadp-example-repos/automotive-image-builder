@@ -98,9 +98,9 @@ You can simplify the build process by using makefile.
 
 1. From the `osbuild-manifest` directory, run `make`. Be sure to use the correct image name as the target:
 ```
-make cs9-qemu-minimal-ostree.x86_64.qcow2
+make cs9-qemu-minimal-regular.x86_64.qcow2
 ```
- This command preprocesses and builds the manifest for the current architecture and defines the image type to be `ostree`. This results in a file named `cs9-qemu-minimal-ostree.x86_64.qcow2`, which is stored in the current directory.
+ This command preprocesses and builds the manifest for the current architecture and defines the image type to be `ostree`. This results in a file named `cs9-qemu-minimal-regular.x86_64.qcow2`, which is stored in the current directory.
 
 2. You can use makefile to build RAW images as well. To see the full list of images available for the current architecture:
 ```
@@ -126,23 +126,10 @@ You can either run the image in QEMU/KVM or flash the image onto an SD card.
 
 ### Booting the image in QEMU/KVM
 
-1. Boot the QCOW2 image in `virt-manager` or run it directly through QEMU:
+1. Boot the QCOW2 image in `virt-manager` or run it directly through QEMU using the included tool (`runvm`):
 
 ```
-qemu-system-x86_64 \
-    -machine q35 \
-    -enable-kvm \
-    -snapshot \
-    -m 2048 \
-    -drive file=cs9-qemu-minimal-regular.x86_64.qcow2 \
-    -cpu qemu64,+ssse3,+sse4.1,+sse4.2,+popcnt \
-    -device virtio-net-pci,netdev=n0,mac=FE:45:5b:75:69:d5 \
-    -netdev user,id=n0,net=10.0.2.0/24,hostfwd=tcp::2222-:22
-```
-2. For `qemu-system-x86_64` target, add this QEMU command line option to enable booting with UEFI:
-
-```
--bios /usr/share/OVMF/OVMF_CODE.fd
+./runvm cs9-qemu-minimal-regular.x86_64.qcow2
 ```
 
 ### Flashing the image onto an SD card
