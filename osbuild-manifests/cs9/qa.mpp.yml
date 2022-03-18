@@ -35,6 +35,7 @@ pipelines:
             - mpp-eval: cs9_repos
             - mpp-eval: cs9_automotive_repos
             - mpp-eval: target_repos
+            - mpp-eval: extra_repos
             - []
           packages:
             mpp-join:

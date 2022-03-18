@@ -34,6 +34,7 @@ pipelines:
             - mpp-eval: cs9_crb_repos
             - mpp-eval: cs9_automotive_repos
             - mpp-eval: target_repos
+            - mpp-eval: extra_repos
             - - id: osbuild
                 baseurl: https://download.copr.fedorainfracloud.org/results/@osbuild/osbuild/centos-stream-9-$arch
           packages:

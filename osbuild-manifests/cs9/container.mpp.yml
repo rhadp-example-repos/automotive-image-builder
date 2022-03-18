@@ -33,6 +33,7 @@ pipelines:
             - mpp-eval: cs9_repos
             - mpp-eval: cs9_automotive_repos
             - mpp-eval: target_repos
+            - mpp-eval: extra_repos
             - - id: copr-quadlet
                 baseurl: https://download.copr.fedorainfracloud.org/results/alexl/quadlet/centos-stream-9-$arch/
             - - id: copr-sample-apps
