@@ -64,6 +64,7 @@ pipelines:
         guest:
           password:
             mpp-eval: guest_password
+          groups: ["wheel"]
   - type: org.osbuild.sshd.config
     options:
       config:
@@ -75,5 +76,17 @@ pipelines:
       - NetworkManager.service
       - rngd.service
       - sshd.service
+  - type: org.osbuild.yum.repos
+    options:
+      filename: epel.repo
+      repos: [
+       {
+          id: epel,
+          name: "EPEL",
+          baseurl: ["https://dl.fedoraproject.org/pub/epel/9/Everything/$arch/os/"],
+          enabled: true,
+          gpgcheck: true
+       }
+      ]
 - mpp-import-pipelines:
     path: include/cs9-image.ipp.yml
