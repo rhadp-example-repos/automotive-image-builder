@@ -154,6 +154,7 @@ make cs9-qemu-minimal-regular.x86_64.qcow2 DEFINES='extra_rpms=["gdb","strace"]'
 ```
 
 Some variables you might want to override include:
+
 * `arch`: The architecture to resolve against; allows preprocessing
     against a non-native architecture.
 * `cs9_baseurl`: The base URL of the CentOS 9 repo; can be overridden to use a local mirror.
@@ -169,6 +170,7 @@ Some variables you might want to override include:
 You can use `make manifests` to preprocess all of the existing manifests without building them. You can use `make manifests` to verify that all combinations of options still work after a change or to inspect the resulting manifests.
 
 In addition to the image types `*.img` and `*.qcow2`, the makefile also supports targets such as:
+
 * `*.rootfs`
 * `*.repo`
 * `*.tar`
