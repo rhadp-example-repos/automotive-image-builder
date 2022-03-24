@@ -37,7 +37,7 @@
           "aarch64"
         ],
         "package-sets": [
-          "automotive-product"
+          "cs9"
         ]
       },
       "neptune": {
