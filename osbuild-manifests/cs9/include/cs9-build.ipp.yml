@@ -35,7 +35,7 @@ mpp-vars:
   default_ssh_permit_root_login: false
   default_image_size: '8589934592'
   default_efipart_size: 204800
-  default_bootpart_size: 409600
+  default_bootpart_size: 614400
   static_uuids:
     mpp-eval: locals().get('static-uuids', False)
   default_rootfs_uuid:
