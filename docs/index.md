@@ -43,12 +43,12 @@ You can learn more about how the content of the Automotive Stream Distribution
 is gathered in our page about [Content Definition](https://sigs.centos.org/automotive/content_definition/).
 
 You can browse the latest version of the Automotive Stream Distribution at:
-[http://54.247.135.67](http://54.247.135.67).
+[http://autosd.sig.centos.org](http://autosd.sig.centos.org).
 
 You can also download a local copy of this repository using `wget`:
 
 ```
-wget --recursive --no-parent -R "index.html*" 'http://54.247.135.67/product-builds/latest/cs9/'
+wget --recursive --no-parent -R "index.html*" 'http://autosd.sig.centos.org/AutoSD-9/latest/cs9/'
 ```
 
 Ensure you have approximately 1.3G of disk space available (total for both
