@@ -2,15 +2,18 @@
 
 import argparse
 import atexit
+import binascii
 import http.server
 import os
 import platform
+import select
 import shutil
 import signal
 import socket
 import socketserver
 import subprocess
 import sys
+import time
 
 is_verbosse = False
 def print_verbose(s):
@@ -39,6 +42,9 @@ def find_qemu(arch):
             return p
 
     exit_error(f"Can't find {binary_name}")
+
+def random_id():
+    return binascii.b2a_hex(os.urandom(8)).decode('utf8')
 
 def machine_id():
     with open("/etc/machine-id", "r") as f:
@@ -94,6 +100,87 @@ def find_omvf():
 
     raise RuntimeError("Could not find OMVF")
 
+def qemu_run_command(qmp_socket_path, command):
+    sock2 = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    sock2.connect(qmp_socket_path)
+    r = sock2.recv(1024)
+    sock2.send('{"execute":"qmp_capabilities"}\n'.encode("utf8"))
+    r = sock2.recv(1024)
+    sock2.send(f'{command}\n'.encode("utf8"))
+    r = sock2.recv(1024)
+    sock2.close()
+
+def virtio_serial_connect(virtio_socket_path):
+    sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    while True:
+        time.sleep(0.1)
+        try:
+            sock.connect(virtio_socket_path)
+            return sock
+        except FileNotFoundError:
+            pass
+
+class WatchdogCommand:
+    START = 1
+    STOP = 2
+
+    def __init__(self, op, arg = None):
+        self.op = op
+        self.arg = arg
+
+def parse_watchdog_commands(sock):
+    commands = []
+    data = sock.recv(16).decode("utf8")
+    for l in data.splitlines():
+        if l.startswith("START"):
+            try:
+                arg = int(l[5:])
+            except ValueError:
+                arg = 30 # Default if not specified
+            commands.append( WatchdogCommand(WatchdogCommand.START, arg) )
+        elif l.startswith("STOP"):
+            commands.append( WatchdogCommand(WatchdogCommand.STOP) )
+        else:
+            print_verbose(f"Unsupported watchdog command {l}")
+    return commands
+
+def run_watchdog(watch_socket_path, qmp_socket_path):
+    sock = virtio_serial_connect(watch_socket_path)
+
+    p = select.poll()
+    p.register(sock, select.POLLIN)
+
+    watchdog_timeout = None
+    watchdog_delay = 30
+
+    while True:
+        timeout = None
+        if watchdog_timeout != None:
+            timeout = max(watchdog_timeout - time.time(), 0) * 1000
+
+        poll_res = p.poll(timeout)
+
+        if len(poll_res) > 0:
+            v = poll_res[0][1]
+            if v & select.POLLHUP:
+                sys.exit(0)
+            commands = parse_watchdog_commands(sock)
+            for cmd in commands:
+                if cmd.op == WatchdogCommand.START:
+                    print_verbose(f"Starting watchdog for {cmd.arg} sec")
+                    watchdog_timeout = time.time() + cmd.arg
+                if cmd.op == WatchdogCommand.STOP:
+                    print_verbose(f"Stopped watchdog")
+                    watchdog_timeout = None
+
+        if watchdog_timeout != None and time.time() >= watchdog_timeout:
+            print_verbose(f"Triggering watchdog")
+            qemu_run_command(qmp_socket_path, '{"execute": "system_reset"}')
+
+            # Queue a new timeout in case the next boot fails, until disabled
+            watchdog_timeout = time.time() + watchdog_delay
+
+
 def main():
     parser = argparse.ArgumentParser(description="Boot virtual machine images")
     parser.add_argument("--verbose", default=False, action="store_true")
@@ -105,6 +192,8 @@ def main():
                         help=f"Memory size (default 2G)")
     parser.add_argument("--nographics", default=False, action="store_true",
                         help=f"Run without graphics")
+    parser.add_argument("--watchdog", default=False, action="store_true",
+                        help=f"Enable watchdog")
     parser.add_argument("--snapshot", default=False, action="store_true",
                         help=f"Work on a snapshot  of the image")
     parser.add_argument("--secureboot", dest="secureboot", action="store_true", default=False,
@@ -188,6 +277,24 @@ def main():
     if args.nographics:
         qemu_args += ["-nographic"]
 
+    runvm_id = random_id()
+
+    watchdog_pid = 0
+    if args.watchdog:
+        qmp_socket_path = f"/tmp/runvm-sock-{runvm_id}"
+        watch_socket_path = f"/tmp/runvm-watch-{runvm_id}"
+
+        qemu_args += [
+            "-qmp", f"unix:{qmp_socket_path},server=on,wait=off",
+            "-device", "virtio-serial", "-chardev", f"socket,path={watch_socket_path},server=on,wait=off,id=watchdog",
+            "-device", "virtserialport,chardev=watchdog,name=watchdog.0"
+        ]
+
+        watchdog_pid = os.fork()
+        if watchdog_pid == 0:
+            run_watchdog(watch_socket_path, qmp_socket_path)
+            sys.exit(0)
+
     print_verbose(f"Image: {args.image}")
 
     qemu_args += [
@@ -202,6 +309,9 @@ def main():
         res = subprocess.run(qemu_args, check=False)
     except KeyboardInterrupt:
         exit_error("Aborted")
+
+    if watchdog_pid:
+        os.kill(watchdog_pid, signal.SIGTERM)
 
     return res.returncode
 
