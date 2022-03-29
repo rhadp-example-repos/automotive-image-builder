@@ -10,38 +10,27 @@ handle-escaped-space = $(subst $(ESCAPEDSPACE),$(ESCAPEDSPACE_REPLACEMENT),$1)
 apply-escaped-space = $(subst $(ESCAPEDSPACE_REPLACEMENT),$(SPACE),$1)
 
 HOST_ARCH:=$(shell arch)
-CURRENT_UIDGID := $(shell id -u):$(shell id -g)
 
 ARCHES := x86_64 aarch64
 
-# All arches define to use VM first
-define arch-rule
-OSBUILD_$1=osbuildvm/osbuildvm --arch=$1
-endef
-$(foreach a, $(ARCHES),  $(eval $(call arch-rule,$a)))
 
-# But Override for host arch unless VM=1
-VM=0
-ifeq ($(VM), 0)
-SUDO_$(HOST_ARCH)=sudo
-OSBUILD_$(HOST_ARCH)=sudo osbuild
-endif
+export VM=0
 
 OSBUILD_MPP=osbuild-mpp
 
 DEFINES=
 DEFINES_ARGS:=$(foreach def,$(call handle-escaped-space,$(DEFINES)),-D '$(call apply-escaped-space,$(def))')
 MPP_ARGS=
-OSBUILD_ARGS=
+export OSBUILD_ARGS=
 
 BUILDDIR=_build
-STOREDIR=$(BUILDDIR)/osbuild_store
-OUTPUTDIR=$(BUILDDIR)/image_output
+export STOREDIR=$(BUILDDIR)/osbuild_store
+export OUTPUTDIR=$(BUILDDIR)/image_output
 
 DISTROS := $(basename $(basename $(notdir f,$(wildcard distro/*.ipp.yml))))
 MANIFESTS := $(wildcard images/*.mpp.yml)
 
-CHECKPOINTS=build
+export CHECKPOINTS=build
 IMAGETYPES := regular ostree direct
 FORMATS := img qcow2 oci.tar repo rootfs ext4 tar
 aarch64_TARGETS := rpi4
@@ -58,25 +47,6 @@ image-name = $(call image-name-noarch,$1,$2,$3,$4).$5
 regular_IMAGETYPE := regular
 ostree_IMAGETYPE := ostree
 direct_IMAGETYPE := directboot
-
-# export names for FORMATS
-img_EXPORTFILE := disk.img
-qcow2_EXPORTFILE := disk.qcow2
-oci.tar_EXPORTFILE := container.tar
-repo_EXPORTFILE := repo
-rootfs_EXPORTFILE :=
-ext4_EXPORTFILE := rootfs.ext4
-tar_EXPORTFILE := rootfs.tar
-
-repo_CHOWNARGS := -R
-
-img_EXPORT := image
-oci.tar_EXPORT := container
-qcow2_EXPORT := qcow2
-repo_EXPORT := ostree-commit
-rootfs_EXPORT := rootfs
-ext4_EXPORT := ext4
-tar_EXPORT := tar
 
 help:
 	@echo
@@ -158,12 +128,7 @@ $(foreach d, $(DISTROS), \
 # $6 == Export format (extension)
 define image-rule
 $(call image-name,$1,$2,$3,$4,$5).$6: $(BUILDDIR)/$(call image-name,$1,$2,$3,$4,$5).json
-	@mkdir -p $(OUTPUTDIR)/$($6_EXPORT)
-	$(OSBUILD_$5) $(foreach cp,$(CHECKPOINTS),--checkpoint $(cp)) --store $(STOREDIR) --output-directory $(OUTPUTDIR) $(OSBUILD_ARGS) --export $($6_EXPORT) $$<
-	$(SUDO_$5) chown $($6_CHOWNARGS) $(CURRENT_UIDGID) $(OUTPUTDIR)/$($6_EXPORT)/$($6_EXPORTFILE)
-	@rm -rf $$@
-	$(SUDO_$5) mv $(OUTPUTDIR)/$($6_EXPORT)/$($6_EXPORTFILE) $$@
-	$(SUDO_$5) rm -rf $(OUTPUTDIR)/$($6_EXPORT)
+	@./runosbuild "$$@" "$$<" "$3" "$4" "$5" "$6"
 endef
 
 $(foreach d, $(DISTROS), \
@@ -202,14 +167,22 @@ clean_caches:
 .PHONY: clean
 clean: clean_downloads clean_caches
 
+ifeq ($(VM), 1)
+VM_SUDO=
+VM_OSBUILD="osbuildvm/osbuildvm --arch=$(HOST_ARCH)"
+else
+VM_SUDO=sudo
+VM_OSBUILD=sudo osbuild
+endif
+
 .PHONY: osbuildvm-images
 osbuildvm-images: $(BUILDDIR)
 	osbuild-mpp osbuildvm/osbuildvm.mpp.yml _build/osbuildvm-$(HOST_ARCH).json
-	$(OSBUILD_$(HOST_ARCH)) --store $(STOREDIR) --output-directory $(OUTPUTDIR) --export osbuildvm _build/osbuildvm-$(HOST_ARCH).json
+	$(VM_OSBUILD) --store $(STOREDIR) --output-directory $(OUTPUTDIR) --export osbuildvm _build/osbuildvm-$(HOST_ARCH).json
 	cp $(OUTPUTDIR)/osbuildvm/disk.qcow2 _build/osbuildvm-$(HOST_ARCH).img
 	cp $(OUTPUTDIR)/osbuildvm/initramfs _build/osbuildvm-$(HOST_ARCH).initramfs
 	cp $(OUTPUTDIR)/osbuildvm/vmlinuz _build/osbuildvm-$(HOST_ARCH).vmlinuz
-	$(SUDO_$(HOST_ARCH)) rm -rf $(OUTPUTDIR)/osbuildvm
+	$(VM_SUDO) rm -rf $(OUTPUTDIR)/osbuildvm
 
 %.ext4.simg : %.ext4
 	img2simg $< $@
