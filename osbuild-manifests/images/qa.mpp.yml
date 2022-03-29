@@ -3,7 +3,7 @@ mpp-vars:
   name: qa
 pipelines:
 - mpp-import-pipelines:
-    path: include/cs9-build.ipp.yml
+    path: include/build.ipp.yml
 - name: rootfs
   build: name:build
   stages:
@@ -89,4 +89,4 @@ pipelines:
        }
       ]
 - mpp-import-pipelines:
-    path: include/cs9-image.ipp.yml
+    path: include/image.ipp.yml

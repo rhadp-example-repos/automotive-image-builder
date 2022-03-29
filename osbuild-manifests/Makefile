@@ -38,7 +38,7 @@ BUILDDIR=_build
 STOREDIR=$(BUILDDIR)/osbuild_store
 OUTPUTDIR=$(BUILDDIR)/image_output
 
-MANIFESTS := $(wildcard cs9/*.mpp.yml)
+MANIFESTS := $(wildcard images/*.mpp.yml)
 
 CHECKPOINTS=build
 IMAGETYPES := regular ostree direct

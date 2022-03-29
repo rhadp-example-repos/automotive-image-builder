@@ -4,7 +4,7 @@ mpp-vars:
   display_server: wayland
 pipelines:
 - mpp-import-pipelines:
-    path: include/cs9-build.ipp.yml
+    path: include/build.ipp.yml
 - name: rootfs
   build: name:build
   stages:
@@ -202,4 +202,4 @@ pipelines:
       - sshd.service
       - mpp-eval: "'init-neptune-session@wayland.service' if display_server == 'wayland' else 'init-neptune-session@xorg.service'"
 - mpp-import-pipelines:
-    path: include/cs9-image.ipp.yml
+    path: include/image.ipp.yml

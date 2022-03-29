@@ -3,7 +3,7 @@ mpp-vars:
   name: minimal
 pipelines:
 - mpp-import-pipelines:
-    path: include/cs9-build.ipp.yml
+    path: include/build.ipp.yml
 - name: rootfs
   build: name:build
   stages:
@@ -109,4 +109,4 @@ pipelines:
       - rngd.service
       - sshd.service
 - mpp-import-pipelines:
-    path: include/cs9-image.ipp.yml
+    path: include/image.ipp.yml
