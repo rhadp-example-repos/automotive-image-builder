@@ -38,6 +38,7 @@ BUILDDIR=_build
 STOREDIR=$(BUILDDIR)/osbuild_store
 OUTPUTDIR=$(BUILDDIR)/image_output
 
+DISTROS := $(basename $(basename $(notdir f,$(wildcard distro/*.ipp.yml))))
 MANIFESTS := $(wildcard images/*.mpp.yml)
 
 CHECKPOINTS=build
@@ -50,8 +51,8 @@ ALL_TARGETS := $(COMMON_TARGETS) $(foreach a,$(ARCHES), $($(a)_TARGETS))
 
 manifest-get-name = $(basename $(basename $(notdir $1)))
 manifest-get-dir = $(notdir $(patsubst %/,%,$(dir $1)))
-image-name-noarch = cs9-$2-$(call manifest-get-name,$1)-$3
-image-name = $(call image-name-noarch,$1,$2,$3).$4
+image-name-noarch = $1-$3-$(call manifest-get-name,$2)-$4
+image-name = $(call image-name-noarch,$1,$2,$3,$4).$5
 
 # variable name for image type
 regular_IMAGETYPE := regular
@@ -119,7 +120,7 @@ help:
 	@echo
 	@echo Available image targets \(for $(HOST_ARCH)\) are:
 	@echo
-	@$(foreach m, $(MANIFESTS), $(foreach t, $(HOST_TARGETS), $(foreach i,$(IMAGETYPES), echo -e "   "  $(call image-name,$m,$t,$i,$(HOST_ARCH)).[$(subst $(SPACE),$(COMMA),$(FORMATS))];)))
+	@$(foreach d, $(DISTROS), $(foreach m, $(MANIFESTS), $(foreach t, $(HOST_TARGETS), $(foreach i,$(IMAGETYPES), echo -e "   "  $(call image-name,$d,$m,$t,$i,$(HOST_ARCH)).[$(subst $(SPACE),$(COMMA),$(FORMATS))];))))
 	@echo
 
 # We pre-create all the toplevel dirs, so that they are owned by the user, not root (when created under sudo)
@@ -130,47 +131,51 @@ $(BUILDDIR):
 	@mkdir -p $(OUTPUTDIR)
 
 # Template rule for producing osbuild json manifest from mpp yaml and image type
-# $1 == yaml manifest path
-# $2 == Target name
-# $3 == Image type
-# $4 == Arch
+# $1 == distro name
+# $2 == yaml manifest path
+# $3 == Target name
+# $4 == Image type
+# $5 == Arch
 define json-rule
-$(BUILDDIR)/$(call image-name,$1,$2,$3,$4).json: $1 $(BUILDDIR)
-	$(OSBUILD_MPP) -D image_type="\"$($3_IMAGETYPE)\"" -D arch=\"$4\" -D target="\"$2\"" $(DEFINES_ARGS) $(MPP_ARGS) $$< $$@
-.PHONY: $(BUILDDIR)/$(call image-name,$1,$2,$3,$4).json
+$(BUILDDIR)/$(call image-name,$1,$2,$3,$4,$5).json: $2 $(BUILDDIR)
+	$(OSBUILD_MPP) -D image_type="\"$($4_IMAGETYPE)\"" -D arch=\"$5\" -D distro_name="\"$1\"" -D target="\"$3\"" $(DEFINES_ARGS) $(MPP_ARGS) $$< $$@
+.PHONY: $(BUILDDIR)/$(call image-name,$1,$2,$3,$4,$5).json
 endef
 
-$(foreach m, $(MANIFESTS), \
- $(foreach a,$(ARCHES), \
-  $(foreach t,$(COMMON_TARGETS) $($(a)_TARGETS), \
-   $(foreach i,$(IMAGETYPES), \
-    $(eval $(call json-rule,$m,$t,$i,$a))))))
+$(foreach d, $(DISTROS), \
+ $(foreach m, $(MANIFESTS), \
+  $(foreach a,$(ARCHES), \
+   $(foreach t,$(COMMON_TARGETS) $($(a)_TARGETS), \
+    $(foreach i,$(IMAGETYPES), \
+     $(eval $(call json-rule,$d,$m,$t,$i,$a)))))))
 
 # Template rule for producing image from json manifest
-# $1 == Manifest path
-# $2 == Target
-# $3 == Image type
-# $4 == Arch
-# $5 == Export format (extension)
+# $1 == distro name
+# $2 == Manifest path
+# $3 == Target
+# $4 == Image type
+# $5 == Arch
+# $6 == Export format (extension)
 define image-rule
-$(call image-name,$1,$2,$3,$4).$5: $(BUILDDIR)/$(call image-name,$1,$2,$3,$4).json
-	@mkdir -p $(OUTPUTDIR)/$($5_EXPORT)
-	$(OSBUILD_$4) $(foreach cp,$(CHECKPOINTS),--checkpoint $(cp)) --store $(STOREDIR) --output-directory $(OUTPUTDIR) $(OSBUILD_ARGS) --export $($5_EXPORT) $$<
-	$(SUDO_$4) chown $($5_CHOWNARGS) $(CURRENT_UIDGID) $(OUTPUTDIR)/$($5_EXPORT)/$($5_EXPORTFILE)
+$(call image-name,$1,$2,$3,$4,$5).$6: $(BUILDDIR)/$(call image-name,$1,$2,$3,$4,$5).json
+	@mkdir -p $(OUTPUTDIR)/$($6_EXPORT)
+	$(OSBUILD_$5) $(foreach cp,$(CHECKPOINTS),--checkpoint $(cp)) --store $(STOREDIR) --output-directory $(OUTPUTDIR) $(OSBUILD_ARGS) --export $($6_EXPORT) $$<
+	$(SUDO_$5) chown $($6_CHOWNARGS) $(CURRENT_UIDGID) $(OUTPUTDIR)/$($6_EXPORT)/$($6_EXPORTFILE)
 	@rm -rf $$@
-	$(SUDO_$4) mv $(OUTPUTDIR)/$($5_EXPORT)/$($5_EXPORTFILE) $$@
-	$(SUDO_$4) rm -rf $(OUTPUTDIR)/$($5_EXPORT)
+	$(SUDO_$5) mv $(OUTPUTDIR)/$($6_EXPORT)/$($6_EXPORTFILE) $$@
+	$(SUDO_$5) rm -rf $(OUTPUTDIR)/$($6_EXPORT)
 endef
 
-$(foreach m, $(MANIFESTS), \
- $(foreach a,$(ARCHES), \
-  $(foreach t, $(COMMON_TARGETS) $($(a)_TARGETS), \
-   $(foreach f,$(FORMATS), \
-    $(foreach i,$(IMAGETYPES), \
-     $(eval $(call image-rule,$m,$t,$i,$a,$f)))))))
+$(foreach d, $(DISTROS), \
+ $(foreach m, $(MANIFESTS), \
+  $(foreach a,$(ARCHES), \
+   $(foreach t, $(COMMON_TARGETS) $($(a)_TARGETS), \
+    $(foreach f,$(FORMATS), \
+     $(foreach i,$(IMAGETYPES), \
+      $(eval $(call image-rule,$d,$m,$t,$i,$a,$f))))))))
 
 # Rule to pre-generate all manifests
-manifests: $(foreach m, $(MANIFESTS), $(foreach a,$(ARCHES), $(foreach t, $(COMMON_TARGETS) $($(a)_TARGETS), $(foreach i,$(IMAGETYPES), $(BUILDDIR)/$(call image-name,$m,$t,$i,$a).json))))
+manifests: $(foreach d, $(DISTROS),$(foreach m, $(MANIFESTS), $(foreach a,$(ARCHES), $(foreach t, $(COMMON_TARGETS) $($(a)_TARGETS), $(foreach i,$(IMAGETYPES), $(BUILDDIR)/$(call image-name,$d,$m,$t,$i,$a).json)))))
 
 define packages-rule
 .PHONY: packages-$(call manifest-get-name,$1).json
