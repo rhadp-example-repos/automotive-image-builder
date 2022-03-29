@@ -19,6 +19,7 @@ mpp-vars:
     baseurl: $distro_baseurl/AppStream/$arch/debug/tree/
   - id: crb-debug
     baseurl: $distro_baseurl/CRB/$arch/debug/tree/
+  distro_module_id: platform:el9
   default_target: qemu
   default_image_type: ostree
   default_ostree_ref: $distro_name/$arch/$target-$name

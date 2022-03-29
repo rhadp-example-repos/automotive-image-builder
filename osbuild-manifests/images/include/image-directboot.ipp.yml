@@ -24,7 +24,7 @@ pipelines:
         origin: org.osbuild.source
         mpp-depsolve:
           architecture: $arch
-          module-platform-id: platform:el9
+          module-platform-id: $distro_module_id
           baseurl: $distro_baseurl/BaseOS/$arch/os/
           repos:
             mpp-join:
