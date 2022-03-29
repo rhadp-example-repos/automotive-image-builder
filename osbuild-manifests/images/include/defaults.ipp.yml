@@ -1,5 +1,6 @@
 version: '2'
 mpp-vars:
+  distro_name: cs9
   distro_baseurl: http://mirror.stream.centos.org/9-stream
   distro_repos:
   - id: baseos
@@ -20,7 +21,7 @@ mpp-vars:
     baseurl: $distro_baseurl/CRB/$arch/debug/tree/
   default_target: qemu
   default_image_type: ostree
-  default_ostree_ref: cs9/$arch/$target-$name
+  default_ostree_ref: $distro_name/$arch/$target-$name
   default_osname: centos
   default_uefi_vendor: centos
   default_kernel_rpm: kernel-automotive
