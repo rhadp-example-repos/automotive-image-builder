@@ -25,11 +25,10 @@ pipelines:
         mpp-depsolve:
           architecture: $arch
           module-platform-id: platform:el9
-          baseurl: $cs9_baseurl/BaseOS/$arch/os/
+          baseurl: $distro_baseurl/BaseOS/$arch/os/
           repos:
             mpp-join:
-            - mpp-eval: cs9_repos
-            - mpp-eval: cs9_automotive_repos
+            - mpp-eval: distro_repos
             - - id: cs9-shim
                 baseurl: https://download.copr.fedorainfracloud.org/results/alexl/cs9-shim/fedora-35-$arch/
           packages:

@@ -27,13 +27,12 @@ pipelines:
           architecture: $arch
           ignore-weak-deps: true
           module-platform-id: platform:el9
-          baseurl: $cs9_baseurl/BaseOS/$arch/os/
+          baseurl: $distro_baseurl/BaseOS/$arch/os/
           repos:
             mpp-join:
             - - id: EPEL
                 baseurl: https://dl.fedoraproject.org/pub/epel/9/Everything/$arch/
-            - mpp-eval: cs9_repos
-            - mpp-eval: cs9_automotive_repos
+            - mpp-eval: distro_repos
             - mpp-eval: target_repos
             - mpp-eval: extra_repos
             - []

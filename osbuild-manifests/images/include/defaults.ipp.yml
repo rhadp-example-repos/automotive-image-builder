@@ -1,24 +1,23 @@
 version: '2'
 mpp-vars:
-  cs9_baseurl: http://mirror.stream.centos.org/9-stream
-  cs9_repos:
+  distro_baseurl: http://mirror.stream.centos.org/9-stream
+  distro_repos:
   - id: baseos
-    baseurl: $cs9_baseurl/BaseOS/$arch/os/
+    baseurl: $distro_baseurl/BaseOS/$arch/os/
   - id: appstream
-    baseurl: $cs9_baseurl/AppStream/$arch/os/
-  cs9_automotive_repos:
+    baseurl: $distro_baseurl/AppStream/$arch/os/
   - id: automotive
     baseurl: https://buildlogs.centos.org/9-stream/automotive/$arch/packages-main/
-  cs9_crb_repos:
+  distro_devel_repos:
   - id: crb
-    baseurl: $cs9_baseurl/CRB/$arch/os/
-  cs9_debug_repos:
+    baseurl: $distro_baseurl/CRB/$arch/os/
+  distro_debug_repos:
   - id: baseos-debug
-    baseurl: $cs9_baseurl/BaseOS/$arch/debug/tree/
+    baseurl: $distro_baseurl/BaseOS/$arch/debug/tree/
   - id: appstream-debug
-    baseurl: $cs9_baseurl/AppStream/$arch/debug/tree/
+    baseurl: $distro_baseurl/AppStream/$arch/debug/tree/
   - id: crb-debug
-    baseurl: $cs9_baseurl/CRB/$arch/debug/tree/
+    baseurl: $distro_baseurl/CRB/$arch/debug/tree/
   default_target: qemu
   default_image_type: ostree
   default_ostree_ref: cs9/$arch/$target-$name

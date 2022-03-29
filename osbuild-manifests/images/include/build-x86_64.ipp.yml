@@ -35,9 +35,9 @@ pipelines:
         mpp-depsolve:
           architecture: $arch
           module-platform-id: platform:el9
-          baseurl: $cs9_baseurl/BaseOS/$arch/os/
+          baseurl: $distro_baseurl/BaseOS/$arch/os/
           repos:
-            mpp-eval: cs9_repos
+            mpp-eval: distro_repos
           packages:
           - dnf
           - dosfstools
