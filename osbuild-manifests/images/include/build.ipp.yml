@@ -1,5 +1,8 @@
 version: '2'
 
+mpp-vars:
+  distro_name: cs9 # The default
+
 mpp-define-image:
   size: $image_size
   table:
@@ -23,6 +26,8 @@ mpp-define-image:
         mpp-eval: "'0FC63DAF-8483-4772-8E79-3D69D8477DE4' if partition_label == 'gpt' else '83'"
       uuid: $rootpart_uuid
 pipelines:
+- mpp-import-pipelines:
+    path: ../../distro/$distro_name.ipp.yml
 - mpp-import-pipelines:
     path: defaults.ipp.yml
 - mpp-import-pipelines:
