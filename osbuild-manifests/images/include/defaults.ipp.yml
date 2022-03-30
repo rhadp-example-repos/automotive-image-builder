@@ -65,6 +65,8 @@ mpp-vars:
       - vfat
       - ext4
   default_dracut_add_drivers: []
+  default_ostree_repo_url: http://10.0.2.100/
+  default_ostree_remote_name: auto-sig
   target:
     mpp-eval: locals().get('target', default_target)
   image_type:
@@ -121,6 +123,10 @@ mpp-vars:
     mpp-eval: locals().get('ssh_permit_root_login', default_ssh_permit_root_login)
   guest_password:
     mpp-eval: locals().get('guest_password', default_guest_password)
+  ostree_repo_url:
+    mpp-eval: locals().get('ostree_repo_url', default_ostree_repo_url)
+  ostree_remote_name:
+    mpp-eval: locals().get('ostree_remote_name', default_ostree_remote_name)
   centos_gpg_key: |
     -----BEGIN PGP PUBLIC KEY BLOCK-----
     Version: GnuPG v2.0.22 (GNU/Linux)

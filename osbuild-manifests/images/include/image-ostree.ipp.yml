@@ -87,6 +87,8 @@ pipelines:
   - type: org.osbuild.ostree.pull
     options:
       repo: /ostree/repo
+      remote:
+        mpp-eval: ostree_remote_name
     inputs:
       commits:
         type: org.osbuild.ostree
@@ -105,6 +107,14 @@ pipelines:
       config:
         sysroot:
           readonly: true
+  - type: org.osbuild.ostree.remotes
+    options:
+      repo: /ostree/repo
+      remotes:
+        - name:
+            mpp-eval: ostree_remote_name
+          url:
+            mpp-eval: ostree_repo_url
   - type: org.osbuild.mkdir
     options:
       paths:
@@ -116,6 +126,8 @@ pipelines:
         mpp-eval: osname
       ref:
         mpp-eval: ostree_ref
+      remote:
+        mpp-eval: ostree_remote_name
       mounts:
       - /boot
       - /boot/efi
