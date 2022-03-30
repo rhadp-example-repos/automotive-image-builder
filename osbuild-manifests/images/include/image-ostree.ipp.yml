@@ -75,6 +75,10 @@ pipelines:
       ref:
         mpp-eval: ostree_ref
       os_version: '9'
+      parent:
+        mpp-if: ostree_ref in locals().get("ostree_parent_refs", {})
+        then:
+          mpp-eval: ostree_parent_refs[ostree_ref]
 - name: image-tree
   build: name:build
   stages:

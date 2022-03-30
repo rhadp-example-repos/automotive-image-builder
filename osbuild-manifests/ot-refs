@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# This is a helper used by the makefile to handle the OSTREE_REPO mpp
+# support.  It creates a json dict mapping all the refs in the repo
+# (if it exists) to the latest commit. This is then passed to osbuild-mpp
+# as the ostree_parent_refs variable that is used by the manifests to pick
+# the right parent commit.
+
+REPOPATH=$1
+FIRST=1
+echo -n "{"
+if test -d $REPOPATH; then
+  for ref in $(ostree refs --repo=$REPOPATH); do
+    if [ $FIRST == 1 ]; then
+      FIRST=0
+    else
+      echo -n ,
+    fi
+    echo -n \"$ref\":\"$(ostree rev-parse --repo=$REPOPATH $ref)\"
+  done
+fi
+echo -n "}"
