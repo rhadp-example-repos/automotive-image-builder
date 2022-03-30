@@ -10,6 +10,7 @@ mpp-vars:
       - greenboot-reboot
       - greenboot-status
       - greenboot-rpm-ostree-grub2
+      - polkit # Needed by rpm-ostree upgrade (until fix for https://github.com/coreos/rpm-ostree/issues/3554 is in)
 pipelines:
 - name: ostree-tree
   build: name:build
