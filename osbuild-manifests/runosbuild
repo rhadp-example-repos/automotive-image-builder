@@ -58,6 +58,8 @@ else
     OSBUILD="osbuildvm/osbuildvm --arch=$ARCH"
 fi
 
+EXPORT_ARGS="--export $EXPORT"
+
 CHECKPOINT_ARGS=
 for CP in $CHECKPOINTS; do
     CHECKPOINT_ARGS="${CHECKPOINT_ARGS} --checkpoint ${CP}"
@@ -68,14 +70,37 @@ if [ $EXTENSION == repo ]; then
     CHOWNARGS=-R # Chown entire repo dir as it doesn't care about permissions
 fi
 
+EXPORTDIRS=$OUTPUTDIR/$EXPORT
+
+# If OSTREE_REPO is set, and we're building an image that has an
+# ostree commit, then we also export that commit to the repo specified
+# by OSTREE_REPO.
+ALSO_EXPORT_OSTREE=0
+if [ "$OSTREE_REPO" != "" -a "$IMAGETYPE" == "ostree" ]; then
+    ALSO_EXPORT_OSTREE=1
+    if [ $EXPORT != "ostree-commit" ]; then
+        EXPORT_ARGS="$EXPORT_ARGS --export ostree-commit"
+        EXPORTDIRS="$EXPORTDIRS $OUTPUTDIR/ostree-commit"
+    fi
+
+    # Ensure we have a repo to export to
+    ostree init --repo=$OSTREE_REPO --mode archive
+fi
+
 set -x
 
-$SUDO rm -rf $OUTPUTDIR/$EXPORT
-mkdir -p $OUTPUTDIR/$EXPORT #
+$SUDO rm -rf $EXPORTDIRS
+mkdir -p $EXPORTDIRS # Own export dirs by user, not root
 
-$OSBUILD $CHECKPOINT_ARGS --store $STOREDIR --output-directory $OUTPUTDIR --export $EXPORT $OSBUILD_ARGS $JSON
+$OSBUILD $CHECKPOINT_ARGS --store $STOREDIR --output-directory $OUTPUTDIR $EXPORT_ARGS $OSBUILD_ARGS $JSON
 
+if [ $ALSO_EXPORT_OSTREE == "1" ]; then
+    ostree pull-local --repo=$OSTREE_REPO $OUTPUTDIR/ostree-commit/repo
+fi
+
+# Extract and chown exported file
 rm -rf $DEST
 $SUDO chown $CHOWNARGS $CURRENT_UIDGID $OUTPUTDIR/$EXPORT/$EXPORT_FILE
 $SUDO mv $OUTPUTDIR/$EXPORT/$EXPORT_FILE $DEST
-$SUDO rm -rf $OUTPUTDIR/$EXPORT
+
+$SUDO rm -rf $EXPORTDIRS
