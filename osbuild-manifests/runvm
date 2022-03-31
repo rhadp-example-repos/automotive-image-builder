@@ -62,7 +62,7 @@ def run_http_server(path):
         os.chdir(path)
 
         class HTTPHandler(http.server.SimpleHTTPRequestHandler):
-            def _log_message(self, format, *args):
+            def log_message(self, format, *args):
                 pass # Silence logs
 
         httpd = socketserver.TCPServer(("127.0.0.1", 0),  HTTPHandler)
