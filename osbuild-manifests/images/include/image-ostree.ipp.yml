@@ -107,6 +107,7 @@ pipelines:
       config:
         sysroot:
           readonly: true
+          bootloader: none
   - type: org.osbuild.ostree.remotes
     options:
       repo: /ostree/repo
