@@ -187,6 +187,7 @@ pipelines:
       uefi:
         vendor:
           mpp-eval: uefi_vendor
+        unified: true
         install: true
       legacy: false
       write_defaults: false

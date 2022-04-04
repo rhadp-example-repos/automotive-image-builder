@@ -59,6 +59,7 @@ pipelines:
       uefi:
         vendor:
           mpp-eval: uefi_vendor
+        unified: true
       legacy: false
       write_defaults: false
   - type: org.osbuild.fix-bls
