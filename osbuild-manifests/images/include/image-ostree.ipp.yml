@@ -191,3 +191,4 @@ pipelines:
         install: true
       legacy: false
       write_defaults: false
+      greenboot: true

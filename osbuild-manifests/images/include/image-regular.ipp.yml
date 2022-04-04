@@ -62,6 +62,7 @@ pipelines:
         unified: true
       legacy: false
       write_defaults: false
+      greenboot: true
   - type: org.osbuild.fix-bls
     options:
       prefix: /
