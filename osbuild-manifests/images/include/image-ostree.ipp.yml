@@ -75,7 +75,8 @@ pipelines:
     options:
       ref:
         mpp-eval: ostree_ref
-      os_version: '9'
+      os_version:
+        mpp-eval: ostree_os_version
       parent:
         mpp-if: ostree_ref in locals().get("ostree_parent_refs", {})
         then:

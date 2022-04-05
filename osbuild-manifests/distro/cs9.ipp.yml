@@ -1,6 +1,7 @@
 version: '2'
 mpp-vars:
   distro_name: cs9
+  distro_version: 9
   distro_baseurl: http://mirror.stream.centos.org/9-stream
   distro_repos:
   - id: baseos

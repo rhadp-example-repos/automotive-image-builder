@@ -3,6 +3,7 @@ mpp-vars:
   default_target: qemu
   default_image_type: ostree
   default_ostree_ref: $distro_name/$arch/$target-$name
+  default_ostree_os_version: $distro_version
   default_osname: centos
   default_uefi_vendor: centos
   default_kernel_rpm: kernel-automotive
@@ -75,6 +76,8 @@ mpp-vars:
     mpp-eval: locals().get('kernel_rpm', default_kernel_rpm)
   ostree_ref:
     mpp-eval: locals().get('ostree_ref', default_ostree_ref)
+  ostree_os_version:
+    mpp-eval: locals().get('ostree_os_version', default_ostree_os_version)
   osname:
     mpp-eval: locals().get('osname', default_osname)
   uefi_vendor:
