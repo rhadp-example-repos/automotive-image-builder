@@ -1,0 +1,21 @@
+[Unit]
+Description=Service that takes a long time to start and blocks boot-complete.target
+Before=boot-complete.target
+
+[Service]
+Type=oneshot
+ExecStart=echo slow-start in 30 sec...
+ExecStart=sleep 10
+ExecStart=echo slow-start in 20 sec...
+ExecStart=sleep 10
+ExecStart=echo slow-start in 10 sec...
+ExecStart=sleep 5
+ExecStart=echo slow-start in 5 sec...
+ExecStart=sleep 4
+ExecStart=echo slow-start in 1 sec...
+ExecStart=sleep 1
+ExecStart=echo slow-start DONE
+
+[Install]
+RequiredBy=boot-complete.target
+WantedBy=multi-user.target
