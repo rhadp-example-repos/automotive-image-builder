@@ -183,4 +183,6 @@ This has only scratched the surface of OSTree and its companion rpm-ostree, once
 at this point you can start learn about things like rollback and other administration details, or
 the mechanics of how ostree works.
 
+There are some details about [unattended updates](unattended updates.md) in a separate doc.
+
 For more information, see the [rpm-ostree docs](https://coreos.github.io/rpm-ostree/).
