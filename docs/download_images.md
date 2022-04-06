@@ -8,4 +8,4 @@ In an effort to continuously deliver working images, we are developing a process
 automatically build and test images as we update them and as CentOS Stream changes. 
 This is a work in progress. 
 
-For more information about how to build images, see [Building images](https://sigs.centos.org/automotive/building/).
+For more information about how to build images, see [Building images](building/index.md).

@@ -42,7 +42,7 @@ the automotive product. Like CentOS Stream, AutoSD will
 be open to contributions using similar mechanisms.
 
 For more information about how the content of the AutoSD
-is gathered, see [Content Definition](https://sigs.centos.org/automotive/content_definition/).
+is gathered, see [Content Definition](content_definition.md).
 
 You can browse the latest version of the Automotive Stream Distribution at:
 [http://autosd.sig.centos.org](http://autosd.sig.centos.org).
@@ -95,10 +95,10 @@ For example:
 ```
 
 You can use [OSBuild](https://www.osbuild.org/) to build each of these manifests.
-For more information, see [Building images](https://sigs.centos.org/automotive/building/).
+For more information, see [Building images](building/index.md).
 
 You can also find pre-built images from our [Download images
-](https://sigs.centos.org/automotive/download_images/) page.
+](download_images.md) page.
 
 
 ## Contact points
