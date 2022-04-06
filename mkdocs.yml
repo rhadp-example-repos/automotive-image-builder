@@ -10,6 +10,10 @@ nav:
   - Contributing to the repository: contributing/contributing-to-auto-sig-repo.md
   - Content definition: content_definition.md
   - Building images: building/index.md
+  - Customizing images: building/customize_template.md
+  - Containers in automotive images: building/containers.md
+  - Using OSTree images: building/updating_ostree.md
+  - Handling unattended updates: building/unattended_updates.md
   - "Downloading images": download_images.md
   - Definitions: definitions.md
 
