@@ -1,14 +1,16 @@
 # Unattended updates using OSTree
 
 This document expects some basic knowledge about OSTree and how the
-auto-sig uses it, see the [basic docs](updating_ostree.md) for that.
+auto-sig uses it. If you need a refresher about that, see the our [OSTree](updating_ostree.md)
+docs.
 
 The basic ostree update operation is atomic in the sense that it is
-either fully applies, or not at all on the next reboot. However, an
-upgrade can still fail in other ways, like failing to boot, or booting
-in a mode that doesn't work. When this happens on a regular computer
-it is easy to interactively use the boot menu to boot the old
-deployment and then roll back.
+either fully applies, or not at all on the next reboot. The result of
+the upgrade will never be partial. However, an upgrade can still fail
+in other ways, like failing to boot, or booting but not working
+properly. When this happens on a regular computer it is easy to
+interactively use the boot menu to boot the old version and then roll
+back.
 
 However, in the automotive use-case, like typical embedded systems,
 there is no user than can interactively fix things up like
@@ -16,45 +18,43 @@ this. Instead we need a system that can detect such failures and
 automatically fall back to the old boot. This is referred to as
 "Unattended updates".
 
-
 ## Basic mechanisms: watchdog, boot-once
 
-The basic implementation detail of unattended updates is an external
+The basic mechanism for unattended updates is an external
 watchdog. The idea is that before applying the new update we tell some
 external device to start a timer, and then we switch to the new
-update.  If the update succeeds in some ahead-of-time time frame, it
-will tell the watchdog to stop, and the update is considered
-working. If the boot succeeds, but we detect that something is not
-working we can roll back and reboot into the old version.
+update.  If the update succeeds in some predefined time, we tell the
+watchdog to stop, and the update is considered successful. If the boot
+succeeds, but we detect that something is broken we can automatically
+roll back and reboot into the old version.
 
-However, if the boot hang, the watchdog will not see a stop
-command. When the time runs out the watchdog will then reset
-the CPU, triggering a forced reboot.
+However, if the boot hangs, the watchdog will not see a stop
+command. When the time runs out the watchdog will then reset the CPU,
+triggering a forced reboot.
 
-In order to use the above we need the system to support some kind of
-"boot-once" support. This is a mechanism where you tell the system
-that the next boot should be into a new target, but unless that boot
-triggers a permanent change, the next reboot will boot back into the
-original target.
+In order to use the above mechanism we need the system to support some
+kind of "boot-once" support. This is a where you configure the system
+to boot into the new version, but unless that boot is successful, the
+following reboot will boot the original version.
 
-## Implementation in qemu
+## Implementation in QEmu
 
-The basic mechanisms described above are very dependent on the exact
-hardware, so it is hard to give general documentation on how to do
-this. Instead we chose to make an example based on a virtual machine
-in qemu. As it doesn't need any particular hardware this means anyone
-can try it.
+The basic mechanisms described above are implemented differently
+dependent on the exact hardware, so it is hard to give general
+documentation on how to do this. Instead we chose to make an example
+based on a virtual machine in qemu. This way it doesn't need any
+particular hardware, and anyone can try it.
 
-### Watchdog in qemu
+### Watchdog in QEmu
 
-Qemu actually supports some emulated hardware watchdogs, but
-unfortunately those all reset the watchdog on system reset, so it is
+QEmu actually supports some emulated hardware watchdogs, but
+unfortunately those all reset the watchdog on system reboot, so it is
 not possible to use them for unattended updates. Instead we use the
 `runvm` script in this repo, as it has a simple external watchdog
 built in.
 
 Just pass `--watchdog` on the command line (and `--verbose` if you
-want to see messages from the watchdog. This will create a device
+want to see messages from the watchdog). This will create a device
 `/dev/virtio-ports/watchdog.0`, in the VM. If you write "START" into
 it the watchdog will start a 30 sec timeout, and if you write "STOP"
 into it it will stop any outstanding timeout. If the timeout runs
@@ -62,23 +62,25 @@ out the script will connect to the qemu monitor and tell it to reset
 the VM.
 
 There is some code in the `rpms/autosig-watchdog` to use the watchdog.
-There are watchdog-start and watchdog-stop commands, and some systemd
-service files to integrate with the systems a described below.
+There are `watchdog-start` and `watchdog-stop` commands, as well as
+some systemd service files to integrate with the systems a described
+below.
 
 ### boot-once in grub2
 
-The OSTree images uses grub2 to boot the system, this uses the
-BootLoader Standard (BLS) files to describe the possible boot targets,
-and supports a boot counter mechanism to do the fallback. After an
-update, ostree creates BLS files for the new and the old target, where
-the new one is first (default boot) and the old is second.
+The OSTree images uses grub2 to boot the system, this uses the [Boot
+Loader Spec](https://systemd.io/BOOT_LOADER_SPECIFICATION/) (BLS)
+files to describe the possible boot targets, and supports a boot
+counter mechanism to do the fallback. After an update, ostree creates
+BLS files for the new and the old target, where the new one is first
+(default boot) and the old is second.
 
 Each time grub boots it loads the `grubenv` file, and this can store
 key/value state between boots. In particular, it supports the
-`boot_counter` and `boot_success` keys. If `boot_counter` is set
-it gets decremented (and saved back to `grubenv`). If boot_counter
-reaches 0 we consider the boot failed, and we change the default
-to the second entry, thus falling back to the old system.
+`boot_counter` and `boot_success` keys. If `boot_counter` is set it
+gets decremented (and saved back to `grubenv`) each boot. If
+`boot_counter` reaches 0 we consider the boot failed, and we change the
+default to the second BLS entry, thus falling back to the old system.
 
 ## Health check system integration
 
@@ -103,7 +105,7 @@ Using greenboot, an regular update would look like this:
    checks on the system and detects if it is OK (green) or
    failed (red).
  * In case the system is red, some info is logged and the system
-   is rebooted. This will trigger the boot_counter mechanism,
+   is rebooted. This will trigger the `boot_counter` mechanism,
    and falling back to the old ostree deployment. In the
    next boot the `greenboot-rpm-ostree-grub2-check-fallback.service`
    service will detect this and will make the old default
@@ -117,7 +119,7 @@ in two ways. First of all, the `watchdog-ostree-start.service`
 triggers before the `ostree-finalize-staged.service` completes the
 migration (at reboot) and starts the watchdog.
 
-Secondly, the `watchdog-ostree-stop.service` triggers of
+Secondly, the `watchdog-ostree-stop.service` triggers after
 `boot-complete.target` (i.e. after a successful green boot) and stops
 the watchdog.
 
