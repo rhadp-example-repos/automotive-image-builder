@@ -102,11 +102,11 @@ probably want to build both.
 We can do this like so:
 
 ```
-$ make cs9-qemu-minimal-ostree.x86_64.repo DEFINES='extra_rpms=["curl"]'  OSTREE_REPO=ostree-repo
+$ make cs9-qemu-minimal-ostree.x86_64.repo DEFINES='extra_rpms=["curl"] distro_version="9.1"'  OSTREE_REPO=ostree-repo
 ```
 
-Note the `.repo` extension instead of `.qcow2`. Also, we specify an additional rpm in the new image, so that
-we can see a difference when we update to the new version. As before we specify `OSTREE_REPO`, pointing it
+Note the `.repo` extension instead of `.qcow2`. Also, we specify an additional rpm in the new image, and a new version id
+so that we can see a difference when we update to the new version. As before we specify `OSTREE_REPO`, pointing it
 at the same directory we did before.
 
 Again, once the build is finished we can look at the resulting commit:
@@ -117,7 +117,7 @@ commit 262e882d5c74da5315f712720529f599df415a1519f6efc1247edf96e148ac2c
 Parent:  d80f713ecaf86e9ff2911811b8f97b3ae68c7e1403954e21628269edd7c2c95a
 ContentChecksum:  e024335faba5db213e8c78cfc186de604d0921a82587696705364109789b4a86
 Date:  2022-03-30 14:19:51 +0000
-Version: 9
+Version: 9.1
 (no subject)
 
 commit d80f713ecaf86e9ff2911811b8f97b3ae68c7e1403954e21628269edd7c2c95a
@@ -143,7 +143,7 @@ Run "systemctl reboot" to start a reboot
 State: idle
 Deployments:
   auto-sig:cs9/x86_64/qemu-minimal
-                   Version: 9 (2022-03-30T14:19:51Z)
+                   Version: 9.1 (2022-03-30T14:19:51Z)
                     Commit: 262e882d5c74da5315f712720529f599df415a1519f6efc1247edf96e148ac2c
 
 ● auto-sig:cs9/x86_64/qemu-minimal
@@ -162,7 +162,7 @@ After boot things look like this:
 State: idle
 Deployments:
 ● auto-sig:cs9/x86_64/qemu-minimal
-                   Version: 9 (2022-03-30T14:19:51Z)
+                   Version: 9.1 (2022-03-30T14:19:51Z)
                     Commit: 262e882d5c74da5315f712720529f599df415a1519f6efc1247edf96e148ac2c
 
   auto-sig:cs9/x86_64/qemu-minimal
