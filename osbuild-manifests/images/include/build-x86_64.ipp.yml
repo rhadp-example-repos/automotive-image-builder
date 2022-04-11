@@ -4,8 +4,8 @@ mpp-vars:
   boot_rpms:
   - dracut-config-generic
   - grub2-tools-minimal
-  - $kernel_rpm-core
-  - $kernel_rpm-modules
+  - $kernel_rpm
+  - $kernel_rpm
   - grub2-efi-x64
   base_rpms:
   - NetworkManager
