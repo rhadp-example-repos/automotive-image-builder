@@ -150,9 +150,9 @@ manifests: $(foreach d, $(DISTROS),$(foreach m, $(MANIFESTS), $(foreach a,$(ARCH
 define packages-rule
 .PHONY: packages-$(call manifest-get-name,$1).json
 packages-$(call manifest-get-name,$1).json: $1
-	osbuild-mpp $$< -D arch=\"x86_64\" - | jq -f extract-rpms.jq > $$@.x86_64
-	osbuild-mpp $$< -D arch=\"aarch64\" - | jq -f extract-rpms.jq > $$@.aarch64
-	echo 1 | jq --indent 4 -f create-packagelist.jq --slurpfile x86_64 $$@.x86_64 --slurpfile aarch64 $$@.aarch64 > $$@
+	osbuild-mpp $$< -D arch=\"x86_64\" - | jq -f tools/extract-rpms.jq > $$@.x86_64
+	osbuild-mpp $$< -D arch=\"aarch64\" - | jq -f tools/extract-rpms.jq > $$@.aarch64
+	echo 1 | jq --indent 4 -f tools/create-packagelist.jq --slurpfile x86_64 $$@.x86_64 --slurpfile aarch64 $$@.aarch64 > $$@
 endef
 
 $(foreach m, $(MANIFESTS), $(eval $(call packages-rule,$m)))
