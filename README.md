@@ -1,8 +1,7 @@
-# Automotive SIG
+# Automotive sample images
 
-This is the central repository for the Automotive SIG. It contains recipes for
-building the images, information on how to download them, and
-documentation.
+This is the git repository for the Automotive SIG sample images. It contains recipes for
+building some sample automotive images and information on how to download them.
 
 For more information, visit:
 
