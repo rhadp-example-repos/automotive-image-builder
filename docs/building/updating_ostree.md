@@ -177,6 +177,81 @@ mode=archive-z2
 The last command shows that curl is now available, and that it can access the ostree repository
 at `10.0.2.100`.
 
+# Offline delta updates
+
+OSTree normally downloads updates from a remote ostree repository. These repositories contains
+all the files that are part of some version of an image. In addition to this, repos can contain
+something called static deltas. These are highly efficient deltas going from one particular
+version to another version. You can use the `ostree static-delta generate` command to generate
+these. If a static delta is available for the particular transaction you are running, it will
+automatically be used. See [the ostree docs](https://ostreedev.github.io/ostree/formats/#static-deltas)
+for more details of how this works.
+
+However, in addition to this in-repo use of static deltas they can also be used for "offline"
+updates. This is where a system update is delivered externally to the target system, as a single
+file, and then applied manually. Such files can be generated with a command like
+`ostree static-delta generate --inline --min-fallback-size=0`.
+
+There is a script in the repository at `osbuild-manifests/tools/generate-deltas` that helps
+generate updates like this. If you point it at an ostree repository it will produce update
+files for the latest version of all the images in the repo going from the 3 latest versions,
+as well as a "from scratch" version that can be applied independently of what is currently
+installed (although it is bigger).
+
+Here is a continuation of the above demo, where we instead update "offline".
+
+First, lets create a new update, and generate deltas for it. This will create a new commit
+(`1a7bb27f43962ba303af8a7fb5e43fbc96d0d900974f8471111961a6be0f8dd8` in this case) for version
+9.2 and a set of updates to it from the previous versions and one from-scratch.
+
+```
+$ make cs9-qemu-minimal-ostree.x86_64.repo DEFINES='extra_rpms=["curl","less"] distro_version="9.2"'  OSTREE_REPO=ostree-repo
+$ tools/generate-deltas ostree-repo/ ostree-repo/updates/
+$ du -h  ostree-repo/updates/*
+395M  cs9-x86_64-qemu-minimal-1a7bb27f43962ba303af8a7fb5e43fbc96d0d900974f8471111961a6be0f8dd8.update
+2.9M  cs9-x86_64-qemu-minimal-262e882d5c74da5315f712720529f599df415a1519f6efc1247edf96e148ac2c-1a7bb27f43962ba303af8a7fb5e43fbc96d0d900974f8471111961a6be0f8dd8.update
+9.4M  cs9-x86_64-qemu-minimal-d80f713ecaf86e9ff2911811b8f97b3ae68c7e1403954e21628269edd7c2c95a-1a7bb27f43962ba303af8a7fb5e43fbc96d0d900974f8471111961a6be0f8dd8.update
+```
+
+The created update files were stored in the `ostree-repo` directory, because then we can easily download them from
+the VM like this:
+
+```
+# curl --remote-name http://10.0.2.100/cs9-x86_64-qemu-minimal-1a7bb27f43962ba303af8a7fb5e43fbc96d0d900974f8471111961a6be0f8dd8.update
+# curl --remote-name cs9-x86_64-qemu-minimal-262e882d5c74da5315f712720529f599df415a1519f6efc1247edf96e148ac2c-1a7bb27f43962ba303af8a7fb5e43fbc96d0d900974f8471111961a6be0f8dd8.update
+# curl --remote-name cs9-x86_64-qemu-minimal-d80f713ecaf86e9ff2911811b8f97b3ae68c7e1403954e21628269edd7c2c95a-1a7bb27f43962ba303af8a7fb5e43fbc96d0d900974f8471111961a6be0f8dd8.update
+```
+
+These can now be applied with `ostree static-delta apply-offline`. Since all we still have both
+`262e882d...` (the fallback) and `d80f713e...` (current boot) installed, any one of these updates
+can be applied, but if you were to install a wrong one you would get an error like
+"Commit XYZ, which is the delta source, is not in repository".
+
+But, lets apply the most recent delta (only 2.9MB):
+
+```
+# ostree static-delta apply-offline cs9-x86_64-qemu-minimal-262e882d5c74da5315f712720529f599df415a1519f6efc1247edf96e148ac2c-1a7bb27f43962ba303af8a7fb5e43fbc96d0d900974f8471111961a6be0f8dd8.update
+# rpm-ostree rebase 1a7bb27f43962ba303af8a7fb5e43fbc96d0d900974f8471111961a6be0f8dd8
+Staging deployment... done
+Added:
+  less-575-4.el9.x86_64
+Changes queued for next boot. Run "systemctl reboot" to start a reboot
+# rpm-ostree status
+State: idle
+Deployments:
+  auto-sig:cs9/x86_64/qemu-minimal
+                   Version: 9.2 (2022-03-30T15:01:03Z)
+                    Commit: 1a7bb27f43962ba303af8a7fb5e43fbc96d0d900974f8471111961a6be0f8dd8
+
+● auto-sig:cs9/x86_64/qemu-minimal
+                   Version: 9.1 (2022-03-30T14:19:51Z)
+                    Commit: 262e882d5c74da5315f712720529f599df415a1519f6efc1247edf96e148ac2c
+```
+
+This kind of "offline" updates are very useful when you have pre-existing update mechanisms
+that can distribute updates to the car, rather than using a networked OSTree repository. Since
+the image is just a single file it is easy to integrate with such systems.
+
 # Further studies
 
 This has only scratched the surface of OSTree and its companion rpm-ostree, once you are
