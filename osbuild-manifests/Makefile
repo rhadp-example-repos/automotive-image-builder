@@ -32,7 +32,7 @@ MANIFESTS := $(wildcard images/*.mpp.yml)
 
 EXTRA_MPP_ARGS= # For internal use
 ifdef OSTREE_REPO
-EXTRA_MPP_ARGS +=-D ostree_parent_refs='$(shell ./ot-refs $(OSTREE_REPO))'
+EXTRA_MPP_ARGS +=-D ostree_parent_refs='$(shell tools/ot-refs $(OSTREE_REPO))'
 endif
 
 export CHECKPOINTS=build
@@ -133,7 +133,7 @@ $(foreach d, $(DISTROS), \
 # $6 == Export format (extension)
 define image-rule
 $(call image-name,$1,$2,$3,$4,$5).$6: $(BUILDDIR)/$(call image-name,$1,$2,$3,$4,$5).json
-	@./runosbuild "$$@" "$$<" "$3" "$4" "$5" "$6"
+	@tools/runosbuild "$$@" "$$<" "$3" "$4" "$5" "$6"
 endef
 
 $(foreach d, $(DISTROS), \
