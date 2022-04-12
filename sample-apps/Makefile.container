@@ -1,4 +1,4 @@
-PREFIX=registry.gitlab.com/redhat/automotive/automotive-sig
+PREFIX=registry.gitlab.com/centos/automotive/sample-images
 IMAGE=${PREFIX}/demo/auto-apps
 
 build:
