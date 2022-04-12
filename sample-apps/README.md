@@ -64,4 +64,4 @@ Or use the Makefile.container helpers:
 
 A pre-built version of these containers for aarch64 and x86-64 is
 available in the [automotive sig container
-repo](https://gitlab.com/redhat/automotive/automotive-sig/container_registry/2843578).
+repo](https://gitlab.com/CentOS/automotive/sample-images/container_registry/2944592).
