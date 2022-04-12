@@ -69,7 +69,7 @@ pipelines:
         origin: org.osbuild.source
         mpp-resolve-images:
           images:
-            - source: registry.gitlab.com/redhat/automotive/automotive-sig/demo/auto-apps
+            - source: registry.gitlab.com/centos/automotive/sample-images/demo/auto-apps
               tag: latest
               name: localhost/auto-apps
     options:
