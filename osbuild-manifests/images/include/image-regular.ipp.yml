@@ -41,7 +41,7 @@ pipelines:
       filesystems:
         mpp-eval: dracut_filesystems
       install:
-      - /.buildstamp
+        mpp-eval: dracut_install
   - type: org.osbuild.fstab
     options:
       filesystems:

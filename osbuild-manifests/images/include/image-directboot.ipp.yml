@@ -69,7 +69,7 @@ pipelines:
       filesystems:
         mpp-eval: dracut_filesystems
       install:
-      - /.buildstamp
+        mpp-eval: dracut_install
       extra:
       - /boot/efi/EFI/Linux/initramfs.img
       - --kernel-cmdline

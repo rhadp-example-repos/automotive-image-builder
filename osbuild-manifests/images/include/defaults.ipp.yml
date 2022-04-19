@@ -66,6 +66,7 @@ mpp-vars:
       - vfat
       - ext4
   default_dracut_add_drivers: []
+  default_dracut_install: []
   default_ostree_repo_url: http://10.0.2.100/
   default_ostree_remote_name: auto-sig
   target:
@@ -118,6 +119,8 @@ mpp-vars:
     mpp-eval: locals().get('dracut_filesystems', default_dracut_filesystems)
   dracut_add_drivers:
     mpp-eval: locals().get('dracut_add_drivers', default_dracut_add_drivers)
+  dracut_install:
+    mpp-eval: locals().get('dracut_install', default_dracut_install)
   root_password:
     mpp-eval: locals().get('root_password', default_root_password)
   root_ssh_key:
