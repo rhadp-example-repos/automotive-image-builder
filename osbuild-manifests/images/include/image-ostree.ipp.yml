@@ -26,22 +26,6 @@ pipelines:
       paths:
       - from: input://tree/
         to: tree:///
-  - type: org.osbuild.dracut
-    options:
-      kernel:
-      - mpp-eval: rpms['rootfs'][kernel_rpm + '-core'].evra
-      add_modules:
-        mpp-eval: dracut_add_modules
-      omit_modules:
-        mpp-eval: dracut_omit_modules
-      add_drivers:
-        mpp-join:
-        - mpp-eval: locals().get('target_dracut_drivers', [])
-        - mpp-eval: dracut_add_drivers
-      filesystems:
-        mpp-eval: dracut_filesystems
-      install:
-      - /.buildstamp
   - type: org.osbuild.systemd
     options:
       enabled_services:
@@ -59,6 +43,15 @@ pipelines:
       etc_group_members:
       - wheel
       - docker
+      initramfs-args:
+        - "--add"
+        - mpp-eval: "' '.join(dracut_add_modules)"
+        - "--omit"
+        - mpp-eval: "' '.join(dracut_omit_modules)"
+        - "--filesystems"
+        - mpp-eval: "' '.join(dracut_filesystems)"
+        - "--add-drivers"
+        - mpp-eval: "' '.join(dracut_add_drivers + locals().get('target_dracut_drivers', []))"
 - name: ostree-commit
   build: name:build
   stages:
