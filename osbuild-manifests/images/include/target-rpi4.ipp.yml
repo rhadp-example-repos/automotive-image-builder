@@ -14,10 +14,12 @@ mpp-vars:
     else: []
   extra_image_rpms:
   - pi4-firmware-blob
-  target_dracut_drivers:
-  - bcm2835
-  - bcm2835-mailbox
-  - sdhci
+  dracut_add_drivers:
+    mpp-join:
+    - mpp-eval: dracut_add_drivers
+    - - bcm2835
+      - bcm2835-mailbox
+      - sdhci
   partition_label: dos
   target_repos:
   - id: cs9-rpi4-fw
