@@ -1,0 +1,65 @@
+# This image demontrates how to use an encrypted rootfs
+# Due to the use of luks_auto_unlock, the passphrase is copied to the initrd and
+# the rootfs uses this to automatically unlock the system on the first boot.
+# However, the autosig-sample-tpm-enroll service is also installed, and this
+# will replace the passphrase with a TPM based token, meaning that later
+# boots are tied to this machine only.
+# Remember to pass --tpm2 to runvm when testing this.
+version: '2'
+mpp-vars:
+  name: encrypted
+  use_luks: true
+  luks_auto_unlock: true
+pipelines:
+- mpp-import-pipelines:
+    path: include/build.ipp.yml
+- name: rootfs
+  build: name:build
+  stages:
+  - type: org.osbuild.kernel-cmdline
+    options:
+      root_fs_uuid:
+        mpp-eval: rootfs_uuid
+      kernel_opts:
+        mpp-eval: ''' '' .join(kernel_opts)'
+  - type: org.osbuild.rpm
+    options:
+      gpgkeys:
+      - mpp-eval: centos_gpg_key
+      - mpp-eval: redhat_gpg_key
+      disable_dracut: true
+      exclude:
+        docs: true
+    inputs:
+      packages:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-depsolve:
+          architecture: $arch
+          ignore-weak-deps: true
+          module-platform-id: $distro_module_id
+          baseurl: $distro_baseurl/BaseOS/$arch/os/
+          repos:
+            mpp-join:
+            - mpp-eval: distro_repos
+            - mpp-eval: target_repos
+            - mpp-eval: extra_repos
+          packages:
+            mpp-join:
+            - mpp-eval: base_rpms
+            - mpp-eval: image_rpms
+            - mpp-eval: extra_rpms
+            # Install the tools and service files
+            - - autosig-sample-tpm-enroll
+          excludes:
+          - dracut-config-rescue
+  - type: org.osbuild.locale
+    options:
+      language: en_US.UTF-8
+  - type: org.osbuild.systemd
+    options:
+      enabled_services:
+      - NetworkManager.service
+      - rngd.service
+- mpp-import-pipelines:
+    path: include/image.ipp.yml
