@@ -2,25 +2,13 @@ version: '2'
 mpp-vars:
   efiarch: aa64
   boot_rpms:
-  - dracut-config-generic
-  - grub2-tools-minimal
-  - $kernel_rpm
-  - grub2-efi-aa64
+    mpp-join:
+      - mpp-eval: boot_rpms
+      - - grub2-efi-aa64
   base_rpms:
-  - NetworkManager
-  - audit
-  - chrony
-  - e2fsprogs
-  - efibootmgr
-  - glibc-langpack-en
-  - hostname
-  - linux-firmware
-  - passwd
-  - rng-tools
-  - rootfiles
-  - rsyslog
-  - selinux-policy-targeted
-  - systemd-udev
+    mpp-join:
+      - mpp-eval: base_rpms
+      - []
 pipelines:
 - name: build
   runner: org.osbuild.centos9
@@ -37,25 +25,11 @@ pipelines:
           repos:
             mpp-eval: distro_repos
           packages:
-          - dnf
-          - dosfstools
-          - e2fsprogs
-          - efibootmgr
-          - grub2-efi-aa64
-          - grub2-efi-aa64-cdboot
-          - grub2-tools
-          - grub2-tools-minimal
-          - policycoreutils
-          - python3-iniparse
-          - python3
-          - qemu-img
-          - rpm-ostree
-          - selinux-policy-targeted
-          - shim-aa64
-          - skopeo
-          - systemd
-          - tar
-          - xz
+            mpp-join:
+              - mpp-eval: build_rpms
+              - - grub2-efi-aa64
+                - grub2-efi-aa64-cdboot
+                - shim-aa64
     options:
       gpgkeys:
       - mpp-eval: centos_gpg_key

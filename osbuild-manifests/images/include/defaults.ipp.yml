@@ -241,3 +241,39 @@ mpp-vars:
       path: /boot
       freq: 1
       passno: 1
+  build_rpms:
+    - dnf
+    - dosfstools
+    - e2fsprogs
+    - efibootmgr
+    - grub2-tools
+    - grub2-tools-minimal
+    - policycoreutils
+    - python3-iniparse
+    - python3
+    - qemu-img
+    - rpm-ostree
+    - selinux-policy-targeted
+    - skopeo
+    - systemd
+    - tar
+    - xz
+  boot_rpms:
+    - dracut-config-generic
+    - grub2-tools-minimal
+    - $kernel_rpm
+  base_rpms:
+    - NetworkManager
+    - audit
+    - chrony
+    - e2fsprogs
+    - efibootmgr
+    - glibc-langpack-en
+    - hostname
+    - linux-firmware
+    - passwd
+    - rng-tools
+    - rootfiles
+    - rsyslog
+    - selinux-policy-targeted
+    - systemd-udev
