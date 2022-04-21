@@ -1,5 +1,12 @@
 version: '2'
+mpp-vars:
+  extra_tree_content: []
 pipelines:
+# Some variables need to be written to files, do that here
+- name: extra-tree-content
+  build: name:build
+  stages:
+  - type: org.osbuild.noop
 - mpp-import-pipelines:
     path: image-$image_type.ipp.yml
 - name: image

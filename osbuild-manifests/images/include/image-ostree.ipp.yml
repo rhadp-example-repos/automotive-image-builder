@@ -22,10 +22,17 @@ pipelines:
         origin: org.osbuild.pipeline
         references:
         - name:rootfs
+      extra-tree:
+        type: org.osbuild.tree
+        origin: org.osbuild.pipeline
+        references:
+        - name:extra-tree-content
     options:
       paths:
-      - from: input://tree/
-        to: tree:///
+        mpp-join:
+          - - from: input://tree/
+              to: tree:///
+          - mpp-eval: extra_tree_content
   - type: org.osbuild.systemd
     options:
       enabled_services:
