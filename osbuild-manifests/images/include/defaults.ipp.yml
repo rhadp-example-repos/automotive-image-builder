@@ -32,6 +32,14 @@ mpp-vars:
     mpp-eval: ('61b2905b-df3e-4fb3-80fa-49d1e773aa32' if static_uuids else str(__import__('uuid').uuid4()))
   default_rootpart_uuid:
     mpp-eval: ('6264d520-3fb9-423f-8ab8-7a0a8e3d3562' if static_uuids else str(__import__('uuid').uuid4()))
+  default_luks_uuid:
+    mpp-eval: ('aedd1eef-f24e-425e-a9f3-bb5a1c996a95' if static_uuids else str(__import__('uuid').uuid4()))
+  default_use_luks: false
+  use_luks:
+    mpp-eval: locals().get('use_luks', default_use_luks)
+  default_luks_auto_unlock: false
+  luks_auto_unlock:
+    mpp-eval: locals().get('luks_auto_unlock', default_luks_auto_unlock)
   default_kernel_opts:
   - ro
   - console=tty0
@@ -54,7 +62,8 @@ mpp-vars:
       - udev-rules
       - usrmount
   default_dracut_omit_modules:
-      - dm
+      - mpp-if: not use_luks
+        then: dm
       - lunmask
       - mdraid
       - memstrack
@@ -69,6 +78,7 @@ mpp-vars:
   default_dracut_install: []
   default_ostree_repo_url: http://10.0.2.100/
   default_ostree_remote_name: auto-sig
+  default_luks_passphrase: password
   target:
     mpp-eval: locals().get('target', default_target)
   image_type:
@@ -105,6 +115,8 @@ mpp-vars:
     mpp-eval: locals().get('bootpart_uuid', default_bootpart_uuid)
   efipart_uuid:
     mpp-eval: locals().get('efipart_uuid', default_efipart_uuid)
+  luks_uuid:
+    mpp-eval: locals().get('luks_uuid', default_luks_uuid)
   kernel_opts:
     mpp-eval: locals().get('kernel_opts', default_kernel_opts)
   efipart_size:
@@ -133,6 +145,8 @@ mpp-vars:
     mpp-eval: locals().get('ostree_repo_url', default_ostree_repo_url)
   ostree_remote_name:
     mpp-eval: locals().get('ostree_remote_name', default_ostree_remote_name)
+  luks_passphrase:
+    mpp-eval: locals().get('luks_passphrase', default_luks_passphrase)
   centos_gpg_key: |
     -----BEGIN PGP PUBLIC KEY BLOCK-----
     Version: GnuPG v2.0.22 (GNU/Linux)
@@ -242,12 +256,14 @@ mpp-vars:
       freq: 1
       passno: 1
   build_rpms:
+    - cryptsetup
     - dnf
     - dosfstools
     - e2fsprogs
     - efibootmgr
     - grub2-tools
     - grub2-tools-minimal
+    - lvm2
     - policycoreutils
     - python3-iniparse
     - python3
@@ -262,6 +278,8 @@ mpp-vars:
     - dracut-config-generic
     - grub2-tools-minimal
     - $kernel_rpm
+    - mpp-if: use_luks and luks_auto_unlock
+      then: clevis-dracut
   base_rpms:
     - NetworkManager
     - audit
@@ -277,3 +295,5 @@ mpp-vars:
     - rsyslog
     - selinux-policy-targeted
     - systemd-udev
+    - mpp-if: use_luks
+      then: lvm2
