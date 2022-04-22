@@ -35,15 +35,13 @@ pipelines:
             - mpp-eval: distro_repos
             - mpp-eval: target_repos
             - mpp-eval: extra_repos
-            - - id: copr-watchdog
-                baseurl: https://download.copr.fedorainfracloud.org/results/alexl/autosig-watchdog/centos-stream-9-$arch/
           packages:
             mpp-join:
             - mpp-eval: base_rpms
             - mpp-eval: image_rpms
             - mpp-eval: extra_rpms
             # Install the watchdog tools and service files
-            - - autosig-watchdog
+            - - autosig-sample-watchdog
           excludes:
           - dracut-config-rescue
     # Make sure we only try a failed boot once before rollback (default is 3)

@@ -1,2 +1,0 @@
-#!/usr/bin/bash
-echo STOP > /dev/virtio-ports/watchdog.0
