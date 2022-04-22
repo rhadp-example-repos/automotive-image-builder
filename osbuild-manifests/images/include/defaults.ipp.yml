@@ -19,7 +19,7 @@ mpp-vars:
   default_efipart_size: 204800
   default_bootpart_size: 614400
   static_uuids:
-    mpp-eval: locals().get('static-uuids', False)
+    mpp-eval: locals().get('static_uuids', True)
   default_rootfs_uuid:
     mpp-eval: ('76a22bf4-f153-4541-b6c7-0332c0dfaeac' if static_uuids else str(__import__('uuid').uuid4()))
   default_bootfs_uuid:
