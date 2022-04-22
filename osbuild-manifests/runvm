@@ -13,6 +13,7 @@ import socket
 import socketserver
 import subprocess
 import sys
+import tempfile
 import time
 
 is_verbosse = False
@@ -194,6 +195,8 @@ def main():
                         help=f"Run without graphics")
     parser.add_argument("--watchdog", default=False, action="store_true",
                         help=f"Enable watchdog")
+    parser.add_argument("--tpm2", default=False, action="store_true",
+                        help=f"Enable TPM2")
     parser.add_argument("--snapshot", default=False, action="store_true",
                         help=f"Work on a snapshot  of the image")
     parser.add_argument("--secureboot", dest="secureboot", action="store_true", default=False,
@@ -279,10 +282,12 @@ def main():
 
     runvm_id = random_id()
 
+    tmpdir = tempfile.TemporaryDirectory(prefix=f"runvm-{runvm_id}")
+
     watchdog_pid = 0
     if args.watchdog:
-        qmp_socket_path = f"/tmp/runvm-sock-{runvm_id}"
-        watch_socket_path = f"/tmp/runvm-watch-{runvm_id}"
+        qmp_socket_path = os.path.join(tmpdir.name, "qmp-socket")
+        watch_socket_path = os.path.join(tmpdir.name, "watch-socket")
 
         qemu_args += [
             "-qmp", f"unix:{qmp_socket_path},server=on,wait=off",
@@ -294,6 +299,27 @@ def main():
         if watchdog_pid == 0:
             run_watchdog(watch_socket_path, qmp_socket_path)
             sys.exit(0)
+
+    if args.tpm2:
+        if shutil.which("swtpm") is None:
+            exit_error("Command `swtpm` not found in path, this is needed for tpm2 support")
+
+        tpm2_socket = os.path.join(tmpdir.name, "tpm-socket")
+
+        if args.snapshot:
+            tpm2_path = os.path.join(tmpdir.name, "tpm2_state")
+        else:
+            tpm2_path = ".tpm2_state"
+        os.makedirs(tpm2_path, exist_ok=True)
+
+        swtpm_args = ["swtpm", "socket", "--tpm2", "--tpmstate", f"dir={tpm2_path}", "--ctrl", f"type=unixio,path={tpm2_socket}" ]
+        res = subprocess.Popen(swtpm_args)
+
+        qemu_args += [
+            "-chardev", f"socket,id=chrtpm,path={tpm2_socket}",
+            "-tpmdev", "emulator,id=tpm0,chardev=chrtpm",
+            "-device", "tpm-tis,tpmdev=tpm0"
+        ]
 
     print_verbose(f"Image: {args.image}")
 
@@ -312,6 +338,8 @@ def main():
 
     if watchdog_pid:
         os.kill(watchdog_pid, signal.SIGTERM)
+
+    tmpdir.cleanup()
 
     return res.returncode
 

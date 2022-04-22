@@ -16,10 +16,17 @@ pipelines:
         origin: org.osbuild.pipeline
         references:
         - name:rootfs
+      extra-tree:
+        type: org.osbuild.tree
+        origin: org.osbuild.pipeline
+        references:
+        - name:extra-tree-content
     options:
       paths:
-      - from: input://tree/
-        to: tree:///
+        mpp-join:
+          - - from: input://tree/
+              to: tree:///
+          - mpp-eval: extra_tree_content
   - type: org.osbuild.users
     options:
       users:
@@ -37,13 +44,11 @@ pipelines:
       omit_modules:
         mpp-eval: dracut_omit_modules
       add_drivers:
-        mpp-join:
-        - mpp-eval: locals().get('target_dracut_drivers', [])
-        - mpp-eval: dracut_add_drivers
+        mpp-eval: dracut_add_drivers
       filesystems:
         mpp-eval: dracut_filesystems
       install:
-      - /.buildstamp
+        mpp-eval: dracut_install
   - type: org.osbuild.fstab
     options:
       filesystems:

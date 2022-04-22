@@ -12,6 +12,8 @@ pipelines:
     options:
       root_fs_uuid:
         mpp-eval: rootfs_uuid
+      kernel_opts:
+        mpp-eval: ''' '' .join(kernel_opts)'
   - type: org.osbuild.rpm
     options:
       gpgkeys:

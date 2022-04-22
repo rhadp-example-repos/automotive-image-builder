@@ -1,5 +1,42 @@
 version: '2'
+mpp-vars:
+  extra_tree_content:
+    - mpp-if: use_luks and luks_auto_unlock
+      then:
+        from: input://extra-tree/luks-key
+        to: tree:///usr/.auto-unlock-key
+  dracut_install:
+    mpp-join:
+      - mpp-eval: dracut_install
+      - mpp-if: use_luks and luks_auto_unlock
+        then:
+          - /usr/.auto-unlock-key
+  kernel_opts:
+    mpp-join:
+      - mpp-eval: kernel_opts
+      - mpp-if: use_luks
+        then:
+          - rd.luks.uuid=$luks_uuid
+          - mpp-if: luks_auto_unlock
+            then: rd.luks.key=$luks_uuid=/usr/.auto-unlock-key
 pipelines:
+# Some variables need to be written to files, do that here
+- name: extra-tree-content
+  build: name:build
+  stages:
+  - type: org.osbuild.copy
+    inputs:
+      inlinefile:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: luks-key
+          text: $luks_passphrase
+    options:
+      paths:
+        - from:
+            mpp-format-string: input://inlinefile/{embedded['luks-key']}
+          to: tree:///luks-key
 - mpp-import-pipelines:
     path: image-$image_type.ipp.yml
 - name: image
@@ -45,16 +82,87 @@ pipelines:
       uuid:
         mpp-eval: bootfs_uuid
       label: boot
+  - mpp-if: use_luks
+    then:
+      type: org.osbuild.luks2.format
+      devices:
+        device:
+          type: org.osbuild.loopback
+          options:
+            filename: disk.img
+            start:
+              mpp-eval: image.layout['root'].start
+            size:
+              mpp-eval: image.layout['root'].size
+            lock: true
+      options:
+        passphrase:
+          mpp-eval: luks_passphrase
+        uuid:
+          mpp-eval: luks_uuid
+        label: luks-rootfs
+        pbkdf:
+          method: argon2i
+          memory: 32
+          parallelism: 1
+          iterations: 4
+  - mpp-if: use_luks
+    then:
+      type: org.osbuild.lvm2.create
+      devices:
+        luks:
+          type: org.osbuild.loopback
+          options:
+            filename: disk.img
+            start:
+              mpp-eval: image.layout['root'].start
+            size:
+              mpp-eval: image.layout['root'].size
+        device:
+          type: org.osbuild.luks2
+          parent: luks
+          options:
+            passphrase:
+              mpp-eval: luks_passphrase
+      options:
+        volumes:
+          - name: root
+            extents: 100%FREE
   - type: org.osbuild.mkfs.ext4
     devices:
+      luks:
+        mpp-if: use_luks
+        then:
+          type: org.osbuild.loopback
+          options:
+            filename: disk.img
+            start:
+              mpp-eval: image.layout['root'].start
+            size:
+              mpp-eval: image.layout['root'].size
+      lvm:
+        mpp-if: use_luks
+        then:
+          type: org.osbuild.luks2
+          parent: luks
+          options:
+            passphrase:
+              mpp-eval: luks_passphrase
       device:
-        type: org.osbuild.loopback
-        options:
-          filename: disk.img
-          start:
-            mpp-eval: image.layout['root'].start
-          size:
-            mpp-eval: image.layout['root'].size
+        mpp-if: use_luks
+        then:
+          type: org.osbuild.lvm2.lv
+          parent: lvm
+          options:
+            volume: root
+        else:
+          type: org.osbuild.loopback
+          options:
+            filename: disk.img
+            start:
+              mpp-eval: image.layout['root'].start
+            size:
+              mpp-eval: image.layout['root'].size
     options:
       uuid:
         mpp-eval: rootfs_uuid
@@ -102,13 +210,38 @@ pipelines:
           size:
             mpp-eval: image.layout['boot'].size
       root:
-        type: org.osbuild.loopback
-        options:
-          filename: disk.img
-          start:
-            mpp-eval: image.layout['root'].start
-          size:
-            mpp-eval: image.layout['root'].size
+        mpp-if: use_luks
+        then:
+          type: org.osbuild.lvm2.lv
+          parent: root-luks
+          options:
+            volume: root
+        else:
+          type: org.osbuild.loopback
+          options:
+            filename: disk.img
+            start:
+              mpp-eval: image.layout['root'].start
+            size:
+              mpp-eval: image.layout['root'].size
+      root-raw:
+        mpp-if: use_luks
+        then:
+          type: org.osbuild.loopback
+          options:
+            filename: disk.img
+            start:
+              mpp-eval: image.layout['root'].start
+            size:
+              mpp-eval: image.layout['root'].size
+      root-luks:
+        mpp-if: use_luks
+        then:
+          type: org.osbuild.luks2
+          parent: root-raw
+          options:
+            passphrase:
+              mpp-eval: luks_passphrase
     mounts:
     - name: root
       type: org.osbuild.ext4
@@ -122,7 +255,28 @@ pipelines:
       type: org.osbuild.fat
       source: efi
       target: /boot/efi
-
+  - mpp-if: use_luks
+    then:
+      type: org.osbuild.lvm2.metadata
+      devices:
+        luks:
+          type: org.osbuild.loopback
+          options:
+            filename: disk.img
+            start:
+              mpp-eval: image.layout['root'].start
+            size:
+              mpp-eval: image.layout['root'].size
+        device:
+          type: org.osbuild.luks2
+          parent: luks
+          options:
+            passphrase:
+              mpp-eval: luks_passphrase
+      options:
+        vg_name: osbuild
+        creation_host: osbuild
+        description: "Built with osbuild"
 - name: qcow2
   build: name:build
   stages:
