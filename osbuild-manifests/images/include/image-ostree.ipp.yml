@@ -51,16 +51,31 @@ pipelines:
       - wheel
       - docker
       initramfs-args:
-        - "--add"
-        - mpp-eval: "' '.join(dracut_add_modules)"
-        - "--omit"
-        - mpp-eval: "' '.join(dracut_omit_modules)"
-        - "--filesystems"
-        - mpp-eval: "' '.join(dracut_filesystems)"
-        - "--add-drivers"
-        - mpp-eval: "' '.join(dracut_add_drivers)"
-        - "--install"
-        - mpp-eval: "' '.join(dracut_install)"
+        - mpp-if: dracut_add_modules
+          then: "--add"
+        - mpp-if: dracut_add_modules
+          then:
+            mpp-eval: "' '.join(dracut_add_modules)"
+        - mpp-if: dracut_omit_modules
+          then: "--omit"
+        - mpp-if: dracut_omit_modules
+          then:
+            mpp-eval: "' '.join(dracut_omit_modules)"
+        - mpp-if: dracut_filesystems
+          then: "--filesystems"
+        - mpp-if: dracut_filesystems
+          then:
+            mpp-eval: "' '.join(dracut_filesystems)"
+        - mpp-if: dracut_add_drivers
+          then: "--add-drivers"
+        - mpp-if: dracut_add_drivers
+          then:
+            mpp-eval: "' '.join(dracut_add_drivers)"
+        - mpp-if: dracut_install
+          then: "--install"
+        - mpp-if: dracut_install
+          then:
+            mpp-eval: "' '.join(dracut_install)"
 - name: ostree-commit
   build: name:build
   stages:
