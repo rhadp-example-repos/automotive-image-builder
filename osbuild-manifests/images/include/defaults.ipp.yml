@@ -256,14 +256,16 @@ mpp-vars:
       freq: 1
       passno: 1
   build_rpms:
-    - cryptsetup
+    - mpp-if: use_luks
+      then: cryptsetup
     - dnf
     - dosfstools
     - e2fsprogs
     - efibootmgr
     - grub2-tools
     - grub2-tools-minimal
-    - lvm2
+    - mpp-if: use_luks
+      then: lvm2
     - policycoreutils
     - python3-iniparse
     - python3
