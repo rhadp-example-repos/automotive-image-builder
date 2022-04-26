@@ -27,7 +27,7 @@ mpp-define-image:
       uuid: $rootpart_uuid
 pipelines:
 - mpp-import-pipelines:
-    path: ../../distro/$distro_name.ipp.yml
+    path: distro/$distro_name.ipp.yml
 - mpp-import-pipelines:
     path: defaults.ipp.yml
 - mpp-import-pipelines:

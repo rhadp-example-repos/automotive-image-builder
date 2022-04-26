@@ -113,7 +113,7 @@ $(BUILDDIR):
 # $5 == Arch
 define json-rule
 $(BUILDDIR)/$(call image-name,$1,$2,$3,$4,$5).json: $2 $(BUILDDIR)
-	$(OSBUILD_MPP) -D image_type="\"$($4_IMAGETYPE)\"" -D arch=\"$5\" -D distro_name="\"$1\"" -D target="\"$3\"" $(DEFINES_ARGS) $(EXTRA_MPP_ARGS) $(MPP_ARGS) $$< $$@
+	$(OSBUILD_MPP) -I . -D image_type="\"$($4_IMAGETYPE)\"" -D arch=\"$5\" -D distro_name="\"$1\"" -D target="\"$3\"" $(DEFINES_ARGS) $(EXTRA_MPP_ARGS) $(MPP_ARGS) $$< $$@
 .PHONY: $(BUILDDIR)/$(call image-name,$1,$2,$3,$4,$5).json
 endef
 
