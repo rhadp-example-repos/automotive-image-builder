@@ -27,8 +27,10 @@ BUILDDIR=_build
 export STOREDIR=$(BUILDDIR)/osbuild_store
 export OUTPUTDIR=$(BUILDDIR)/image_output
 
+IMAGEDIR=
+
 DISTROS := $(basename $(basename $(notdir f,$(wildcard distro/*.ipp.yml))))
-MANIFESTS := $(wildcard images/*.mpp.yml)
+MANIFESTS := $(wildcard images/*.mpp.yml) $(foreach DIR,$(IMAGEDIR),$(wildcard $(DIR)/*))
 
 EXTRA_MPP_ARGS= # For internal use
 ifdef OSTREE_REPO
@@ -57,7 +59,9 @@ help:
 	@echo
 	@echo This makefile is a wrapper around osbuild-mpp and osbuild to easily build images
 	@echo
-	@echo To build a raw image, run \"make image.img\", or to build a qcow2 image, run \"make image.qcow2\"
+	@echo To build a raw image, run \"make image.img\", or to build a qcow2 image, run \"make image.qcow2\".
+	@echo This will build any image from a file called \"image.mpp.yml\" in the \"images\" subdirectory. You can
+	@echo pass IMAGEDIR=/some/other/path to make also to pick up manifests from an external directory.
 	@echo
 	@echo For example, to build a minimal qcow2 image with ostree support targeting qemu, run:
 	@echo '  make cs9-qemu-minimal-ostree.$(HOST_ARCH).qcow2'
