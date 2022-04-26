@@ -46,6 +46,7 @@ mpp-vars:
   - console=ttyS0
   - systemd.log_target=console
   - systemd.journald.forward_to_console=1
+  - efi=runtime
   default_dracut_add_modules:
       - base
       - bash
