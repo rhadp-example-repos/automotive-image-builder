@@ -42,6 +42,7 @@ pipelines:
             - mpp-eval: extra_rpms
             # Install the watchdog tools and service files
             - - autosig-sample-watchdog
+              - autosig-sample-staticdelta
           excludes:
           - dracut-config-rescue
     # Make sure we only try a failed boot once before rollback (default is 3)
