@@ -93,6 +93,10 @@ help:
 	@echo  \ \ foo.simg will build foo.img and then convert it with img2simg
 	@echo  \ \ foo.tar.gz will build $foo.tar and then gzip it
 	@echo
+	@echo "When building a custom variant of an image (say with an extra package) you can use a"
+	@echo custom @suffix to change the name of the produced file. For example:
+	@echo "  make cs9-qemu-minimal-ostree@gdb.$(HOST_ARCH).qcow2 DEFINES='extra_rpms=[\"gdb\"]'"
+	@echo
 	@echo If you pass VM=1, then the images used from \"make osbuildvm-images\" will be used to do the
 	@echo actual building. This means that you don\'t need sudo rights to run osbuild, and it means
 	@echo architectures other than the current ones can be built.
@@ -137,6 +141,9 @@ $(foreach d, $(DISTROS), \
 # $6 == Export format (extension)
 define image-rule
 $(call image-name,$1,$2,$3,$4,$5).$6: $(BUILDDIR)/$(call image-name,$1,$2,$3,$4,$5).json
+	@tools/runosbuild "$$@" "$$<" "$3" "$4" "$5" "$6"
+
+$(call image-name-noarch,$1,$2,$3,$4)@%.$5.$6: $(BUILDDIR)/$(call image-name,$1,$2,$3,$4,$5).json
 	@tools/runosbuild "$$@" "$$<" "$3" "$4" "$5" "$6"
 endef
 
