@@ -69,5 +69,10 @@ pipelines:
       # Enable the watchdog ostree/greenboot integration
       - watchdog-ostree-start.service
       - watchdog-ostree-stop.service
+  # Work around bug for now (https://github.com/coreos/rpm-ostree/issues/3554)
+  - type: org.osbuild.mkdir
+    options:
+      paths:
+        - path: /var/lib/containers
 - mpp-import-pipelines:
     path: include/image.ipp.yml
