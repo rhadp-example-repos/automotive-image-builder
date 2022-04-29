@@ -17,6 +17,7 @@ mpp-vars:
       - mpp-if: use_luks
         then:
           - rd.luks.uuid=$luks_uuid
+          - rd.luks.options=discard
           - mpp-if: luks_auto_unlock
             then: rd.luks.key=$luks_uuid=/usr/.auto-unlock-key
 pipelines:
