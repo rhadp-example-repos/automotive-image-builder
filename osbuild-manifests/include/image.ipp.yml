@@ -107,6 +107,9 @@ pipelines:
           memory: 32
           parallelism: 1
           iterations: 4
+        integrity:
+          mpp-if: luks_use_integrity
+          then: hmac-sha256
   - mpp-if: use_luks
     then:
       type: org.osbuild.lvm2.create
