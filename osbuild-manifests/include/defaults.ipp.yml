@@ -37,6 +37,7 @@ mpp-vars:
   default_use_luks: false
   use_luks:
     mpp-eval: locals().get('use_luks', default_use_luks)
+  default_luks_use_integrity: false
   default_luks_auto_unlock: false
   luks_auto_unlock:
     mpp-eval: locals().get('luks_auto_unlock', default_luks_auto_unlock)
@@ -148,6 +149,8 @@ mpp-vars:
     mpp-eval: locals().get('ostree_remote_name', default_ostree_remote_name)
   luks_passphrase:
     mpp-eval: locals().get('luks_passphrase', default_luks_passphrase)
+  luks_integrity:
+    mpp-eval: locals().get('luks_use_integrity', default_luks_use_integrity)
   centos_gpg_key: |
     -----BEGIN PGP PUBLIC KEY BLOCK-----
     Version: GnuPG v2.0.22 (GNU/Linux)
