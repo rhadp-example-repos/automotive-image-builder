@@ -18,6 +18,7 @@ mpp-vars:
   default_image_size: '8589934592'
   default_efipart_size: 204800
   default_bootpart_size: 614400
+  default_kernel_loglevel: 4
   static_uuids:
     mpp-eval: locals().get('static_uuids', True)
   default_rootfs_uuid:
@@ -41,13 +42,12 @@ mpp-vars:
   default_luks_auto_unlock: false
   luks_auto_unlock:
     mpp-eval: locals().get('luks_auto_unlock', default_luks_auto_unlock)
+  default_use_efi_runtime: true
   default_kernel_opts:
-  - ro
   - console=tty0
   - console=ttyS0
   - systemd.log_target=console
   - systemd.journald.forward_to_console=1
-  - efi=runtime
   default_dracut_add_modules:
       - base
       - bash
@@ -151,6 +151,10 @@ mpp-vars:
     mpp-eval: locals().get('luks_passphrase', default_luks_passphrase)
   luks_integrity:
     mpp-eval: locals().get('luks_use_integrity', default_luks_use_integrity)
+  use_efi_runtime:
+    mpp-eval: locals().get('use_efi_runtime', default_use_efi_runtime)
+  kernel_loglevel:
+    mpp-eval: locals().get('kernel_loglevel', default_kernel_loglevel)
   centos_gpg_key: |
     -----BEGIN PGP PUBLIC KEY BLOCK-----
     Version: GnuPG v2.0.22 (GNU/Linux)

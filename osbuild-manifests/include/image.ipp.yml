@@ -13,6 +13,10 @@ mpp-vars:
           - /usr/.auto-unlock-key
   kernel_opts:
     mpp-join:
+      - - ro
+        - loglevel=$kernel_loglevel
+        - mpp-if: use_efi_runtime
+          then: efi=runtime
       - mpp-eval: kernel_opts
       - mpp-if: use_luks
         then:
