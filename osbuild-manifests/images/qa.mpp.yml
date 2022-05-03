@@ -84,7 +84,7 @@ pipelines:
        {
           id: epel,
           name: "EPEL",
-          baseurl: ["https://dl.fedoraproject.org/pub/epel/9/Everything/$arch/os/"],
+          baseurl: ["https://dl.fedoraproject.org/pub/epel/9/Everything/$basearch/"],
           enabled: true,
           gpgcheck: true
        }
