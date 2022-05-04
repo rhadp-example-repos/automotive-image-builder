@@ -54,6 +54,7 @@ pipelines:
               - vim
               - git
               - wget
+              - make
               # Dependencies to build RPMs and images
               - rpm-build
               - hostname
