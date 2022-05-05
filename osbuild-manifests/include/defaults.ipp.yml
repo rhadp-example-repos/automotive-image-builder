@@ -288,8 +288,6 @@ mpp-vars:
     - dracut-config-generic
     - grub2-tools-minimal
     - $kernel_rpm
-    - mpp-if: use_luks and luks_auto_unlock
-      then: clevis-dracut
   base_rpms:
     - NetworkManager
     - audit

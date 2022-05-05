@@ -10,6 +10,8 @@ mpp-vars:
   name: encrypted
   use_luks: true
   luks_auto_unlock: true
+  extra_boot_rpms:
+    - clevis-dracut
 pipelines:
 - mpp-import-pipelines:
     path: include/build.ipp.yml
