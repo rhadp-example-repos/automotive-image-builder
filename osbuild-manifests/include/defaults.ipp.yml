@@ -149,7 +149,7 @@ mpp-vars:
     mpp-eval: locals().get('ostree_remote_name', default_ostree_remote_name)
   luks_passphrase:
     mpp-eval: locals().get('luks_passphrase', default_luks_passphrase)
-  luks_integrity:
+  luks_use_integrity:
     mpp-eval: locals().get('luks_use_integrity', default_luks_use_integrity)
   use_efi_runtime:
     mpp-eval: locals().get('use_efi_runtime', default_use_efi_runtime)
