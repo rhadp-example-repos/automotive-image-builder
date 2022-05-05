@@ -37,6 +37,7 @@ pipelines:
             mpp-join:
             - mpp-eval: base_rpms
             - mpp-eval: boot_rpms
+            - mpp-eval: locals().get('extra_boot_rpms', [])
             - - shim-unsigned-$efiarch
           excludes:
           - dracut-config-rescue

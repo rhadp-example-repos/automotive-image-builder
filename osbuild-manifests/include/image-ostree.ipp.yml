@@ -4,6 +4,7 @@ mpp-vars:
     mpp-join:
     - mpp-eval: locals().get('extra_image_rpms', [])
     - mpp-eval: boot_rpms
+    - mpp-eval: locals().get('extra_boot_rpms', [])
     - - nss-altfiles
       - greenboot
       - greenboot-grub2
