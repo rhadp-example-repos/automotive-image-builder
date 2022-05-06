@@ -88,6 +88,8 @@ mpp-vars:
     mpp-eval: locals().get('image_type', default_image_type)
   kernel_rpm:
     mpp-eval: locals().get('kernel_rpm', default_kernel_rpm)
+  linux_firmware_rpm:
+    mpp-eval: locals().get('linux_firmware_rpm', default_linux_firmware_rpm)
   ostree_ref:
     mpp-eval: locals().get('ostree_ref', default_ostree_ref)
   ostree_os_version:
