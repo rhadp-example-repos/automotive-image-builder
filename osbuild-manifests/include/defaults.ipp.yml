@@ -7,6 +7,7 @@ mpp-vars:
   default_osname: centos
   default_uefi_vendor: centos
   default_kernel_rpm: kernel-automotive
+  default_linux_firmware_rpm: linux-firmware-automotive
   default_partition_label: gpt
   default_extra_rpms: []
   default_extra_repos: []
@@ -289,6 +290,7 @@ mpp-vars:
     - grub2-tools-minimal
     - $kernel_rpm
   base_rpms:
+    - $linux_firmware_rpm
     - NetworkManager
     - audit
     - chrony
@@ -296,7 +298,6 @@ mpp-vars:
     - efibootmgr
     - glibc-langpack-en
     - hostname
-    - linux-firmware
     - passwd
     - rng-tools
     - rootfiles
