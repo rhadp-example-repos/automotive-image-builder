@@ -1,0 +1,8 @@
+include:
+  - project: 'redhat/edge/ci-cd/pipe-x/pipelines-as-code'
+    file:
+      - '/.gitlab/trigger.yml'
+
+stages:
+  - trigger
+
