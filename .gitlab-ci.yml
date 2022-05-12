@@ -1,5 +1,6 @@
 include:
   - project: 'redhat/edge/ci-cd/pipe-x/pipelines-as-code'
+    ref: gitlab-ci
     file:
       - '/.gitlab/trigger.yml'
 
