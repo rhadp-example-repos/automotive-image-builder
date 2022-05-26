@@ -34,6 +34,8 @@ pipelines:
             mpp-join:
             - - id: EPEL
                 baseurl: https://dl.fedoraproject.org/pub/epel/9/Everything/$arch/
+              - id: EPEL-TEST
+                baseurl: https://dl.fedoraproject.org/pub/epel/testing/9/Everything/$arch/
             - mpp-eval: distro_repos
             - mpp-eval: target_repos
             - mpp-eval: extra_repos
@@ -46,14 +48,15 @@ pipelines:
             - - sudo
               - openssh-clients
               - openssh-server
-              - dnf
               - rsync
               - wget
               - git
+              - jq
               - time
               - nfs-utils
               - ncurses
               - beakerlib
+              - beaker-client
           excludes:
           - dracut-config-rescue
   - type: org.osbuild.locale
