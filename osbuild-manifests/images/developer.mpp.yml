@@ -1,6 +1,6 @@
 version: '2'
 mpp-vars:
-  name: minimal
+  name: developer
 pipelines:
 - mpp-import-pipelines:
     path: include/build.ipp.yml
