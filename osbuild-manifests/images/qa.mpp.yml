@@ -34,8 +34,8 @@ pipelines:
             mpp-join:
             - - id: EPEL
                 baseurl: https://dl.fedoraproject.org/pub/epel/9/Everything/$arch/
-              - id: EPEL-TEST
-                baseurl: https://dl.fedoraproject.org/pub/epel/testing/9/Everything/$arch/
+              - id: RESTRAINT
+                baseurl: https://beaker-project.org/yum/harness/CentOSStream9/
             - mpp-eval: distro_repos
             - mpp-eval: target_repos
             - mpp-eval: extra_repos
@@ -57,6 +57,7 @@ pipelines:
               - ncurses
               - beakerlib
               - beaker-client
+              - restraint-client
           excludes:
           - dracut-config-rescue
   - type: org.osbuild.locale
@@ -90,6 +91,18 @@ pipelines:
           baseurl: ["https://dl.fedoraproject.org/pub/epel/9/Everything/$basearch/"],
           enabled: true,
           gpgcheck: true
+       }
+      ]
+  - type: org.osbuild.yum.repos
+    options:
+      filename: harness.repo
+      repos: [
+       {
+          id: beaker-client,
+          name: "Beaker Harness - CentOS Stream 9",
+          baseurl: ["https://beaker-project.org/yum/harness/CentOSStream9/"],
+          enabled: true,
+          gpgcheck: false
        }
       ]
 - mpp-import-pipelines:
