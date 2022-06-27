@@ -96,10 +96,11 @@ def run_http_server(path):
 
     return http_port
 
-def find_omvf():
+def find_ovmf():
     dirs = [
         "~/.local/share/ovmf",
-        "/usr/share/OVMF"
+        "/usr/share/OVMF",
+        "/usr/share/edk2/ovmf/"
     ]
 
     for d in dirs:
@@ -226,16 +227,16 @@ def main():
         machine = "q35"
         default_cpu = "qemu64,+ssse3,+sse4.1,+sse4.2,+popcnt"
 
-        omvf = find_omvf()
+        ovmf = find_ovmf()
         if args.secureboot:
             qemu_args += [
-                "-drive", f"file={omvf}/OVMF_CODE.secboot.fd,if=pflash,format=raw,unit=0,readonly=on",
-                "-drive", f"file={omvf}/OVMF_VARS.secboot.fd,if=pflash,format=raw,unit=1,snapshot=on,readonly=off",
+                "-drive", f"file={ovmf}/OVMF_CODE.secboot.fd,if=pflash,format=raw,unit=0,readonly=on",
+                "-drive", f"file={ovmf}/OVMF_VARS.secboot.fd,if=pflash,format=raw,unit=1,snapshot=on,readonly=off",
             ]
         else:
             qemu_args += [
-                "-drive", f"file={omvf}/OVMF_CODE.fd,if=pflash,format=raw,unit=0,readonly=on",
-                "-drive", f"file={omvf}/OVMF_VARS.fd,if=pflash,format=raw,unit=1,snapshot=on,readonly=off",
+                "-drive", f"file={ovmf}/OVMF_CODE.fd,if=pflash,format=raw,unit=0,readonly=on",
+                "-drive", f"file={ovmf}/OVMF_VARS.fd,if=pflash,format=raw,unit=1,snapshot=on,readonly=off",
             ]
     elif args.arch == "aarch64":
         machine = "virt"
