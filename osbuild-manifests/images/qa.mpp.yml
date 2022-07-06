@@ -1,6 +1,12 @@
 version: '2'
 mpp-vars:
   name: qa
+  restraint_env_text:
+   mpp-if: image_type == 'ostree'
+   then: |
+     RSTRNT_PKG_CMD=rpm-ostree
+     RSTRNT_PKG_ARGS="-A --idempotent --allow-inactive"
+     RSTRNT_BACKUP_DIR=/var/tmp/backup
 pipelines:
 - mpp-import-pipelines:
     path: include/build.ipp.yml
@@ -57,9 +63,23 @@ pipelines:
               - ncurses
               - beakerlib
               - beaker-client
+              - restraint
               - restraint-client
           excludes:
           - dracut-config-rescue
+  - type: org.osbuild.copy
+    inputs:
+      inlinefile:
+         type: org.osbuild.files
+         origin: org.osbuild.source
+         mpp-embed:
+           id: res
+           text: $restraint_env_text
+    options:
+       paths:
+         - from:
+             mpp-format-string: input://inlinefile/{embedded['res']}
+           to: tree:///etc/environment
   - type: org.osbuild.locale
     options:
       language: en_US.UTF-8
