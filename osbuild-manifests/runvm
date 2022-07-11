@@ -56,8 +56,21 @@ def random_id():
     return binascii.b2a_hex(os.urandom(8)).decode('utf8')
 
 def machine_id():
-    with open("/etc/machine-id", "r") as f:
-        mid = f.read().strip()
+    try:
+        with open("/etc/machine-id", "r") as f:
+            mid = f.read().strip()
+    except FileNotFoundError:
+        if sys.platform == "darwin":
+            # for macOS
+            import plistlib
+            cmd = "ioreg -rd1 -c IOPlatformExpertDevice -a"
+            plist_data = subprocess.check_output(cmd.split(" "))
+            mid = plistlib.loads(plist_data)[0]["IOPlatformUUID"].replace("-","")
+        else:
+            # fallback for the other distros
+            hostname = socket.gethostname()
+            mid = ''.join(hex(ord(x))[2:] for x in (hostname*16)[:16])
+
     return mid
 
 def generate_mac_address():
@@ -96,12 +109,14 @@ def run_http_server(path):
 
     return http_port
 
-def find_ovmf():
+def find_ovmf(args):
     dirs = [
         "~/.local/share/ovmf",
         "/usr/share/OVMF",
         "/usr/share/edk2/ovmf/"
     ]
+    if args.ovmf_dir:
+        dirs.append(args.ovmf_dir)
 
     for d in dirs:
         path = os.path.expanduser(d)
@@ -208,6 +223,8 @@ def main():
                         help=f"Enable TPM2")
     parser.add_argument("--snapshot", default=False, action="store_true",
                         help=f"Work on a snapshot  of the image")
+    parser.add_argument("--ovmf-dir", action="store",
+                        help="Specify directory for OVMF files (Open Virtual Machine Firmware)")
     parser.add_argument("--secureboot", dest="secureboot", action="store_true", default=False,
                         help="Enable SecureBoot")
     parser.add_argument("image", type=str, help="The image to boot")
@@ -227,7 +244,7 @@ def main():
         machine = "q35"
         default_cpu = "qemu64,+ssse3,+sse4.1,+sse4.2,+popcnt"
 
-        ovmf = find_ovmf()
+        ovmf = find_ovmf(args)
         if args.secureboot:
             qemu_args += [
                 "-drive", f"file={ovmf}/OVMF_CODE.secboot.fd,if=pflash,format=raw,unit=0,readonly=on",
