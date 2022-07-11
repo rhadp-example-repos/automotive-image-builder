@@ -2,6 +2,8 @@ version: '2'
 mpp-vars:
   name: neptune
   display_server: wayland
+  neptune_uid: 998
+  neptune_gid: 998
 pipelines:
 - mpp-import-pipelines:
     path: include/build.ipp.yml
@@ -76,6 +78,10 @@ pipelines:
             mpp-eval: guest_uid
         neptune:
           password: ''
+          gid:
+            mpp-eval: neptune_gid
+          uid:
+            mpp-eval: neptune_uid
   - type: org.osbuild.copy
     inputs:
       inlinefile:
