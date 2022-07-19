@@ -52,6 +52,15 @@ def find_qemu(arch):
 
     exit_error(f"Can't find {binary_name}")
 
+def qemu_available_accels(qemu):
+    cmd = qemu + ' -accel help'
+    info = subprocess.check_output(cmd.split(" ")).decode('utf-8')
+    accel_list = []
+    for accel in ('kvm', 'xen', 'hvf', 'hax', 'tcg'):
+        if info.find(accel) > 0:
+            accel_list.append(accel)
+    return accel_list
+
 def random_id():
     return binascii.b2a_hex(os.urandom(8)).decode('utf8')
 
@@ -235,9 +244,8 @@ def main():
     global is_verbose
     is_verbose = args.verbose
 
-    native = platform.machine() == args.arch
-
     qemu = find_qemu(args.arch)
+    accel_list = qemu_available_accels(qemu)
     qemu_args = [qemu]
 
     if args.arch == "x86_64":
@@ -265,16 +273,19 @@ def main():
     else:
         exit_error(f"unsupported architecture {args.arch}")
 
-    use_kvm = native and os.path.exists("/dev/kvm")
-    if use_kvm:
+    accel_enabled = True
+    if 'kvm' in accel_list and os.path.exists("/dev/kvm"):
         qemu_args += ['-enable-kvm']
+    elif 'hvf' in accel_list:
+        qemu_args += ['-accel', 'hvf']
     else:
+        accel_enabled = False
         print_verbose("Acceleration: off")
 
     qemu_args += [
         "-m", str(args.memory),
         "-machine", machine,
-        "-cpu", "host" if use_kvm else default_cpu
+        "-cpu", "host" if accel_enabled else default_cpu
     ]
 
     guestfwds=""
