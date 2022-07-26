@@ -110,7 +110,8 @@ pipelines:
           name: "EPEL",
           baseurl: ["https://dl.fedoraproject.org/pub/epel/9/Everything/$basearch/"],
           enabled: true,
-          gpgcheck: true
+          gpgcheck: true,
+          gpgkey: [ "https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-9" ]
        }
       ]
   - type: org.osbuild.yum.repos
