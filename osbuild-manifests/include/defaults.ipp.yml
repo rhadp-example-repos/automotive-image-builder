@@ -303,7 +303,6 @@ mpp-vars:
     - passwd
     - rng-tools
     - rootfiles
-    - rsyslog
     - selinux-policy-targeted
     - systemd-udev
     - mpp-if: use_luks
