@@ -134,6 +134,20 @@ def find_ovmf(args):
 
     raise RuntimeError("Could not find OMVF")
 
+# location can differ depending on how qemu is installed
+def find_edk2():
+    dirs = [
+        "/usr/local/share/qemu",
+        "/opt/homebrew/share/qemu"
+    ]
+
+    for d in dirs:
+        path = os.path.expanduser(d)
+        if os.path.exists(path):
+            return path
+
+    raise RuntimeError("Could not find edk2 directory")
+
 def qemu_run_command(qmp_socket_path, command):
     sock2 = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     sock2.connect(qmp_socket_path)
@@ -244,6 +258,10 @@ def main():
     global is_verbose
     is_verbose = args.verbose
 
+    if args.arch == "arm64":
+        args.arch = "aarch64"
+        is_macos_arm = True
+
     qemu = find_qemu(args.arch)
     accel_list = qemu_available_accels(qemu)
     qemu_args = [qemu]
@@ -263,6 +281,15 @@ def main():
                 "-drive", f"file={ovmf}/OVMF_CODE.fd,if=pflash,format=raw,unit=0,readonly=on",
                 "-drive", f"file={ovmf}/OVMF_VARS.fd,if=pflash,format=raw,unit=1,snapshot=on,readonly=off",
             ]
+    elif is_macos_arm:
+        machine = "virt"
+        edk2 = find_edk2()
+        qemu_args += [
+            "-device", "virtio-gpu-pci",
+            "-display", "default,show-cursor=on",
+            "-drive", f"file={edk2}/edk2-aarch64-code.fd,if=pflash,format=raw,unit=0,readonly=on",
+            "-drive", f"file={edk2}/edk2-arm-vars.fd,if=pflash,format=raw,unit=1,snapshot=on,readonly=off",
+        ]
     elif args.arch == "aarch64":
         machine = "virt"
         default_cpu = "cortex-a57"
