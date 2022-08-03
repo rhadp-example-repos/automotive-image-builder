@@ -168,6 +168,21 @@ def virtio_serial_connect(virtio_socket_path):
         except FileNotFoundError:
             pass
 
+def available_tcp_port(port_range_from = 1024):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    port = port_range_from
+    port_range_to = port_range_from + 32 # limit for retry
+    while port < port_range_to:
+        try:
+            s.bind(('', port))
+        except OSError:
+            port += 1
+            continue
+        break
+    s.close()
+    return port
+
 class WatchdogCommand:
     START = 1
     STOP = 2
@@ -250,6 +265,8 @@ def main():
                         help="Specify directory for OVMF files (Open Virtual Machine Firmware)")
     parser.add_argument("--secureboot", dest="secureboot", action="store_true", default=False,
                         help="Enable SecureBoot")
+    parser.add_argument("--ssh-port", type=int, default=2222,
+                        help="SSH port forwarding to SSH_PORT (default 2222)")
     parser.add_argument("image", type=str, help="The image to boot")
     parser.add_argument('extra_args', nargs=argparse.REMAINDER, metavar="...", help="extra qemu arguments")
 
@@ -326,7 +343,7 @@ def main():
             print_verbose(f"publishing {args.publish_dir} on http://10.0.2.100/")
 
     portfwd = {
-        2222:22
+        available_tcp_port(args.ssh_port): 22
     }
     for local, remote in portfwd.items():
         print_verbose(f"port: {local} → {remote}")
