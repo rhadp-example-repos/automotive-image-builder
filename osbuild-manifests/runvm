@@ -16,7 +16,7 @@ import sys
 import tempfile
 import time
 
-is_verbosse = False
+is_verbose = False
 def print_verbose(s):
     if is_verbose:
         print(s)
