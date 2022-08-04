@@ -22,4 +22,6 @@ mpp-vars:
     baseurl: $distro_baseurl/AppStream/$arch/debug/tree/
   - id: crb-debug
     baseurl: $distro_baseurl/CRB/$arch/debug/tree/
+  - id: autosd-debug
+    baseurl: https://buildlogs.centos.org/9-stream/autosd/$arch/packages-main/debug/
   distro_module_id: platform:el9
