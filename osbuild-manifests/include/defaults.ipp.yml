@@ -158,6 +158,9 @@ mpp-vars:
     mpp-eval: locals().get('use_efi_runtime', default_use_efi_runtime)
   kernel_loglevel:
     mpp-eval: locals().get('kernel_loglevel', default_kernel_loglevel)
+  default_target_stages: []
+  target_stages:
+    mpp-eval: locals().get('target_stages', default_target_stages)
   centos_gpg_key: |
     -----BEGIN PGP PUBLIC KEY BLOCK-----
     Version: GnuPG v2.0.22 (GNU/Linux)
