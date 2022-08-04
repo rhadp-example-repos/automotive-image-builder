@@ -275,9 +275,9 @@ def main():
     global is_verbose
     is_verbose = args.verbose
 
+    # arm64 is an alias for aarch64 on macOS
     if args.arch == "arm64":
         args.arch = "aarch64"
-        is_macos_arm = True
 
     qemu = find_qemu(args.arch)
     accel_list = qemu_available_accels(qemu)
@@ -298,22 +298,26 @@ def main():
                 "-drive", f"file={ovmf}/OVMF_CODE.fd,if=pflash,format=raw,unit=0,readonly=on",
                 "-drive", f"file={ovmf}/OVMF_VARS.fd,if=pflash,format=raw,unit=1,snapshot=on,readonly=off",
             ]
-    elif is_macos_arm:
-        machine = "virt"
-        edk2 = find_edk2()
-        qemu_args += [
-            "-device", "virtio-gpu-pci",
-            "-display", "default,show-cursor=on",
-            "-drive", f"file={edk2}/edk2-aarch64-code.fd,if=pflash,format=raw,unit=0,readonly=on",
-            "-drive", f"file={edk2}/edk2-arm-vars.fd,if=pflash,format=raw,unit=1,snapshot=on,readonly=off",
-        ]
     elif args.arch == "aarch64":
         machine = "virt"
         default_cpu = "cortex-a57"
-        qemu_args += [
-            "-bios", "/usr/share/edk2/aarch64/QEMU_EFI.fd",
-            "-boot", "efi"
-        ]
+        if sys.platform == "darwin":
+            edk2 = find_edk2()
+            qemu_args += [
+                "-device", "virtio-gpu-pci", # for display
+                "-display", "default,show-cursor=on", # for display
+                "-device", "qemu-xhci", # for keyboard
+                "-device", "usb-kbd", # for keyboard
+                "-device", "usb-tablet", # for mouse
+                "-smp", str(os.cpu_count()), # for max cores
+                "-drive", f"file={edk2}/edk2-aarch64-code.fd,if=pflash,format=raw,unit=0,readonly=on",
+                "-drive", f"file={edk2}/edk2-arm-vars.fd,if=pflash,format=raw,unit=1,snapshot=on,readonly=off"
+            ]
+        else:
+            qemu_args += [
+                "-bios", "/usr/share/edk2/aarch64/QEMU_EFI.fd",
+                "-boot", "efi"
+            ]
     else:
         exit_error(f"unsupported architecture {args.arch}")
 
