@@ -267,6 +267,8 @@ def main():
                         help="Enable SecureBoot")
     parser.add_argument("--ssh-port", type=int, default=2222,
                         help="SSH port forwarding to SSH_PORT (default 2222)")
+    parser.add_argument("--cdrom", action="store",
+                        help="Specify .iso to load")
     parser.add_argument("image", type=str, help="The image to boot")
     parser.add_argument('extra_args', nargs=argparse.REMAINDER, metavar="...", help="extra qemu arguments")
 
@@ -275,9 +277,9 @@ def main():
     global is_verbose
     is_verbose = args.verbose
 
+    # arm64 is an alias for aarch64 on macOS
     if args.arch == "arm64":
         args.arch = "aarch64"
-        is_macos_arm = True
 
     qemu = find_qemu(args.arch)
     accel_list = qemu_available_accels(qemu)
@@ -298,22 +300,26 @@ def main():
                 "-drive", f"file={ovmf}/OVMF_CODE.fd,if=pflash,format=raw,unit=0,readonly=on",
                 "-drive", f"file={ovmf}/OVMF_VARS.fd,if=pflash,format=raw,unit=1,snapshot=on,readonly=off",
             ]
-    elif is_macos_arm:
-        machine = "virt"
-        edk2 = find_edk2()
-        qemu_args += [
-            "-device", "virtio-gpu-pci",
-            "-display", "default,show-cursor=on",
-            "-drive", f"file={edk2}/edk2-aarch64-code.fd,if=pflash,format=raw,unit=0,readonly=on",
-            "-drive", f"file={edk2}/edk2-arm-vars.fd,if=pflash,format=raw,unit=1,snapshot=on,readonly=off",
-        ]
     elif args.arch == "aarch64":
         machine = "virt"
         default_cpu = "cortex-a57"
-        qemu_args += [
-            "-bios", "/usr/share/edk2/aarch64/QEMU_EFI.fd",
-            "-boot", "efi"
-        ]
+        if sys.platform == "darwin":
+            edk2 = find_edk2()
+            qemu_args += [
+                "-device", "virtio-gpu-pci", # for display
+                "-display", "default,show-cursor=on", # for display
+                "-device", "qemu-xhci", # for keyboard
+                "-device", "usb-kbd", # for keyboard
+                "-device", "usb-tablet", # for mouse
+                "-smp", str(os.cpu_count()), # for max cores
+                "-drive", f"file={edk2}/edk2-aarch64-code.fd,if=pflash,format=raw,unit=0,readonly=on",
+                "-drive", f"file={edk2}/edk2-arm-vars.fd,if=pflash,format=raw,unit=1,snapshot=on,readonly=off"
+            ]
+        else:
+            qemu_args += [
+                "-bios", "/usr/share/edk2/aarch64/QEMU_EFI.fd",
+                "-boot", "efi"
+            ]
     else:
         exit_error(f"unsupported architecture {args.arch}")
 
@@ -404,9 +410,20 @@ def main():
 
     print_verbose(f"Image: {args.image}")
 
-    qemu_args += [
-        "-drive", f"file={args.image},index=0,media=disk,format=qcow2,if=virtio,snapshot={bool_arg(args.snapshot)}",
-    ]
+    if args.image.endswith(".raw"):
+        qemu_args += [
+            "-drive", f"file={args.image},index=0,media=disk,format=raw,if=virtio,snapshot={bool_arg(args.snapshot)}",
+        ]
+    else: # assume qcow2
+        qemu_args += [
+            "-drive", f"file={args.image},index=0,media=disk,format=qcow2,if=virtio,snapshot={bool_arg(args.snapshot)}",
+        ]
+
+    if args.cdrom:
+        qemu_args += [
+            "-cdrom", args.cdrom,
+            "-boot", "d"
+        ]
 
     qemu_args += args.extra_args
 
