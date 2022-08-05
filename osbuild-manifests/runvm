@@ -267,6 +267,8 @@ def main():
                         help="Enable SecureBoot")
     parser.add_argument("--ssh-port", type=int, default=2222,
                         help="SSH port forwarding to SSH_PORT (default 2222)")
+    parser.add_argument("--cdrom", action="store",
+                        help="Specify .iso to load")
     parser.add_argument("image", type=str, help="The image to boot")
     parser.add_argument('extra_args', nargs=argparse.REMAINDER, metavar="...", help="extra qemu arguments")
 
@@ -408,9 +410,20 @@ def main():
 
     print_verbose(f"Image: {args.image}")
 
-    qemu_args += [
-        "-drive", f"file={args.image},index=0,media=disk,format=qcow2,if=virtio,snapshot={bool_arg(args.snapshot)}",
-    ]
+    if args.image.endswith(".raw"):
+        qemu_args += [
+            "-drive", f"file={args.image},index=0,media=disk,format=raw,if=virtio,snapshot={bool_arg(args.snapshot)}",
+        ]
+    else: # assume qcow2
+        qemu_args += [
+            "-drive", f"file={args.image},index=0,media=disk,format=qcow2,if=virtio,snapshot={bool_arg(args.snapshot)}",
+        ]
+
+    if args.cdrom:
+        qemu_args += [
+            "-cdrom", args.cdrom,
+            "-boot", "d"
+        ]
 
     qemu_args += args.extra_args
 
