@@ -32,23 +32,26 @@ def bool_arg(val):
     return "on" if val else "off"
 
 def find_qemu(arch):
-    binary_name = f"qemu-system-{arch}"
+    binary_names = [ f"qemu-system-{arch}" ]
+    if arch == platform.machine():
+        binary_names.append("qemu-kvm")
 
-    if "QEMU_BUILD_DIR" in os.environ:
-        p = os.path.join(os.environ["QEMU_BUILD_DIR"], binary_name)
-        if os.path.isfile(p):
-            return p
-        else:
-            exit_error(f"Can't find {binary_name}")
+    for binary_name in binary_names:
+        if "QEMU_BUILD_DIR" in os.environ:
+            p = os.path.join(os.environ["QEMU_BUILD_DIR"], binary_name)
+            if os.path.isfile(p):
+                return p
+            else:
+                exit_error(f"Can't find {binary_name}")
 
-    qemu_bin_dirs = ["/usr/bin", "/usr/libexec"]
-    if "PATH" in os.environ:
-        qemu_bin_dirs += os.environ["PATH"].split(":")
+        qemu_bin_dirs = ["/usr/bin", "/usr/libexec"]
+        if "PATH" in os.environ:
+            qemu_bin_dirs += os.environ["PATH"].split(":")
 
-    for d in qemu_bin_dirs:
-        p = os.path.join(d, binary_name)
-        if os.path.isfile(p):
-            return p
+        for d in qemu_bin_dirs:
+            p = os.path.join(d, binary_name)
+            if os.path.isfile(p):
+                return p
 
     exit_error(f"Can't find {binary_name}")
 
