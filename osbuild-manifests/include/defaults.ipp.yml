@@ -10,6 +10,7 @@ mpp-vars:
   default_linux_firmware_rpm: linux-firmware-automotive
   default_partition_label: gpt
   default_extra_rpms: []
+  default_extra_build_rpms: []
   default_extra_repos: []
   default_target_repos: []
   default_root_password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.
@@ -102,6 +103,8 @@ mpp-vars:
     mpp-eval: locals().get('partition_label', default_partition_label)
   extra_rpms:
     mpp-eval: locals().get('extra_rpms', default_extra_rpms)
+  extra_build_rpms:
+    mpp-eval: locals().get('extra_build_rpms', default_extra_build_rpms)
   extra_repos:
     mpp-eval: locals().get('extra_repos', default_extra_repos)
   target_repos:
@@ -281,7 +284,6 @@ mpp-vars:
     - mpp-if: use_luks
       then: lvm2
     - policycoreutils
-    - python3-pyyaml
     - python3-iniparse
     - python3
     - qemu-img

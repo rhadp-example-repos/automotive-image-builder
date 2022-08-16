@@ -27,6 +27,7 @@ pipelines:
           packages:
             mpp-join:
               - mpp-eval: build_rpms
+              - mpp-eval: extra_build_rpms
               - - grub2-efi-aa64
                 - grub2-efi-aa64-cdboot
                 - shim-aa64

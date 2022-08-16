@@ -10,6 +10,8 @@ mpp-vars:
   - NetworkManager-cloud-setup
   - rsync
   - qemu-guest-agent
+  extra_build_rpms:
+  - python3-pyyaml
   target_stages:
     - type: org.osbuild.sshd.config
       options:
