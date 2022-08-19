@@ -15,6 +15,8 @@ mpp-vars:
   default_target_repos: []
   default_root_password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.
   default_guest_password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.
+  default_guest_uid: 999
+  default_guest_gid: 999
   default_root_ssh_key: ""
   default_ssh_permit_root_login: false
   default_image_size: '8589934592'
@@ -149,6 +151,10 @@ mpp-vars:
     mpp-eval: locals().get('ssh_permit_root_login', default_ssh_permit_root_login)
   guest_password:
     mpp-eval: locals().get('guest_password', default_guest_password)
+  guest_gid:
+    mpp-eval: locals().get('guest_gid', default_guest_gid)
+  guest_uid:
+    mpp-eval: locals().get('guest_uid', default_guest_uid)
   ostree_repo_url:
     mpp-eval: locals().get('ostree_repo_url', default_ostree_repo_url)
   ostree_remote_name:

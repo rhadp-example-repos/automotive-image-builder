@@ -99,6 +99,10 @@ pipelines:
         guest:
           password:
             mpp-eval: guest_password
+          gid:
+            mpp-eval: guest_gid
+          uid:
+            mpp-eval: guest_uid
   - type: org.osbuild.sshd.config
     options:
       config:
