@@ -170,7 +170,7 @@ pipelines:
                 mpp-eval: root_password
               key:
                 mpp-eval: root_ssh_key
-    - mpp-eval: target_stages
+    - mpp-eval: image_extra_stages
     - - type: org.osbuild.fstab
         options:
           filesystems:
