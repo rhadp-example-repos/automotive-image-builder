@@ -32,7 +32,35 @@ pipelines:
     path: defaults.ipp.yml
 - mpp-import-pipelines:
     path: target-$target.ipp.yml
-- mpp-import-pipeline:
-    path: build-$arch.ipp.yml
-    id: build
+- mpp-import-pipelines:
+    path: arch-$arch.ipp.yml
+- name: build
   runner: org.osbuild.centos9
+  stages:
+  - type: org.osbuild.rpm
+    inputs:
+      packages:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-depsolve:
+          architecture: $arch
+          module-platform-id: $distro_module_id
+          baseurl: $distro_baseurl/BaseOS/$arch/os/
+          repos:
+            mpp-eval: distro_repos
+          packages:
+            mpp-join:
+              - mpp-eval: build_rpms
+              - mpp-eval: extra_build_rpms
+    options:
+      gpgkeys:
+      - mpp-eval: centos_gpg_key
+      - mpp-eval: redhat_gpg_key
+      exclude:
+        docs: true
+  - type: org.osbuild.selinux
+    options:
+      file_contexts: etc/selinux/targeted/contexts/files/file_contexts
+      labels:
+        /usr/bin/cp: system_u:object_r:install_exec_t:s0
+        /usr/bin/tar: system_u:object_r:install_exec_t:s0

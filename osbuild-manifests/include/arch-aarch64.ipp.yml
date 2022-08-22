@@ -1,0 +1,18 @@
+version: '2'
+mpp-vars:
+  efiarch: aa64
+  boot_rpms:
+    mpp-join:
+      - mpp-eval: boot_rpms
+      - - grub2-efi-aa64
+  base_rpms:
+    mpp-join:
+      - mpp-eval: base_rpms
+      - []
+  build_rpms:
+    mpp-join:
+      - mpp-eval: build_rpms
+      - - grub2-efi-aa64
+        - grub2-efi-aa64-cdboot
+        - shim-aa64
+pipelines: []
