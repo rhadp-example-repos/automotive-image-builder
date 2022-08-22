@@ -54,12 +54,6 @@ mpp-vars:
             config:
               Service:
                 Environment: NM_CLOUD_SETUP_EC2=yes
-        - type: org.osbuild.locale
-          options:
-            language: en_US.UTF-8
-        - type: org.osbuild.timezone
-          options:
-            zone: UTC
         - type: org.osbuild.chrony
           options:
             servers:

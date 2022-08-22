@@ -23,6 +23,8 @@ mpp-vars:
   default_efipart_size: 204800
   default_bootpart_size: 614400
   default_kernel_loglevel: 4
+  default_timezone: UTC
+  default_locale: en_US.UTF-8
   static_uuids:
     mpp-eval: locals().get('static_uuids', True)
   default_rootfs_uuid:
@@ -167,6 +169,10 @@ mpp-vars:
     mpp-eval: locals().get('use_efi_runtime', default_use_efi_runtime)
   kernel_loglevel:
     mpp-eval: locals().get('kernel_loglevel', default_kernel_loglevel)
+  locale:
+    mpp-eval: locals().get('locale', default_locale)
+  timezone:
+    mpp-eval: locals().get('timezone', default_timezone)
   image_extra_stages: []
   centos_gpg_key: |
     -----BEGIN PGP PUBLIC KEY BLOCK-----

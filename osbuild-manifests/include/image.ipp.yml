@@ -24,6 +24,17 @@ mpp-vars:
           - rd.luks.options=discard
           - mpp-if: luks_auto_unlock
             then: rd.luks.key=$luks_uuid=/usr/.auto-unlock-key
+  image_extra_stages:
+    mpp-join:
+      - mpp-eval: image_extra_stages
+      - - type: org.osbuild.locale
+          options:
+            language:
+              mpp-eval: locale
+        - type: org.osbuild.timezone
+          options:
+            zone:
+              mpp-eval: timezone
 pipelines:
 # Some variables need to be written to files, do that here
 - name: extra-tree-content
