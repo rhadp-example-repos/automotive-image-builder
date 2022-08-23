@@ -44,7 +44,7 @@ pipelines:
           - greenboot-rpm-ostree-grub2-check-fallback.service
           - greenboot-status.service
           - greenboot-task-runner.service
-    - mpp-eval: target_stages
+    - mpp-eval: image_extra_stages
     - - type: org.osbuild.selinux
         options:
           file_contexts: etc/selinux/targeted/contexts/files/file_contexts
