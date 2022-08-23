@@ -49,7 +49,9 @@ pipelines:
           module-platform-id: $distro_module_id
           baseurl: $distro_baseurl/BaseOS/$arch/os/
           repos:
-            mpp-eval: distro_repos
+            mpp-join:
+              - mpp-eval: distro_repos
+              - mpp-eval: extra_build_repos
           packages:
             mpp-join:
               - mpp-eval: build_rpms

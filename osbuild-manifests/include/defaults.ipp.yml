@@ -18,6 +18,7 @@ mpp-vars:
   default_partition_label: gpt
   default_extra_rpms: []
   default_extra_build_rpms: []
+  default_extra_build_repos: []
   default_extra_repos: []
   default_target_repos: []
   default_root_password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.
@@ -114,6 +115,8 @@ mpp-vars:
     mpp-eval: locals().get('extra_rpms', default_extra_rpms)
   extra_build_rpms:
     mpp-eval: locals().get('extra_build_rpms', default_extra_build_rpms)
+  extra_build_repos:
+    mpp-eval: locals().get('extra_build_repos', default_extra_build_repos)
   extra_repos:
     mpp-eval: locals().get('extra_repos', default_extra_repos)
   target_repos:
