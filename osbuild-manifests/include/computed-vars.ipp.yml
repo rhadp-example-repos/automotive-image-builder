@@ -12,17 +12,21 @@ mpp-vars:
       path: /
       freq: 1
       passno: 1
-    - label: ESP
-      vfs_type: vfat
-      path: /boot/efi
-      freq: 1
-      passno: 1
-    - uuid:
-        mpp-eval: bootfs_uuid
-      vfs_type: ext4
-      path: /boot
-      freq: 1
-      passno: 1
+    - mpp-if: use_efipart
+      then:
+        label: ESP
+        vfs_type: vfat
+        path: /boot/efi
+        freq: 1
+        passno: 1
+    - mpp-if: use_bootpart
+      then:
+        uuid:
+          mpp-eval: bootfs_uuid
+        vfs_type: ext4
+        path: /boot
+        freq: 1
+        passno: 1
   build_rpms:
     mpp-join:
     - mpp-eval: build_rpms
