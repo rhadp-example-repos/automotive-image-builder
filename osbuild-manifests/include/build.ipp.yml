@@ -12,6 +12,7 @@ mpp-define-image:
     - mpp-if: use_efipart
       then:
         id: efi
+        name: efi
         start:
           mpp-eval: "0 if partition_label == 'gpt' else 2048"
         size: $efipart_size
@@ -21,11 +22,13 @@ mpp-define-image:
     - mpp-if: use_bootpart
       then:
         id: boot
+        name: boot
         size: $bootpart_size
         type:
           mpp-eval: "'0FC63DAF-8483-4772-8E79-3D69D8477DE4' if partition_label == 'gpt' else '83'"
         uuid: $bootpart_uuid
     - id: root
+      name: root
       type:
         mpp-eval: "'0FC63DAF-8483-4772-8E79-3D69D8477DE4' if partition_label == 'gpt' else '83'"
       uuid: $rootpart_uuid
