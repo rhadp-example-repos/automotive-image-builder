@@ -90,7 +90,52 @@ pipelines:
             legacy: false
             write_defaults: false
             greenboot: true
-      - type: org.osbuild.fix-bls
+    - mpp-if: use_aboot
+      then:
+        - type: org.osbuildtest.aboot.conf
+          options:
+            pagesize:
+              mpp-if: "locals().get('aboot_pagesize',) != None"
+              then:
+                mpp-format-string: "{aboot_pagesize}"
+            kernel_offset:
+              mpp-if: "locals().get('aboot_kernel_offset') != None"
+              then:
+                mpp-format-string: "{aboot_kernel_offset}"
+            second_offset:
+              mpp-if: "locals().get('aboot_second_offset') != None"
+              then:
+                mpp-format-string: "{aboot_second_offset}"
+            tags_offset:
+              mpp-if: "locals().get('aboot_tags_offset') != None"
+              then:
+                mpp-format-string: "{aboot_tags_offset}"
+            base:
+              mpp-if: "locals().get('aboot_base') != None"
+              then:
+                mpp-format-string: "{aboot_base}"
+            dtb_file:
+              mpp-if: "locals().get('aboot_dtb_file') != None"
+              then:
+                mpp-format-string: "{aboot_dtb_file}"
+        - type: org.osbuildtest.aboot.update
+          options:
+            kernel:
+              mpp-eval: rpms['rootfs'][kernel_core_package].evra
+        - type: org.osbuild.copy
+          inputs:
+            inlinefile:
+              type: org.osbuild.files
+              origin: org.osbuild.source
+              mpp-embed:
+                id: kernel-install.conf
+                text: layout=aboot
+          options:
+            paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['kernel-install.conf']}
+              to: tree:///usr/lib/kernel/install.conf
+    - - type: org.osbuild.fix-bls
         options:
           prefix: /
       - type: org.osbuild.selinux

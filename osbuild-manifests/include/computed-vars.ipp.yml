@@ -47,6 +47,8 @@ mpp-vars:
         then: cryptsetup
       - mpp-if: use_luks
         then: lvm2
+      - mpp-if: use_aboot
+        then: aboot-update
   boot_rpms:
     mpp-join:
     - mpp-eval: boot_rpms
@@ -57,6 +59,8 @@ mpp-vars:
     - - $linux_firmware_rpm
       - mpp-if: use_luks
         then: lvm2
+      - mpp-if: use_aboot
+        then: aboot-update
   dracut_omit_modules:
     mpp-join:
     - mpp-eval: dracut_omit_modules
