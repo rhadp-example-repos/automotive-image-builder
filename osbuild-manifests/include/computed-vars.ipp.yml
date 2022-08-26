@@ -49,5 +49,11 @@ mpp-vars:
     - mpp-eval: dracut_omit_modules
     - - mpp-if: not use_luks
         then: dm
+  kernel_opts:
+    mpp-join:
+    - mpp-eval: kernel_opts
+    - mpp-if: use_serial_console
+      then:
+        - console=$serial_console
 
 pipelines: []
