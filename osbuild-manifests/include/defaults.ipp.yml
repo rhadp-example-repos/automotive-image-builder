@@ -1,4 +1,11 @@
 version: '2'
+
+# This file is loaded early and sets all the default values for variables.
+# It will inherit variables set in the image manifest itself, so the
+# defaults only override variable if they are already unset.
+# After this loads, things like the per-arch, per-target and per image type
+# includes are loaded which can override these.
+
 mpp-vars:
   default_target: qemu
   default_image_type: ostree
@@ -11,6 +18,7 @@ mpp-vars:
   default_partition_label: gpt
   default_extra_rpms: []
   default_extra_build_rpms: []
+  default_extra_build_repos: []
   default_extra_repos: []
   default_target_repos: []
   default_root_password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.
@@ -25,6 +33,9 @@ mpp-vars:
   default_kernel_loglevel: 4
   default_timezone: UTC
   default_locale: en_US.UTF-8
+  default_use_grub2: true
+  default_use_efipart: true
+  default_use_bootpart: true
   static_uuids:
     mpp-eval: locals().get('static_uuids', True)
   default_rootfs_uuid:
@@ -70,8 +81,6 @@ mpp-vars:
       - udev-rules
       - usrmount
   default_dracut_omit_modules:
-      - mpp-if: not use_luks
-        then: dm
       - lunmask
       - mdraid
       - memstrack
@@ -109,6 +118,8 @@ mpp-vars:
     mpp-eval: locals().get('extra_rpms', default_extra_rpms)
   extra_build_rpms:
     mpp-eval: locals().get('extra_build_rpms', default_extra_build_rpms)
+  extra_build_repos:
+    mpp-eval: locals().get('extra_build_repos', default_extra_build_repos)
   extra_repos:
     mpp-eval: locals().get('extra_repos', default_extra_repos)
   target_repos:
@@ -171,8 +182,14 @@ mpp-vars:
     mpp-eval: locals().get('kernel_loglevel', default_kernel_loglevel)
   locale:
     mpp-eval: locals().get('locale', default_locale)
+  use_grub2:
+    mpp-eval: locals().get('use_grub2', default_use_grub2)
   timezone:
     mpp-eval: locals().get('timezone', default_timezone)
+  use_efipart:
+    mpp-eval: locals().get('use_efipart', default_use_efipart)
+  use_bootpart:
+    mpp-eval: locals().get('use_bootpart', default_use_bootpart)
   image_extra_stages: []
   centos_gpg_key: |
     -----BEGIN PGP PUBLIC KEY BLOCK-----
@@ -264,35 +281,13 @@ mpp-vars:
     iA==
     =+Gxh
     -----END PGP PUBLIC KEY BLOCK-----
-  fstab:
-    - uuid:
-        mpp-eval: rootfs_uuid
-      vfs_type: ext4
-      path: /
-      freq: 1
-      passno: 1
-    - label: ESP
-      vfs_type: vfat
-      path: /boot/efi
-      freq: 1
-      passno: 1
-    - uuid:
-        mpp-eval: bootfs_uuid
-      vfs_type: ext4
-      path: /boot
-      freq: 1
-      passno: 1
   build_rpms:
-    - mpp-if: use_luks
-      then: cryptsetup
     - dnf
     - dosfstools
     - e2fsprogs
     - efibootmgr
     - grub2-tools
     - grub2-tools-minimal
-    - mpp-if: use_luks
-      then: lvm2
     - policycoreutils
     - python3-iniparse
     - python3
@@ -306,9 +301,7 @@ mpp-vars:
   boot_rpms:
     - dracut-config-generic
     - grub2-tools-minimal
-    - $kernel_rpm
   base_rpms:
-    - $linux_firmware_rpm
     - NetworkManager
     - audit
     - chrony
@@ -321,5 +314,3 @@ mpp-vars:
     - rootfiles
     - selinux-policy-targeted
     - systemd-udev
-    - mpp-if: use_luks
-      then: lvm2

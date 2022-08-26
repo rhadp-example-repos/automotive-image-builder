@@ -72,33 +72,37 @@ pipelines:
               filename: disk.img
         options:
           mpp-format-json: '{image.layout}'
-      - type: org.osbuild.mkfs.fat
-        devices:
-          device:
-            type: org.osbuild.loopback
-            options:
-              filename: disk.img
-              start:
-                mpp-eval: image.layout['efi'].start
-              size:
-                mpp-eval: image.layout['efi'].size
-        options:
-          label: ESP
-          volid: 7B7795E7
-      - type: org.osbuild.mkfs.ext4
-        devices:
-          device:
-            type: org.osbuild.loopback
-            options:
-              filename: disk.img
-              start:
-                mpp-eval: image.layout['boot'].start
-              size:
-                mpp-eval: image.layout['boot'].size
-        options:
-          uuid:
-            mpp-eval: bootfs_uuid
-          label: boot
+      - mpp-if: use_efipart
+        then:
+          type: org.osbuild.mkfs.fat
+          devices:
+            device:
+              type: org.osbuild.loopback
+              options:
+                filename: disk.img
+                start:
+                  mpp-eval: image.layout['efi'].start
+                size:
+                  mpp-eval: image.layout['efi'].size
+          options:
+            label: ESP
+            volid: 7B7795E7
+      - mpp-if: use_bootpart
+        then:
+          type: org.osbuild.mkfs.ext4
+          devices:
+            device:
+              type: org.osbuild.loopback
+              options:
+                filename: disk.img
+                start:
+                  mpp-eval: image.layout['boot'].start
+                size:
+                  mpp-eval: image.layout['boot'].size
+          options:
+            uuid:
+              mpp-eval: bootfs_uuid
+            label: boot
     - mpp-if: use_luks
       then:
         - type: org.osbuild.luks2.format
@@ -212,21 +216,25 @@ pipelines:
             - mpp-eval: locals().get('extra_image_copy_' + image_type, [])
         devices:
           efi:
-            type: org.osbuild.loopback
-            options:
-              filename: disk.img
-              start:
-                mpp-eval: image.layout['efi'].start
-              size:
-                mpp-eval: image.layout['efi'].size
+            mpp-if: use_efipart
+            then:
+               type: org.osbuild.loopback
+               options:
+                 filename: disk.img
+                 start:
+                   mpp-eval: image.layout['efi'].start
+                 size:
+                   mpp-eval: image.layout['efi'].size
           boot:
-            type: org.osbuild.loopback
-            options:
-              filename: disk.img
-              start:
-                mpp-eval: image.layout['boot'].start
-              size:
-                mpp-eval: image.layout['boot'].size
+            mpp-if: use_bootpart
+            then:
+              type: org.osbuild.loopback
+              options:
+                filename: disk.img
+                start:
+                  mpp-eval: image.layout['boot'].start
+                size:
+                  mpp-eval: image.layout['boot'].size
           root:
             mpp-if: use_luks
             then:
@@ -265,14 +273,18 @@ pipelines:
           type: org.osbuild.ext4
           source: root
           target: /
-        - name: boot
-          type: org.osbuild.ext4
-          source: boot
-          target: /boot
-        - name: efi
-          type: org.osbuild.fat
-          source: efi
-          target: /boot/efi
+        - mpp-if: use_bootpart
+          then:
+            name: boot
+            type: org.osbuild.ext4
+            source: boot
+            target: /boot
+        - mpp-if: use_efipart
+          then:
+            name: efi
+            type: org.osbuild.fat
+            source: efi
+            target: /boot/efi
       - mpp-if: use_luks
         then:
           type: org.osbuild.lvm2.metadata

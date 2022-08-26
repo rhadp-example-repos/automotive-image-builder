@@ -56,21 +56,23 @@ pipelines:
         options:
           filesystems:
             mpp-eval: fstab
-      - type: org.osbuild.grub2
-        options:
-          root_fs_uuid:
-            mpp-eval: rootfs_uuid
-          boot_fs_uuid:
-            mpp-eval: bootfs_uuid
-          kernel_opts:
-            mpp-eval: ''' '' .join(kernel_opts)'
-          uefi:
-            vendor:
-              mpp-eval: uefi_vendor
-            unified: true
-          legacy: false
-          write_defaults: false
-          greenboot: true
+      - mpp-if: use_grub2
+        then:
+          type: org.osbuild.grub2
+          options:
+            root_fs_uuid:
+              mpp-eval: rootfs_uuid
+            boot_fs_uuid:
+              mpp-eval: bootfs_uuid
+            kernel_opts:
+              mpp-eval: ''' '' .join(kernel_opts)'
+            uefi:
+              vendor:
+                mpp-eval: uefi_vendor
+              unified: true
+            legacy: false
+            write_defaults: false
+            greenboot: true
       - type: org.osbuild.fix-bls
         options:
           prefix: /
