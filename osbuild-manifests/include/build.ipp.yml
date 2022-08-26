@@ -34,6 +34,8 @@ pipelines:
     path: target-$target.ipp.yml
 - mpp-import-pipelines:
     path: arch-$arch.ipp.yml
+- mpp-import-pipelines:
+    path: computed-vars.ipp.yml # After including all snippets that may change the defaults, compute derived things
 - name: build
   runner: org.osbuild.centos9
   stages:

@@ -1,0 +1,49 @@
+version: '2'
+
+# We have loaded the variables specified in the manifest, the defaults
+# and in the per-arc/target/image-type includes. We can now do optional
+# things that depend on what was set in that.
+
+mpp-vars:
+  fstab:
+    - uuid:
+        mpp-eval: rootfs_uuid
+      vfs_type: ext4
+      path: /
+      freq: 1
+      passno: 1
+    - label: ESP
+      vfs_type: vfat
+      path: /boot/efi
+      freq: 1
+      passno: 1
+    - uuid:
+        mpp-eval: bootfs_uuid
+      vfs_type: ext4
+      path: /boot
+      freq: 1
+      passno: 1
+  build_rpms:
+    mpp-join:
+    - mpp-eval: build_rpms
+    - - mpp-if: use_luks
+        then: cryptsetup
+      - mpp-if: use_luks
+        then: lvm2
+  boot_rpms:
+    mpp-join:
+    - mpp-eval: boot_rpms
+    - - $kernel_rpm
+  base_rpms:
+    mpp-join:
+    - mpp-eval: base_rpms
+    - - $linux_firmware_rpm
+      - mpp-if: use_luks
+        then: lvm2
+  dracut_omit_modules:
+    mpp-join:
+    - mpp-eval: dracut_omit_modules
+    - - mpp-if: not use_luks
+        then: dm
+
+pipelines: []

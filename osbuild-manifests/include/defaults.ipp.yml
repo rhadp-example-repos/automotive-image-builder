@@ -1,4 +1,11 @@
 version: '2'
+
+# This file is loaded early and sets all the default values for variables.
+# It will inherit variables set in the image manifest itself, so the
+# defaults only override variable if they are already unset.
+# After this loads, things like the per-arch, per-target and per image type
+# includes are loaded which can override these.
+
 mpp-vars:
   default_target: qemu
   default_image_type: ostree
@@ -70,8 +77,6 @@ mpp-vars:
       - udev-rules
       - usrmount
   default_dracut_omit_modules:
-      - mpp-if: not use_luks
-        then: dm
       - lunmask
       - mdraid
       - memstrack
@@ -264,35 +269,13 @@ mpp-vars:
     iA==
     =+Gxh
     -----END PGP PUBLIC KEY BLOCK-----
-  fstab:
-    - uuid:
-        mpp-eval: rootfs_uuid
-      vfs_type: ext4
-      path: /
-      freq: 1
-      passno: 1
-    - label: ESP
-      vfs_type: vfat
-      path: /boot/efi
-      freq: 1
-      passno: 1
-    - uuid:
-        mpp-eval: bootfs_uuid
-      vfs_type: ext4
-      path: /boot
-      freq: 1
-      passno: 1
   build_rpms:
-    - mpp-if: use_luks
-      then: cryptsetup
     - dnf
     - dosfstools
     - e2fsprogs
     - efibootmgr
     - grub2-tools
     - grub2-tools-minimal
-    - mpp-if: use_luks
-      then: lvm2
     - policycoreutils
     - python3-iniparse
     - python3
@@ -306,9 +289,7 @@ mpp-vars:
   boot_rpms:
     - dracut-config-generic
     - grub2-tools-minimal
-    - $kernel_rpm
   base_rpms:
-    - $linux_firmware_rpm
     - NetworkManager
     - audit
     - chrony
@@ -321,5 +302,3 @@ mpp-vars:
     - rootfiles
     - selinux-policy-targeted
     - systemd-udev
-    - mpp-if: use_luks
-      then: lvm2
