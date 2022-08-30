@@ -472,6 +472,7 @@
             "pkgconf-m4-1.7.3-9.el9",
             "pkgconf-pkg-config-1.7.3-9.el9",
             "podman-4.2.0-3.el9",
+            "podman-catatonit-4.2.0-3.el9",
             "policycoreutils-3.4-3.el9",
             "policycoreutils-python-utils-3.4-3.el9",
             "polkit-0.117-10.el9",
