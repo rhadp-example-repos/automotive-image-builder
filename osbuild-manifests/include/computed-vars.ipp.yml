@@ -5,6 +5,19 @@ version: '2'
 # things that depend on what was set in that.
 
 mpp-vars:
+  # Backwards compatibility by checking if the deprecated kernel_rpm variable is set
+  kernel_core_package:
+    mpp-if: locals().get('kernel_rpm')
+    then:
+      mpp-eval: kernel_rpm + "-core"
+    else:
+      mpp-eval: kernel_package + "-core"
+  kernel_rpm:
+    mpp-if: locals().get('kernel_rpm')
+    then:
+      mpp-eval: kernel_rpm
+    else:
+      mpp-eval: kernel_package if not kernel_version else kernel_package + "-" + kernel_version
   fstab:
     - uuid:
         mpp-eval: rootfs_uuid

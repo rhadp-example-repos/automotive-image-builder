@@ -13,7 +13,8 @@ mpp-vars:
   default_ostree_os_version: $distro_version
   default_osname: centos
   default_uefi_vendor: centos
-  default_kernel_rpm: kernel-automotive
+  default_kernel_package: kernel-automotive
+  default_kernel_version: ""
   default_linux_firmware_rpm: linux-firmware-automotive
   default_partition_label: gpt
   default_extra_rpms: []
@@ -102,8 +103,10 @@ mpp-vars:
     mpp-eval: locals().get('target', default_target)
   image_type:
     mpp-eval: locals().get('image_type', default_image_type)
-  kernel_rpm:
-    mpp-eval: locals().get('kernel_rpm', default_kernel_rpm)
+  kernel_package:
+    mpp-eval: locals().get('kernel_package', default_kernel_package)
+  kernel_version:
+    mpp-eval: locals().get('kernel_version', default_kernel_version)
   linux_firmware_rpm:
     mpp-eval: locals().get('linux_firmware_rpm', default_linux_firmware_rpm)
   ostree_ref:
