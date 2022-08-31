@@ -38,20 +38,37 @@ pipelines:
               key:
                 mpp-eval: root_ssh_key
     - mpp-eval: image_extra_stages
-    - - type: org.osbuild.dracut
+    - - type: org.osbuild.dracut.conf
+        options:
+          filename: 90-image.conf
+          config:
+            early_microcode: false
+            reproducible: true
+            compress: pigz
+            add_dracutmodules:
+              mpp-if: dracut_add_modules
+              then:
+                mpp-eval: dracut_add_modules
+            omit_dracutmodules:
+              mpp-if: dracut_omit_modules
+              then:
+                mpp-eval: dracut_omit_modules
+            add_drivers:
+              mpp-if: dracut_add_drivers
+              then:
+                mpp-eval: dracut_add_drivers
+            filesystems:
+              mpp-if: dracut_filesystems
+              then:
+                mpp-eval: dracut_filesystems
+            install_items:
+              mpp-if: dracut_install
+              then:
+                mpp-eval: dracut_install
+      - type: org.osbuild.dracut
         options:
           kernel:
           - mpp-eval: rpms['rootfs'][kernel_core_package].evra
-          add_modules:
-            mpp-eval: dracut_add_modules
-          omit_modules:
-            mpp-eval: dracut_omit_modules
-          add_drivers:
-            mpp-eval: dracut_add_drivers
-          filesystems:
-            mpp-eval: dracut_filesystems
-          install:
-            mpp-eval: dracut_install
       - type: org.osbuild.fstab
         options:
           filesystems:
