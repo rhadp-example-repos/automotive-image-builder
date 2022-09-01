@@ -214,3 +214,14 @@ osbuildvm-images: $(BUILDDIR)
 
 %.tar.gz : %.tar
 	gzip -f $<
+
+AUTOSIGREPO=https://buildlogs.centos.org/9-stream/automotive
+define u-boot-rule
+qemu-u-boot-$1.bin:
+	DLDIR=`mktemp -d` && \
+	dnf download -q --downloaddir $$$$DLDIR --disablerepo "*" --repofrompath "autosig,${AUTOSIGREPO}/$1/packages-main/" autosig-u-boot && \
+	rpm2cpio $$$$DLDIR/autosig-u-boot-*.rpm | cpio -id -D $$$$DLDIR && \
+	mv $$$$DLDIR/boot/u-boot.bin $$@ && \
+	rm -rf $$$$DLDIR
+endef
+$(foreach a,$(ARCHES), $(eval $(call u-boot-rule,$a)))

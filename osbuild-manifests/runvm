@@ -25,7 +25,7 @@ def print_error(s):
     print(s, file=sys.stderr)
 
 def exit_error(s):
-    print_error(s)
+    print_error("Error: " + s)
     sys.exit(1)
 
 def bool_arg(val):
@@ -258,6 +258,8 @@ def main():
                         help=f"Memory size (default 2G)")
     parser.add_argument("--nographics", default=False, action="store_true",
                         help=f"Run without graphics")
+    parser.add_argument("--aboot", default=False, action="store_true",
+                        help=f"Boot with aboot")
     parser.add_argument("--watchdog", default=False, action="store_true",
                         help=f"Enable watchdog")
     parser.add_argument("--tpm2", default=False, action="store_true",
@@ -284,6 +286,13 @@ def main():
     if args.arch == "arm64":
         args.arch = "aarch64"
 
+    if args.aboot:
+        if args.arch != "aarch64":
+            exit_error("--aboot only supported with --arch=aarch64")
+        aboot_bios = f"qemu-u-boot-{args.arch}.bin"
+        if not os.path.exists(aboot_bios):
+            exit_error(f"Missing file '{aboot_bios}'. Download using: 'make {aboot_bios}'")
+
     qemu = find_qemu(args.arch)
     accel_list = qemu_available_accels(qemu)
     qemu_args = [qemu]
@@ -306,7 +315,12 @@ def main():
     elif args.arch == "aarch64":
         machine = "virt"
         default_cpu = "cortex-a57"
-        if sys.platform == "darwin":
+        if args.aboot:
+            args.memory = "4G" # this is hardcoded in our dtb files
+            qemu_args += [
+                "-bios", aboot_bios
+            ]
+        elif sys.platform == "darwin":
             edk2 = find_edk2()
             qemu_args += [
                 "-device", "virtio-gpu-pci", # for display
