@@ -39,7 +39,7 @@ endif
 
 export CHECKPOINTS=build
 IMAGETYPES := regular ostree direct
-FORMATS := img qcow2 oci.tar repo rootfs ext4 tar
+FORMATS := img qcow2 oci.tar repo rootfs ext4 tar aboot
 aarch64_TARGETS := rpi4
 COMMON_TARGETS := qemu abootqemu aws
 HOST_TARGETS := $(COMMON_TARGETS) $($(HOST_ARCH)_TARGETS)
@@ -71,7 +71,8 @@ help:
 	@echo \ \* .rootfs: Generate a directory with the rootfs content
 	@echo \ \* .tar: Generate a tar file with the rootfs content
 	@echo \ \* .ext4: Generate an ext4 filesystem with the rootfs content  \(size from \"image_size\"\)
-	@echo \ \* oci.tar: Generate an oci container image with the rootfs content
+	@echo \ \* .oci.tar: Generate an oci container image with the rootfs content
+	@echo \ \* .aboot: Generate an ext4 root filesystem and an android boot image \(for aboot targets\)
 	@echo
 	@echo You can pass variable declarations to osbuild-mpp with the DEFINES make variable.
 	@echo Multiple defines are separated by space, if you need a space inside a value escape it using \"\\ \".
