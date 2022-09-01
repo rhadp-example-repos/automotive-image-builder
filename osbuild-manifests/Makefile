@@ -40,7 +40,7 @@ endif
 export CHECKPOINTS=build
 IMAGETYPES := regular ostree direct
 FORMATS := img qcow2 oci.tar repo rootfs ext4 tar aboot
-aarch64_TARGETS := rpi4
+aarch64_TARGETS := rpi4 qdrive3
 COMMON_TARGETS := qemu abootqemu aws
 HOST_TARGETS := $(COMMON_TARGETS) $($(HOST_ARCH)_TARGETS)
 ALL_TARGETS := $(COMMON_TARGETS) $(foreach a,$(ARCHES), $($(a)_TARGETS))
