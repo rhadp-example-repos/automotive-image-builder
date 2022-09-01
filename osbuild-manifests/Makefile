@@ -101,6 +101,10 @@ help:
 	@echo actual building. This means that you don\'t need sudo rights to run osbuild, and it means
 	@echo architectures other than the current ones can be built.
 	@echo
+	@echo Available image targets can be listed with \"make list-targets\"
+	@echo
+
+list-targets:
 	@echo Available image targets \(for $(HOST_ARCH)\) are:
 	@echo
 	@$(foreach d, $(DISTROS), $(foreach m, $(MANIFESTS), $(foreach t, $(HOST_TARGETS), $(foreach i,$(IMAGETYPES), echo -e "   "  $(call image-name,$d,$m,$t,$i,$(HOST_ARCH)).[$(subst $(SPACE),$(COMMA),$(FORMATS))];))))
