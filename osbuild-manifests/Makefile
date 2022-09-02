@@ -39,9 +39,9 @@ endif
 
 export CHECKPOINTS=build
 IMAGETYPES := regular ostree direct
-FORMATS := img qcow2 oci.tar repo rootfs ext4 tar
-aarch64_TARGETS := rpi4
-COMMON_TARGETS := qemu aws
+FORMATS := img qcow2 oci.tar repo rootfs ext4 tar aboot
+aarch64_TARGETS := rpi4 qdrive3
+COMMON_TARGETS := qemu abootqemu aws
 HOST_TARGETS := $(COMMON_TARGETS) $($(HOST_ARCH)_TARGETS)
 ALL_TARGETS := $(COMMON_TARGETS) $(foreach a,$(ARCHES), $($(a)_TARGETS))
 
@@ -71,7 +71,8 @@ help:
 	@echo \ \* .rootfs: Generate a directory with the rootfs content
 	@echo \ \* .tar: Generate a tar file with the rootfs content
 	@echo \ \* .ext4: Generate an ext4 filesystem with the rootfs content  \(size from \"image_size\"\)
-	@echo \ \* oci.tar: Generate an oci container image with the rootfs content
+	@echo \ \* .oci.tar: Generate an oci container image with the rootfs content
+	@echo \ \* .aboot: Generate an ext4 root filesystem and an android boot image \(for aboot targets\)
 	@echo
 	@echo You can pass variable declarations to osbuild-mpp with the DEFINES make variable.
 	@echo Multiple defines are separated by space, if you need a space inside a value escape it using \"\\ \".
@@ -101,6 +102,10 @@ help:
 	@echo actual building. This means that you don\'t need sudo rights to run osbuild, and it means
 	@echo architectures other than the current ones can be built.
 	@echo
+	@echo Available image targets can be listed with \"make list-targets\"
+	@echo
+
+list-targets:
 	@echo Available image targets \(for $(HOST_ARCH)\) are:
 	@echo
 	@$(foreach d, $(DISTROS), $(foreach m, $(MANIFESTS), $(foreach t, $(HOST_TARGETS), $(foreach i,$(IMAGETYPES), echo -e "   "  $(call image-name,$d,$m,$t,$i,$(HOST_ARCH)).[$(subst $(SPACE),$(COMMA),$(FORMATS))];))))
@@ -210,3 +215,14 @@ osbuildvm-images: $(BUILDDIR)
 
 %.tar.gz : %.tar
 	gzip -f $<
+
+AUTOSIGREPO=https://buildlogs.centos.org/9-stream/automotive
+define u-boot-rule
+qemu-u-boot-$1.bin:
+	DLDIR=`mktemp -d` && \
+	dnf download -q --downloaddir $$$$DLDIR --disablerepo "*" --repofrompath "autosig,${AUTOSIGREPO}/$1/packages-main/" autosig-u-boot && \
+	rpm2cpio $$$$DLDIR/autosig-u-boot-*.rpm | cpio -id -D $$$$DLDIR && \
+	mv $$$$DLDIR/boot/u-boot.bin $$@ && \
+	rm -rf $$$$DLDIR
+endef
+$(foreach a,$(ARCHES), $(eval $(call u-boot-rule,$a)))

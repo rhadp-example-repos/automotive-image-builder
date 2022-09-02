@@ -72,6 +72,27 @@ pipelines:
               filename: disk.img
         options:
           mpp-format-json: '{image.layout}'
+      - mpp-if: use_aboot and use_abootpart
+        then:
+          type: org.osbuildtest.write-device
+          devices:
+            device:
+              type: org.osbuild.loopback
+              options:
+                filename: disk.img
+                start:
+                  mpp-eval: image.layout['aboot'].start
+                size:
+                  mpp-eval: image.layout['aboot'].size
+          inputs:
+            tree:
+              type: org.osbuild.tree
+              origin: org.osbuild.pipeline
+              references:
+              - name:image-tree
+          options:
+            from:
+              mpp-format-string: "input://tree/boot/aboot-{rpms['rootfs'][kernel_core_package].evra}.img"
       - mpp-if: use_efipart
         then:
           type: org.osbuild.mkfs.fat
@@ -420,6 +441,33 @@ pipelines:
       type: org.osbuild.ext4
       source: root
       target: /
+
+- name: aboot
+  build: name:build
+  stages:
+  - type: org.osbuild.mkdir
+    options:
+      paths:
+      - path: /images
+  - type: org.osbuild.copy
+    inputs:
+      ext4:
+        type: org.osbuild.tree
+        origin: org.osbuild.pipeline
+        references:
+        - name:ext4
+      tree:
+        type: org.osbuild.tree
+        origin: org.osbuild.pipeline
+        references:
+        - name:image-tree
+    options:
+      paths:
+        - from: input://ext4/rootfs.ext4
+          to: tree:///images/rootfs.img
+        - from:
+            mpp-format-string: "input://tree/boot/aboot-{rpms['rootfs'][kernel_core_package].evra}.img"
+          to: tree:///images/aboot.img
 
 - name: tar
   build: name:build

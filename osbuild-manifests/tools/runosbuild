@@ -33,6 +33,7 @@ EXPORT_BY_EXT[repo]=ostree-commit
 EXPORT_BY_EXT[rootfs]=rootfs
 EXPORT_BY_EXT[ext4]=ext4
 EXPORT_BY_EXT[tar]=tar
+EXPORT_BY_EXT[aboot]=aboot
 
 # Map extension to name of exported file by pipeline
 declare -A EXPORT_FILE_BY_EXT
@@ -43,6 +44,7 @@ EXPORT_FILE_BY_EXT[repo]=repo
 EXPORT_FILE_BY_EXT[rootfs]=
 EXPORT_FILE_BY_EXT[ext4]=rootfs.ext4
 EXPORT_FILE_BY_EXT[tar]=rootfs.tar
+EXPORT_FILE_BY_EXT[aboot]=images
 
 EXPORT=${EXPORT_BY_EXT[${EXTENSION}]}
 EXPORT_FILE=${EXPORT_FILE_BY_EXT[${EXTENSION}]}
@@ -66,7 +68,7 @@ for CP in $CHECKPOINTS; do
 done
 
 CHOWNARGS=
-if [ $EXTENSION == repo ]; then
+if [ $EXTENSION == repo -o $EXTENSION == aboot ]; then
     CHOWNARGS=-R # Chown entire repo dir as it doesn't care about permissions
 fi
 

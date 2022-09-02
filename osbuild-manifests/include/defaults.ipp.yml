@@ -31,10 +31,13 @@ mpp-vars:
   default_image_size: '8589934592'
   default_efipart_size: 204800
   default_bootpart_size: 614400
+  default_abootpart_size: 131072 # 64M
   default_kernel_loglevel: 4
   default_timezone: UTC
   default_locale: en_US.UTF-8
   default_use_grub2: true
+  default_use_aboot: false
+  default_use_abootpart: false
   default_use_efipart: true
   default_use_bootpart: true
   static_uuids:
@@ -49,6 +52,8 @@ mpp-vars:
     mpp-eval: ('68b2905b-df3e-4fb3-80fa-49d1e773aa33' if static_uuids else str(__import__('uuid').uuid4()))
   default_bootpart_uuid:
     mpp-eval: ('61b2905b-df3e-4fb3-80fa-49d1e773aa32' if static_uuids else str(__import__('uuid').uuid4()))
+  default_abootpart_uuid:
+    mpp-eval: ('e12f967c-2383-11ed-b598-305a3ae2477d' if static_uuids else str(__import__('uuid').uuid4()))
   default_rootpart_uuid:
     mpp-eval: ('6264d520-3fb9-423f-8ab8-7a0a8e3d3562' if static_uuids else str(__import__('uuid').uuid4()))
   default_luks_uuid:
@@ -141,6 +146,8 @@ mpp-vars:
     mpp-eval: locals().get('rootpart_uuid', default_rootpart_uuid)
   bootpart_uuid:
     mpp-eval: locals().get('bootpart_uuid', default_bootpart_uuid)
+  abootpart_uuid:
+    mpp-eval: locals().get('abootpart_uuid', default_abootpart_uuid)
   efipart_uuid:
     mpp-eval: locals().get('efipart_uuid', default_efipart_uuid)
   luks_uuid:
@@ -151,6 +158,8 @@ mpp-vars:
     mpp-eval: locals().get('efipart_size', default_efipart_size)
   bootpart_size:
     mpp-eval: locals().get('bootpart_size', default_bootpart_size)
+  abootpart_size:
+    mpp-eval: locals().get('abootpart_size', default_abootpart_size)
   dracut_add_modules:
     mpp-eval: locals().get('dracut_add_modules', default_dracut_add_modules)
   dracut_omit_modules:
@@ -195,6 +204,10 @@ mpp-vars:
     mpp-eval: locals().get('use_grub2', default_use_grub2)
   timezone:
     mpp-eval: locals().get('timezone', default_timezone)
+  use_aboot:
+    mpp-eval: locals().get('use_aboot', default_use_aboot)
+  use_abootpart:
+    mpp-eval: locals().get('use_abootpart', default_use_abootpart)
   use_efipart:
     mpp-eval: locals().get('use_efipart', default_use_efipart)
   use_bootpart:
