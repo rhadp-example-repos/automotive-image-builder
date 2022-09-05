@@ -493,10 +493,15 @@ pipelines:
         - name:raw-image-tree
     options:
       filename: container.tar
-      architecture: $arch
+      architecture:
+        mpp-eval: arch
       config:
+        Entrypoint:
+          mpp-if: container_entrypoint
+          then:
+            mpp-eval: container_entrypoint
         Cmd:
-          - "/usr/bin/bash"
+          mpp-eval: container_cmd
 
 - name: tar
   build: name:build

@@ -104,6 +104,9 @@ mpp-vars:
   default_ostree_repo_url: http://10.0.2.100/
   default_ostree_remote_name: auto-sig
   default_luks_passphrase: password
+  default_container_cmd:
+    - "/usr/bin/bash"
+  default_container_entrypoint: []
   target:
     mpp-eval: locals().get('target', default_target)
   image_type:
@@ -212,6 +215,10 @@ mpp-vars:
     mpp-eval: locals().get('use_efipart', default_use_efipart)
   use_bootpart:
     mpp-eval: locals().get('use_bootpart', default_use_bootpart)
+  container_entrypoint:
+    mpp-eval: locals().get('container_entrypoint', default_container_entrypoint)
+  container_cmd:
+    mpp-eval: locals().get('container_cmd', default_container_cmd)
   image_extra_stages: []
   centos_gpg_key: |
     -----BEGIN PGP PUBLIC KEY BLOCK-----
