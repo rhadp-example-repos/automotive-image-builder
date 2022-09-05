@@ -40,7 +40,6 @@ pipelines:
                 baseurl: https://download.copr.fedorainfracloud.org/results/@osbuild/osbuild/centos-stream-9-$arch
           packages:
             mpp-join:
-            - mpp-eval: base_rpms
             - mpp-eval: image_rpms
             - mpp-eval: extra_rpms
             - - "@Development Tools"

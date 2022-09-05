@@ -2,6 +2,7 @@ version: '2'
 mpp-vars:
   image_rpms:
     mpp-join:
+    - mpp-eval: base_rpms
     - mpp-eval: locals().get('extra_image_rpms', [])
     - []
 pipelines:

@@ -38,7 +38,6 @@ pipelines:
             - []
           packages:
             mpp-join:
-            - mpp-eval: base_rpms
             - mpp-eval: image_rpms
             - mpp-eval: extra_rpms
             - []
