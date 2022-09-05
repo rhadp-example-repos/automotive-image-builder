@@ -346,23 +346,6 @@ pipelines:
         type: qcow2
         compat: '1.1'
 
-- name: container
-  build: name:build
-  stages:
-  - type: org.osbuild.oci-archive
-    inputs:
-      base:
-        type: org.osbuild.tree
-        origin: org.osbuild.pipeline
-        references:
-        - name:rootfs
-    options:
-      filename: container.tar
-      architecture: $arch
-      config:
-        Cmd:
-        - "/usr/bin/bash"
-
 # We need a smaller fstab for the non-partitioned case
 - name: ext4-fstab
   build: name:build
@@ -469,6 +452,52 @@ pipelines:
             mpp-format-string: "input://tree/boot/aboot-{rpms['rootfs'][kernel_core_package].evra}.img"
           to: tree:///images/aboot.img
 
+# This is essentially rootfs with no image-specific stuff like boot, etc, but with
+# some required extras.
+- name: raw-image-tree
+  build: name:build
+  stages:
+    mpp-join:
+    - - type: org.osbuild.copy
+        inputs:
+          tree:
+            type: org.osbuild.tree
+            origin: org.osbuild.pipeline
+            references:
+            - name:rootfs
+          extra-tree:
+            type: org.osbuild.tree
+            origin: org.osbuild.pipeline
+            references:
+            - name:extra-tree-content
+        options:
+          paths:
+            mpp-join:
+              - - from: input://tree/
+                  to: tree:///
+              - mpp-eval: extra_tree_content
+    - mpp-eval: image_extra_stages
+    - - type: org.osbuild.selinux
+        options:
+          file_contexts: etc/selinux/targeted/contexts/files/file_contexts
+
+- name: container
+  build: name:build
+  stages:
+  - type: org.osbuild.oci-archive
+    inputs:
+      base:
+        type: org.osbuild.tree
+        origin: org.osbuild.pipeline
+        references:
+        - name:raw-image-tree
+    options:
+      filename: container.tar
+      architecture: $arch
+      config:
+        Cmd:
+          - "/usr/bin/bash"
+
 - name: tar
   build: name:build
   stages:
@@ -478,7 +507,7 @@ pipelines:
         type: org.osbuild.tree
         origin: org.osbuild.pipeline
         references:
-        - name:rootfs
+        - name:raw-image-tree
     options:
       filename: rootfs.tar
       root-node: omit
