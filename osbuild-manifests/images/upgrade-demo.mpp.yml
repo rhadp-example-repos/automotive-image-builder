@@ -32,12 +32,10 @@ pipelines:
           baseurl: $distro_baseurl/BaseOS/$arch/os/
           repos:
             mpp-join:
-            - mpp-eval: distro_repos
-            - mpp-eval: target_repos
+            - mpp-eval: image_repos
             - mpp-eval: extra_repos
           packages:
             mpp-join:
-            - mpp-eval: base_rpms
             - mpp-eval: image_rpms
             - mpp-eval: extra_rpms
             # Install the watchdog tools and service files
@@ -59,9 +57,6 @@ pipelines:
       - from:
           mpp-format-string: input://inlinefile/{embedded['greenboot.conf']}
         to: tree:///etc/greenboot/greenboot.conf
-  - type: org.osbuild.locale
-    options:
-      language: en_US.UTF-8
   - type: org.osbuild.systemd
     options:
       enabled_services:

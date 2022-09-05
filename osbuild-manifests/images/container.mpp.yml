@@ -30,8 +30,7 @@ pipelines:
           baseurl: $distro_baseurl/BaseOS/$arch/os/
           repos:
             mpp-join:
-            - mpp-eval: distro_repos
-            - mpp-eval: target_repos
+            - mpp-eval: image_repos
             - mpp-eval: extra_repos
             - - id: copr-quadlet
                 baseurl: https://download.copr.fedorainfracloud.org/results/alexl/quadlet/centos-stream-9-$arch/
@@ -39,7 +38,6 @@ pipelines:
                 baseurl: https://download.copr.fedorainfracloud.org/results/alexl/cs9-sample-images/centos-stream-9-$arch/
           packages:
             mpp-join:
-            - mpp-eval: base_rpms
             - mpp-eval: image_rpms
             - mpp-eval: extra_rpms
             - - podman
@@ -103,9 +101,6 @@ pipelines:
       - from:
           mpp-format-string: input://inlinefile2/{embedded['engine.container']}
         to: tree:///etc/containers/systemd/engine.container
-  - type: org.osbuild.locale
-    options:
-      language: en_US.UTF-8
   - type: org.osbuild.users
     options:
       users:

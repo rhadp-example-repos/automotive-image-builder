@@ -32,15 +32,13 @@ pipelines:
           baseurl: $distro_baseurl/BaseOS/$arch/os/
           repos:
             mpp-join:
-            - mpp-eval: distro_repos
-            - mpp-eval: distro_devel_repos
-            - mpp-eval: target_repos
+            - mpp-eval: image_repos
+            - mpp-eval: image_devel_repos
             - mpp-eval: extra_repos
             - - id: osbuild
                 baseurl: https://download.copr.fedorainfracloud.org/results/@osbuild/osbuild/centos-stream-9-$arch
           packages:
             mpp-join:
-            - mpp-eval: base_rpms
             - mpp-eval: image_rpms
             - mpp-eval: extra_rpms
             - - "@Development Tools"
@@ -90,9 +88,6 @@ pipelines:
               - skopeo
           excludes:
           - dracut-config-rescue
-  - type: org.osbuild.locale
-    options:
-      language: en_US.UTF-8
   - type: org.osbuild.users
     options:
       users:

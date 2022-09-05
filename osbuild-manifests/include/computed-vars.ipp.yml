@@ -72,5 +72,12 @@ mpp-vars:
     - mpp-if: use_serial_console
       then:
         - console=$serial_console
+  image_repos:
+    mpp-join:
+      - mpp-eval: distro_repos
+      - mpp-eval: target_repos
+  image_devel_repos:
+    mpp-join:
+      - mpp-eval: distro_devel_repos
 
 pipelines: []
