@@ -30,8 +30,7 @@ pipelines:
           baseurl: $distro_baseurl/BaseOS/$arch/os/
           repos:
             mpp-join:
-            - mpp-eval: distro_repos
-            - mpp-eval: target_repos
+            - mpp-eval: image_repos
             - mpp-eval: extra_repos
           packages:
             mpp-join:
