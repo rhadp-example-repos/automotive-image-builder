@@ -59,9 +59,6 @@ pipelines:
       - from:
           mpp-format-string: input://inlinefile/{embedded['greenboot.conf']}
         to: tree:///etc/greenboot/greenboot.conf
-  - type: org.osbuild.locale
-    options:
-      language: en_US.UTF-8
   - type: org.osbuild.systemd
     options:
       enabled_services:

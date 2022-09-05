@@ -103,9 +103,6 @@ pipelines:
       - from:
           mpp-format-string: input://inlinefile2/{embedded['engine.container']}
         to: tree:///etc/containers/systemd/engine.container
-  - type: org.osbuild.locale
-    options:
-      language: en_US.UTF-8
   - type: org.osbuild.users
     options:
       users:

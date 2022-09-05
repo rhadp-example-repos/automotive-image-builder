@@ -90,9 +90,6 @@ pipelines:
               - skopeo
           excludes:
           - dracut-config-rescue
-  - type: org.osbuild.locale
-    options:
-      language: en_US.UTF-8
   - type: org.osbuild.users
     options:
       users:
