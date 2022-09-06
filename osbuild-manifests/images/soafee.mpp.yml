@@ -37,6 +37,7 @@ pipelines:
             - mpp-eval: image_rpms
             - mpp-eval: extra_rpms
             - - podman
+              - containernetworking-plugins
               - curl
           excludes:
           - dracut-config-rescue
