@@ -51,6 +51,8 @@ mpp-vars:
         then: lvm2
       - mpp-if: use_aboot
         then: aboot-update
+      - mpp-if: use_aboot
+        then: aboot-deploy
   boot_rpms:
     mpp-join:
     - mpp-eval: boot_rpms
@@ -63,6 +65,8 @@ mpp-vars:
         then: lvm2
       - mpp-if: use_aboot
         then: aboot-update
+      - mpp-if: use_aboot
+        then: aboot-deploy
   dracut_omit_modules:
     mpp-join:
     - mpp-eval: dracut_omit_modules
