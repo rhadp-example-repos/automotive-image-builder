@@ -11,7 +11,7 @@ mpp-vars:
   aboot_second_offset: "0x81100000"
   aboot_tags_offset: "0x7d00000"
   aboot_base: "0x1208800"
-  aboot_dtb_file: "qcom/sa8295p-adp.dtb"
+  aboot_dtb_file: "qcom/sa8540p-adp-ride.dtb"
   kernel_opts:
     mpp-join:
     - mpp-eval: kernel_opts
