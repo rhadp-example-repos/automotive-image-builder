@@ -2,6 +2,7 @@ version: '2'
 mpp-vars:
   extra_image_rpms:
   - openssh-server
+  - openssh-clients
   - sudo
   - tuned
   - cloud-init

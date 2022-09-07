@@ -37,8 +37,76 @@ pipelines:
             - mpp-eval: image_rpms
             - mpp-eval: extra_rpms
             - - podman
+              - containernetworking-plugins
               - curl
           excludes:
           - dracut-config-rescue
+  - type: org.osbuild.copy
+    inputs:
+      inlinefile:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: storage.conf
+          path: ../files/storage.conf
+    options:
+      paths:
+      - from:
+          mpp-format-string: input://inlinefile/{embedded['storage.conf']}
+        to: tree:///etc/containers/storage.conf
+  - type: org.osbuild.skopeo
+    inputs:
+      images:
+        type: org.osbuild.containers
+        origin: org.osbuild.source
+        mpp-resolve-images:
+          images:
+            - source: docker.io/library/httpd
+              tag: latest
+              name: localhost/httpd
+    options:
+      destination:
+        type: containers-storage
+        storage-path: /usr/share/containers/storage
+  - type: org.osbuild.mkdir
+    options:
+      paths:
+      - path: /etc/httpd/htdocs
+        parents: true
+  - type: org.osbuild.copy
+    inputs:
+      docfile:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: index.html
+          url: https://ygalblum.github.io/soafee-on-autosd-doc/index.html
+      podspec:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: podfile
+          path: ../files/httpd-doc.yml
+      unitfile:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: unitfile
+          path: ../files/httpd-doc.service
+    options:
+      paths:
+      - from:
+          mpp-format-string: input://docfile/{embedded['index.html']}
+        to: tree:///etc/httpd/htdocs/index.html
+      - from:
+          mpp-format-string: input://podspec/{embedded['podfile']}
+        to: tree:///etc/httpd/httpd-doc.yml
+      - from:
+          mpp-format-string: input://unitfile/{embedded['unitfile']}
+        to: tree:///usr/lib/systemd/system/httpd-doc.service
+  - type: org.osbuild.systemd
+    options:
+      enabled_services:
+      - httpd-doc.service
 - mpp-import-pipelines:
     path: include/image.ipp.yml
