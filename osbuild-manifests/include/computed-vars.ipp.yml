@@ -19,27 +19,29 @@ mpp-vars:
     else:
       mpp-eval: kernel_package if not kernel_version else kernel_package + "-" + kernel_version
   fstab:
-    - uuid:
-        mpp-eval: rootfs_uuid
-      vfs_type: ext4
-      path: /
-      freq: 1
-      passno: 1
-    - mpp-if: use_efipart
-      then:
-        label: ESP
-        vfs_type: vfat
-        path: /boot/efi
-        freq: 1
-        passno: 1
-    - mpp-if: use_bootpart
-      then:
-        uuid:
-          mpp-eval: bootfs_uuid
+    mpp-join:
+    - - uuid:
+          mpp-eval: rootfs_uuid
         vfs_type: ext4
-        path: /boot
+        path: /
         freq: 1
         passno: 1
+      - mpp-if: use_efipart
+        then:
+          label: ESP
+          vfs_type: vfat
+          path: /boot/efi
+          freq: 1
+          passno: 1
+      - mpp-if: use_bootpart
+        then:
+          uuid:
+            mpp-eval: bootfs_uuid
+          vfs_type: ext4
+          path: /boot
+          freq: 1
+          passno: 1
+    - mpp-eval: extra_fstab
   build_rpms:
     mpp-join:
     - mpp-eval: build_rpms

@@ -365,10 +365,13 @@ pipelines:
   - type: org.osbuild.fstab
     options:
       filesystems:
-        - uuid:
-            mpp-eval: rootfs_uuid
-          vfs_type: ext4
-          path: /
+        mpp-join:
+          - - uuid:
+                mpp-eval: rootfs_uuid
+              vfs_type: ext4
+              path: /
+          - mpp-eval:
+              extra_fstab
 
 - name: ext4
   build: name:build

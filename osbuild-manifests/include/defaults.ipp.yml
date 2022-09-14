@@ -107,6 +107,7 @@ mpp-vars:
   default_container_cmd:
     - "/usr/bin/bash"
   default_container_entrypoint: []
+  default_extra_fstab: []
   target:
     mpp-eval: locals().get('target', default_target)
   image_type:
@@ -219,6 +220,8 @@ mpp-vars:
     mpp-eval: locals().get('container_entrypoint', default_container_entrypoint)
   container_cmd:
     mpp-eval: locals().get('container_cmd', default_container_cmd)
+  extra_fstab:
+    mpp-eval: locals().get('extra_fstab',  default_extra_fstab)
   image_extra_stages: []
   centos_gpg_key: |
     -----BEGIN PGP PUBLIC KEY BLOCK-----
