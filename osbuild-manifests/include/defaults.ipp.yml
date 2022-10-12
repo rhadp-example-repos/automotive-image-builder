@@ -15,6 +15,7 @@ mpp-vars:
   default_uefi_vendor: centos
   default_kernel_package: kernel-automotive
   default_kernel_version: ""
+  default_release_package: centos-release-automotive
   default_linux_firmware_rpm: linux-firmware-automotive
   default_partition_label: gpt
   default_extra_rpms: []
@@ -122,6 +123,8 @@ mpp-vars:
     mpp-eval: locals().get('kernel_version', default_kernel_version)
   linux_firmware_rpm:
     mpp-eval: locals().get('linux_firmware_rpm', default_linux_firmware_rpm)
+  release_rpm:
+    mpp-eval: locals().get('release_rpm', default_release_package)
   ostree_ref:
     mpp-eval: locals().get('ostree_ref', default_ostree_ref)
   ostree_os_version:
@@ -357,6 +360,7 @@ mpp-vars:
     - rootfiles
     - selinux-policy-targeted
     - systemd-udev
+    - mpp-eval: release_rpm
   # Snapshot of podman 4.4 until it is in cs9
   podman_snapshot_repos:
     - id: copr-podman-snapshot
