@@ -42,6 +42,7 @@ pipelines:
             - mpp-eval: extra_rpms
             - - podman
               - quadlet
+              - containernetworking-plugins
               - curl
               - vsomeip3-routingmanager
               - auto-apps
