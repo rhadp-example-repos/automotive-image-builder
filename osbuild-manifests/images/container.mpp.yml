@@ -1,6 +1,7 @@
 version: '2'
 mpp-vars:
   name: container
+  transient_containers: true
 pipelines:
 - mpp-import-pipelines:
     path: include/build.ipp.yml
@@ -46,6 +47,8 @@ pipelines:
               - curl
               - vsomeip3-routingmanager
               - auto-apps
+              - mpp-if: transient_containers
+                then: containers-transient-store
           excludes:
           - dracut-config-rescue
   - type: org.osbuild.copy
@@ -61,6 +64,21 @@ pipelines:
       - from:
           mpp-format-string: input://inlinefile/{embedded['storage.conf']}
         to: tree:///etc/containers/storage.conf
+  - mpp-if: transient_containers
+    then:
+      type: org.osbuild.copy
+      inputs:
+        inlinefile:
+          type: org.osbuild.files
+          origin: org.osbuild.source
+          mpp-embed:
+            id: containers.conf
+            path: ../files/containers.conf
+      options:
+        paths:
+          - from:
+              mpp-format-string: input://inlinefile/{embedded['containers.conf']}
+            to: tree:///etc/containers/containers.conf
   - type: org.osbuild.skopeo
     inputs:
       images:
