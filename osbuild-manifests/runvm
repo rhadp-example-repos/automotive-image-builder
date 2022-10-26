@@ -137,19 +137,34 @@ def find_ovmf(args):
 
     raise RuntimeError("Could not find OMVF")
 
+qemu_dirs = [
+    "/usr/local/share/qemu",
+    "/opt/homebrew/share/qemu",
+    "/usr/share/edk2/aarch64",
+    "/usr/share/qemu"
+]
+
 # location can differ depending on how qemu is installed
 def find_edk2():
-    dirs = [
-        "/usr/local/share/qemu",
-        "/opt/homebrew/share/qemu"
-    ]
-
-    for d in dirs:
-        path = os.path.expanduser(d)
+    for d in qemu_dirs:
         if os.path.exists(path):
             return path
 
     raise RuntimeError("Could not find edk2 directory")
+
+def find_edk2_code_fd():
+    files = [
+        "QEMU_EFI.fd",
+        "edk2-aarch64-code.fd"
+    ]
+
+    for d in qemu_dirs:
+        for f in files:
+            dir_and_file = os.path.join(d, f)
+            if os.path.exists(dir_and_file):
+                return dir_and_file
+
+    raise RuntimeError("Could not find edk2 code fd file")
 
 def qemu_run_command(qmp_socket_path, command):
     sock2 = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -333,8 +348,9 @@ def main():
                 "-drive", f"file={edk2}/edk2-arm-vars.fd,if=pflash,format=raw,unit=1,snapshot=on,readonly=off"
             ]
         else:
+            edk2_file = find_edk2_code_fd()
             qemu_args += [
-                "-bios", "/usr/share/edk2/aarch64/QEMU_EFI.fd",
+                "-bios", f"{edk2_file}",
                 "-boot", "efi"
             ]
     else:
