@@ -86,6 +86,9 @@ pipelines:
               - podman
               - buildah
               - skopeo
+              # bpf tools
+              - bcc
+              - bcc-tools
           excludes:
           - dracut-config-rescue
   - type: org.osbuild.users
