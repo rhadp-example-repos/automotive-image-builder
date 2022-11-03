@@ -343,7 +343,7 @@ def main():
                 "-device", "qemu-xhci", # for keyboard
                 "-device", "usb-kbd", # for keyboard
                 "-device", "usb-tablet", # for mouse
-                "-smp", str(os.cpu_count()), # for max cores
+                "-smp", str(min(os.cpu_count(), 8)), # for max cores
                 "-drive", f"file={edk2}/edk2-aarch64-code.fd,if=pflash,format=raw,unit=0,readonly=on",
                 "-drive", f"file={edk2}/edk2-arm-vars.fd,if=pflash,format=raw,unit=1,snapshot=on,readonly=off"
             ]
