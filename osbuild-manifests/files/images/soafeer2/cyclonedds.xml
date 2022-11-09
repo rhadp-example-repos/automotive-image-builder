@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CycloneDDS xmlns="https://cdds.io/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://cdds.io/config https://raw.githubusercontent.com/eclipse-cyclonedds/cyclonedds/master/etc/cyclonedds.xsd">
-  <Domain id="any">
-    <General>
-      <NetworkInterfaceAddress>enp0s2</NetworkInterfaceAddress>
-    </General>
-    <Internal>
-      <MinimumSocketReceiveBufferSize>10MB</MinimumSocketReceiveBufferSize>
-    </Internal>
-    <Tracing>                                                    
-      <EnableCategory>data,whc</EnableCategory>                       
-    </Tracing>                                                   
-  </Domain>
+    <Domain id="any">
+        <General>
+            <!-- you man need to change the inferface name based on your environment -->
+            <NetworkInterfaceAddress>enp0s2</NetworkInterfaceAddress>
+        </General>
+        <Internal>
+            <MinimumSocketReceiveBufferSize>10MB</MinimumSocketReceiveBufferSize>
+        </Internal>
+        <Tracing>                                                    
+            <EnableCategory>data,whc</EnableCategory>                       
+        </Tracing>                                                   
+    </Domain>
 </CycloneDDS>
