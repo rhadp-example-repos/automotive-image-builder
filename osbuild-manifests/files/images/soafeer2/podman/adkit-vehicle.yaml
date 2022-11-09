@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    bind-mount-options:/etc/cyclonedds: Z
+    bind-mount-options:/map: Z
+    io.kubernetes.cri-o.TTY/adkit-vehicle: "false"
+    io.podman.annotations.autoremove/adkit-vehicle: "TRUE"
+    io.podman.annotations.cid-file/adkit-vehicle: /run/adkit-vehicle.cid
+    io.podman.annotations.init/adkit-vehicle: "TRUE"
+    io.podman.annotations.privileged/adkit-vehicle: "FALSE"
+    io.podman.annotations.publish-all/adkit-vehicle: "FALSE"
+  labels:
+    app: adkit-vehicle
+  name: adkit-vehicle
+spec:
+  hostNetwork: true
+  containers:
+  - image: localhost/autoware-universe:latest
+    name: app
+    command:
+    - /bin/bash
+    - -c
+    - "source install/setup.bash; ros2 launch tier4_vehicle_launch vehicle.launch.xml vehicle_model:=sample_vehicle sensor_model:=sample_sensor_kit launch_vehicle_interface:=true"
+    env:
+    - name: CYCLONEDDS_URI
+      value: file:///etc/cyclonedds/cyclonedds.xml
+    - name: RMW_IMPLEMENTATION
+      value: rmw_cyclonedds_cpp
+    securityContext:
+      seLinuxOptions:
+        type: 'spc_t'
+    volumeMounts:
+    - mountPath: /tmp
+      name: tmpfs
+    - mountPath: /etc/cyclonedds
+      name: cyclonedds
+    - name: map
+      mountPath: /map
+    resources:
+      limits:
+        cpu: "1"
+        memory: "512Mi"
+      requests:
+        cpu: "200m"
+        memory: "256Mi"
+  volumes:
+    - name: tmpfs
+      hostPath:
+        path: tmpfs
+        type: DirectoryOrCreate
+    - name: cyclonedds
+      hostPath:
+        path: /etc/adkit/cyclonedds
+        type: Directory
+    - name: map
+      hostPath:
+        path: /etc/adkit/map
+        type: Directory

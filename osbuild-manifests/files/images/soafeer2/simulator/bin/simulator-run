@@ -1,0 +1,10 @@
+#!/bin/bash
+
+source install/setup.sh;
+
+ros2 \
+launch scenario_test_runner scenario_test_runner.launch.py \
+scenario:=/sample_data/t4v2.yaml \
+architecture_type:=awf/auto \
+launch_autoware:=false \
+record:=false
