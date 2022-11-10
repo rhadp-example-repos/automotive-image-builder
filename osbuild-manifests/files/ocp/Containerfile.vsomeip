@@ -1,0 +1,15 @@
+FROM quay.io/centos/centos:stream9-development
+
+RUN dnf upgrade --refresh -y
+
+RUN dnf install -y 'dnf-command(config-manager)'
+
+RUN dnf config-manager --set-enabled crb && \
+    dnf install -y \
+    https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm \
+    https://dl.fedoraproject.org/pub/epel/epel-next-release-latest-9.noarch.rpm
+
+RUN dnf install -y \
+    vsomeip3-routingmanager
+
+ENTRYPOINT [ "/usr/bin/routingmanagerd" ]

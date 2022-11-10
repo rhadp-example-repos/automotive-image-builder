@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: engine
+  labels:
+    app: engine
+  namespace: cow
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: engine
+  template:
+    metadata:
+      labels:
+        app: engine
+    spec:
+      containers:
+        - name: engine
+          image: registry.gitlab.com/centos/automotive/sample-images/demo/auto-apps:latest
+          command:
+          - /usr/bin/engine-service
+          volumeMounts:
+            - name: vsomeip
+              mountPath: /run/vsomeip
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+      volumes:
+        - name: vsomeip
+          persistentVolumeClaim:
+            claimName: some-ip-volume-claim

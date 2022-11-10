@@ -1,0 +1,50 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: some-ip-volume-claim
+  namespace: cow
+spec:
+  storageClassName: nfs-client
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vsomeip
+  labels:
+    app: vsomeip
+  namespace: cow
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: vsomeip
+  template:
+    metadata:
+      labels:
+        app: vsomeip
+    spec:
+      containers:
+        - name: vsomeip
+          image: registry.gitlab.com/centos/automotive/sample-images/demo/vsomeip:v0.1
+          volumeMounts:
+            - name: vsomeip
+              mountPath: /run/vsomeip
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+      volumes:
+        - name: vsomeip
+          persistentVolumeClaim:
+            claimName: some-ip-volume-claim
