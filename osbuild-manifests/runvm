@@ -6,6 +6,7 @@ import binascii
 import http.server
 import os
 import platform
+import re
 import select
 import shutil
 import signal
@@ -287,6 +288,8 @@ def main():
                         help="Enable SecureBoot")
     parser.add_argument("--ssh-port", type=int, default=2222,
                         help="SSH port forwarding to SSH_PORT (default 2222)")
+    parser.add_argument("--port-forward", type=str, metavar="host:guest,...",
+                        help="Add port forwarding rules by host:guest format with comma separation.\ne.g - \"8443:443,8143:143\" will forward the port 8443 of host machine to the post 443 of guest OS and the port 8143 of host to the port 143 of guest too")
     parser.add_argument("--cdrom", action="store",
                         help="Specify .iso to load")
     parser.add_argument("image", type=str, help="The image to boot")
@@ -384,6 +387,16 @@ def main():
     portfwd = {
         available_tcp_port(args.ssh_port): 22
     }
+
+    if args.port_forward:
+        for rule in args.port_forward.split(','):
+            match = re.search('([0-9]+):([0-9]+)', rule)
+            if match:
+                host, guest = match.groups()
+                portfwd[available_tcp_port(int(host))] = int(guest)
+            else:
+                exit_error(f'Invalid port-forward rule "{rule}"')
+
     for local, remote in portfwd.items():
         print_verbose(f"port: {local} → {remote}")
 
