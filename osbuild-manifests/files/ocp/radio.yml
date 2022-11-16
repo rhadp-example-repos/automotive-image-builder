@@ -4,7 +4,6 @@ metadata:
   name: radio
   labels:
     app: radio
-  namespace: cow
 spec:
   replicas: 1
   strategy:
