@@ -292,6 +292,8 @@ def main():
                         help="Add port forwarding rules by host:guest format with comma separation.\ne.g - \"8443:443,8143:143\" will forward the port 8443 of host machine to the post 443 of guest OS and the port 8143 of host to the port 143 of guest too")
     parser.add_argument("--cdrom", action="store",
                         help="Specify .iso to load")
+    parser.add_argument("--noaccel", default=False, action="store_true",
+                        help=f"Disable acceleration (kvm or hvf)")
     parser.add_argument("image", type=str, help="The image to boot")
     parser.add_argument('extra_args', nargs=argparse.REMAINDER, metavar="...", help="extra qemu arguments")
 
@@ -360,12 +362,19 @@ def main():
         exit_error(f"unsupported architecture {args.arch}")
 
     accel_enabled = True
-    if 'kvm' in accel_list and os.path.exists("/dev/kvm"):
+
+    # There are some cases that acceleration may not work,
+    # kvm accelerated aboot is one, kernel crash
+    if args.noaccel:
+        accel_enabled = False
+    elif 'kvm' in accel_list and os.path.exists("/dev/kvm"):
         qemu_args += ['-enable-kvm']
     elif 'hvf' in accel_list:
         qemu_args += ['-accel', 'hvf']
     else:
         accel_enabled = False
+
+    if not accel_enabled:
         print_verbose("Acceleration: off")
 
     qemu_args += [
