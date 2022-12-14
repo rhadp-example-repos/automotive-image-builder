@@ -91,6 +91,14 @@ pipelines:
               - bcc-tools
           excludes:
           - dracut-config-rescue
+  - type: org.osbuild.yum.repos
+    options:
+      filename: osbuild.repo
+      repos:
+        - name: osbuild
+          id: osbuild
+          baseurl:
+            - https://download.copr.fedorainfracloud.org/results/@osbuild/osbuild/centos-stream-9-$arch
   - type: org.osbuild.users
     options:
       users:
