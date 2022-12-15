@@ -56,6 +56,5 @@ pipelines:
     options:
       enabled_services:
       - NetworkManager.service
-      - rngd.service
 - mpp-import-pipelines:
     path: include/image.ipp.yml

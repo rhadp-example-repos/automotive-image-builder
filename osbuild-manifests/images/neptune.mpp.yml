@@ -204,7 +204,6 @@ pipelines:
       enabled_services:
       - NetworkManager.service
       - firewalld.service
-      - rngd.service
       - sshd.service
       - mpp-eval: "'init-neptune-session@wayland.service' if display_server == 'wayland' else 'init-neptune-session@xorg.service'"
 - mpp-import-pipelines:

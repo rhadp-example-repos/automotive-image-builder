@@ -61,7 +61,6 @@ pipelines:
     options:
       enabled_services:
       - NetworkManager.service
-      - rngd.service
       # Enable the watchdog ostree/greenboot integration
       - watchdog-ostree-start.service
       - watchdog-ostree-stop.service
