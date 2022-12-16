@@ -1,0 +1,202 @@
+version: '2'
+mpp-vars:
+  name: eclipse-sdv
+  # image_size: 
+pipelines:
+- mpp-import-pipelines:
+    path: include/build.ipp.yml
+- name: rootfs
+  build: name:build
+  stages:
+  - type: org.osbuild.kernel-cmdline
+    options:
+      root_fs_uuid:
+        mpp-eval: rootfs_uuid
+      kernel_opts:
+        mpp-eval: ''' '' .join(kernel_opts)'
+  - type: org.osbuild.rpm
+    options:
+      gpgkeys:
+      - mpp-eval: centos_gpg_key
+      - mpp-eval: redhat_gpg_key
+      disable_dracut: true
+    inputs:
+      packages:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-depsolve:
+          architecture: $arch
+          ignore-weak-deps: true
+          module-platform-id: $distro_module_id
+          baseurl: $distro_baseurl/BaseOS/$arch/os/
+          repos:
+            mpp-join:
+            - mpp-eval: image_repos
+            - mpp-eval: extra_repos
+            - - id: copr-podman-snapshot
+                baseurl: https://download.copr.fedorainfracloud.org/results/alexl/podman-snapshot/centos-stream-9-$arch/
+          packages:
+            mpp-join:
+            - mpp-eval: image_rpms
+            - mpp-eval: extra_rpms
+            - - podman
+              - podman-quadlet
+              - containernetworking-plugins
+              # debug packages
+              - curl
+              - net-tools
+              - vim
+          excludes:
+          - dracut-config-rescue
+  - type: org.osbuild.copy
+    inputs:
+      inlinefile:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: storage.conf
+          path: ../files/storage.conf
+    options:
+      paths:
+      - from:
+          mpp-format-string: input://inlinefile/{embedded['storage.conf']}
+        to: tree:///etc/containers/storage.conf
+  - type: org.osbuild.skopeo
+    inputs:
+      images:
+        type: org.osbuild.containers
+        origin: org.osbuild.source
+        mpp-resolve-images:
+          images:
+            - source: quay.io/lrossett/eclipse-ecal
+              tag: latest-f37
+              name: localhost/eclipse-ecal
+            - source: quay.io/lrossett/ecal-cpp-subscriber
+              tag: latest-f37
+              name: localhost/ecal-cpp-subscriber
+            - source: quay.io/lrossett/ecal-cpp-publisher
+              tag: latest-f37
+              name: localhost/ecal-cpp-publisher
+    options:
+      destination:
+        type: containers-storage
+        storage-path: /usr/share/containers/storage
+
+  - type: org.osbuild.mkdir
+    options:
+      paths:
+        # ecal config
+        - path: /etc/ecal
+        # autosd tools
+        - path: /etc/autosd
+        - path: /etc/autosd/scripts
+        - path: /etc/autosd/podman
+  - type: org.osbuild.copy
+    inputs:
+      # ecal.ini
+      ecal_ini:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: ecal_ini
+          path: ../files/images/esdv/ecal/ecal.ini
+      # ecal network config
+      ecal_setup_sh:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: ecal_setup_sh
+          path: ../files/images/esdv/ecal/ecal-network-setup.sh
+      ecal_setup_systemd:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: ecal_setup_systemd
+          path: ../files/images/esdv/systemd/ecal-network-setup.service
+      # kube files
+      kube_app_ecal_publisher:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: kube_app_ecal_publisher
+          path: ../files/images/esdv/podman/publisher.yaml
+      kube_app_ecal_subscriber:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: kube_app_ecal_subscriber
+          path: ../files/images/esdv/podman/subscriber.yaml
+      kube_app_ecal_allinone:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: kube_app_ecal_allinone
+          path: ../files/images/esdv/podman/allinone.yaml
+      # systemd files
+      systemd_ecal_publisher:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: systemd_ecal_publisher
+          path: ../files/images/esdv/systemd/ecal-publisher.service
+      systemd_ecal_subscriber:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: systemd_ecal_subscriber
+          path: ../files/images/esdv/systemd/ecal-subscriber.service
+      systemd_ecal_allinone:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: systemd_ecal_allinone
+          path: ../files/images/esdv/systemd/ecal-allinone.service
+    options:
+      paths:
+        # ecal.ini
+        - from:
+            mpp-format-string: input://ecal_ini/{embedded['ecal_ini']}
+          to: tree:///etc/ecal/ecal.ini
+        # ecal network setup 
+        - from:
+            mpp-format-string: input://ecal_setup_sh/{embedded['ecal_setup_sh']}
+          to: tree:///etc/autosd/scripts/ecal-network-setup.sh
+        - from:
+            mpp-format-string: input://ecal_setup_systemd/{embedded['ecal_setup_systemd']}
+          to: tree:///usr/lib/systemd/system/ecal-network-setup.service
+        # kube files
+        - from:
+            mpp-format-string: input://kube_app_ecal_publisher/{embedded['kube_app_ecal_publisher']}
+          to: tree:///etc/autosd/podman/publisher.yaml
+        - from:
+            mpp-format-string: input://kube_app_ecal_subscriber/{embedded['kube_app_ecal_subscriber']}
+          to: tree:///etc/autosd/podman/subscriber.yaml
+        - from:
+            mpp-format-string: input://kube_app_ecal_allinone/{embedded['kube_app_ecal_allinone']}
+          to: tree:///etc/autosd/podman/allinone.yaml
+        # systemd files
+        - from:
+            mpp-format-string: input://systemd_ecal_publisher/{embedded['systemd_ecal_publisher']}
+          to: tree:///usr/lib/systemd/system/ecal-publisher.service
+        - from:
+            mpp-format-string: input://systemd_ecal_subscriber/{embedded['systemd_ecal_subscriber']}
+          to: tree:///usr/lib/systemd/system/ecal-subscriber.service
+        - from:
+            mpp-format-string: input://systemd_ecal_allinone/{embedded['systemd_ecal_allinone']}
+          to: tree:///usr/lib/systemd/system/ecal-allinone.service
+  - type: org.osbuild.chmod
+    options:
+      items:
+        /etc/autosd/scripts/ecal-network-setup.sh:
+          mode: +x
+
+  - type: org.osbuild.systemd
+    options:
+      enabled_services:
+        - ecal-network-setup.service
+        - ecal-allinone.service
+          # - ecal-publisher.service
+          # - ecal-subscriber.service
+
+- mpp-import-pipelines:
+    path: include/image.ipp.yml

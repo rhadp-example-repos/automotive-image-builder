@@ -1,0 +1,13 @@
+[Unit]
+Description=Network setup for Eclipse eCAL at startup
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+RemainAfterExit=yes
+ExecStart=/etc/autosd/scripts/ecal-network-setup.sh
+TimeoutStartSec=0
+
+[Install]
+WantedBy=default.target
