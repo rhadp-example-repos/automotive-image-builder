@@ -55,12 +55,21 @@ pipelines:
         origin: org.osbuild.source
         mpp-embed:
           id: storage.conf
-          path: ../files/storage.conf
+          path: ../files/transient_storage.conf
+      inlinefile2:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: podman-clean-transient.service
+          path: ../files/podman-clean-transient.service
     options:
       paths:
       - from:
           mpp-format-string: input://inlinefile/{embedded['storage.conf']}
         to: tree:///etc/containers/storage.conf
+      - from:
+          mpp-format-string: input://inlinefile2/{embedded['podman-clean-transient.service']}
+        to: tree:///etc/systemd/system/podman-clean-transient.service
   - type: org.osbuild.skopeo
     inputs:
       images:
@@ -117,5 +126,6 @@ pipelines:
       enabled_services:
       - NetworkManager.service
       - rngd.service
+      - podman-clean-transient
 - mpp-import-pipelines:
     path: include/image.ipp.yml
