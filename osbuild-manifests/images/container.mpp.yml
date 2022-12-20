@@ -125,7 +125,6 @@ pipelines:
     options:
       enabled_services:
       - NetworkManager.service
-      - rngd.service
       - podman-clean-transient
 - mpp-import-pipelines:
     path: include/image.ipp.yml

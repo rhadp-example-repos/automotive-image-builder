@@ -342,7 +342,6 @@ mpp-vars:
     - glibc-langpack-en
     - hostname
     - passwd
-    - rng-tools
     - rootfiles
     - selinux-policy-targeted
     - systemd-udev
