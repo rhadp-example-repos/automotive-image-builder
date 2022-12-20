@@ -32,8 +32,8 @@ pipelines:
             mpp-join:
             - mpp-eval: image_repos
             - mpp-eval: extra_repos
-            - - id: copr-quadlet
-                baseurl: https://download.copr.fedorainfracloud.org/results/alexl/quadlet/centos-stream-9-$arch/
+            - - id: copr-podman-snapshot
+                baseurl: https://download.copr.fedorainfracloud.org/results/alexl/podman-snapshot/centos-stream-9-$arch/
             - - id: copr-sample-apps
                 baseurl: https://download.copr.fedorainfracloud.org/results/alexl/cs9-sample-images/centos-stream-9-$arch/
           packages:
@@ -41,7 +41,7 @@ pipelines:
             - mpp-eval: image_rpms
             - mpp-eval: extra_rpms
             - - podman
-              - quadlet
+              - podman-quadlet
               - containernetworking-plugins
               - curl
               - vsomeip3-routingmanager
@@ -55,12 +55,21 @@ pipelines:
         origin: org.osbuild.source
         mpp-embed:
           id: storage.conf
-          path: ../files/storage.conf
+          path: ../files/transient_storage.conf
+      inlinefile2:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: podman-clean-transient.service
+          path: ../files/podman-clean-transient.service
     options:
       paths:
       - from:
           mpp-format-string: input://inlinefile/{embedded['storage.conf']}
         to: tree:///etc/containers/storage.conf
+      - from:
+          mpp-format-string: input://inlinefile2/{embedded['podman-clean-transient.service']}
+        to: tree:///etc/systemd/system/podman-clean-transient.service
   - type: org.osbuild.skopeo
     inputs:
       images:
@@ -117,5 +126,6 @@ pipelines:
       enabled_services:
       - NetworkManager.service
       - rngd.service
+      - podman-clean-transient
 - mpp-import-pipelines:
     path: include/image.ipp.yml
