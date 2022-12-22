@@ -1,0 +1,5 @@
+[Kube]
+Yaml=deployment.yml
+
+[Install]
+WantedBy=default.target

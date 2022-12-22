@@ -19,9 +19,7 @@ spec:
   - image: localhost/ecal-cpp-subscriber:latest
     name: sub
     command:
-      - /bin/bash
-      - -c
-      - '/opt/app/_build/hello_world_rec'
+      - /opt/app/_build/hello_world_rec
     securityContext:
       seLinuxOptions:
         type: 'spc_t'
@@ -40,10 +38,7 @@ spec:
   - image: localhost/ecal-cpp-publisher:latest
     name: pub
     command:
-      - /bin/bash
-      - -c
-        # - 'sleep infinity'
-      - '/opt/app/_build/hello_world_snd'
+      - /opt/app/_build/hello_world_snd
     securityContext:
       seLinuxOptions:
         type: 'spc_t'

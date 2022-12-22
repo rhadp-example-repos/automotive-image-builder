@@ -91,6 +91,9 @@ pipelines:
         - path: /etc/autosd
         - path: /etc/autosd/scripts
         - path: /etc/autosd/podman
+        # quadlet
+        - path: /etc/containers/systemd/ecal-allinone
+          parents: true
   - type: org.osbuild.copy
     inputs:
       # ecal.ini
@@ -151,6 +154,19 @@ pipelines:
         mpp-embed:
           id: systemd_ecal_allinone
           path: ../files/images/esdv/systemd/ecal-allinone.service
+      # quadlet 
+      quadlet_kube_allinone:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: quadlet_kube_allinone
+          path: ../files/images/esdv/quadlet/allinone.kube
+      quadlet_deployment_allinone:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: quadlet_deployment_allinone
+          path: ../files/images/esdv/quadlet/deployment.yml
     options:
       paths:
         # ecal.ini
@@ -184,6 +200,13 @@ pipelines:
         - from:
             mpp-format-string: input://systemd_ecal_allinone/{embedded['systemd_ecal_allinone']}
           to: tree:///usr/lib/systemd/system/ecal-allinone.service
+        # quadlet 
+        - from:
+            mpp-format-string: input://quadlet_kube_allinone/{embedded['quadlet_kube_allinone']}
+          to: tree:////etc/containers/systemd/allinone.kube
+        - from:
+            mpp-format-string: input://quadlet_deployment_allinone/{embedded['quadlet_deployment_allinone']}
+          to: tree:////etc/containers/systemd/deployment.yml
   - type: org.osbuild.chmod
     options:
       items:
@@ -194,7 +217,6 @@ pipelines:
     options:
       enabled_services:
         - ecal-network-setup.service
-        - ecal-allinone.service
           # - ecal-publisher.service
           # - ecal-subscriber.service
 
