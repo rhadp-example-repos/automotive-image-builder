@@ -5,8 +5,6 @@ metadata:
 spec:
   replicas: 1
   template:
-    # apiVersion: v1
-    # kind: Pod
     metadata:
       annotations:
         bind-mount-options:/etc/ecal: Z
@@ -20,7 +18,6 @@ spec:
         app: ecal-allinone
       name: ecal-allinone
     spec:
-      hostNetwork: true
       shareProcessNamespace: true
       containers:
       - image: localhost/ecal-cpp-subscriber:latest
@@ -28,8 +25,7 @@ spec:
         command:
           - /opt/app/_build/hello_world_rec
         securityContext:
-          seLinuxOptions:
-            type: 'spc_t'
+          readOnlyRootFilesystem: true
         volumeMounts:
         - mountPath: /tmp
           name: tmpfs
@@ -47,8 +43,7 @@ spec:
         command:
           - /opt/app/_build/hello_world_snd
         securityContext:
-          seLinuxOptions:
-            type: 'spc_t'
+          readOnlyRootFilesystem: true
         volumeMounts:
         - mountPath: /tmp
           name: tmpfs
