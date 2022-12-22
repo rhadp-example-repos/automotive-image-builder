@@ -42,10 +42,6 @@ pipelines:
             - - podman
               - podman-quadlet
               - containernetworking-plugins
-              # debug packages
-              - curl
-              - net-tools
-              - vim
           excludes:
           - dracut-config-rescue
   - type: org.osbuild.copy
