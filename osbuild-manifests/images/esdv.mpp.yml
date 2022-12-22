@@ -89,10 +89,8 @@ pipelines:
         - path: /etc/ecal
         # autosd tools
         - path: /etc/autosd
-        - path: /etc/autosd/scripts
-        - path: /etc/autosd/podman
         # quadlet
-        - path: /etc/containers/systemd/ecal-allinone
+        - path: /etc/containers/systemd
           parents: true
   - type: org.osbuild.copy
     inputs:
@@ -103,57 +101,6 @@ pipelines:
         mpp-embed:
           id: ecal_ini
           path: ../files/images/esdv/ecal/ecal.ini
-      # ecal network config
-      ecal_setup_sh:
-        type: org.osbuild.files
-        origin: org.osbuild.source
-        mpp-embed:
-          id: ecal_setup_sh
-          path: ../files/images/esdv/ecal/ecal-network-setup.sh
-      ecal_setup_systemd:
-        type: org.osbuild.files
-        origin: org.osbuild.source
-        mpp-embed:
-          id: ecal_setup_systemd
-          path: ../files/images/esdv/systemd/ecal-network-setup.service
-      # kube files
-      kube_app_ecal_publisher:
-        type: org.osbuild.files
-        origin: org.osbuild.source
-        mpp-embed:
-          id: kube_app_ecal_publisher
-          path: ../files/images/esdv/podman/publisher.yaml
-      kube_app_ecal_subscriber:
-        type: org.osbuild.files
-        origin: org.osbuild.source
-        mpp-embed:
-          id: kube_app_ecal_subscriber
-          path: ../files/images/esdv/podman/subscriber.yaml
-      kube_app_ecal_allinone:
-        type: org.osbuild.files
-        origin: org.osbuild.source
-        mpp-embed:
-          id: kube_app_ecal_allinone
-          path: ../files/images/esdv/podman/allinone.yaml
-      # systemd files
-      systemd_ecal_publisher:
-        type: org.osbuild.files
-        origin: org.osbuild.source
-        mpp-embed:
-          id: systemd_ecal_publisher
-          path: ../files/images/esdv/systemd/ecal-publisher.service
-      systemd_ecal_subscriber:
-        type: org.osbuild.files
-        origin: org.osbuild.source
-        mpp-embed:
-          id: systemd_ecal_subscriber
-          path: ../files/images/esdv/systemd/ecal-subscriber.service
-      systemd_ecal_allinone:
-        type: org.osbuild.files
-        origin: org.osbuild.source
-        mpp-embed:
-          id: systemd_ecal_allinone
-          path: ../files/images/esdv/systemd/ecal-allinone.service
       # quadlet 
       quadlet_kube_allinone:
         type: org.osbuild.files
@@ -173,33 +120,6 @@ pipelines:
         - from:
             mpp-format-string: input://ecal_ini/{embedded['ecal_ini']}
           to: tree:///etc/ecal/ecal.ini
-        # ecal network setup 
-        - from:
-            mpp-format-string: input://ecal_setup_sh/{embedded['ecal_setup_sh']}
-          to: tree:///etc/autosd/scripts/ecal-network-setup.sh
-        - from:
-            mpp-format-string: input://ecal_setup_systemd/{embedded['ecal_setup_systemd']}
-          to: tree:///usr/lib/systemd/system/ecal-network-setup.service
-        # kube files
-        - from:
-            mpp-format-string: input://kube_app_ecal_publisher/{embedded['kube_app_ecal_publisher']}
-          to: tree:///etc/autosd/podman/publisher.yaml
-        - from:
-            mpp-format-string: input://kube_app_ecal_subscriber/{embedded['kube_app_ecal_subscriber']}
-          to: tree:///etc/autosd/podman/subscriber.yaml
-        - from:
-            mpp-format-string: input://kube_app_ecal_allinone/{embedded['kube_app_ecal_allinone']}
-          to: tree:///etc/autosd/podman/allinone.yaml
-        # systemd files
-        - from:
-            mpp-format-string: input://systemd_ecal_publisher/{embedded['systemd_ecal_publisher']}
-          to: tree:///usr/lib/systemd/system/ecal-publisher.service
-        - from:
-            mpp-format-string: input://systemd_ecal_subscriber/{embedded['systemd_ecal_subscriber']}
-          to: tree:///usr/lib/systemd/system/ecal-subscriber.service
-        - from:
-            mpp-format-string: input://systemd_ecal_allinone/{embedded['systemd_ecal_allinone']}
-          to: tree:///usr/lib/systemd/system/ecal-allinone.service
         # quadlet 
         - from:
             mpp-format-string: input://quadlet_kube_allinone/{embedded['quadlet_kube_allinone']}
@@ -207,18 +127,6 @@ pipelines:
         - from:
             mpp-format-string: input://quadlet_deployment_allinone/{embedded['quadlet_deployment_allinone']}
           to: tree:////etc/containers/systemd/deployment.yml
-  - type: org.osbuild.chmod
-    options:
-      items:
-        /etc/autosd/scripts/ecal-network-setup.sh:
-          mode: +x
-
-  - type: org.osbuild.systemd
-    options:
-      enabled_services:
-        - ecal-network-setup.service
-          # - ecal-publisher.service
-          # - ecal-subscriber.service
 
 - mpp-import-pipelines:
     path: include/image.ipp.yml
