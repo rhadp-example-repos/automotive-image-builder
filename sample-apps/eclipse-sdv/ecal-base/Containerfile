@@ -1,0 +1,50 @@
+FROM registry.fedoraproject.org/fedora:37
+
+RUN dnf install -y \
+g++ \
+git \
+make \
+cmake \
+doxygen \
+graphviz \
+zlib \
+zlib-devel \
+qt5-qtbase \
+qt5-qtbase-devel \
+qt5-qtsvg \
+qt5-qtsvg-devel \
+openssl \
+openssl-devel \
+openssl-libs \
+python3 \
+python3-pip \
+python3-devel \
+patchelf \
+capnproto \
+capnproto-devel \
+capnproto-libs \
+sphinx \
+python3-sphinxcontrib-apidoc \
+curl-devel \
+protobuf-devel \
+hdf5-devel \
+qwt-devel
+
+RUN mkdir -p /opt/ecal/src
+
+# Fetch
+RUN git clone https://github.com/eclipse-ecal/ecal.git /opt/ecal/src && \
+(cd /opt/ecal/src; git checkout v5.10.3; git submodule init;git submodule update)
+
+## Build
+RUN mkdir -p /opt/ecal/src/_build && \
+(cd /opt/ecal/src/_build; \
+    cmake .. \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DBUILD_TIME=ON \
+    -DECAL_THIRDPARTY_BUILD_PROTOBUF=OFF \
+    -DECAL_THIRDPARTY_BUILD_CURL=OFF \
+    -DECAL_THIRDPARTY_BUILD_HDF5=OFF \
+    -DECAL_THIRDPARTY_BUILD_QWT=OFF; \
+    make -j4; \
+    make install;)

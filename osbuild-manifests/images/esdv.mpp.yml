@@ -64,10 +64,10 @@ pipelines:
         origin: org.osbuild.source
         mpp-resolve-images:
           images: 
-            - source: quay.io/lrossett/ecal-cpp-subscriber
+            - source: registry.gitlab.com/centos/automotive/sample-images/ecal-sample-cpp-subscriber
               tag: latest-f37
               name: localhost/ecal-cpp-subscriber
-            - source: quay.io/lrossett/ecal-cpp-publisher
+            - source: registry.gitlab.com/centos/automotive/sample-images/ecal-sample-cpp-publisher
               tag: latest-f37
               name: localhost/ecal-cpp-publisher
     options:
