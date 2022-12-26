@@ -1,5 +1,5 @@
 [Kube]
-Yaml=deployment.yml
+Yaml=ecal-sample-pubsub.yml
 
 [Install]
 WantedBy=default.target

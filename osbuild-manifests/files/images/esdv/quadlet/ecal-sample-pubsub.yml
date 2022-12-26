@@ -1,22 +1,22 @@
 apiVersion: v1/apps
 kind: Deployment
 metadata:
-  name: ecal
+  name: ecal-sample-pubsub
 spec:
   replicas: 1
   template:
     metadata:
       annotations:
         bind-mount-options:/etc/ecal: Z
-        io.kubernetes.cri-o.TTY/ecal-allinone: "false"
-        io.podman.annotations.autoremove/ecal-allinone: "TRUE"
-        io.podman.annotations.cid-file/ecal-allinone: /run/ecal-allinone.cid
-        io.podman.annotations.init/ecal-allinone: "TRUE"
-        io.podman.annotations.privileged/ecal-allinone: "FALSE"
-        io.podman.annotations.publish-all/ecal-allinone: "FALSE"
+        io.kubernetes.cri-o.TTY/ecal-sample-pubsub: "false"
+        io.podman.annotations.autoremove/ecal-sample-pubsub: "TRUE"
+        io.podman.annotations.cid-file/ecal-sample-pubsub: /run/ecal-sample-pubsub.cid
+        io.podman.annotations.init/ecal-sample-pubsub: "TRUE"
+        io.podman.annotations.privileged/ecal-sample-pubsub: "FALSE"
+        io.podman.annotations.publish-all/ecal-sample-pubsub: "FALSE"
       labels:
-        app: ecal-allinone
-      name: ecal-allinone
+        app: ecal-sample-pubsub
+      name: ecal-sample-pubsub
     spec:
       shareProcessNamespace: true
       containers:

@@ -63,10 +63,7 @@ pipelines:
         type: org.osbuild.containers
         origin: org.osbuild.source
         mpp-resolve-images:
-          images:
-            - source: quay.io/lrossett/eclipse-ecal
-              tag: latest-f37
-              name: localhost/eclipse-ecal
+          images: 
             - source: quay.io/lrossett/ecal-cpp-subscriber
               tag: latest-f37
               name: localhost/ecal-cpp-subscriber
@@ -83,8 +80,6 @@ pipelines:
       paths:
         # ecal config
         - path: /etc/ecal
-        # autosd tools
-        - path: /etc/autosd
         # quadlet
         - path: /etc/containers/systemd
           parents: true
@@ -98,18 +93,18 @@ pipelines:
           id: ecal_ini
           path: ../files/images/esdv/ecal/ecal.ini
       # quadlet 
-      quadlet_kube_allinone:
+      quadlet_kube_esdv_pubsub:
         type: org.osbuild.files
         origin: org.osbuild.source
         mpp-embed:
-          id: quadlet_kube_allinone
-          path: ../files/images/esdv/quadlet/allinone.kube
-      quadlet_deployment_allinone:
+          id: quadlet_kube_esdv_pubsub
+          path: ../files/images/esdv/quadlet/ecal-sample-pubsub.kube
+      quadlet_deployment_esdv_pubsub:
         type: org.osbuild.files
         origin: org.osbuild.source
         mpp-embed:
-          id: quadlet_deployment_allinone
-          path: ../files/images/esdv/quadlet/deployment.yml
+          id: quadlet_deployment_esdv_pubsub
+          path: ../files/images/esdv/quadlet/ecal-sample-pubsub.yml
     options:
       paths:
         # ecal.ini
@@ -118,11 +113,11 @@ pipelines:
           to: tree:///etc/ecal/ecal.ini
         # quadlet 
         - from:
-            mpp-format-string: input://quadlet_kube_allinone/{embedded['quadlet_kube_allinone']}
-          to: tree:////etc/containers/systemd/allinone.kube
+            mpp-format-string: input://quadlet_kube_esdv_pubsub/{embedded['quadlet_kube_esdv_pubsub']}
+          to: tree:////etc/containers/systemd/ecal-sample-pubsub.kube
         - from:
-            mpp-format-string: input://quadlet_deployment_allinone/{embedded['quadlet_deployment_allinone']}
-          to: tree:////etc/containers/systemd/deployment.yml
+            mpp-format-string: input://quadlet_deployment_esdv_pubsub/{embedded['quadlet_deployment_esdv_pubsub']}
+          to: tree:////etc/containers/systemd/ecal-sample-pubsub.yml
 
 - mpp-import-pipelines:
     path: include/image.ipp.yml
