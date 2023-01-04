@@ -1,6 +1,7 @@
 version: '2'
 mpp-vars:
   name: container
+  use_containers: true
 pipelines:
 - mpp-import-pipelines:
     path: include/build.ipp.yml
@@ -32,8 +33,6 @@ pipelines:
             mpp-join:
             - mpp-eval: image_repos
             - mpp-eval: extra_repos
-            - - id: copr-podman-snapshot
-                baseurl: https://download.copr.fedorainfracloud.org/results/alexl/podman-snapshot/centos-stream-9-$arch/
             - - id: copr-sample-apps
                 baseurl: https://download.copr.fedorainfracloud.org/results/alexl/cs9-sample-images/centos-stream-9-$arch/
           packages:
@@ -48,19 +47,6 @@ pipelines:
               - auto-apps
           excludes:
           - dracut-config-rescue
-  - type: org.osbuild.copy
-    inputs:
-      inlinefile:
-        type: org.osbuild.files
-        origin: org.osbuild.source
-        mpp-embed:
-          id: storage.conf
-          path: ../files/transient_storage.conf
-    options:
-      paths:
-      - from:
-          mpp-format-string: input://inlinefile/{embedded['storage.conf']}
-        to: tree:///etc/containers/storage.conf
   - type: org.osbuild.skopeo
     inputs:
       images:
@@ -75,11 +61,6 @@ pipelines:
       destination:
         type: containers-storage
         storage-path: /usr/share/containers/storage
-  - type: org.osbuild.mkdir
-    options:
-      paths:
-      - path: /etc/containers/systemd
-        parents: true
   - type: org.osbuild.copy
     inputs:
       inlinefile:
@@ -116,6 +97,5 @@ pipelines:
     options:
       enabled_services:
       - NetworkManager.service
-      - podman-clean-transient
 - mpp-import-pipelines:
     path: include/image.ipp.yml

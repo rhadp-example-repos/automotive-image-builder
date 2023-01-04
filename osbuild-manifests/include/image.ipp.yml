@@ -5,6 +5,14 @@ mpp-vars:
       then:
         from: input://extra-tree/luks-key
         to: tree:///usr/.auto-unlock-key
+    - mpp-if: use_containers
+      then:
+        from: input://extra-tree/storage.conf
+        to: tree:///etc/containers/storage.conf
+    - mpp-if: use_containers
+      then:
+        from: input://extra-tree/containers.conf
+        to: tree:///etc/containers/containers.conf
   dracut_install:
     mpp-join:
       - mpp-eval: dracut_install
@@ -35,6 +43,13 @@ mpp-vars:
           options:
             zone:
               mpp-eval: timezone
+        - mpp-if: use_containers and containers_transient_store
+          then:
+            type: org.osbuild.systemd
+            options:
+              enabled_services:
+                - podman-clean-transient
+
 pipelines:
 # Some variables need to be written to files, do that here
 - name: extra-tree-content
@@ -53,6 +68,32 @@ pipelines:
         - from:
             mpp-format-string: input://inlinefile/{embedded['luks-key']}
           to: tree:///luks-key
+  - type: org.osbuild.copy
+    inputs:
+      inlinefile:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: storage.conf
+          text: $containers_storage_conf
+    options:
+      paths:
+      - from:
+          mpp-format-string: input://inlinefile/{embedded['storage.conf']}
+        to: tree:///storage.conf
+  - type: org.osbuild.copy
+    inputs:
+      inlinefile:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: containers.conf
+          text: $containers_conf
+    options:
+      paths:
+      - from:
+          mpp-format-string: input://inlinefile/{embedded['containers.conf']}
+        to: tree:///containers.conf
 - mpp-import-pipelines:
     path: image-$image_type.ipp.yml
 - name: image

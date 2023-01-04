@@ -78,8 +78,31 @@ mpp-vars:
     mpp-join:
       - mpp-eval: distro_repos
       - mpp-eval: target_repos
+      - mpp-if: use_containers
+        then:
+          mpp-eval: podman_snapshot_repos
   image_devel_repos:
     mpp-join:
       - mpp-eval: distro_devel_repos
+  containers_storage_conf:
+    mpp-format-string: |
+      [storage]
+      driver = "overlay"
+      runroot = "/run/containers/storage"
+      graphroot = "/var/lib/containers/storage"
+      { "transient_store = true" if containers_transient_store else "" }
+
+      [storage.options]
+      additionalimagestores = [
+         "{containers_extra_store}"
+      ]
+
+      [storage.options.overlay]
+      mountopt = "nodev,metacopy=on"
+  containers_conf:
+    mpp-format-string: |
+      [containers]
+      { "read_only = true" if containers_read_only else "" }
+
 
 pipelines: []
