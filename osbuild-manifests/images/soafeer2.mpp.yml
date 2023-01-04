@@ -1,6 +1,7 @@
 version: '2'
 mpp-vars:
   name: soafee
+  use_containers: true
   image_size: 25000000000
 pipelines:
 - mpp-import-pipelines:
@@ -42,19 +43,6 @@ pipelines:
               - curl
           excludes:
           - dracut-config-rescue
-  - type: org.osbuild.copy
-    inputs:
-      inlinefile:
-        type: org.osbuild.files
-        origin: org.osbuild.source
-        mpp-embed:
-          id: storage.conf
-          path: ../files/storage.conf
-    options:
-      paths:
-      - from:
-          mpp-format-string: input://inlinefile/{embedded['storage.conf']}
-        to: tree:///etc/containers/storage.conf
   - type: org.osbuild.skopeo
     inputs:
       images:
