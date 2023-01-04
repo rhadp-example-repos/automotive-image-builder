@@ -497,7 +497,7 @@ pipelines:
     options:
       filename: container.tar
       architecture:
-        mpp-eval: arch
+        mpp-eval: goarch
       config:
         Entrypoint:
           mpp-if: container_entrypoint

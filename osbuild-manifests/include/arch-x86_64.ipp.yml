@@ -1,6 +1,7 @@
 version: '2'
 mpp-vars:
   efiarch: x64
+  goarch: amd64
   boot_rpms:
     mpp-join:
       - mpp-eval: boot_rpms
