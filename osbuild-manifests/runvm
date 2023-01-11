@@ -274,6 +274,8 @@ def main():
                         help=f"Memory size (default 2G)")
     parser.add_argument("--nographics", default=False, action="store_true",
                         help=f"Run without graphics")
+    parser.add_argument("--nosmp", default=False, action="store_true",
+                        help=f"Use a single core")
     parser.add_argument("--aboot", default=False, action="store_true",
                         help=f"Boot with aboot")
     parser.add_argument("--watchdog", default=False, action="store_true",
@@ -317,6 +319,8 @@ def main():
     accel_list = qemu_available_accels(qemu)
     qemu_args = [qemu]
 
+    num_cpus = os.cpu_count()
+
     if args.arch == "x86_64":
         machine = "q35"
         default_cpu = "qemu64,+ssse3,+sse4.1,+sse4.2,+popcnt"
@@ -348,10 +352,10 @@ def main():
                 "-device", "qemu-xhci", # for keyboard
                 "-device", "usb-kbd", # for keyboard
                 "-device", "usb-tablet", # for mouse
-                "-smp", str(min(os.cpu_count(), 8)), # for up to 8 cores (limitation of qemu-system-aarch64)
                 "-drive", f"file={edk2}/edk2-aarch64-code.fd,if=pflash,format=raw,unit=0,readonly=on",
                 "-drive", f"file={edk2}/edk2-arm-vars.fd,if=pflash,format=raw,unit=1,snapshot=on,readonly=off"
             ]
+            num_cpus = min(os.cpu_count(), 8) # for up to 8 cores (limitation of qemu-system-aarch64)
         else:
             edk2_file = find_edk2_code_fd()
             qemu_args += [
@@ -360,6 +364,11 @@ def main():
             ]
     else:
         exit_error(f"unsupported architecture {args.arch}")
+
+    if not args.nosmp and num_cpus > 1:
+        qemu_args += [
+            "-smp", str(num_cpus)
+        ]
 
     accel_enabled = True
 
