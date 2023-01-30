@@ -113,6 +113,7 @@ mpp-vars:
   default_containers_extra_store: /usr/share/containers/storage
   default_containers_transient_store: true
   default_containers_read_only: true
+  default_image_extra_stages: []
   target:
     mpp-eval: locals().get('target', default_target)
   image_type:
@@ -237,7 +238,8 @@ mpp-vars:
     mpp-eval: locals().get('containers_transient_store', default_containers_transient_store)
   containers_read_only:
     mpp-eval: locals().get('containers_read_only', default_containers_read_only)
-  image_extra_stages: []
+  image_extra_stages:
+    mpp-eval: locals().get('image_extra_stages',  default_image_extra_stages)
   centos_gpg_key: |
     -----BEGIN PGP PUBLIC KEY BLOCK-----
     Version: GnuPG v2.0.22 (GNU/Linux)
