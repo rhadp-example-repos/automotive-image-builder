@@ -78,9 +78,6 @@ mpp-vars:
     mpp-join:
       - mpp-eval: distro_repos
       - mpp-eval: target_repos
-      - mpp-if: use_containers
-        then:
-          mpp-eval: podman_snapshot_repos
   image_devel_repos:
     mpp-join:
       - mpp-eval: distro_devel_repos
