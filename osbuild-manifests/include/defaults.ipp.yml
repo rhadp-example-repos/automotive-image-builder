@@ -352,8 +352,6 @@ mpp-vars:
     - grub2-tools-minimal
   base_rpms:
     - NetworkManager
-    - audit
-    - chrony
     - e2fsprogs
     - efibootmgr
     - glibc-langpack-en
