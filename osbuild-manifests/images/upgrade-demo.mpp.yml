@@ -60,7 +60,6 @@ pipelines:
   - type: org.osbuild.systemd
     options:
       enabled_services:
-      - NetworkManager.service
       # Enable the watchdog ostree/greenboot integration
       - watchdog-ostree-start.service
       - watchdog-ostree-stop.service

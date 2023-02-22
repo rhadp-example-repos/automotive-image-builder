@@ -82,9 +82,5 @@ pipelines:
             mpp-eval: guest_gid
           uid:
             mpp-eval: guest_uid
-  - type: org.osbuild.systemd
-    options:
-      enabled_services:
-      - NetworkManager.service
 - mpp-import-pipelines:
     path: include/image.ipp.yml

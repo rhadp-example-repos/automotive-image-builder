@@ -202,7 +202,6 @@ pipelines:
   - type: org.osbuild.systemd
     options:
       enabled_services:
-      - NetworkManager.service
       - firewalld.service
       - sshd.service
       - mpp-eval: "'init-neptune-session@wayland.service' if display_server == 'wayland' else 'init-neptune-session@xorg.service'"
