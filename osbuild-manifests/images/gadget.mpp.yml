@@ -115,7 +115,6 @@ pipelines:
   - type: org.osbuild.systemd
     options:
       enabled_services:
-      - NetworkManager.service
       - firewalld.service
       - sshd.service
       - cockpit.socket

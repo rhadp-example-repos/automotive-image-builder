@@ -100,6 +100,11 @@ mpp-vars:
     mpp-format-string: |
       [containers]
       { "read_only = true" if containers_read_only else "" }
+  image_enabled_services:
+    mpp-join:
+      - mpp-eval: image_enabled_services
+      - - mpp-if: use_containers and containers_transient_store
+          then: podman-clean-transient.service
 
 
 pipelines: []

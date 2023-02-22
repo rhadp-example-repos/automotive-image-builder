@@ -43,12 +43,12 @@ mpp-vars:
           options:
             zone:
               mpp-eval: timezone
-        - mpp-if: use_containers and containers_transient_store
-          then:
-            type: org.osbuild.systemd
-            options:
-              enabled_services:
-                - podman-clean-transient
+        - type: org.osbuild.systemd
+          options:
+            enabled_services:
+              mpp-eval: image_enabled_services
+            masked_services:
+              mpp-eval: image_masked_services
 
 pipelines:
 # Some variables need to be written to files, do that here
