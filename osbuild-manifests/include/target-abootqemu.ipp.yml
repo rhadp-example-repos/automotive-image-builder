@@ -14,10 +14,12 @@ mpp-vars:
   use_efipart: false
   aboot_pagesize: 4096
   aboot_kernel_offset: "0x40000000"
+  aboot_partition: "/dev/disk/by-partlabel/aboot"
   aboot_dtb_file:
     mpp-if: arch == 'aarch64'
-    then: "../qemu.dtb"
+    then: "qemu-tcg.dtb"
   extra_image_rpms:
+    - aboot-deploy
     - mpp-if: arch == 'aarch64'
       then: autosig-qemu-dtb
 pipelines: []

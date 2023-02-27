@@ -104,6 +104,10 @@ pipelines:
               mpp-if: "locals().get('aboot_kernel_offset') != None"
               then:
                 mpp-format-string: "{aboot_kernel_offset}"
+            partition:
+              mpp-if: "locals().get('aboot_partition') != None"
+              then:
+                mpp-format-string: "{aboot_partition}"
             second_offset:
               mpp-if: "locals().get('aboot_second_offset') != None"
               then:

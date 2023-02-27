@@ -81,6 +81,46 @@ pipelines:
             - mpp-if: dracut_install
               then:
                 mpp-eval: "' '.join(dracut_install)"
+      - mpp-if: use_aboot
+        then:
+          type: org.osbuildtest.aboot.conf
+          options:
+            pagesize:
+              mpp-if: "locals().get('aboot_pagesize',) != None"
+              then:
+                mpp-format-string: "{aboot_pagesize}"
+            kernel_offset:
+              mpp-if: "locals().get('aboot_kernel_offset') != None"
+              then:
+                mpp-format-string: "{aboot_kernel_offset}"
+            partition:
+              mpp-if: "locals().get('aboot_partition') != None"
+              then:
+                mpp-format-string: "{aboot_partition}"
+            second_offset:
+              mpp-if: "locals().get('aboot_second_offset') != None"
+              then:
+                mpp-format-string: "{aboot_second_offset}"
+            tags_offset:
+              mpp-if: "locals().get('aboot_tags_offset') != None"
+              then:
+                mpp-format-string: "{aboot_tags_offset}"
+            base:
+              mpp-if: "locals().get('aboot_base') != None"
+              then:
+                mpp-format-string: "{aboot_base}"
+            dtb_file:
+              mpp-if: "locals().get('aboot_dtb_file') != None"
+              then:
+                mpp-format-string: "{aboot_dtb_file}"
+            preptree: true
+      - mpp-if: use_aboot
+        then:
+          type: org.osbuildtest.aboot.update
+          options:
+            kernel:
+              mpp-eval: rpms['rootfs'][kernel_core_package].evra
+            preptree: true
 - name: ostree-commit
   build: name:build
   stages:
@@ -124,13 +164,23 @@ pipelines:
     options:
       osname:
         mpp-eval: osname
-  - type: org.osbuild.ostree.config
-    options:
-      repo: /ostree/repo
-      config:
-        sysroot:
-          readonly: false
-          bootloader: none
+  - mpp-if: use_aboot
+    then:
+      type: org.osbuild.ostree.config
+      options:
+        repo: /ostree/repo
+        config:
+          sysroot:
+            readonly: false
+            bootloader: aboot
+    else:
+      type: org.osbuild.ostree.config
+      options:
+        repo: /ostree/repo
+        config:
+          sysroot:
+            readonly: false
+            bootloader: none
   - type: org.osbuild.ostree.remotes
     options:
       repo: /ostree/repo
@@ -200,6 +250,12 @@ pipelines:
           mpp-eval: osname
         ref:
           mpp-eval: ostree_ref
+  - mpp-if: use_aboot
+    then:
+      type: org.osbuildtest.aboot.update
+      options:
+        kernel:
+          mpp-eval: rpms['rootfs'][kernel_core_package].evra
   - mpp-if: use_grub2
     then:
       type: org.osbuild.grub2
