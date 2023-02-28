@@ -164,22 +164,16 @@ pipelines:
     options:
       osname:
         mpp-eval: osname
-  - mpp-if: use_aboot
-    then:
-      type: org.osbuild.ostree.config
-      options:
-        repo: /ostree/repo
-        config:
-          sysroot:
-            readonly: false
+  - type: org.osbuild.ostree.config
+    options:
+      repo: /ostree/repo
+      config:
+        sysroot:
+          readonly: false
+          mpp-if: use_aboot
+          then:
             bootloader: aboot
-    else:
-      type: org.osbuild.ostree.config
-      options:
-        repo: /ostree/repo
-        config:
-          sysroot:
-            readonly: false
+          else:
             bootloader: none
   - type: org.osbuild.ostree.remotes
     options:
