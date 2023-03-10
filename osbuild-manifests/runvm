@@ -147,7 +147,7 @@ qemu_dirs = [
 
 # location can differ depending on how qemu is installed
 def find_edk2():
-    for d in qemu_dirs:
+    for path in qemu_dirs:
         if os.path.exists(path):
             return path
 
