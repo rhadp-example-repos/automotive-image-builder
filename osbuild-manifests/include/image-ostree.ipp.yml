@@ -1,6 +1,7 @@
 version: '2'
 mpp-vars:
   kernel_osbuild_tree: rootfs
+  use_ostree: true
   image_rpms:
     mpp-join:
     - mpp-eval: base_rpms
