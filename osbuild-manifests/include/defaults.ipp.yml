@@ -41,6 +41,7 @@ mpp-vars:
   default_use_abootpart: false
   default_use_efipart: true
   default_use_bootpart: true
+  default_use_ostree: false
   static_uuids:
     mpp-eval: locals().get('static_uuids', True)
   default_rootfs_uuid:
@@ -226,6 +227,8 @@ mpp-vars:
     mpp-eval: locals().get('use_efipart', default_use_efipart)
   use_bootpart:
     mpp-eval: locals().get('use_bootpart', default_use_bootpart)
+  use_ostree:
+    mpp-eval: locals().get('use_ostree', default_use_ostree)
   container_entrypoint:
     mpp-eval: locals().get('container_entrypoint', default_container_entrypoint)
   container_cmd:

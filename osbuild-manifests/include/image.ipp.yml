@@ -443,17 +443,21 @@ pipelines:
         references:
         - name:image-tree
       fstab:
-        type: org.osbuild.tree
-        origin: org.osbuild.pipeline
-        references:
-        - name:ext4-fstab
+        mpp-if: not (use_ostree and use_aboot)
+        then:
+          type: org.osbuild.tree
+          origin: org.osbuild.pipeline
+          references:
+          - name:ext4-fstab
     options:
       paths:
         mpp-join:
         - - from: input://tree/
             to: mount://root/
-          - from: input://fstab/etc/fstab
-            to: mount://root/etc/fstab
+        - mpp-if: not (use_ostree and use_aboot)
+          then:
+            - from: input://fstab/etc/fstab
+              to: mount://root/etc/fstab
         - mpp-eval: locals().get('extra_image_copy_' + image_type, [])
     devices:
       root:
