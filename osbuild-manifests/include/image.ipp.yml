@@ -122,9 +122,9 @@ pipelines:
               options:
                 filename: disk.img
                 start:
-                  mpp-eval: image.layout['aboot'].start
+                  mpp-eval: image.layout['boot_a'].start
                 size:
-                  mpp-eval: image.layout['aboot'].size
+                  mpp-eval: image.layout['boot_a'].size
           inputs:
             tree:
               type: org.osbuild.tree
@@ -297,6 +297,26 @@ pipelines:
                   mpp-eval: image.layout['boot'].start
                 size:
                   mpp-eval: image.layout['boot'].size
+          boot_a:
+            mpp-if: use_abootpart
+            then:
+              type: org.osbuild.loopback
+              options:
+                filename: disk.img
+                start:
+                  mpp-eval: image.layout['boot_a'].start
+                size:
+                  mpp-eval: image.layout['boot_a'].size
+          boot_b:
+            mpp-if: use_abootpart
+            then:
+              type: org.osbuild.loopback
+              options:
+                filename: disk.img
+                start:
+                  mpp-eval: image.layout['boot_b'].start
+                size:
+                  mpp-eval: image.layout['boot_b'].size
           root:
             mpp-if: use_luks
             then:

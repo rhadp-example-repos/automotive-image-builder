@@ -14,7 +14,8 @@ mpp-vars:
   use_efipart: false
   aboot_pagesize: 4096
   aboot_kernel_offset: "0x40000000"
-  aboot_partition: "/dev/disk/by-partlabel/aboot"
+  aboot_partition_a: "/dev/disk/by-partlabel/boot_a"
+  aboot_partition_b: "/dev/disk/by-partlabel/boot_b"
   aboot_dtb_file:
     mpp-if: arch == 'aarch64'
     then: "/usr/share/qemu/qemu-tcg.dtb"
