@@ -15,6 +15,11 @@ mpp-vars:
   aboot_dtb_file: "qcom/sa8540p-ride.dtb"
   extra_image_rpms:
     - aboot-deploy
+    - aquantia-mac-generator
+  image_enabled_services:
+    mpp-join:
+    - mpp-eval: image_enabled_services
+    - - aquantia-mac-generator.service
   kernel_opts:
     mpp-join:
     - mpp-eval: kernel_opts
