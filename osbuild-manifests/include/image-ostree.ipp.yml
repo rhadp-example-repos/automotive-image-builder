@@ -2,6 +2,9 @@ version: '2'
 mpp-vars:
   kernel_osbuild_tree: rootfs
   use_ostree: true
+  use_compliance_mode:
+    mpp-if: name == 'developer'
+    then: true
   image_rpms:
     mpp-join:
     - mpp-eval: base_rpms
@@ -14,6 +17,8 @@ mpp-vars:
       - greenboot-reboot
       - greenboot-status
       - greenboot-rpm-ostree-grub2
+      - mpp-if: name == 'developer'
+        then: ostree-compliance-mode
       - polkit # Needed by rpm-ostree upgrade (until fix for https://github.com/coreos/rpm-ostree/issues/3554 is in)
 pipelines:
 - name: ostree-tree
@@ -251,6 +256,23 @@ pipelines:
       options:
         kernel:
           mpp-eval: rpms['rootfs'][kernel_core_package].evra
+  - mpp-if: use_compliance_mode
+    then:
+      type: org.osbuildtest.ostree-compliance-mode.config
+      options:
+        deployment:
+          osname:
+            mpp-eval: osname
+          ref:
+            mpp-eval: ostree_ref
+      inputs:
+        commits:
+          type: org.osbuild.ostree
+          origin: org.osbuild.pipeline
+          references:
+            name:ostree-commit:
+              ref:
+                mpp-eval: ostree_ref
   - mpp-if: use_grub2
     then:
       type: org.osbuild.grub2
