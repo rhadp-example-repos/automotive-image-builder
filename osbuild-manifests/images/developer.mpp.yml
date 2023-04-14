@@ -45,6 +45,7 @@ pipelines:
               # Some convenience packages
               - bash-completion
               - chrony
+              - audit
               - dnf
               - emacs-nox
               - less
