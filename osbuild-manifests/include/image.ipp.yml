@@ -443,7 +443,7 @@ pipelines:
         references:
         - name:image-tree
       fstab:
-        mpp-if: not (use_ostree and use_aboot)
+        mpp-if: not use_ostree
         then:
           type: org.osbuild.tree
           origin: org.osbuild.pipeline
@@ -454,7 +454,7 @@ pipelines:
         mpp-join:
         - - from: input://tree/
             to: mount://root/
-        - mpp-if: not (use_ostree and use_aboot)
+        - mpp-if: not use_ostree
           then:
             - from: input://fstab/etc/fstab
               to: mount://root/etc/fstab
