@@ -16,13 +16,7 @@ trigger-pipeline:
         - osbuild-manifests/Makefile
         - osbuild-manifests/*/*.yml
         - osbuild-manifests/files/*
-    # Run pipeline skipping non-sample-images if changes occur to lockfile only
-    #(using DISABLE flag configured at p-a-c)
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      changes:
-        - package_list/*
-      variables:
-        DISABLE_BUILD_NON_SAMPLE_IMAGES: "true"
+
     # Disable pipeline's run otherwise
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: never
