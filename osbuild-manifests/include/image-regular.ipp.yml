@@ -69,8 +69,13 @@ pipelines:
                 mpp-eval: dracut_install
       - type: org.osbuild.dracut
         options:
-          kernel:
-          - mpp-eval: rpms['rootfs'][kernel_core_package].evra
+          mpp-if: use_debug
+          then:
+            kernel:
+            - mpp-eval: rpms['rootfs'][kernel_core_package].evra+"+debug"
+          else:
+            kernel:
+            - mpp-eval: rpms['rootfs'][kernel_core_package].evra
       - type: org.osbuild.fstab
         options:
           filesystems:
@@ -126,8 +131,13 @@ pipelines:
                 mpp-format-string: "{aboot_dtb_file}"
         - type: org.osbuildtest.aboot.update
           options:
-            kernel:
-              mpp-eval: rpms['rootfs'][kernel_core_package].evra
+            mpp-if: use_debug
+            then:
+              kernel:
+                mpp-eval: rpms['rootfs'][kernel_core_package].evra+'+debug'
+            else:
+              kernel:
+                mpp-eval: rpms['rootfs'][kernel_core_package].evra
         - type: org.osbuild.copy
           inputs:
             inlinefile:

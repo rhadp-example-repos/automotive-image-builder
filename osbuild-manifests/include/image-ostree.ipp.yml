@@ -124,9 +124,13 @@ pipelines:
         then:
           type: org.osbuildtest.aboot.update
           options:
-            kernel:
-              mpp-eval: rpms['rootfs'][kernel_core_package].evra
             preptree: true
+            kernel:
+              mpp-if: use_debug
+              then:
+                mpp-eval: rpms['rootfs'][kernel_core_package].evra+'+debug'
+              else:
+                mpp-eval: rpms['rootfs'][kernel_core_package].evra
 - name: ostree-commit
   build: name:build
   stages:
@@ -254,8 +258,13 @@ pipelines:
     then:
       type: org.osbuildtest.aboot.update
       options:
-        kernel:
-          mpp-eval: rpms['rootfs'][kernel_core_package].evra
+        mpp-if: use_debug
+        then:
+          kernel:
+            mpp-eval: rpms['rootfs'][kernel_core_package].evra+'+debug'
+        else:
+          kernel:
+            mpp-eval: rpms['rootfs'][kernel_core_package].evra
   - mpp-if: use_compliance_mode
     then:
       type: org.osbuildtest.ostree-compliance-mode.config
