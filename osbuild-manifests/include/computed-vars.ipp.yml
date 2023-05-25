@@ -18,6 +18,9 @@ mpp-vars:
       mpp-eval: kernel_rpm
     else:
       mpp-eval: kernel_package if not kernel_version else kernel_package + "-" + kernel_version
+  use_debug:
+    mpp-if: "'debug' in locals().get('kernel_package')"
+    then: true
   fstab:
     mpp-join:
     - - uuid:

@@ -497,9 +497,12 @@ pipelines:
         - from: input://ext4/rootfs.ext4
           to: tree:///images/rootfs.img
         - from:
-            mpp-format-string: "input://tree/boot/aboot-{rpms[kernel_osbuild_tree][kernel_core_package].evra}.img"
+            mpp-if: use_debug
+            then:
+              mpp-format-string: "input://tree/boot/aboot-{rpms[kernel_osbuild_tree][kernel_core_package].evra}+debug.img"
+            else:
+              mpp-format-string: "input://tree/boot/aboot-{rpms[kernel_osbuild_tree][kernel_core_package].evra}.img"
           to: tree:///images/aboot.img
-
 # This is essentially rootfs with no image-specific stuff like boot, etc, but with
 # some required extras.
 - name: raw-image-tree

@@ -66,6 +66,9 @@ mpp-vars:
   default_use_compliance_mode: false
   use_compliance_mode:
     mpp-eval: locals().get('use_compliance_mode', default_use_compliance_mode)
+  default_use_debug: false
+  use_debug:
+    mpp-eval: locals().get('use_debug', default_use_debug)
   default_luks_use_integrity: false
   default_luks_auto_unlock: false
   luks_auto_unlock:
