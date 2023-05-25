@@ -15,6 +15,7 @@ mpp-vars:
   default_uefi_vendor: centos
   default_kernel_package: kernel-automotive
   default_kernel_version: ""
+  default_release_name: ""
   default_release_package: centos-release-automotive
   default_linux_firmware_rpm: linux-firmware-automotive
   default_partition_label: gpt
@@ -42,6 +43,8 @@ mpp-vars:
   default_use_efipart: true
   default_use_bootpart: true
   default_use_ostree: false
+  default_image_uuid:
+    mpp-eval: (str(__import__('uuid').uuid4()))
   static_uuids:
     mpp-eval: locals().get('static_uuids', True)
   default_rootfs_uuid:
@@ -125,6 +128,10 @@ mpp-vars:
   default_image_extra_stages: []
   default_image_enabled_services: []
   default_image_masked_services: []
+  timestamp:
+    mpp-eval: (__import__('datetime').datetime.now().timestamp())
+  build_timestamp:
+    mpp-eval: (str(__import__('datetime').datetime.fromtimestamp(timestamp)))
   target:
     mpp-eval: locals().get('target', default_target)
   image_type:
@@ -135,6 +142,8 @@ mpp-vars:
     mpp-eval: locals().get('kernel_version', default_kernel_version)
   linux_firmware_rpm:
     mpp-eval: locals().get('linux_firmware_rpm', default_linux_firmware_rpm)
+  release_name:
+    mpp-eval: locals().get('release_name', default_release_name)
   release_rpm:
     mpp-eval: locals().get('release_rpm', default_release_package)
   ostree_ref:
@@ -239,6 +248,8 @@ mpp-vars:
     mpp-eval: locals().get('use_bootpart', default_use_bootpart)
   use_ostree:
     mpp-eval: locals().get('use_ostree', default_use_ostree)
+  image_uuid:
+    mpp-eval: locals().get('image_uuid', default_image_uuid)
   container_entrypoint:
     mpp-eval: locals().get('container_entrypoint', default_container_entrypoint)
   container_cmd:
