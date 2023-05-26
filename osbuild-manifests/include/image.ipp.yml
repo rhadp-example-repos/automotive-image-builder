@@ -266,6 +266,7 @@ pipelines:
           uuid:
             mpp-eval: rootfs_uuid
           label: root
+          verity: true
       - type: org.osbuild.copy
         inputs:
           tree:
