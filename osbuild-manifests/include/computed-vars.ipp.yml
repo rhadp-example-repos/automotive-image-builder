@@ -21,12 +21,18 @@ mpp-vars:
   use_debug:
     mpp-if: "'debug' in locals().get('kernel_package')"
     then: true
+  # We need to define this ahead of image-ostree.ipp.yml for use below
+  use_ostree:
+    mpp-eval: use_ostree or image_type == 'ostree'
   fstab:
     mpp-join:
     - - uuid:
           mpp-eval: rootfs_uuid
         vfs_type: ext4
-        path: /
+        path:
+          mpp-if: use_ostree and use_composefs
+          then: /sysroot
+          else: /
         freq: 1
         passno: 1
       - mpp-if: use_efipart
