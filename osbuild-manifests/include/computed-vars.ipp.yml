@@ -110,7 +110,9 @@ mpp-vars:
   image_enabled_services:
     mpp-join:
       - mpp-eval: image_enabled_services
-      - - mpp-if: use_containers and containers_transient_store
+      - - mpp-if: tmp_is_tmpfs
+          then: tmp.mount
+        - mpp-if: use_containers and containers_transient_store
           then: podman-clean-transient.service
   build_info:
     mpp-format-string: |
