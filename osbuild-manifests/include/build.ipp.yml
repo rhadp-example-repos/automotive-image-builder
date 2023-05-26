@@ -29,11 +29,21 @@ mpp-define-image:
         uuid: $bootpart_uuid
     - mpp-if: use_aboot and use_abootpart
       then:
-        id: aboot
-        name: aboot
+        id: boot_a
+        name: boot_a
         size: $abootpart_size
         type: 20117F86-E985-4357-B9EE-374BC1D8487D # Android boot v2
-        uuid: $abootpart_uuid
+        uuid: $abootpart_uuid_a
+        attr: # TODO: org.osbuild.sfdisk supports this, but not osbuild-mpp
+          - 56 # Successful boot (as per chromiumOS specs)
+        # Ideally set GPT attributes, to signal A/B boot details, but not supported by osbuild
+    - mpp-if: use_aboot and use_abootpart
+      then:
+        id: boot_b
+        name: boot_b
+        size: $abootpart_size
+        type: 20117F86-E985-4357-B9EE-374BC1D8487D # Android boot v2
+        uuid: $abootpart_uuid_b
         attr: # TODO: org.osbuild.sfdisk supports this, but not osbuild-mpp
           - 56 # Successful boot (as per chromiumOS specs)
         # Ideally set GPT attributes, to signal A/B boot details, but not supported by osbuild
