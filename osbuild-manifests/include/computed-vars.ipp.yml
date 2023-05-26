@@ -81,6 +81,13 @@ mpp-vars:
     - mpp-eval: dracut_omit_modules
     - - mpp-if: not use_luks
         then: dm
+  dracut_filesystems:
+    mpp-join:
+    - mpp-eval: dracut_filesystems
+    - mpp-if: use_composefs and use_ostree
+      then:
+        - overlay
+        - erofs
   kernel_opts:
     mpp-join:
     - mpp-eval: kernel_opts
