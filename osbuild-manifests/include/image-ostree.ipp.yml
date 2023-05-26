@@ -194,6 +194,14 @@ pipelines:
             bootloader: aboot
           else:
             bootloader: none
+  - mpp-if: use_composefs
+    then:
+      type: org.osbuild-auto.ostree.config
+      options:
+        repo: /ostree/repo
+        config:
+          sysroot:
+            composefs: "true"
   - type: org.osbuild.ostree.remotes
     options:
       repo: /ostree/repo

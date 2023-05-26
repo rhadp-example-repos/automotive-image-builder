@@ -135,5 +135,4 @@ mpp-vars:
       IMAGE_NAME="{image_type}"
       IMAGE_TARGET="{target}"
 
-
 pipelines: []
