@@ -76,6 +76,10 @@ mpp-vars:
         then: aboot-update
       - mpp-if: use_aboot
         then: aboot-deploy
+      - mpp-if: use_composefs and use_ostree
+        then: keyutils
+      - mpp-if: use_composefs and use_ostree
+        then: dracut-fsverity
   dracut_omit_modules:
     mpp-join:
     - mpp-eval: dracut_omit_modules
@@ -88,12 +92,21 @@ mpp-vars:
       then:
         - overlay
         - erofs
+  dracut_install:
+    mpp-join:
+    - mpp-eval: dracut_install
+    - mpp-if: use_composefs and use_ostree
+      then:
+        - /etc/ostree/commit.key
   kernel_opts:
     mpp-join:
     - mpp-eval: kernel_opts
     - mpp-if: use_serial_console
       then:
         - console=$serial_console
+    - mpp-if: use_composefs
+      then:
+        - ot-composefs=signed=/etc/ostree/commit.key
   image_repos:
     mpp-join:
       - mpp-eval: distro_repos
