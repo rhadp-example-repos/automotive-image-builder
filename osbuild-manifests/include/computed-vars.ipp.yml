@@ -112,6 +112,13 @@ mpp-vars:
       - mpp-eval: image_enabled_services
       - - mpp-if: use_containers and containers_transient_store
           then: podman-clean-transient.service
+  build_info:
+    mpp-format-string: |
+      RELEASE={release_name}
+      UUID={image_uuid}
+      TIMESTAMP={build_timestamp}
+      IMAGE_NAME={image_type}
+      IMAGE_TARGET={target}
 
 
 pipelines: []

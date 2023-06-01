@@ -13,6 +13,8 @@ mpp-vars:
       then:
         from: input://extra-tree/containers.conf
         to: tree:///etc/containers/containers.conf
+    - from: input://extra-tree/build-info
+      to: tree:///etc/build-info
   dracut_install:
     mpp-join:
       - mpp-eval: dracut_install
@@ -94,6 +96,19 @@ pipelines:
       - from:
           mpp-format-string: input://inlinefile/{embedded['containers.conf']}
         to: tree:///containers.conf
+  - type: org.osbuild.copy
+    inputs:
+      inlinefile:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: build-info
+          text: $build_info
+    options:
+      paths:
+      - from:
+          mpp-format-string: input://inlinefile/{embedded['build-info']}
+        to: tree:///build-info
 - mpp-import-pipelines:
     path: image-$image_type.ipp.yml
 - name: image
