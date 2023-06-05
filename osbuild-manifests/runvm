@@ -339,6 +339,7 @@ def main():
     elif args.arch == "aarch64":
         machine = "virt"
         default_cpu = "cortex-a57"
+        num_cpus = min(os.cpu_count(), 8) # for up to 8 cores (limitation of qemu-system-aarch64)
         if sys.platform == "darwin":
             qemu_args += [
                 "-device", "virtio-gpu-pci", # for display
@@ -347,7 +348,6 @@ def main():
                 "-device", "usb-kbd", # for keyboard
                 "-device", "usb-tablet", # for mouse
             ]
-            num_cpus = min(os.cpu_count(), 8) # for up to 8 cores (limitation of qemu-system-aarch64)
         if args.aboot:
             args.memory = "4G" # this is hardcoded in our dtb files
             qemu_args += [
