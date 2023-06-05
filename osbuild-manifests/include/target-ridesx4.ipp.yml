@@ -1,3 +1,4 @@
+# A target for the QC RIDESX4 board.
 version: '2'
 mpp-vars:
   use_grub2: false
@@ -13,7 +14,7 @@ mpp-vars:
   aboot_second_offset: "0x81100000"
   aboot_tags_offset: "0x7d00000"
   aboot_base: "0x1208800"
-  aboot_dtb_file: "qcom/sa8540p-ride.dtb"
+  aboot_dtb_file: "qcom/sa8775p-ride.dtb"
   extra_image_rpms:
     - aboot-deploy
     - aquantia-mac-generator
@@ -25,6 +26,6 @@ mpp-vars:
     mpp-join:
     - mpp-eval: kernel_opts
     - - no_console_suspend=1
-      - earlycon=qcom_geni,0x884000
+      - earlycon=qcom_geni,0xa8c000
       - ignore_loglevel
 pipelines: []
