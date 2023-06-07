@@ -31,4 +31,10 @@ mpp-vars:
       - ignore_loglevel
       - pd_ignore_unused
       - clk_ignore_unused
+  dracut_add_drivers:
+    mpp-join:
+    - mpp-eval: dracut_add_drivers
+    - - "governor_simpleondemand.ko"
+      - "qnoc-sc8280xp.ko"
+      - "ufs_qcom.ko"
 pipelines: []
