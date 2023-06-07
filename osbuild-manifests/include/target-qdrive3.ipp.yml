@@ -29,4 +29,6 @@ mpp-vars:
     - - no_console_suspend=1
       - earlycon
       - ignore_loglevel
+      - pd_ignore_unused
+      - clk_ignore_unused
 pipelines: []
