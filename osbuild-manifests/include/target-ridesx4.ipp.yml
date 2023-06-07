@@ -1,0 +1,35 @@
+# A target for the QC RIDESX4 board.
+version: '2'
+mpp-vars:
+  use_grub2: false
+  use_aboot: true
+  use_abootpart: true
+  use_bootpart: false
+  use_efipart: false
+  serial_console: "ttyMSM0,115200,n8"
+  aboot_pagesize: 4096
+  aboot_kernel_offset: "0x80208000"
+  aboot_partition_a: "/dev/disk/by-partlabel/boot_a"
+  aboot_partition_b: "/dev/disk/by-partlabel/boot_b"
+  aboot_second_offset: "0x81100000"
+  aboot_tags_offset: "0x7d00000"
+  aboot_base: "0x1208800"
+  aboot_dtb_file: "qcom/sa8775p-ride.dtb"
+  extra_image_rpms:
+    - aboot-deploy
+    - aquantia-mac-generator
+    - stmmac-mac-generator
+  image_enabled_services:
+    mpp-join:
+    - mpp-eval: image_enabled_services
+    - - aquantia-mac-generator.service
+    - - stmmac-mac-generator.service
+  kernel_opts:
+    mpp-join:
+    - mpp-eval: kernel_opts
+    - - no_console_suspend=1
+      - earlycon
+      - ignore_loglevel
+      - clk_ignore_unused
+      - pd_ignore_unused
+pipelines: []
