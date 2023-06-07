@@ -27,6 +27,6 @@ mpp-vars:
     mpp-join:
     - mpp-eval: kernel_opts
     - - no_console_suspend=1
-      - earlycon=qcom_geni,0x884000
+      - earlycon
       - ignore_loglevel
 pipelines: []
