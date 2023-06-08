@@ -27,6 +27,14 @@ mpp-vars:
     mpp-join:
     - mpp-eval: kernel_opts
     - - no_console_suspend=1
-      - earlycon=qcom_geni,0x884000
+      - earlycon
       - ignore_loglevel
+      - pd_ignore_unused
+      - clk_ignore_unused
+  dracut_add_drivers:
+    mpp-join:
+    - mpp-eval: dracut_add_drivers
+    - - "governor_simpleondemand.ko"
+      - "qnoc-sc8280xp.ko"
+      - "ufs_qcom.ko"
 pipelines: []
