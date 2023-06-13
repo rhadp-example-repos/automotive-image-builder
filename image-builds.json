@@ -40,31 +40,6 @@
           "cs9"
         ]
       },
-      "neptune": {
-        "manifest": "neptune",
-        "type": "ostree",
-        "target": "qemu",
-        "format" : "qcow2",
-        "arches": [
-          "x86_64",
-          "aarch64"
-        ],
-        "package-sets": [
-          "cs9"
-        ]
-      },
-      "neptune-rpi": {
-        "manifest": "neptune",
-        "type": "regular",
-        "target": "rpi4",
-        "format" : "img",
-        "arches": [
-          "aarch64"
-        ],
-        "package-sets": [
-          "cs9"
-        ]
-      },
       "developer": {
         "manifest": "developer",
         "type": "regular",

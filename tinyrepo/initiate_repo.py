@@ -20,7 +20,6 @@ import requests
 environments = [
     "https://tiny.distro.builders/workload--automotive-c9s-workload-development--automotive-c9s-env-minimum--automotive-c9s-repositories--aarch64.json",
     "https://tiny.distro.builders/workload--automotive-c9s-workload-minimum--automotive-c9s-env-minimum--automotive-c9s-repositories--aarch64.json",
-    "https://tiny.distro.builders/workload--automotive-c9s-workload-neptune--automotive-c9s-env-minimum--automotive-c9s-repositories--aarch64.json",
     "https://tiny.distro.builders/workload--automotive-c9s-workload-ostree--automotive-c9s-env-minimum--automotive-c9s-repositories--aarch64.json",
     "https://tiny.distro.builders/workload--automotive-c9s-workload-podman--automotive-c9s-env-minimum--automotive-c9s-repositories--aarch64.json",
 ]
