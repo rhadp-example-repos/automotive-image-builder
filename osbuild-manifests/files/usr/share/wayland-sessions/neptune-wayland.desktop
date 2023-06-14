@@ -1,7 +1,0 @@
-[Desktop Entry]
-Name=Neptune (Wayland)
-Comment=This session logs you into Neptune
-Exec=gnome-session --session=neptune
-Type=Application
-DesktopNames=GNOME
-X-GDM-SessionRegisters=true
