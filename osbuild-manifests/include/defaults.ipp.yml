@@ -34,6 +34,19 @@ mpp-vars:
   default_efipart_size: 204800
   default_bootpart_size: 614400
   default_abootpart_size: 131072 # 64M
+  default_active_gpt_attrs: # Default active setup for Qualcomm
+    - 48
+    - 49 # priority 0x3
+    - 50 # active
+    - 51
+    - 52
+    - 53 # remaining tries 0x7
+  default_inactive_gpt_attrs:  # Default inactive for Qualcomm
+    - 48 # priority 0x1
+    - 50 # active
+    - 51
+    - 52
+    - 53 # remaining tries 0x7
   default_kernel_loglevel: 4
   default_timezone: UTC
   default_locale: en_US.UTF-8
@@ -194,6 +207,10 @@ mpp-vars:
     mpp-eval: locals().get('bootpart_size', default_bootpart_size)
   abootpart_size:
     mpp-eval: locals().get('abootpart_size', default_abootpart_size)
+  active_gpt_attrs:
+    mpp-eval: locals().get('active_gpt_attrs', default_active_gpt_attrs)
+  inactive_gpt_attrs:
+    mpp-eval: locals().get('inactive_gpt_attrs', default_inactive_gpt_attrs)
   dracut_add_modules:
     mpp-eval: locals().get('dracut_add_modules', default_dracut_add_modules)
   dracut_omit_modules:
