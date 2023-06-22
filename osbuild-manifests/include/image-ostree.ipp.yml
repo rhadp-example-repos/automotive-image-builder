@@ -89,7 +89,7 @@ pipelines:
                 mpp-eval: "' '.join(dracut_install)"
       - mpp-if: use_aboot
         then:
-          type: org.osbuildtest.aboot.conf
+          type: org.osbuild-auto.aboot.conf
           options:
             pagesize:
               mpp-if: "locals().get('aboot_pagesize',) != None"
@@ -126,7 +126,7 @@ pipelines:
             preptree: true
       - mpp-if: use_aboot
         then:
-          type: org.osbuildtest.aboot.update
+          type: org.osbuild-auto.aboot.update
           options:
             preptree: true
             kernel:
@@ -260,7 +260,7 @@ pipelines:
           mpp-eval: ostree_ref
   - mpp-if: use_aboot
     then:
-      type: org.osbuildtest.aboot.update
+      type: org.osbuild-auto.aboot.update
       options:
         mpp-if: use_debug
         then:
@@ -271,7 +271,7 @@ pipelines:
             mpp-eval: rpms['rootfs'][kernel_core_package].evra
   - mpp-if: use_compliance_mode
     then:
-      type: org.osbuildtest.ostree-compliance-mode.config
+      type: org.osbuild-auto.ostree.config-compliance-mode
       options:
         deployment:
           osname:
