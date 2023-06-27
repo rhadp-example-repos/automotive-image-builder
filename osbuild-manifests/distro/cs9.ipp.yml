@@ -12,8 +12,8 @@ mpp-vars:
     baseurl: https://buildlogs.centos.org/9-stream/automotive/$arch/packages-main/
   - id: autosd
     baseurl: https://buildlogs.centos.org/9-stream/autosd/$arch/packages-main/
-  - id: ecurtin-cs9-sample-images
-    baseurl: https://download.copr.fedorainfracloud.org/results/ecurtin/cs9-sample-images/epel-9-$arch/
+  - id: next
+    baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/next/epel-9-$arch/
   distro_devel_repos:
   - id: crb
     baseurl: $distro_baseurl/CRB/$arch/os/
