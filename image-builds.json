@@ -53,6 +53,19 @@
           "cs9"
         ]
       },
+      "developer-aws": {
+        "manifest": "developer",
+        "type": "regular",
+        "target": "aws",
+        "format" : "img",
+        "arches": [
+          "x86_64",
+          "aarch64"
+        ],
+        "package-sets": [
+          "cs9"
+        ]
+      },
       "developer-rpi": {
         "manifest": "developer",
         "type": "regular",
