@@ -130,7 +130,7 @@ pipelines:
           mpp-format-json: '{image.layout}'
       - mpp-if: use_aboot and use_abootpart
         then:
-          type: org.osbuildtest.write-device
+          type: org.osbuild-auto.write-device
           devices:
             device:
               type: org.osbuild.loopback

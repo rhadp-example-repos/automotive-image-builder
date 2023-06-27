@@ -99,7 +99,7 @@ pipelines:
             greenboot: true
     - mpp-if: use_aboot
       then:
-        - type: org.osbuildtest.aboot.conf
+        - type: org.osbuild-auto.aboot.conf
           options:
             pagesize:
               mpp-if: "locals().get('aboot_pagesize',) != None"
@@ -133,7 +133,7 @@ pipelines:
               mpp-if: "locals().get('aboot_dtb_file') != None"
               then:
                 mpp-format-string: "{aboot_dtb_file}"
-        - type: org.osbuildtest.aboot.update
+        - type: org.osbuild-auto.aboot.update
           options:
             mpp-if: use_debug
             then:
