@@ -90,6 +90,7 @@ help:
 	@echo  \ \ osbuildvm-images: Build a image that can be used to build images inside a VM
 	@echo
 	@echo There are also some common conversion rules:
+	@echo  \ \ foo.aboot.simg will build aboot.img / rootfs.img and convert rootfs.img using img2simg
 	@echo  \ \ foo.ext4.simg will build foo.ext4 and then convert it with img2simg
 	@echo  \ \ foo.simg will build foo.img and then convert it with img2simg
 	@echo  \ \ foo.tar.gz will build $foo.tar and then gzip it
@@ -204,6 +205,10 @@ osbuildvm-images: $(BUILDDIR)
 	cp $(OUTPUTDIR)/osbuildvm/initramfs _build/osbuildvm-$(HOST_ARCH).initramfs
 	cp $(OUTPUTDIR)/osbuildvm/vmlinuz _build/osbuildvm-$(HOST_ARCH).vmlinuz
 	$(VM_SUDO) rm -rf $(OUTPUTDIR)/osbuildvm
+
+%.aboot.simg : %.aboot
+	img2simg $</rootfs.img $</rootfs.simg
+	rm $</rootfs.img
 
 %.ext4.simg : %.ext4
 	img2simg $< $@
