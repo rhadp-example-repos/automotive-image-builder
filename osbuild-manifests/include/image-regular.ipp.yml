@@ -46,7 +46,7 @@ pipelines:
           config:
             early_microcode: false
             reproducible: true
-            compress: pigz
+            compress: gzip
             add_dracutmodules:
               mpp-if: dracut_add_modules
               then:
