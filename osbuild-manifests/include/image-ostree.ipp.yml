@@ -13,10 +13,12 @@ mpp-vars:
     - mpp-eval: locals().get('extra_boot_rpms', [])
     - - nss-altfiles
       - greenboot
-      - greenboot-grub2
+      - mpp-if: not use_aboot
+        then: greenboot-grub2
       - greenboot-reboot
       - greenboot-status
-      - greenboot-rpm-ostree-grub2
+      - mpp-if: not use_aboot
+        then: greenboot-rpm-ostree-grub2
       - mpp-if: name == 'developer'
         then: ostree-compliance-mode
       - polkit # Needed by rpm-ostree upgrade (until fix for https://github.com/coreos/rpm-ostree/issues/3554 is in)
@@ -46,10 +48,13 @@ pipelines:
       - type: org.osbuild.systemd
         options:
           enabled_services:
-          - greenboot-grub2-set-counter.service
-          - greenboot-grub2-set-success.service
+          - mpp-if: not use_aboot
+            then: greenboot-grub2-set-counter.service
+          - mpp-if: not use_aboot
+            then: greenboot-grub2-set-success.service
           - greenboot-healthcheck.service
-          - greenboot-rpm-ostree-grub2-check-fallback.service
+          - mpp-if: not use_aboot
+            then: greenboot-rpm-ostree-grub2-check-fallback.service
           - greenboot-status.service
           - greenboot-task-runner.service
     - mpp-eval: image_extra_stages
