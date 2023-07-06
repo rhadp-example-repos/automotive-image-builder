@@ -38,7 +38,7 @@ EXTRA_MPP_ARGS +=-D ostree_parent_refs='$(shell tools/ot-refs $(OSTREE_REPO))'
 endif
 
 export CHECKPOINTS=build
-IMAGETYPES := regular ostree direct
+IMAGETYPES := regular ostree
 FORMATS := img qcow2 oci.tar repo rootfs ext4 tar aboot
 aarch64_TARGETS := ridesx4 rpi4 qdrive3 abootqemu
 COMMON_TARGETS := qemu aws
@@ -53,7 +53,6 @@ image-name = $(call image-name-noarch,$1,$2,$3,$4).$5
 # variable name for image type
 regular_IMAGETYPE := regular
 ostree_IMAGETYPE := ostree
-direct_IMAGETYPE := directboot
 
 help:
 	@echo
