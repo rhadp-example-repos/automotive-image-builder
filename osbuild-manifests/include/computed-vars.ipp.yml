@@ -132,6 +132,41 @@ mpp-vars:
     mpp-format-string: |
       [containers]
       { "read_only = true" if containers_read_only else "" }
+
+      default_capabilities = [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "FSETID",
+        "KILL",
+        "NET_BIND_SERVICE",
+        "SETFCAP",
+        "SETGID",
+        "SETPCAP",
+        "SETUID",
+        "SYS_CHROOT"
+      ]
+
+      # A list of sysctls to be set in containers by default,
+      # specified as "name=value",
+      # for example:"net.ipv4.ping_group_range=0 0".
+      #
+      default_sysctls = [
+        "net.ipv4.ping_group_range=0 0",
+      ]
+
+      # keyring tells the container engine whether to create
+      # a kernel keyring for use within the container.
+      #
+      keyring = false
+  qm_containers_conf:
+    mpp-format-string: |
+      [containers]
+      default_sysctls = []
+      cgroup_conf=[
+        "memory.oom.group=1",
+      ]
+      oom_score_adj = 750
   image_enabled_services:
     mpp-join:
       - mpp-eval: image_enabled_services
@@ -139,6 +174,10 @@ mpp-vars:
           then: tmp.mount
         - mpp-if: use_containers and containers_transient_store
           then: podman-clean-transient.service
+        - mpp-if: use_qm or use_hirte
+          then: hirte-agent.service
+        - mpp-if: use_qm or use_hirte
+          then: hirte.service
   ostree_prepare_root_conf:
     mpp-format-string: |
       [sysroot]
@@ -152,5 +191,26 @@ mpp-vars:
       TIMESTAMP="{build_timestamp}"
       IMAGE_NAME="{image_type}"
       IMAGE_TARGET="{target}"
-
+  qm_importfile:
+    mpp-if: use_qm
+    then: "qm"
+    else: "empty"
+  use_hirte:
+    mpp-if: use_qm
+    then: true
+    else: use_hirte
+  bluechi_agent_conf:
+    mpp-format-string: |
+      [hirte-agent]
+      NodeName={ bluechi_nodename }
+      ManagerHost= { bluechi_manager_host_ip }
+  qm_bluechi_agent_conf:
+    mpp-format-string: |
+      [hirte-agent]
+      NodeName=qm.{ bluechi_nodename }
+      ManagerHost= { bluechi_manager_host_ip }
+  bluechi_conf:
+    mpp-format-string: |
+      [hirte]
+      AllowedNodeNames={ bluechi_nodename },qm.{ bluechi_nodename }
 pipelines: []

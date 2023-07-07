@@ -2,9 +2,11 @@ version: '2'
 mpp-vars:
   name: container
   use_containers: true
+  use_qm: true
 pipelines:
 - mpp-import-pipelines:
     path: include/build.ipp.yml
+
 - name: rootfs
   build: name:build
   stages:
@@ -91,5 +93,6 @@ pipelines:
             mpp-eval: guest_gid
           uid:
             mpp-eval: guest_uid
+
 - mpp-import-pipelines:
     path: include/image.ipp.yml

@@ -17,6 +17,21 @@ mpp-vars:
       then:
         from: input://extra-tree/ostree_prepare_root.conf
         to: tree:///usr/lib/ostree/prepare-root.conf
+    - from: input://extra-tree/build-info
+      to: tree:///etc/build-info
+    - mpp-if: use_qm or use_hirte
+      then:
+        from: input://extra-tree/hirte_agent.conf
+        to: tree:///etc/hirte/agent.conf
+    - mpp-if: use_qm or use_hirte
+      then:
+        from: input://extra-tree/hirte.conf
+        to: tree:///etc/hirte/hirte.conf
+    - mpp-if: use_qm
+      then:
+        from: input://extra-tree/qm.container
+        to: tree:///etc/containers/systemd/qm.container
+
   dracut_install:
     mpp-join:
       - mpp-eval: dracut_install
@@ -55,6 +70,26 @@ mpp-vars:
               mpp-eval: image_enabled_services
             masked_services:
               mpp-eval: image_masked_services
+        - mpp-if: use_qm
+          then:
+            type: org.osbuild.mkdir
+            options:
+              paths:
+              - path: /usr/lib/qm/rootfs
+                parents: true
+        - mpp-if: use_qm
+          then:
+            type: org.osbuild.copy
+            inputs:
+              tree:
+                type: org.osbuild.tree
+                origin: org.osbuild.pipeline
+                references:
+                  - name:qm_rootfs
+            options:
+              paths:
+                - from: input://tree/
+                  to: tree:///usr/lib/qm/rootfs/
 
 pipelines:
 # Some variables need to be written to files, do that here
@@ -126,6 +161,39 @@ pipelines:
       - from:
           mpp-format-string: input://inlinefile/{embedded['build-info']}
         to: tree:///build-info
+
+  - type: org.osbuild.copy
+    inputs:
+      inlinefile:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: hirte_agent_conf
+          text: $bluechi_agent_conf
+      inlinefile2:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: hirte_conf
+          text: $bluechi_conf
+      inlinefile3:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: qm_container
+          path: ../files/qm.container
+    options:
+      paths:
+      - from:
+          mpp-format-string: input://inlinefile/{embedded['hirte_agent_conf']}
+        to: tree:///hirte_agent.conf
+      - from:
+          mpp-format-string: input://inlinefile2/{embedded['hirte_conf']}
+        to: tree:///hirte.conf
+      - from:
+          mpp-format-string: input://inlinefile3/{embedded['qm_container']}
+        to: tree:///qm.container
+
 - mpp-import-pipelines:
     path: image-$image_type.ipp.yml
 - name: image
