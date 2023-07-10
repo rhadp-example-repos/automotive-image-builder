@@ -8,7 +8,7 @@ mpp-vars:
     baseurl: $cs9_baseurl/BaseOS/$arch/os/
   - id: appstream
     baseurl: $cs9_baseurl/AppStream/$arch/os/
-  centos_gpg_key: |
+  distro_gpg_key: |
     -----BEGIN PGP PUBLIC KEY BLOCK-----
     Version: GnuPG v2.0.22 (GNU/Linux)
 
@@ -66,7 +66,7 @@ pipelines:
           - xz
     options:
       gpgkeys:
-      - mpp-eval: centos_gpg_key
+      - mpp-eval: distro_gpg_key
       exclude:
         docs: true
   - type: org.osbuild.selinux
@@ -81,7 +81,7 @@ pipelines:
   - type: org.osbuild.rpm
     options:
       gpgkeys:
-      - mpp-eval: centos_gpg_key
+      - mpp-eval: distro_gpg_key
     inputs:
       packages:
         type: org.osbuild.files

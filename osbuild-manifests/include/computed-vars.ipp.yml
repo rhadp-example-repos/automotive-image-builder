@@ -21,6 +21,14 @@ mpp-vars:
   use_debug:
     mpp-if: "'debug' in locals().get('kernel_package')"
     then: true
+  distro_gpg_keys:
+    mpp-if: locals().get('distro_gpg_keys')
+    then:
+      mpp-eval: distro_gpg_keys
+    else:
+      mpp-format-string: |
+        $centos_gpg_key
+        $redhat_gpg_key
   # We need to define this ahead of image-ostree.ipp.yml for use below
   use_ostree:
     mpp-eval: use_ostree or image_type == 'ostree'
