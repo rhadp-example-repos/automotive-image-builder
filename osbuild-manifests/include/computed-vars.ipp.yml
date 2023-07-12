@@ -21,12 +21,18 @@ mpp-vars:
   use_debug:
     mpp-if: "'debug' in locals().get('kernel_package')"
     then: true
+  # We need to define this ahead of image-ostree.ipp.yml for use below
+  use_ostree:
+    mpp-eval: use_ostree or image_type == 'ostree'
   fstab:
     mpp-join:
     - - uuid:
           mpp-eval: rootfs_uuid
         vfs_type: ext4
-        path: /
+        path:
+          mpp-if: use_ostree and use_composefs
+          then: /sysroot
+          else: /
         freq: 1
         passno: 1
       - mpp-if: use_efipart
@@ -70,17 +76,37 @@ mpp-vars:
         then: aboot-update
       - mpp-if: use_aboot
         then: aboot-deploy
+      - mpp-if: use_composefs and use_ostree
+        then: keyutils
+      - mpp-if: use_composefs and use_ostree
+        then: dracut-fsverity
   dracut_omit_modules:
     mpp-join:
     - mpp-eval: dracut_omit_modules
     - - mpp-if: not use_luks
         then: dm
+  dracut_filesystems:
+    mpp-join:
+    - mpp-eval: dracut_filesystems
+    - mpp-if: use_composefs and use_ostree
+      then:
+        - overlay
+        - erofs
+  dracut_install:
+    mpp-join:
+    - mpp-eval: dracut_install
+    - mpp-if: use_composefs and use_ostree
+      then:
+        - /etc/ostree/commit.key
   kernel_opts:
     mpp-join:
     - mpp-eval: kernel_opts
     - mpp-if: use_serial_console
       then:
         - console=$serial_console
+    - mpp-if: use_composefs
+      then:
+        - ot-composefs=signed=/etc/ostree/commit.key
   image_repos:
     mpp-join:
       - mpp-eval: distro_repos
@@ -110,7 +136,9 @@ mpp-vars:
   image_enabled_services:
     mpp-join:
       - mpp-eval: image_enabled_services
-      - - mpp-if: use_containers and containers_transient_store
+      - - mpp-if: tmp_is_tmpfs
+          then: tmp.mount
+        - mpp-if: use_containers and containers_transient_store
           then: podman-clean-transient.service
   build_info:
     mpp-format-string: |
@@ -119,6 +147,5 @@ mpp-vars:
       TIMESTAMP="{build_timestamp}"
       IMAGE_NAME="{image_type}"
       IMAGE_TARGET="{target}"
-
 
 pipelines: []

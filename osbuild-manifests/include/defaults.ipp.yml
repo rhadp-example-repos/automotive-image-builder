@@ -58,6 +58,7 @@ mpp-vars:
   default_use_ostree: false
   default_image_uuid:
     mpp-eval: (str(__import__('uuid').uuid4()))
+  default_use_composefs: false
   static_uuids:
     mpp-eval: locals().get('static_uuids', True)
   default_rootfs_uuid:
@@ -138,6 +139,7 @@ mpp-vars:
   default_containers_extra_store: /usr/share/containers/storage
   default_containers_transient_store: true
   default_containers_read_only: true
+  default_tmp_is_tmpfs: true
   default_image_extra_stages: []
   default_image_enabled_services: []
   default_image_masked_services: []
@@ -267,6 +269,8 @@ mpp-vars:
     mpp-eval: locals().get('use_ostree', default_use_ostree)
   image_uuid:
     mpp-eval: locals().get('image_uuid', default_image_uuid)
+  use_composefs:
+    mpp-eval: locals().get('use_composefs', default_use_composefs)
   container_entrypoint:
     mpp-eval: locals().get('container_entrypoint', default_container_entrypoint)
   container_cmd:
@@ -281,6 +285,8 @@ mpp-vars:
     mpp-eval: locals().get('containers_transient_store', default_containers_transient_store)
   containers_read_only:
     mpp-eval: locals().get('containers_read_only', default_containers_read_only)
+  tmp_is_tmpfs:
+    mpp-eval: locals().get('tmp_is_tmpfs', default_tmp_is_tmpfs)
   image_extra_stages:
     mpp-eval: locals().get('image_extra_stages',  default_image_extra_stages)
   image_enabled_services:
