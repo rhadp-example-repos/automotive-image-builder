@@ -1,6 +1,7 @@
 version: '2'
 mpp-vars:
   use_grub2: false
+  use_abl: true
   use_aboot: true
   use_abootpart: true
   use_bootpart: false

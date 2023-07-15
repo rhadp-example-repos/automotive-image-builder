@@ -51,6 +51,7 @@ mpp-vars:
   default_timezone: UTC
   default_locale: en_US.UTF-8
   default_use_grub2: true
+  default_use_abl: false
   default_use_aboot: false
   default_use_abootpart: false
   default_use_efipart: true
@@ -257,6 +258,8 @@ mpp-vars:
     mpp-eval: locals().get('use_grub2', default_use_grub2)
   timezone:
     mpp-eval: locals().get('timezone', default_timezone)
+  use_abl:
+    mpp-eval: locals().get('use_abl', default_use_abl)
   use_aboot:
     mpp-eval: locals().get('use_aboot', default_use_aboot)
   use_abootpart:
