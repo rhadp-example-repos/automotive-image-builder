@@ -14,6 +14,7 @@ mpp-vars:
   aboot_tags_offset: "0x7d00000"
   aboot_base: "0x1208800"
   aboot_dtb_file: "qcom/sa8540p-ride.dtb"
+  image_size: 10737373184
   extra_image_rpms:
     - aboot-deploy
     - aquantia-mac-generator
