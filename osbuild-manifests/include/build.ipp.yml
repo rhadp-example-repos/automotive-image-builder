@@ -83,8 +83,7 @@ pipelines:
               - mpp-eval: extra_build_rpms
     options:
       gpgkeys:
-      - mpp-eval: centos_gpg_key
-      - mpp-eval: redhat_gpg_key
+      - mpp-eval: distro_gpg_keys
       exclude:
         docs: true
   - type: org.osbuild.selinux

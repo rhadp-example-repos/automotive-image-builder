@@ -33,8 +33,7 @@ pipelines:
   - type: org.osbuild.rpm
     options:
       gpgkeys:
-      - mpp-eval: centos_gpg_key
-      - mpp-eval: redhat_gpg_key
+      - mpp-eval: distro_gpg_keys
       disable_dracut: true
       exclude:
         docs: true
