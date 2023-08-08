@@ -148,6 +148,10 @@ mpp-vars:
           then: tmp.mount
         - mpp-if: use_containers and containers_transient_store
           then: podman-clean-transient.service
+  ostree_prepare_root_conf:
+    mpp-format-string: |
+      [sysroot]
+      readonly=false
   build_info:
     mpp-format-string: |
       RELEASE="{release_name}"

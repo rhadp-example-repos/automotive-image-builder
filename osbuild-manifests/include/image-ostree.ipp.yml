@@ -233,7 +233,6 @@ pipelines:
       repo: /ostree/repo
       config:
         sysroot:
-          readonly: false
           mpp-if: use_aboot
           then:
             bootloader: aboot
