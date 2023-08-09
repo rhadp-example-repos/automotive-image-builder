@@ -3,6 +3,7 @@ mpp-vars:
   distro_name: f38
   distro_version: 38
   distro_baseurl: http://download.fedoraproject.org/pub/fedora/linux/
+  distro_baseurl_repo: $distro_baseurl/updates/$distro_version/Everything/$arch/
   osname: fedora
   uefi_vendor: fedora
   kernel_package: kernel
@@ -14,7 +15,8 @@ mpp-vars:
   - id: fedora-updates
     baseurl: $distro_baseurl/updates/$distro_version/Everything/$arch/
   distro_devel_repos:
-  - []
+  - id: fedora-updates-devel
+    baseurl: $distro_baseurl/updates/$distro_version/Everything/$arch/
   distro_debug_repos:
   - []
   distro_module_id: platform:f38

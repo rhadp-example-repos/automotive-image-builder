@@ -30,7 +30,7 @@ pipelines:
           architecture: $arch
           ignore-weak-deps: true
           module-platform-id: $distro_module_id
-          baseurl: $distro_baseurl/BaseOS/$arch/os/
+          baseurl: $distro_baseurl_repo
           repos:
             mpp-join:
             - mpp-eval: image_repos
