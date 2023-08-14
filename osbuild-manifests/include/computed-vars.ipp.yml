@@ -100,21 +100,12 @@ mpp-vars:
       then:
         - overlay
         - erofs
-  dracut_install:
-    mpp-join:
-    - mpp-eval: dracut_install
-    - mpp-if: use_composefs and use_ostree
-      then:
-        - /etc/ostree/commit.key
   kernel_opts:
     mpp-join:
     - mpp-eval: kernel_opts
     - mpp-if: use_serial_console
       then:
         - console=$serial_console
-    - mpp-if: use_composefs
-      then:
-        - ot-composefs=signed=/etc/ostree/commit.key
   image_repos:
     mpp-join:
       - mpp-eval: distro_repos
@@ -152,6 +143,8 @@ mpp-vars:
     mpp-format-string: |
       [sysroot]
       readonly=false
+      [composefs]
+      enabled={"signed" if use_composefs else "maybe" }
   build_info:
     mpp-format-string: |
       RELEASE="{release_name}"
