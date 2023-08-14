@@ -142,7 +142,7 @@ mpp-vars:
   ostree_prepare_root_conf:
     mpp-format-string: |
       [sysroot]
-      readonly=false
+      readonly=true
       [composefs]
       enabled={"signed" if use_composefs else "maybe" }
   build_info:

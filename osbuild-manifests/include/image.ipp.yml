@@ -25,7 +25,9 @@ mpp-vars:
           - /usr/.auto-unlock-key
   kernel_opts:
     mpp-join:
-      - - ro
+      - - mpp-if: use_ostree
+          then: rw
+          else: ro
         - loglevel=$kernel_loglevel
         - mpp-if: use_efi_runtime
           then: efi=runtime
