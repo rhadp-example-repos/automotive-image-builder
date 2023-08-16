@@ -13,8 +13,10 @@ mpp-vars:
       then:
         from: input://extra-tree/containers.conf
         to: tree:///etc/containers/containers.conf
-    - from: input://extra-tree/build-info
-      to: tree:///etc/build-info
+    - mpp-if: use_ostree
+      then:
+        from: input://extra-tree/ostree_prepare_root.conf
+        to: tree:///usr/lib/ostree/prepare-root.conf
   dracut_install:
     mpp-join:
       - mpp-eval: dracut_install
@@ -23,7 +25,9 @@ mpp-vars:
           - /usr/.auto-unlock-key
   kernel_opts:
     mpp-join:
-      - - ro
+      - - mpp-if: use_ostree
+          then: rw
+          else: ro
         - loglevel=$kernel_loglevel
         - mpp-if: use_efi_runtime
           then: efi=runtime
@@ -96,6 +100,19 @@ pipelines:
       - from:
           mpp-format-string: input://inlinefile/{embedded['containers.conf']}
         to: tree:///containers.conf
+  - type: org.osbuild.copy
+    inputs:
+      inlinefile:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: ostree_prepare_root.conf
+          text: $ostree_prepare_root_conf
+    options:
+      paths:
+      - from:
+          mpp-format-string: input://inlinefile/{embedded['ostree_prepare_root.conf']}
+        to: tree:///ostree_prepare_root.conf
   - type: org.osbuild.copy
     inputs:
       inlinefile:

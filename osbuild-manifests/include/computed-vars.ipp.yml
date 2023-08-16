@@ -100,21 +100,12 @@ mpp-vars:
       then:
         - overlay
         - erofs
-  dracut_install:
-    mpp-join:
-    - mpp-eval: dracut_install
-    - mpp-if: use_composefs and use_ostree
-      then:
-        - /etc/ostree/commit.key
   kernel_opts:
     mpp-join:
     - mpp-eval: kernel_opts
     - mpp-if: use_serial_console
       then:
         - console=$serial_console
-    - mpp-if: use_composefs
-      then:
-        - ot-composefs=signed=/etc/ostree/commit.key
   image_repos:
     mpp-join:
       - mpp-eval: distro_repos
@@ -148,6 +139,12 @@ mpp-vars:
           then: tmp.mount
         - mpp-if: use_containers and containers_transient_store
           then: podman-clean-transient.service
+  ostree_prepare_root_conf:
+    mpp-format-string: |
+      [sysroot]
+      readonly=true
+      [composefs]
+      enabled={"signed" if use_composefs else "maybe" }
   build_info:
     mpp-format-string: |
       RELEASE="{release_name}"
