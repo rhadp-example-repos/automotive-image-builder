@@ -95,6 +95,8 @@ pipelines:
             - mpp-eval: cs9_repos
             - - id: osbuild
                 baseurl: https://download.copr.fedorainfracloud.org/results/@osbuild/osbuild/centos-stream-9-$arch
+            - - id: osbuild-auto
+                baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/osbuild-auto/centos-stream-9-$arch
           packages:
           - bash
           - dracut-config-generic
@@ -105,6 +107,7 @@ pipelines:
           - osbuild
           - osbuild-tools
           - osbuild-ostree
+          - osbuild-auto
           excludes:
           - dracut-config-rescue
   - type: org.osbuild.locale
