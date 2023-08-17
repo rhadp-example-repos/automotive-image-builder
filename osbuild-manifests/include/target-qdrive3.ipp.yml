@@ -29,10 +29,9 @@ mpp-vars:
     mpp-join:
     - mpp-eval: kernel_opts
     - - no_console_suspend=1
-      - earlycon
-      - ignore_loglevel
       - pd_ignore_unused
       - clk_ignore_unused
+      - quiet
   dracut_add_drivers:
     mpp-join:
     - mpp-eval: dracut_add_drivers
