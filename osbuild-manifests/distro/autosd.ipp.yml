@@ -12,6 +12,8 @@ mpp-vars:
   distro_repos:
   - id: autosd
     baseurl: $distro_baseurl/AutoSD/$arch/os/
+  - id: automotive
+    baseurl: https://buildlogs.centos.org/9-stream/automotive/$arch/packages-main/
   distro_devel_repos: []
   distro_debug_repos:
   - id: autosd-debug
