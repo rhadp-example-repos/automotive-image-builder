@@ -10,9 +10,9 @@ mpp-vars:
   - id: appstream
     baseurl: $distro_baseurl/AppStream/$arch/os/
   - id: automotive
-    baseurl: https://buildlogs.centos.org/9-stream/automotive/$arch/packages-main/
+    baseurl: https://mirror.stream.centos.org/SIGs/9-stream/automotive/$arch/packages-main/
   - id: autosd
-    baseurl: https://buildlogs.centos.org/9-stream/autosd/$arch/packages-main/
+    baseurl: https://mirror.stream.centos.org/SIGs/9-stream/autosd/$arch/packages-main/
   - id: next
     baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/next/epel-9-$arch/
   distro_devel_repos:
@@ -26,5 +26,5 @@ mpp-vars:
   - id: crb-debug
     baseurl: $distro_baseurl/CRB/$arch/debug/tree/
   - id: autosd-debug
-    baseurl: https://buildlogs.centos.org/9-stream/autosd/$arch/packages-main/debug/
+    baseurl: https://mirror.stream.centos.org/SIGs/9-stream/autosd/$arch/packages-main/debug/
   distro_module_id: platform:el9
