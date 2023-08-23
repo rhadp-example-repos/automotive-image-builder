@@ -32,6 +32,7 @@ mpp-vars:
       - pd_ignore_unused
       - clk_ignore_unused
       - quiet
+      - acpi=off
   dracut_add_drivers:
     mpp-join:
     - mpp-eval: dracut_add_drivers
