@@ -220,7 +220,7 @@ osbuildvm-images: $(BUILDDIR)
 %.tar.gz : %.tar
 	gzip -f $<
 
-AUTOSIGREPO=https://buildlogs.centos.org/9-stream/automotive
+AUTOSIGREPO=https://mirror.stream.centos.org/SIGs/9-stream/automotive
 define u-boot-rule
 qemu-u-boot-$1.bin:
 	DLDIR=`mktemp -d` && \
