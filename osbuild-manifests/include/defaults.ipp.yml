@@ -402,7 +402,6 @@ mpp-vars:
     - policycoreutils
     - python3-iniparse
     - python3
-    - qemu-img
     - rpm-ostree
     - selinux-policy-targeted
     - skopeo
