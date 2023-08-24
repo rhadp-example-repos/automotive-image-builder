@@ -25,4 +25,8 @@ mpp-vars:
     - aboot-deploy
     - mpp-if: arch == 'aarch64'
       then: autosig-qemu-dtb
+  kernel_opts:
+    mpp-join:
+    - mpp-eval: kernel_opts
+    - - acpi=off
 pipelines: []
