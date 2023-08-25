@@ -35,9 +35,9 @@ mpp-vars:
   dracut_add_drivers:
     mpp-join:
     - mpp-eval: dracut_add_drivers
-    - - "governor_simpleondemand.ko"
-      - "qnoc-sa8775p.ko"
-      - "ufs_qcom.ko"
+    - - "governor_simpleondemand"
+      - "qnoc_sa8775p"
+      - "ufs_qcom"
   dracut_omit_drivers:
     mpp-join:
     - mpp-eval: dracut_omit_drivers
