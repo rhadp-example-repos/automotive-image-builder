@@ -12,7 +12,7 @@ mpp-vars:
       - hirtectl
 
 pipelines:
-- name: qm_rootfs
+- name: qm_rootfs_base
   build: name:build
   stages:
   - type: org.osbuild.rpm
@@ -86,44 +86,6 @@ pipelines:
       - from:
           mpp-format-string: input://inlinefile4/{embedded['qm_container_conf']}
         to: tree:///etc/containers/containers.conf
-
-  - type: org.osbuild.skopeo
-    inputs:
-      images:
-        type: org.osbuild.containers
-        origin: org.osbuild.source
-        mpp-resolve-images:
-          images:
-            - source: registry.gitlab.com/centos/automotive/sample-images/demo/auto-apps
-              tag: latest
-              name: localhost/auto-apps
-    options:
-      destination:
-        type: containers-storage
-        storage-path: /usr/share/containers/storage
-
-  - type: org.osbuild.copy
-    inputs:
-      inlinefile:
-        type: org.osbuild.files
-        origin: org.osbuild.source
-        mpp-embed:
-          id: radio.container
-          path: ../files/radio.container
-      inlinefile2:
-        type: org.osbuild.files
-        origin: org.osbuild.source
-        mpp-embed:
-          id: engine.container
-          path: ../files/engine.container
-    options:
-      paths:
-      - from:
-          mpp-format-string: input://inlinefile/{embedded['radio.container']}
-        to: tree:///etc/containers/systemd/radio.container
-      - from:
-          mpp-format-string: input://inlinefile2/{embedded['engine.container']}
-        to: tree:///etc/containers/systemd/engine.container
 
   - type: org.osbuild.locale
     options:
