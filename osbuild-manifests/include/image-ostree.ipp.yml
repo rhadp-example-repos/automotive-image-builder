@@ -89,7 +89,7 @@ pipelines:
           - wheel
           - docker
           initramfs-args:
-            - "--zstd"
+            - "--lz4"
             - mpp-if: dracut_add_modules
               then: "--add"
             - mpp-if: dracut_add_modules
