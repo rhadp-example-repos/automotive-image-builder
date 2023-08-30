@@ -100,6 +100,71 @@ pipelines:
               - auto-apps
           excludes:
           - dracut-config-rescue
+  - mpp-if: not use_qm
+    then:
+      type: org.osbuild.skopeo
+      inputs:
+        images:
+          type: org.osbuild.containers
+          origin: org.osbuild.source
+          mpp-resolve-images:
+            images:
+              - source: registry.gitlab.com/centos/automotive/sample-images/demo/auto-apps
+                tag: latest
+                name: localhost/auto-apps
+      options:
+        destination:
+          type: containers-storage
+          storage-path: /usr/share/containers/storage
+    else:
+      type: org.osbuild.mkdir
+      options:
+        paths:
+        - path: /usr/share/containers/storage/overlay-images
+          parents: true
+        - path: /usr/share/containers/storage/overlay-layers
+          parents: true
+  - mpp-if: not use_qm
+    then:
+      type: org.osbuild.copy
+      inputs:
+        inlinefile1:
+          type: org.osbuild.files
+          origin: org.osbuild.source
+          mpp-embed:
+            id: radio.container
+            path: ../files/radio.container
+        inlinefile2:
+          type: org.osbuild.files
+          origin: org.osbuild.source
+          mpp-embed:
+            id: engine.container
+            path: ../files/engine.container
+      options:
+        paths:
+        - from:
+            mpp-format-string: input://inlinefile1/{embedded['radio.container']}
+          to: tree:///etc/containers/systemd/radio.container
+        - from:
+            mpp-format-string: input://inlinefile2/{embedded['engine.container']}
+          to: tree:///etc/containers/systemd/engine.container
+    else:
+      type: org.osbuild.copy
+      inputs:
+        inlinefile:
+          type: org.osbuild.files
+          origin: org.osbuild.source
+          mpp-embed:
+            id: empty
+            path: ../files/empty
+      options:
+        paths:
+        - from:
+            mpp-format-string: input://inlinefile/{embedded['empty']}
+          to: tree:///usr/share/containers/storage/overlay-images/images.lock
+        - from:
+            mpp-format-string: input://inlinefile/{embedded['empty']}
+          to: tree:///usr/share/containers/storage/overlay-layers/layers.lock
   - type: org.osbuild.users
     options:
       users:
