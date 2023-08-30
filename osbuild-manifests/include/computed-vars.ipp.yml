@@ -167,6 +167,21 @@ mpp-vars:
         "memory.oom.group=1",
       ]
       oom_score_adj = 750
+  qm_containers_storage_conf:
+    mpp-format-string: |
+      [storage]
+      driver = "overlay"
+      runroot = "/run/containers/storage"
+      graphroot = "/var/lib/containers/storage"
+      { "transient_store = true" if containers_transient_store else "" }
+
+      [storage.options]
+      additionalimagestores = [
+         "{qm_containers_extra_store}"
+      ]
+
+      [storage.options.overlay]
+      mountopt = "nodev,metacopy=on"
   image_enabled_services:
     mpp-join:
       - mpp-eval: image_enabled_services
