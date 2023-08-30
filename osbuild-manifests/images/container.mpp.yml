@@ -3,6 +3,9 @@ mpp-vars:
   name: container
   use_containers: true
   use_qm: true
+  qm_extra_rpms:
+    - vsomeip3-routingmanager
+
 pipelines:
 - mpp-import-pipelines:
     path: include/build.ipp.yml
