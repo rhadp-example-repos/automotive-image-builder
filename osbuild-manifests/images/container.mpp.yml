@@ -7,58 +7,60 @@ pipelines:
 - mpp-import-pipelines:
     path: include/build.ipp.yml
 
-- name: qm_rootfs
-  build: name:build
-  stages:
-    - type: org.osbuild.copy
-      inputs:
-        tree:
-          type: org.osbuild.tree
-          origin: org.osbuild.pipeline
-          references:
-            - name:qm_rootfs_base
-      options:
-        paths:
-          - from: input://tree/
-            to: tree:///
+- mpp-if: use_qm
+  then:
+    name: qm_rootfs
+    build: name:build
+    stages:
+      - type: org.osbuild.copy
+        inputs:
+          tree:
+            type: org.osbuild.tree
+            origin: org.osbuild.pipeline
+            references:
+              - name:qm_rootfs_base
+        options:
+          paths:
+            - from: input://tree/
+              to: tree:///
 
-    - type: org.osbuild.skopeo
-      inputs:
-        images:
-          type: org.osbuild.containers
-          origin: org.osbuild.source
-          mpp-resolve-images:
-            images:
-              - source: registry.gitlab.com/centos/automotive/sample-images/demo/auto-apps
-                tag: latest
-                name: localhost/auto-apps
-      options:
-        destination:
-          type: containers-storage
-          storage-path: /usr/share/containers/storage
+      - type: org.osbuild.skopeo
+        inputs:
+          images:
+            type: org.osbuild.containers
+            origin: org.osbuild.source
+            mpp-resolve-images:
+              images:
+                - source: registry.gitlab.com/centos/automotive/sample-images/demo/auto-apps
+                  tag: latest
+                  name: localhost/auto-apps
+        options:
+          destination:
+            type: containers-storage
+            storage-path: /usr/share/containers/storage
 
-    - type: org.osbuild.copy
-      inputs:
-        inlinefile:
-          type: org.osbuild.files
-          origin: org.osbuild.source
-          mpp-embed:
-            id: radio.container
-            path: ../files/radio.container
-        inlinefile2:
-          type: org.osbuild.files
-          origin: org.osbuild.source
-          mpp-embed:
-            id: engine.container
-            path: ../files/engine.container
-      options:
-        paths:
-        - from:
-            mpp-format-string: input://inlinefile/{embedded['radio.container']}
-          to: tree:///etc/containers/systemd/radio.container
-        - from:
-            mpp-format-string: input://inlinefile2/{embedded['engine.container']}
-          to: tree:///etc/containers/systemd/engine.container
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: radio.container
+              path: ../files/radio.container
+          inlinefile2:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: engine.container
+              path: ../files/engine.container
+        options:
+          paths:
+          - from:
+              mpp-format-string: input://inlinefile/{embedded['radio.container']}
+            to: tree:///etc/containers/systemd/radio.container
+          - from:
+              mpp-format-string: input://inlinefile2/{embedded['engine.container']}
+            to: tree:///etc/containers/systemd/engine.container
 
 - name: rootfs
   build: name:build
