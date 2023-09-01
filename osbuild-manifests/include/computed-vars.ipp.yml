@@ -213,7 +213,8 @@ mpp-vars:
   use_hirte:
     mpp-if: use_qm
     then: true
-    else: use_hirte
+    else:
+      mpp-eval: use_hirte
   bluechi_agent_conf:
     mpp-format-string: |
       [hirte-agent]
