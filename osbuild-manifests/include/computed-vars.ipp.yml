@@ -229,4 +229,9 @@ mpp-vars:
     mpp-format-string: |
       [hirte]
       AllowedNodeNames={ bluechi_nodename },qm.{ bluechi_nodename }
+  qm_subgid:
+    containers:1000000000:1500000000
+  qm_subgid:
+    containers:1000000000:1500000000
+
 pipelines: []
