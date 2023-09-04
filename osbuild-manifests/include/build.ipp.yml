@@ -81,6 +81,9 @@ pipelines:
             mpp-join:
               - mpp-eval: build_rpms
               - mpp-eval: extra_build_rpms
+              - mpp-if: use_qm
+                then:
+                  - qm
     options:
       gpgkeys:
       - mpp-eval: distro_gpg_keys
