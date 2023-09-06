@@ -1,0 +1,112 @@
+version: '2'
+mpp-vars:
+  name: container
+
+mpp-vars:
+  extra_image_rpms:
+    mpp-join:
+    - mpp-eval: extra_image_rpms
+    - - qm
+      - hirte
+      - hirte-agent
+      - hirtectl
+
+pipelines:
+- name: qm_rootfs_base
+  build: name:build
+  stages:
+  - type: org.osbuild.rpm
+    options:
+      gpgkeys:
+      - mpp-eval: centos_gpg_key
+      - mpp-eval: redhat_gpg_key
+      disable_dracut: true
+    inputs:
+      packages:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-depsolve:
+          architecture: $arch
+          ignore-weak-deps: true
+          module-platform-id: $distro_module_id
+          baseurl: $distro_baseurl/BaseOS/$arch/os/
+          repos:
+            mpp-join:
+            - mpp-eval: image_repos
+            - mpp-eval: extra_repos
+            - mpp-eval: qm_extra_repos
+            - - id: copr-sample-apps
+                baseurl: https://download.copr.fedorainfracloud.org/results/alexl/cs9-sample-images/centos-stream-9-$arch/
+          packages:
+            mpp-join:
+              - mpp-eval: qm_extra_rpms
+              - - systemd
+                - podman
+                - selinux-policy-targeted
+                - procps-ng
+                - hirte-agent
+
+  - type: org.osbuild.copy
+    inputs:
+      inlinefile:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: qm_subuid
+          text: qm_subuid
+      inlinefile2:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: qm_subgid
+          text: qm_subgid
+      inlinefile3:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: qm_agent_hirte_conf
+          text: $qm_bluechi_agent_conf
+      inlinefile4:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: qm_container_conf
+          text: $qm_containers_conf
+      inlinefile5:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: qm_container_storage_conf
+          text: $qm_containers_storage_conf
+    options:
+      paths:
+      - from:
+          mpp-format-string: input://inlinefile/{embedded['qm_subuid']}
+        to: tree:///etc/subuid
+      - from:
+          mpp-format-string: input://inlinefile2/{embedded['qm_subgid']}
+        to: tree:///etc/subgid
+      - from:
+          mpp-format-string: input://inlinefile3/{embedded['qm_agent_hirte_conf']}
+        to: tree:///etc/hirte/agent.conf
+      - from:
+          mpp-format-string: input://inlinefile4/{embedded['qm_container_conf']}
+        to: tree:///etc/containers/containers.conf
+      - from:
+          mpp-format-string: input://inlinefile5/{embedded['qm_container_storage_conf']}
+        to: tree:///etc/containers/storage.conf
+
+  - type: org.osbuild.locale
+    options:
+      language:
+        mpp-eval: locale
+
+  - type: org.osbuild.timezone
+    options:
+      zone:
+        mpp-eval: timezone
+
+  - type: org.osbuild.systemd
+    options:
+      enabled_services:
+      - hirte-agent.service

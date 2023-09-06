@@ -81,6 +81,9 @@ pipelines:
             mpp-join:
               - mpp-eval: build_rpms
               - mpp-eval: extra_build_rpms
+              - mpp-if: use_qm
+                then:
+                  - qm
     options:
       gpgkeys:
       - mpp-eval: distro_gpg_keys
@@ -92,3 +95,6 @@ pipelines:
       labels:
         /usr/bin/cp: system_u:object_r:install_exec_t:s0
         /usr/bin/tar: system_u:object_r:install_exec_t:s0
+
+- mpp-import-pipelines:
+    path: include/$qm_importfile.ipp.yml
