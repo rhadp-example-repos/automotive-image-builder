@@ -33,6 +33,7 @@ mpp-vars:
   default_guest_gid: 999
   default_root_ssh_key: ""
   default_ssh_permit_root_login: false
+  default_ssh_permit_password_auth: false
   default_image_size: '8589934592'
   default_efipart_size: 204800
   default_bootpart_size: 614400
@@ -247,6 +248,8 @@ mpp-vars:
     mpp-eval: locals().get('root_ssh_key', default_root_ssh_key)
   ssh_permit_root_login:
     mpp-eval: locals().get('ssh_permit_root_login', default_ssh_permit_root_login)
+  ssh_permit_password_auth:
+    mpp-eval: locals().get('ssh_permit_password_auth', default_ssh_permit_password_auth)
   guest_password:
     mpp-eval: locals().get('guest_password', default_guest_password)
   guest_gid:
