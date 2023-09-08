@@ -110,6 +110,11 @@ pipelines:
             - mpp-if: dracut_add_drivers
               then:
                 mpp-eval: "' '.join(dracut_add_drivers)"
+            - mpp-if: dracut_omit_drivers
+              then: "--omit-drivers"
+            - mpp-if: dracut_omit_drivers
+              then:
+                mpp-eval: "' '.join(dracut_omit_drivers)"
             - mpp-if: dracut_install
               then: "--install"
             - mpp-if: dracut_install
