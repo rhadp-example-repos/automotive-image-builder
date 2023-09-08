@@ -189,10 +189,10 @@ mpp-vars:
           then: tmp.mount
         - mpp-if: use_containers and containers_transient_store
           then: podman-clean-transient.service
-        - mpp-if: use_qm or use_hirte
-          then: hirte-agent.service
-        - mpp-if: use_qm or use_hirte
-          then: hirte.service
+        - mpp-if: use_qm or use_bluechi
+          then: bluechi-agent.service
+        - mpp-if: use_qm or use_bluechi
+          then: bluechi.service
   ostree_prepare_root_conf:
     mpp-format-string: |
       [sysroot]
@@ -210,24 +210,24 @@ mpp-vars:
     mpp-if: use_qm
     then: "qm"
     else: "empty"
-  use_hirte:
+  use_bluechi:
     mpp-if: use_qm
     then: true
     else:
-      mpp-eval: use_hirte
+      mpp-eval: use_bluechi
   bluechi_agent_conf:
     mpp-format-string: |
-      [hirte-agent]
+      [bluechi-agent]
       NodeName={ bluechi_nodename }
       ManagerHost= { bluechi_manager_host_ip }
   qm_bluechi_agent_conf:
     mpp-format-string: |
-      [hirte-agent]
+      [bluechi-agent]
       NodeName=qm.{ bluechi_nodename }
       ManagerHost= { bluechi_manager_host_ip }
   bluechi_conf:
     mpp-format-string: |
-      [hirte]
+      [bluechi]
       AllowedNodeNames={ bluechi_nodename },qm.{ bluechi_nodename }
   qm_subgid:
     containers:1000000000:1500000000

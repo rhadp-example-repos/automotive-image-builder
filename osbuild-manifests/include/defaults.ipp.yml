@@ -56,7 +56,7 @@ mpp-vars:
   default_use_grub2: true
   default_use_abl: false
   default_use_qm: false
-  default_use_hirte: false
+  default_use_bluechi: false
   default_use_aboot: false
   default_use_abootpart: false
   default_use_efipart: true
@@ -282,8 +282,8 @@ mpp-vars:
     mpp-eval: locals().get('use_abl', default_use_abl)
   use_qm:
     mpp-eval: locals().get('use_qm', default_use_qm)
-  use_hirte:
-    mpp-eval: locals().get('use_hirte', default_use_hirte)
+  use_bluechi:
+    mpp-eval: locals().get('use_bluechi', default_use_bluechi)
   use_aboot:
     mpp-eval: locals().get('use_aboot', default_use_aboot)
   use_abootpart:

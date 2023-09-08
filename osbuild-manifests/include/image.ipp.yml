@@ -19,14 +19,14 @@ mpp-vars:
         to: tree:///usr/lib/ostree/prepare-root.conf
     - from: input://extra-tree/build-info
       to: tree:///etc/build-info
-    - mpp-if: use_qm or use_hirte
+    - mpp-if: use_qm or use_bluechi
       then:
-        from: input://extra-tree/hirte_agent.conf
-        to: tree:///etc/hirte/agent.conf
-    - mpp-if: use_qm or use_hirte
+        from: input://extra-tree/bluechi.conf
+        to: tree:///etc/bluechi/bluechi.conf
+    - mpp-if: use_qm or use_bluechi
       then:
-        from: input://extra-tree/hirte.conf
-        to: tree:///etc/hirte/hirte.conf
+        from: input://extra-tree/bluechi_agent.conf
+        to: tree:///etc/bluechi/agent.conf
     - mpp-if: use_qm
       then:
         from: input://extra-tree/qm.container
@@ -168,13 +168,13 @@ pipelines:
         type: org.osbuild.files
         origin: org.osbuild.source
         mpp-embed:
-          id: hirte_agent_conf
+          id: bluechi_agent_conf
           text: $bluechi_agent_conf
       inlinefile2:
         type: org.osbuild.files
         origin: org.osbuild.source
         mpp-embed:
-          id: hirte_conf
+          id: bluechi_conf
           text: $bluechi_conf
       inlinefile3:
         type: org.osbuild.files
@@ -185,11 +185,11 @@ pipelines:
     options:
       paths:
       - from:
-          mpp-format-string: input://inlinefile/{embedded['hirte_agent_conf']}
-        to: tree:///hirte_agent.conf
+          mpp-format-string: input://inlinefile/{embedded['bluechi_agent_conf']}
+        to: tree:///bluechi_agent.conf
       - from:
-          mpp-format-string: input://inlinefile2/{embedded['hirte_conf']}
-        to: tree:///hirte.conf
+          mpp-format-string: input://inlinefile2/{embedded['bluechi_conf']}
+        to: tree:///bluechi.conf
       - from:
           mpp-format-string: input://inlinefile3/{embedded['qm_container']}
         to: tree:///qm.container

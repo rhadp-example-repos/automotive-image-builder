@@ -7,9 +7,9 @@ mpp-vars:
     mpp-join:
     - mpp-eval: extra_image_rpms
     - - qm
-      - hirte
-      - hirte-agent
-      - hirtectl
+      - bluechi
+      - bluechi-agent
+      - bluechictl
 
 pipelines:
 - name: qm_rootfs_base
@@ -44,7 +44,7 @@ pipelines:
                 - podman
                 - selinux-policy-targeted
                 - procps-ng
-                - hirte-agent
+                - bluechi-agent
 
   - type: org.osbuild.copy
     inputs:
@@ -64,7 +64,7 @@ pipelines:
         type: org.osbuild.files
         origin: org.osbuild.source
         mpp-embed:
-          id: qm_agent_hirte_conf
+          id: qm_agent_bluechi_conf
           text: $qm_bluechi_agent_conf
       inlinefile4:
         type: org.osbuild.files
@@ -87,8 +87,8 @@ pipelines:
           mpp-format-string: input://inlinefile2/{embedded['qm_subgid']}
         to: tree:///etc/subgid
       - from:
-          mpp-format-string: input://inlinefile3/{embedded['qm_agent_hirte_conf']}
-        to: tree:///etc/hirte/agent.conf
+          mpp-format-string: input://inlinefile3/{embedded['qm_agent_bluechi_conf']}
+        to: tree:///etc/bluechi/agent.conf
       - from:
           mpp-format-string: input://inlinefile4/{embedded['qm_container_conf']}
         to: tree:///etc/containers/containers.conf
@@ -109,4 +109,4 @@ pipelines:
   - type: org.osbuild.systemd
     options:
       enabled_services:
-      - hirte-agent.service
+      - bluechi-agent.service

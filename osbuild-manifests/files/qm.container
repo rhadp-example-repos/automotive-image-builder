@@ -11,7 +11,7 @@ Restart=always
 Slice=QM.slice
 Environment=ROOTFS=/usr/lib/qm/rootfs
 # Not something we can do on ostree
-#ExecStartPre=/usr/share/qm/setup hirte-agent
+#ExecStartPre=/usr/share/qm/setup bluechi-agent
 
 [Container]
 AddCapability=all
