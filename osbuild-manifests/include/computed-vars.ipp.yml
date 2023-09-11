@@ -198,7 +198,7 @@ mpp-vars:
       [sysroot]
       readonly=true
       [composefs]
-      enabled={"signed" if use_composefs else "maybe" }
+      enabled={"signed" if use_composefs_signed else "yes" if use_composefs else "maybe" }
   build_info:
     mpp-format-string: |
       RELEASE="{release_name}"
