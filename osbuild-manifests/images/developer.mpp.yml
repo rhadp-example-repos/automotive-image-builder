@@ -115,6 +115,8 @@ pipelines:
   - type: org.osbuild.sshd.config
     options:
       config:
+        PasswordAuthentication:
+          mpp-eval: ssh_permit_password_auth
         PermitRootLogin:
           mpp-eval: ssh_permit_root_login
   - type: org.osbuild.systemd
