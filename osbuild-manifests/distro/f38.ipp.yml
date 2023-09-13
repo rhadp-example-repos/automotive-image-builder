@@ -14,11 +14,16 @@ mpp-vars:
     baseurl: $distro_baseurl/releases/$distro_version/Everything/$arch/os/
   - id: fedora-updates
     baseurl: $distro_baseurl/updates/$distro_version/Everything/$arch/
+  - id: next
+    baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/next/fedora-38-$arch/
   distro_devel_repos:
   - id: fedora-updates-devel
     baseurl: $distro_baseurl/updates/$distro_version/Everything/$arch/
+  - id: next-devel
+    baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/next/fedora-38-$arch/
   distro_debug_repos:
-  - []
+  - id: next-debug
+    baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/next/fedora-38-$arch/
   distro_module_id: platform:f38
   distro_gpg_keys: |
     -----BEGIN PGP PUBLIC KEY BLOCK-----
