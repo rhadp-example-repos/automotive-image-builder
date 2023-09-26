@@ -110,10 +110,8 @@ mpp-vars:
   - libahci.ignore_sss=1 # Staggered spin-up
   default_dracut_add_modules:
       - base
-      - bash
       - dracut-systemd
       - fs-lib
-      - i18n
       - kernel-modules
       - kernel-modules-extra
       - rootfs-block
@@ -124,13 +122,17 @@ mpp-vars:
       - udev-rules
       - usrmount
   default_dracut_omit_modules:
+      - bash
+      - i18n
       - lunmask
       - mdraid
       - memstrack
       - nss-softokn
       - nvdimm
+      - qemu
       - resume
       - terminfo
+      - virtiofs
   default_dracut_filesystems:
       - vfat
       - ext4
