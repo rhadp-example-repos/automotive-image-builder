@@ -134,7 +134,6 @@ mpp-vars:
       - terminfo
       - virtiofs
   default_dracut_filesystems:
-      - vfat
       - ext4
   default_dracut_add_drivers: []
   default_dracut_omit_drivers: []
