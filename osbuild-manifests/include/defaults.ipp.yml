@@ -106,8 +106,7 @@ mpp-vars:
     mpp-if: arch == 'aarch64'
     then: ttyAMA0
     else: ttyS0
-  default_kernel_opts:
-  - libahci.ignore_sss=1 # Staggered spin-up
+  default_kernel_opts: []
   default_dracut_add_modules:
       - base
       - dracut-systemd

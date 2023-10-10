@@ -30,7 +30,6 @@ mpp-vars:
     - - no_console_suspend=1
       - clk_ignore_unused
       - pd_ignore_unused
-      - quiet
       - acpi=off
   dracut_add_drivers:
     mpp-join:

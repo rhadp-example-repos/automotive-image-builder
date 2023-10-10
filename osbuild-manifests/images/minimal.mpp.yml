@@ -1,6 +1,8 @@
 version: '2'
 mpp-vars:
   name: minimal
+  kernel_opts:
+    - quiet
 pipelines:
 - mpp-import-pipelines:
     path: include/build.ipp.yml
