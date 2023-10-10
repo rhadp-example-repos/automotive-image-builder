@@ -205,7 +205,8 @@ mpp-vars:
       RELEASE="{release_name}"
       UUID="{image_uuid}"
       TIMESTAMP="{build_timestamp}"
-      IMAGE_NAME="{image_type}"
+      IMAGE_NAME="{name}"
+      IMAGE_TYPE="{image_type}"
       IMAGE_TARGET="{target}"
   qm_importfile:
     mpp-if: use_qm
