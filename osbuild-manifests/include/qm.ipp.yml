@@ -96,6 +96,20 @@ pipelines:
           mpp-format-string: input://inlinefile5/{embedded['qm_container_storage_conf']}
         to: tree:///etc/containers/storage.conf
 
+  - type: org.osbuild.copy
+    inputs:
+      tree:
+        type: org.osbuild.tree
+        origin: org.osbuild.pipeline
+        references:
+          - name:build
+    options:
+      paths:
+        - from: input://tree/usr/share/qm/contexts
+          to: tree:///usr/share/containers/selinux/
+        - from: input://tree/usr/share/qm/file_contexts
+          to: tree:///etc/selinux/targeted/contexts/files/
+
   - type: org.osbuild.locale
     options:
       language:
