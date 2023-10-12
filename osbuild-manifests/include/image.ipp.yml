@@ -249,6 +249,13 @@ pipelines:
           options:
             label: ESP
             volid: 7B7795E7
+            # Usually disk geometry is obtained automatically, but some platforms
+            # require a specific boot filesystem geometry in order to boot. This
+            # allows you to setup the geometry of the disk.
+            geometry:
+              mpp-if: "'efipart_geometry' in locals()"
+              then:
+                mpp-eval: efipart_geometry
       - mpp-if: use_bootpart
         then:
           type: org.osbuild.mkfs.ext4
