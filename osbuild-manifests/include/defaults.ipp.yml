@@ -157,7 +157,7 @@ mpp-vars:
   default_bluechi_manager_host_ip: "127.0.0.1"
   default_efipart_dos_type: 'ef'
   efipart_dos_type:
-    mpp-eval: locals().get('efipart_dos_type', default_efipart_type)
+    mpp-eval: locals().get('efipart_dos_type', default_efipart_dos_type)
   default_efipart_bootable: false
   efipart_bootable:
     mpp-eval: locals().get('efipart_bootable', default_efipart_bootable)
