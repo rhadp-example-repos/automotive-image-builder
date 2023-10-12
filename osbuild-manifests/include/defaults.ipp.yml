@@ -155,6 +155,12 @@ mpp-vars:
   default_image_masked_services: []
   default_bluechi_nodename: "host"
   default_bluechi_manager_host_ip: "127.0.0.1"
+  default_efipart_dos_type: 'ef'
+  efipart_dos_type:
+    mpp-eval: locals().get('efipart_dos_type', default_efipart_type)
+  default_efipart_bootable: false
+  efipart_bootable:
+    mpp-eval: locals().get('efipart_bootable', default_efipart_bootable)
   default_distro_gpg_keys: ""
   distro_gpg_keys:
     mpp-eval: locals().get('distro_gpg_keys', default_distro_gpg_keys)
