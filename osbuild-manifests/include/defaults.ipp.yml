@@ -23,6 +23,7 @@ mpp-vars:
   default_extra_build_rpms: []
   default_extra_build_repos: []
   default_extra_image_rpms: []
+  default_extra_kernel_opts: []
   default_extra_repos: []
   default_qm_extra_repos: []
   default_qm_extra_rpms: []
@@ -200,6 +201,8 @@ mpp-vars:
     mpp-eval: locals().get('extra_build_rpms', default_extra_build_rpms)
   extra_build_repos:
     mpp-eval: locals().get('extra_build_repos', default_extra_build_repos)
+  extra_kernel_opts:
+    mpp-eval: locals().get('extra_kernel_opts', default_extra_kernel_opts)
   extra_repos:
     mpp-eval: locals().get('extra_repos', default_extra_repos)
   qm_extra_repos:
