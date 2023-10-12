@@ -19,6 +19,8 @@ mpp-define-image:
         type:
           mpp-eval: "'C12A7328-F81F-11D2-BA4B-00A0C93EC93B' if partition_label == 'gpt' else '$efipart_dos_type'"
         uuid: $efipart_uuid
+        bootable:
+          mpp-eval: efipart_bootable
     - mpp-if: use_bootpart
       then:
         id: boot
