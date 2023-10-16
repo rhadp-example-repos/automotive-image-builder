@@ -103,6 +103,7 @@ mpp-vars:
   kernel_opts:
     mpp-join:
     - mpp-eval: kernel_opts
+    - mpp-eval: extra_kernel_opts
     - mpp-if: use_serial_console
       then:
         - console=$serial_console
