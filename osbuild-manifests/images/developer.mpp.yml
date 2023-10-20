@@ -92,6 +92,8 @@ pipelines:
               # bpf tools
               - bcc
               - bcc-tools
+              # debugging tools
+              - sos
           excludes:
           - dracut-config-rescue
   - type: org.osbuild.yum.repos
