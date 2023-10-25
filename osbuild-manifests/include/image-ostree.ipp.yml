@@ -54,6 +54,14 @@ pipelines:
               - - from: input://tree/
                   to: tree:///
               - mpp-eval: extra_tree_content
+      - type: org.osbuild.users
+        options:
+          users:
+            root:
+              password:
+                mpp-eval: root_password
+              key:
+                mpp-eval: root_ssh_key
       - mpp-if: use_composefs
         then:
           type: org.osbuild.copy
@@ -287,23 +295,6 @@ pipelines:
           mpp-eval: osname
         ref:
           mpp-eval: ostree_ref
-  - type: org.osbuild.users
-    mounts:
-      - type: org.osbuild.ostree.deployment
-        name: ostree.deployment
-        options:
-          deployment:
-            osname:
-              mpp-eval: osname
-            ref:
-              mpp-eval: ostree_ref
-    options:
-      users:
-        root:
-          password:
-            mpp-eval: root_password
-          key:
-            mpp-eval: root_ssh_key
   - type: org.osbuild.fstab
     options:
       ostree:
