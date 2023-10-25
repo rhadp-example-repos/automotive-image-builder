@@ -18,6 +18,7 @@ mpp-vars:
       baseurl: https://download.copr.fedorainfracloud.org/results/alexl/composefs-test/centos-stream-9-$arch
     - id: epel
       baseurl: https://dl.fedoraproject.org/pub/epel/9/Everything/$arch/
+  use_transient_etc: true
 pipelines:
 - mpp-import-pipelines:
     path: include/build.ipp.yml
