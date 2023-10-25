@@ -202,6 +202,8 @@ mpp-vars:
     mpp-format-string: |
       [sysroot]
       readonly=true
+      [etc]
+      { "transient=true" if use_transient_etc else "" }
       [composefs]
       enabled={"signed" if use_composefs_signed else "yes" if use_composefs else "maybe" }
   build_info:
