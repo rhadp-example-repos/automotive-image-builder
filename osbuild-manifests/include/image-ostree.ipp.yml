@@ -88,7 +88,11 @@ pipelines:
           - greenboot-status.service
           - greenboot-task-runner.service
     - mpp-eval: image_extra_stages
-    - - type: org.osbuild.selinux
+    - - type: org.osbuild.fstab
+        options:
+          filesystems:
+            mpp-eval: fstab
+      - type: org.osbuild.selinux
         options:
           file_contexts: etc/selinux/targeted/contexts/files/file_contexts
       - type: org.osbuild.ostree.preptree
@@ -295,16 +299,6 @@ pipelines:
           mpp-eval: osname
         ref:
           mpp-eval: ostree_ref
-  - type: org.osbuild.fstab
-    options:
-      ostree:
-        deployment:
-          osname:
-            mpp-eval: osname
-          ref:
-            mpp-eval: ostree_ref
-      filesystems:
-        mpp-eval: fstab
   - type: org.osbuild.ostree.selinux
     options:
       deployment:
