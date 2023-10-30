@@ -10,6 +10,7 @@ version: '2'
 mpp-vars:
   name: composefs
   use_composefs: true
+  use_transient_etc: true
   extra_build_repos:
     - id: composefs-test
       baseurl: https://download.copr.fedorainfracloud.org/results/alexl/composefs-test/centos-stream+epel-next-9-$arch
