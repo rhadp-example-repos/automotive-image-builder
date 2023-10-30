@@ -200,6 +200,9 @@ pipelines:
         mpp-if: ostree_ref in locals().get("ostree_parent_refs", {})
         then:
           mpp-eval: ostree_parent_refs[ostree_ref]
+      selinux-label-version:
+        mpp-if: use_transient_etc
+        then: 1
   - mpp-if: use_composefs
     then:
       type: org.osbuild.copy
