@@ -12,10 +12,10 @@ mpp-vars:
   use_composefs: true
   extra_build_repos:
     - id: composefs-test
-      baseurl: https://download.copr.fedorainfracloud.org/results/alexl/composefs-test/centos-stream-9-$arch
+      baseurl: https://download.copr.fedorainfracloud.org/results/alexl/composefs-test/centos-stream+epel-next-9-$arch
   extra_repos:
     - id: composefs-test
-      baseurl: https://download.copr.fedorainfracloud.org/results/alexl/composefs-test/centos-stream-9-$arch
+      baseurl: https://download.copr.fedorainfracloud.org/results/alexl/composefs-test/centos-stream+epel-next-9-$arch
     - id: epel
       baseurl: https://dl.fedoraproject.org/pub/epel/9/Everything/$arch/
   use_transient_etc: true
