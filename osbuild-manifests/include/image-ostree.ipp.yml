@@ -99,7 +99,7 @@ pipelines:
           - wheel
           - docker
           initramfs-args:
-            - "--lz4"
+            - "--gzip"
             - mpp-if: dracut_add_modules
               then: "--add"
             - mpp-if: dracut_add_modules
