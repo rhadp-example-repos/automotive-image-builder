@@ -107,8 +107,11 @@ mpp-vars:
     - mpp-if: use_serial_console
       then:
         - console=$serial_console
-    - mpp-if: not use_debug
+    - mpp-if: use_debug
       then:
+        - ignore_loglevel
+        - earlycon
+      else:
         - quiet
     - - libahci.ignore_sss=1 # Staggered spin-up
   image_repos:
