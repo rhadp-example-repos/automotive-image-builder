@@ -99,7 +99,10 @@ pipelines:
           config:
             early_microcode: false
             reproducible: true
-            compress: gzip
+            compress:
+              mpp-if: dracut_compression
+              then:
+                mpp-eval: dracut_compression
             add_dracutmodules:
               mpp-if: dracut_add_modules
               then:

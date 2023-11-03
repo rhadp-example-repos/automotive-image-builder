@@ -100,6 +100,10 @@ mpp-vars:
       then:
         - overlay
         - erofs
+  dracut_compression:
+    mpp-if: use_debug
+    then: gzip
+    else: cat
   kernel_opts:
     mpp-join:
     - mpp-eval: kernel_opts

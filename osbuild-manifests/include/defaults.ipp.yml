@@ -136,6 +136,7 @@ mpp-vars:
       - virtiofs
   default_dracut_filesystems:
       - ext4
+  default_dracut_compression: ""
   default_dracut_add_drivers: []
   default_dracut_omit_drivers: []
   default_dracut_install: []
@@ -250,6 +251,8 @@ mpp-vars:
     mpp-eval: locals().get('dracut_omit_modules', default_dracut_omit_modules)
   dracut_filesystems:
     mpp-eval: locals().get('dracut_filesystems', default_dracut_filesystems)
+  dracut_compression:
+    mpp-eval: locals().get('dracut_compression', default_dracut_compression)
   dracut_add_drivers:
     mpp-eval: locals().get('dracut_add_drivers', default_dracut_add_drivers)
   dracut_omit_drivers:
