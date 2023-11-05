@@ -226,6 +226,24 @@ pipelines:
         ref:
           mpp-eval: ostree_ref
         key: /repo/build-key
+
+- name: ostree-oci-image
+  build: name:build
+  stages:
+  - type: org.osbuild.ostree.encapsulate
+    inputs:
+      commit:
+        type: org.osbuild.ostree
+        origin: org.osbuild.pipeline
+        references:
+          name:ostree-commit:
+            ref:
+              mpp-eval: ostree_ref
+    options:
+      filename: image.oci-archive
+      cmd:
+        mpp-eval: container_cmd
+
 - name: image-tree
   build: name:build
   stages:
