@@ -21,6 +21,7 @@ mpp-vars:
         then: greenboot-rpm-ostree-grub2
       - mpp-if: name == 'developer'
         then: ostree-compliance-mode
+      - skopeo # Needed for upgrading from an OCI remove image
       - polkit # Needed by rpm-ostree upgrade (until fix for https://github.com/coreos/rpm-ostree/issues/3554 is in)
 pipelines:
 - name: build-keys
