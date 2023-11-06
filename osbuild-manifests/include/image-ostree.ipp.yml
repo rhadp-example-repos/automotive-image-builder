@@ -93,43 +93,42 @@ pipelines:
       - type: org.osbuild.selinux
         options:
           file_contexts: etc/selinux/targeted/contexts/files/file_contexts
+      - type: org.osbuild.dracut.conf
+        options:
+          filename: 90-image.conf
+          config:
+            early_microcode: false
+            reproducible: true
+            compress: gzip
+            add_dracutmodules:
+              mpp-if: dracut_add_modules
+              then:
+                mpp-eval: dracut_add_modules
+            omit_dracutmodules:
+              mpp-if: dracut_omit_modules
+              then:
+                mpp-eval: dracut_omit_modules
+            add_drivers:
+              mpp-if: dracut_add_drivers
+              then:
+                mpp-eval: dracut_add_drivers
+            omit_drivers:
+              mpp-if: dracut_omit_drivers
+              then:
+                mpp-eval: dracut_omit_drivers
+            filesystems:
+              mpp-if: dracut_filesystems
+              then:
+                mpp-eval: dracut_filesystems
+            install_items:
+              mpp-if: dracut_install
+              then:
+                mpp-eval: dracut_install
       - type: org.osbuild.ostree.preptree
         options:
           etc_group_members:
           - wheel
           - docker
-          initramfs-args:
-            - "--gzip"
-            - mpp-if: dracut_add_modules
-              then: "--add"
-            - mpp-if: dracut_add_modules
-              then:
-                mpp-eval: "' '.join(dracut_add_modules)"
-            - mpp-if: dracut_omit_modules
-              then: "--omit"
-            - mpp-if: dracut_omit_modules
-              then:
-                mpp-eval: "' '.join(dracut_omit_modules)"
-            - mpp-if: dracut_filesystems
-              then: "--filesystems"
-            - mpp-if: dracut_filesystems
-              then:
-                mpp-eval: "' '.join(dracut_filesystems)"
-            - mpp-if: dracut_add_drivers
-              then: "--add-drivers"
-            - mpp-if: dracut_add_drivers
-              then:
-                mpp-eval: "' '.join(dracut_add_drivers)"
-            - mpp-if: dracut_omit_drivers
-              then: "--omit-drivers"
-            - mpp-if: dracut_omit_drivers
-              then:
-                mpp-eval: "' '.join(dracut_omit_drivers)"
-            - mpp-if: dracut_install
-              then: "--install"
-            - mpp-if: dracut_install
-              then:
-                mpp-eval: "' '.join(dracut_install)"
       - mpp-if: use_aboot
         then:
           type: org.osbuild-auto.aboot.conf
