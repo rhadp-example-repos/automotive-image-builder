@@ -39,7 +39,7 @@ endif
 
 export CHECKPOINTS=build
 IMAGETYPES := regular ostree
-FORMATS := img qcow2 oci.tar repo oci-archive rootfs ext4 tar aboot
+FORMATS := img qcow2 oci.tar repo oci-archive rootfs ext4 tar aboot oci-archive+qcow2 oci-archive+img
 aarch64_TARGETS := ridesx4 rpi4 qdrive3 abootqemu am62sk
 COMMON_TARGETS := qemu aws
 HOST_TARGETS := $(COMMON_TARGETS) $($(HOST_ARCH)_TARGETS)
@@ -72,6 +72,8 @@ help:
 	@echo \ \* .ext4: Generate an ext4 filesystem with the rootfs content  \(size from \"image_size\"\)
 	@echo \ \* .oci.tar: Generate an oci container image with the rootfs content
 	@echo \ \* .oci-archive: Generate an oci container image with the ostree commit
+	@echo \ \* .oci-archive+qcow: Generate an oci container image with the ostree commit plus a qcow image deploying the commit
+	@echo \ \* .oci-archive+img: Generate an oci container image with the ostree commit plus a image deploying the commit
 	@echo \ \* .aboot: Generate an ext4 root filesystem and an android boot image \(for aboot targets\)
 	@echo
 	@echo You can pass variable declarations to osbuild-mpp with the DEFINES make variable.

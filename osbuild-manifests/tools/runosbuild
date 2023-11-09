@@ -22,7 +22,7 @@ JSON="$2"
 TARGET="$3"
 IMAGETYPE="$4"
 ARCH="$5"
-EXTENSION="$6"
+COMBINEDEXTENSION="$6"
 
 # Map extension => export pipeline name
 declare -A EXPORT_BY_EXT
@@ -48,9 +48,6 @@ EXPORT_FILE_BY_EXT[ext4]=rootfs.ext4
 EXPORT_FILE_BY_EXT[tar]=rootfs.tar
 EXPORT_FILE_BY_EXT[aboot]=images
 
-EXPORT=${EXPORT_BY_EXT[${EXTENSION}]}
-EXPORT_FILE=${EXPORT_FILE_BY_EXT[${EXTENSION}]}
-
 HOST_ARCH=$(arch)
 CURRENT_UIDGID="$(id -u):$(id -g)"
 SUDO=
@@ -64,19 +61,23 @@ else
     OSBUILD="osbuild"
 fi
 
-EXPORT_ARGS="--export $EXPORT"
-
 CHECKPOINT_ARGS=
 for CP in $CHECKPOINTS; do
     CHECKPOINT_ARGS="${CHECKPOINT_ARGS} --checkpoint ${CP}"
 done
 
-CHOWNARGS=
-if [ $EXTENSION == repo -o $EXTENSION == aboot ]; then
-    CHOWNARGS=-R # Chown entire repo dir as it doesn't care about permissions
-fi
+EXTENSIONS=()
+declare -A EXPORTS
 
-EXPORTDIRS=$OUTPUTDIR/$EXPORT
+# Split EXTENSION over + into EXTS
+OIFS=$IFS
+IFS='+'
+for EXT in $COMBINEDEXTENSION
+do
+    EXTENSIONS+=($EXT)
+    EXPORTS[${EXPORT_BY_EXT[${EXT}]}]=1
+done
+IFS=$OIFS
 
 # If OSTREE_REPO is set, and we're building an image that has an
 # ostree commit, then we also export that commit to the repo specified
@@ -84,19 +85,21 @@ EXPORTDIRS=$OUTPUTDIR/$EXPORT
 ALSO_EXPORT_OSTREE=0
 if [ "$OSTREE_REPO" != "" -a "$IMAGETYPE" == "ostree" ]; then
     ALSO_EXPORT_OSTREE=1
-    if [ $EXPORT != "ostree-commit" ]; then
-        EXPORT_ARGS="$EXPORT_ARGS --export ostree-commit"
-        EXPORTDIRS="$EXPORTDIRS $OUTPUTDIR/ostree-commit"
-    fi
+
+    EXPORTS[ostree-commit]=1
 
     # Ensure we have a repo to export to
     ostree init --repo=$OSTREE_REPO --mode archive
 fi
 
-set -x
+EXPORT_ARGS=
+for EXPORT in ${!EXPORTS[@]}; do
+    EXPORT_ARGS="$EXPORT_ARGS --export $EXPORT"
 
-$SUDO rm -rf $EXPORTDIRS
-mkdir -p $EXPORTDIRS # Own export dirs by user, not root
+    # Recreate export dirs to own by user, not root (from sudo)
+    $SUDO rm -rf $OUTPUTDIR/$EXPORT
+    mkdir -p $OUTPUTDIR/$EXPORT
+done
 
 $OSBUILD $CHECKPOINT_ARGS --store $STOREDIR --output-directory $OUTPUTDIR $EXPORT_ARGS $OSBUILD_ARGS $JSON
 
@@ -104,9 +107,23 @@ if [ $ALSO_EXPORT_OSTREE == "1" ]; then
     ostree pull-local --repo=$OSTREE_REPO $OUTPUTDIR/ostree-commit/repo
 fi
 
-# Extract and chown exported file
-rm -rf $DEST
-$SUDO chown $CHOWNARGS $CURRENT_UIDGID $OUTPUTDIR/$EXPORT/$EXPORT_FILE
-$SUDO mv $OUTPUTDIR/$EXPORT/$EXPORT_FILE $DEST
+# Extract and chown exported files
+for EXT in ${EXTENSIONS[@]}; do
+    EXPORTDIR=${EXPORT_BY_EXT[${EXT}]}
+    EXPORTFILE=${EXPORT_FILE_BY_EXT[${EXT}]}
+    DESTFILE=$(basename $DEST $COMBINEDEXTENSION)$EXT
+    echo Extracting $EXPORTDIR/$EXPORTFILE as $DESTFILE
 
-$SUDO rm -rf $EXPORTDIRS
+    CHOWNARGS=
+    if [ $EXT == repo -o $EXT == aboot ]; then
+        CHOWNARGS=-R # Chown entire repo dir as it doesn't care about permissions
+    fi
+
+    $SUDO chown $CHOWNARGS $CURRENT_UIDGID $OUTPUTDIR/$EXPORTDIR/$EXPORTFILE
+    $SUDO mv $OUTPUTDIR/$EXPORTDIR/$EXPORTFILE $DESTFILE
+done
+
+# Remove un-extracted parts of exports
+for EXPORTDIR in ${!EXPORTS[@]}; do
+    $SUDO rm -rf $OUTPUTDIR/$EXPORTDIR
+done
