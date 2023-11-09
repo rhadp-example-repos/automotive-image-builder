@@ -21,6 +21,7 @@ mpp-vars:
         then: greenboot-rpm-ostree-grub2
       - mpp-if: name == 'developer'
         then: ostree-compliance-mode
+      - skopeo # Needed for upgrading from an OCI remove image
       - polkit # Needed by rpm-ostree upgrade (until fix for https://github.com/coreos/rpm-ostree/issues/3554 is in)
 pipelines:
 - name: build-keys
@@ -225,6 +226,24 @@ pipelines:
         ref:
           mpp-eval: ostree_ref
         key: /repo/build-key
+
+- name: ostree-oci-image
+  build: name:build
+  stages:
+  - type: org.osbuild.ostree.encapsulate
+    inputs:
+      commit:
+        type: org.osbuild.ostree
+        origin: org.osbuild.pipeline
+        references:
+          name:ostree-commit:
+            ref:
+              mpp-eval: ostree_ref
+    options:
+      filename: image.oci-archive
+      cmd:
+        mpp-eval: container_cmd
+
 - name: image-tree
   build: name:build
   stages:
