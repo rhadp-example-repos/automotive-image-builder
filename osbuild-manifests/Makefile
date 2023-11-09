@@ -88,6 +88,9 @@ help:
 	@echo  \ \ clean_downloads: Removes files downloaded during image builds
 	@echo  \ \ clean: Run clean_caches and clean_downloads
 	@echo  \ \ osbuildvm-images: Build a image that can be used to build images inside a VM
+	@echo  \ \ packages-image.json: create a manifest \"packages-image.json\" file with the list
+	@echo  \ \ of packages for that image. Relace \"image\" with your image, for example:
+	@echo  \ \ '  make packages-minimal.json'
 	@echo
 	@echo There are also some common conversion rules:
 	@echo  \ \ foo.aboot.simg will build aboot.img / rootfs.img and convert rootfs.img using img2simg
@@ -167,8 +170,8 @@ manifests: $(foreach d, $(DISTROS),$(foreach m, $(MANIFESTS), $(foreach a,$(ARCH
 define packages-rule
 .PHONY: packages-$(call manifest-get-name,$1).json
 packages-$(call manifest-get-name,$1).json: $1
-	osbuild-mpp $$< -D arch=\"x86_64\" - | jq -f tools/extract-rpms.jq > $$@.x86_64
-	osbuild-mpp $$< -D arch=\"aarch64\" - | jq -f tools/extract-rpms.jq > $$@.aarch64
+	$(OSBUILD_MPP) -I . $$< -D arch=\"x86_64\" - | jq -f tools/extract-rpms.jq > $$@.x86_64
+	$(OSBUILD_MPP) -I . $$< -D arch=\"aarch64\" - | jq -f tools/extract-rpms.jq > $$@.aarch64
 	echo 1 | jq --indent 4 -f tools/create-packagelist.jq --slurpfile x86_64 $$@.x86_64 --slurpfile aarch64 $$@.aarch64 > $$@
 endef
 
