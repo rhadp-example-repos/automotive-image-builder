@@ -34,15 +34,17 @@ mpp-vars:
     mpp-eval: use_ostree or image_type == 'ostree'
   fstab:
     mpp-join:
-    - - uuid:
-          mpp-eval: rootfs_uuid
-        vfs_type: ext4
-        path:
-          mpp-if: use_ostree and use_composefs
-          then: /sysroot
-          else: /
-        freq: 1
-        passno: 1
+    # NOTE: We don't add / when using ostree, because this causes systemd-remount-fs.service to
+    # try to remount what it thinks is a regular fs as read-write, which fails if using composefs
+    # This is fine as we pass rw on the kernel commanline if use_ostree anyway, so no need to remount
+    - - mpp-if: not use_ostree
+        then:
+          uuid:
+            mpp-eval: rootfs_uuid
+          vfs_type: ext4
+          path: /
+          freq: 1
+          passno: 1
       - mpp-if: use_efipart
         then:
           label: ESP
@@ -84,22 +86,11 @@ mpp-vars:
         then: aboot-update
       - mpp-if: use_aboot
         then: aboot-deploy
-      - mpp-if: use_composefs and use_ostree
-        then: keyutils
-      - mpp-if: use_composefs and use_ostree
-        then: dracut-fsverity
   dracut_omit_modules:
     mpp-join:
     - mpp-eval: dracut_omit_modules
     - - mpp-if: not use_luks
         then: dm
-  dracut_filesystems:
-    mpp-join:
-    - mpp-eval: dracut_filesystems
-    - mpp-if: use_composefs and use_ostree
-      then:
-        - overlay
-        - erofs
   dracut_compression:
     mpp-if: use_debug
     then: gzip
@@ -212,7 +203,7 @@ mpp-vars:
       [etc]
       { "transient=true" if use_transient_etc else "" }
       [composefs]
-      enabled={"signed" if use_composefs_signed else "yes" if use_composefs else "maybe" }
+      enabled={"signed" if use_composefs else "yes" if use_composefs else "maybe" }
   build_info:
     mpp-format-string: |
       RELEASE="{release_name}"
