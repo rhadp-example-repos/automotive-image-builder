@@ -84,10 +84,6 @@ mpp-vars:
         then: aboot-update
       - mpp-if: use_aboot
         then: aboot-deploy
-      - mpp-if: use_composefs and use_ostree
-        then: keyutils
-      - mpp-if: use_composefs and use_ostree
-        then: dracut-fsverity
   dracut_omit_modules:
     mpp-join:
     - mpp-eval: dracut_omit_modules
