@@ -37,6 +37,7 @@ ifdef OSTREE_REPO
 EXTRA_MPP_ARGS +=-D ostree_parent_refs='$(shell tools/ot-refs $(OSTREE_REPO))'
 endif
 
+export CACHESIZE=1GB
 export CHECKPOINTS=build
 IMAGETYPES := regular ostree
 FORMATS := img qcow2 oci.tar repo oci-archive rootfs ext4 tar aboot oci-archive+qcow2 oci-archive+img
