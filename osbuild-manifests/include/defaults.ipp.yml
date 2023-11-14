@@ -314,6 +314,8 @@ mpp-vars:
     mpp-eval: locals().get('image_uuid', default_image_uuid)
   use_composefs:
     mpp-eval: locals().get('use_composefs', default_use_composefs)
+  use_ocibased:
+    mpp-eval: locals().get('use_ocibased', False)
   use_transient_etc:
     mpp-eval: locals().get('use_transient_etc', default_use_transient_etc)
   container_entrypoint:

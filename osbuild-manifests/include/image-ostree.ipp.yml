@@ -251,19 +251,21 @@ pipelines:
   build: name:build
   stages:
   - type: org.osbuild.ostree.init-fs
-  - type: org.osbuild.ostree.pull
-    options:
-      repo: /ostree/repo
-      remote:
-        mpp-eval: ostree_remote_name
-    inputs:
-      commits:
-        type: org.osbuild.ostree
-        origin: org.osbuild.pipeline
-        references:
-          name:ostree-commit:
-            ref:
-              mpp-eval: ostree_ref
+  - mpp-if: not use_ocibased
+    then:
+      type: org.osbuild.ostree.pull
+      options:
+        repo: /ostree/repo
+        remote:
+          mpp-eval: ostree_remote_name
+      inputs:
+        commits:
+          type: org.osbuild.ostree
+          origin: org.osbuild.pipeline
+          references:
+            name:ostree-commit:
+              ref:
+                mpp-eval: ostree_ref
   - type: org.osbuild.ostree.os-init
     options:
       osname:
@@ -286,41 +288,66 @@ pipelines:
         config:
           sysroot:
             composefs: "true"
-  - type: org.osbuild.ostree.remotes
-    options:
-      repo: /ostree/repo
-      remotes:
-        - name:
-            mpp-eval: ostree_remote_name
-          url:
-            mpp-eval: ostree_repo_url
+  - mpp-if: not use_ocibased
+    then:
+      type: org.osbuild.ostree.remotes
+      options:
+        repo: /ostree/repo
+        remotes:
+          - name:
+              mpp-eval: ostree_remote_name
+            url:
+              mpp-eval: ostree_repo_url
   - type: org.osbuild.mkdir
     options:
       paths:
       - path: /boot/efi
         mode: 448
-  - type: org.osbuild.ostree.deploy
-    options:
-      osname:
-        mpp-eval: osname
-      ref:
-        mpp-eval: ostree_ref
-      remote:
-        mpp-eval: ostree_remote_name
-      mounts:
-      - /boot
-      - /boot/efi
-      rootfs:
-        label: root
-      kernel_opts:
-        mpp-eval: kernel_opts
+  - mpp-if: use_ocibased
+    then:
+      type: org.osbuild.ostree.deploy.container
+      options:
+        osname:
+          mpp-eval: osname
+        target_imgref:
+          mpp-format-string: "ostree-unverified-registry:{oci_source}:{oci_source_tag}"
+        mounts:
+        - /boot
+        - /boot/efi
+        rootfs:
+          label: root
+        kernel_opts:
+          mpp-eval: kernel_opts
+      inputs:
+        images:
+          type: org.osbuild.containers
+          origin: org.osbuild.source
+          mpp-resolve-images:
+            images:
+              - source: $oci_source
+                tag: $oci_source_tag
+    else:
+      type: org.osbuild.ostree.deploy
+      options:
+        osname:
+          mpp-eval: osname
+        ref:
+          mpp-eval: ostree_ref
+        remote:
+          mpp-eval: ostree_remote_name
+        mounts:
+        - /boot
+        - /boot/efi
+        rootfs:
+          label: root
+        kernel_opts:
+          mpp-eval: kernel_opts
   - type: org.osbuild.ostree.fillvar
     options:
       deployment:
         osname:
           mpp-eval: osname
-        ref:
-          mpp-eval: ostree_ref
+        ref: ostree/1/1/0
   - type: org.osbuild.users
     mounts:
       - type: org.osbuild.ostree.deployment
@@ -329,8 +356,7 @@ pipelines:
           deployment:
             osname:
               mpp-eval: osname
-            ref:
-              mpp-eval: ostree_ref
+            ref: ostree/1/1/0
     options:
       users:
         root:
@@ -341,8 +367,7 @@ pipelines:
       deployment:
         osname:
           mpp-eval: osname
-        ref:
-          mpp-eval: ostree_ref
+        ref: ostree/1/1/0
   - mpp-if: use_aboot
     then:
       type: org.osbuild-auto.aboot.update

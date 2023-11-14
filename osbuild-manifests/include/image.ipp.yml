@@ -647,36 +647,38 @@ pipelines:
       source: root
       target: /
 
-- name: aboot
-  build: name:build
-  stages:
-  - type: org.osbuild.mkdir
-    options:
-      paths:
-      - path: /images
-  - type: org.osbuild.copy
-    inputs:
-      ext4:
-        type: org.osbuild.tree
-        origin: org.osbuild.pipeline
-        references:
-        - name:ext4
-      tree:
-        type: org.osbuild.tree
-        origin: org.osbuild.pipeline
-        references:
-        - name:image-tree
-    options:
-      paths:
-        - from: input://ext4/rootfs.ext4
-          to: tree:///images/rootfs.img
-        - from:
-            mpp-if: use_debug
-            then:
-              mpp-format-string: "input://tree/boot/aboot-{rpms[kernel_osbuild_tree][kernel_core_package].evra}+debug.img"
-            else:
-              mpp-format-string: "input://tree/boot/aboot-{rpms[kernel_osbuild_tree][kernel_core_package].evra}.img"
-          to: tree:///images/aboot.img
+- mpp-if: use_aboot
+  then:
+    name: aboot
+    build: name:build
+    stages:
+    - type: org.osbuild.mkdir
+      options:
+        paths:
+        - path: /images
+    - type: org.osbuild.copy
+      inputs:
+        ext4:
+          type: org.osbuild.tree
+          origin: org.osbuild.pipeline
+          references:
+          - name:ext4
+        tree:
+          type: org.osbuild.tree
+          origin: org.osbuild.pipeline
+          references:
+          - name:image-tree
+      options:
+        paths:
+          - from: input://ext4/rootfs.ext4
+            to: tree:///images/rootfs.img
+          - from:
+              mpp-if: use_debug
+              then:
+                mpp-format-string: "input://tree/boot/aboot-{rpms[kernel_osbuild_tree][kernel_core_package].evra}+debug.img"
+              else:
+                mpp-format-string: "input://tree/boot/aboot-{rpms[kernel_osbuild_tree][kernel_core_package].evra}.img"
+            to: tree:///images/aboot.img
 # This is essentially rootfs with no image-specific stuff like boot, etc, but with
 # some required extras.
 - name: raw-image-tree
