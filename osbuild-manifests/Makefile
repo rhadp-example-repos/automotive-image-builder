@@ -72,7 +72,7 @@ help:
 	@echo \ \* .ext4: Generate an ext4 filesystem with the rootfs content  \(size from \"image_size\"\)
 	@echo \ \* .oci.tar: Generate an oci container image with the rootfs content
 	@echo \ \* .oci-archive: Generate an oci container image with the ostree commit
-	@echo \ \* .oci-archive+qcow: Generate an oci container image with the ostree commit plus a qcow image deploying the commit
+	@echo \ \* .oci-archive+qcow2: Generate an oci container image with the ostree commit plus a qcow image deploying the commit
 	@echo \ \* .oci-archive+img: Generate an oci container image with the ostree commit plus a image deploying the commit
 	@echo \ \* .aboot: Generate an ext4 root filesystem and an android boot image \(for aboot targets\)
 	@echo
