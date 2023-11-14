@@ -29,7 +29,7 @@ pipelines:
   stages:
   - mpp-if: use_composefs
     then:
-      type: org.osbuild-auto.ostree.genkey
+      type: org.osbuild.ostree.genkey
       options:
         publickey: /build-key.pub
         secretkey: /build-key
@@ -223,7 +223,7 @@ pipelines:
             to: tree:///repo/build-key
   - mpp-if: use_composefs
     then:
-      type: org.osbuild-auto.ostree.sign
+      type: org.osbuild.ostree.sign
       options:
         repo: repo
         ref:
