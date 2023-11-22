@@ -478,9 +478,7 @@ pipelines:
 
       - mpp-if: use_composefs and use_ostree
         then:
-          type: org.osbuild-auto.ostree.deploy-verity
-          options:
-            repo: /ostree/repo
+          type: org.osbuild.ostree.post-copy
           devices:
             root:
               mpp-if: use_luks

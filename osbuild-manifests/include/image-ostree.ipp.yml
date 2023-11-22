@@ -282,11 +282,11 @@ pipelines:
             bootloader: none
   - mpp-if: use_composefs
     then:
-      type: org.osbuild-auto.ostree.config
+      type: org.osbuild.experimental.ostree.config
       options:
         repo: /ostree/repo
         config:
-          sysroot:
+          integrity:
             composefs: "true"
   - mpp-if: not use_ocibased
     then:
