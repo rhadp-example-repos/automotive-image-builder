@@ -11,6 +11,7 @@ mpp-vars:
   - NetworkManager-cloud-setup
   - rsync
   - qemu-guest-agent
+  - chrony
   extra_build_rpms:
   - python3-pyyaml
   image_extra_stages:
