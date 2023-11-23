@@ -1,7 +1,7 @@
 version: '2'
 mpp-vars:
   name: gadget
-  image_size: '3489660928'
+  image_size: '3758096384'
 pipelines:
 - mpp-import-pipelines:
     path: include/build.ipp.yml
