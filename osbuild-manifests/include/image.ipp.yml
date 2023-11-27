@@ -19,6 +19,10 @@ mpp-vars:
         to: tree:///usr/lib/ostree/prepare-root.conf
     - from: input://extra-tree/build-info
       to: tree:///etc/build-info
+    - from: input://extra-tree/subuid
+      to: tree:///etc/subuid
+    - from: input://extra-tree/subgid
+      to: tree:///etc/subgid
     - mpp-if: use_qm or use_bluechi
       then:
         from: input://extra-tree/bluechi.conf
@@ -157,6 +161,29 @@ pipelines:
       - from:
           mpp-format-string: input://inlinefile/{embedded['build-info']}
         to: tree:///build-info
+
+  - type: org.osbuild.copy
+    inputs:
+      inlinefile:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: subuid
+          text: $subuid_content
+      inlinefile2:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: subgid
+          text: $subgid_content
+    options:
+      paths:
+      - from:
+          mpp-format-string: input://inlinefile/{embedded['subuid']}
+        to: tree:///subuid
+      - from:
+          mpp-format-string: input://inlinefile2/{embedded['subgid']}
+        to: tree:///subgid
 
   - type: org.osbuild.copy
     inputs:

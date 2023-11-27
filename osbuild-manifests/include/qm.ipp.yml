@@ -53,13 +53,13 @@ pipelines:
         origin: org.osbuild.source
         mpp-embed:
           id: qm_subuid
-          text: qm_subuid
+          text: $qm_subuid_content
       inlinefile2:
         type: org.osbuild.files
         origin: org.osbuild.source
         mpp-embed:
           id: qm_subgid
-          text: qm_subgid
+          text: $qm_subgid_content
       inlinefile3:
         type: org.osbuild.files
         origin: org.osbuild.source
