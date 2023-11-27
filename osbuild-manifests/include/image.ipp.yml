@@ -27,10 +27,6 @@ mpp-vars:
       then:
         from: input://extra-tree/bluechi_agent.conf
         to: tree:///etc/bluechi/agent.conf
-    - mpp-if: use_qm
-      then:
-        from: input://extra-tree/qm.container
-        to: tree:///etc/containers/systemd/qm.container
 
   dracut_install:
     mpp-join:
@@ -176,12 +172,6 @@ pipelines:
         mpp-embed:
           id: bluechi_conf
           text: $bluechi_conf
-      inlinefile3:
-        type: org.osbuild.files
-        origin: org.osbuild.source
-        mpp-embed:
-          id: qm_container
-          path: ../files/qm.container
     options:
       paths:
       - from:
@@ -190,9 +180,6 @@ pipelines:
       - from:
           mpp-format-string: input://inlinefile2/{embedded['bluechi_conf']}
         to: tree:///bluechi.conf
-      - from:
-          mpp-format-string: input://inlinefile3/{embedded['qm_container']}
-        to: tree:///qm.container
 
 - mpp-import-pipelines:
     path: image-$image_type.ipp.yml
