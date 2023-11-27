@@ -70,12 +70,6 @@ pipelines:
         type: org.osbuild.files
         origin: org.osbuild.source
         mpp-embed:
-          id: qm_container_conf
-          text: $qm_containers_conf
-      inlinefile5:
-        type: org.osbuild.files
-        origin: org.osbuild.source
-        mpp-embed:
           id: qm_container_storage_conf
           text: $qm_containers_storage_conf
     options:
@@ -90,10 +84,7 @@ pipelines:
           mpp-format-string: input://inlinefile3/{embedded['qm_agent_bluechi_conf']}
         to: tree:///etc/bluechi/agent.conf
       - from:
-          mpp-format-string: input://inlinefile4/{embedded['qm_container_conf']}
-        to: tree:///etc/containers/containers.conf
-      - from:
-          mpp-format-string: input://inlinefile5/{embedded['qm_container_storage_conf']}
+          mpp-format-string: input://inlinefile4/{embedded['qm_container_storage_conf']}
         to: tree:///etc/containers/storage.conf
 
   - type: org.osbuild.copy
@@ -109,6 +100,8 @@ pipelines:
           to: tree:///usr/share/containers/selinux/
         - from: input://tree/usr/share/qm/file_contexts
           to: tree:///etc/selinux/targeted/contexts/files/
+        - from: input://tree/usr/share/qm/containers.conf
+          to: tree:///etc/containers/containers.conf
 
   - type: org.osbuild.locale
     options:

@@ -162,14 +162,6 @@ mpp-vars:
       # a kernel keyring for use within the container.
       #
       keyring = false
-  qm_containers_conf:
-    mpp-format-string: |
-      [containers]
-      default_sysctls = []
-      cgroup_conf=[
-        "memory.oom.group=1",
-      ]
-      oom_score_adj = 750
   qm_containers_storage_conf:
     mpp-format-string: |
       [storage]
