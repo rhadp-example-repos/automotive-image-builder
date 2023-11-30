@@ -33,6 +33,7 @@ mpp-vars:
       - pd_ignore_unused
       - clk_ignore_unused
       - acpi=off
+      - fsck.mode=skip
   dracut_add_drivers:
     mpp-join:
     - mpp-eval: dracut_add_drivers
