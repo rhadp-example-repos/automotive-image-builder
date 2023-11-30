@@ -58,6 +58,10 @@ pipelines:
               mpp-if: dracut_omit_modules
               then:
                 mpp-eval: dracut_omit_modules
+            drivers:
+              mpp-if: dracut_drivers
+              then:
+                mpp-eval: dracut_drivers
             add_drivers:
               mpp-if: dracut_add_drivers
               then:
