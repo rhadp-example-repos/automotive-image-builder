@@ -162,14 +162,6 @@ mpp-vars:
       # a kernel keyring for use within the container.
       #
       keyring = false
-  qm_containers_conf:
-    mpp-format-string: |
-      [containers]
-      default_sysctls = []
-      cgroup_conf=[
-        "memory.oom.group=1",
-      ]
-      oom_score_adj = 750
   qm_containers_storage_conf:
     mpp-format-string: |
       [storage]
@@ -235,9 +227,31 @@ mpp-vars:
     mpp-format-string: |
       [bluechi]
       AllowedNodeNames={ bluechi_nodename },qm.{ bluechi_nodename }
-  qm_subgid:
-    containers:1000000000:1500000000
-  qm_subgid:
-    containers:1000000000:1500000000
+  qm_subuid_content:
+    mpp-format-string: |
+      containers:{ qm_container_subuid }
+  qm_subgid_content:
+    mpp-format-string: |
+      containers:{ qm_container_subgid }
+  subuid_content_qm:
+    mpp-if: use_qm
+    then:
+      mpp-format-string: |-
+        qmcontainers:{qm_container_subuid}
+        containers:{container_subuid}
+    else: ""
+  subgid_content_qm:
+    mpp-if: use_qm
+    then:
+      mpp-format-string: |-
+        qmcontainers:{qm_container_subgid}
+        containers:{container_subgid}
+    else: ""
+  subuid_content: |-
+    $subuid_content_qm
+    $extra_subuid
+  subgid_content: |-
+    $subgid_content_qm
+    $extra_subgid
 
 pipelines: []

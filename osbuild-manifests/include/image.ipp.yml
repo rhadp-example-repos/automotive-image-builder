@@ -19,6 +19,10 @@ mpp-vars:
         to: tree:///usr/lib/ostree/prepare-root.conf
     - from: input://extra-tree/build-info
       to: tree:///etc/build-info
+    - from: input://extra-tree/subuid
+      to: tree:///etc/subuid
+    - from: input://extra-tree/subgid
+      to: tree:///etc/subgid
     - mpp-if: use_qm or use_bluechi
       then:
         from: input://extra-tree/bluechi.conf
@@ -27,10 +31,6 @@ mpp-vars:
       then:
         from: input://extra-tree/bluechi_agent.conf
         to: tree:///etc/bluechi/agent.conf
-    - mpp-if: use_qm
-      then:
-        from: input://extra-tree/qm.container
-        to: tree:///etc/containers/systemd/qm.container
 
   dracut_install:
     mpp-join:
@@ -168,6 +168,29 @@ pipelines:
         type: org.osbuild.files
         origin: org.osbuild.source
         mpp-embed:
+          id: subuid
+          text: $subuid_content
+      inlinefile2:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: subgid
+          text: $subgid_content
+    options:
+      paths:
+      - from:
+          mpp-format-string: input://inlinefile/{embedded['subuid']}
+        to: tree:///subuid
+      - from:
+          mpp-format-string: input://inlinefile2/{embedded['subgid']}
+        to: tree:///subgid
+
+  - type: org.osbuild.copy
+    inputs:
+      inlinefile:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
           id: bluechi_agent_conf
           text: $bluechi_agent_conf
       inlinefile2:
@@ -176,12 +199,6 @@ pipelines:
         mpp-embed:
           id: bluechi_conf
           text: $bluechi_conf
-      inlinefile3:
-        type: org.osbuild.files
-        origin: org.osbuild.source
-        mpp-embed:
-          id: qm_container
-          path: ../files/qm.container
     options:
       paths:
       - from:
@@ -190,9 +207,6 @@ pipelines:
       - from:
           mpp-format-string: input://inlinefile2/{embedded['bluechi_conf']}
         to: tree:///bluechi.conf
-      - from:
-          mpp-format-string: input://inlinefile3/{embedded['qm_container']}
-        to: tree:///qm.container
 
 - mpp-import-pipelines:
     path: image-$image_type.ipp.yml

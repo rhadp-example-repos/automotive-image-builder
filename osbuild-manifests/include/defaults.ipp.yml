@@ -158,6 +158,12 @@ mpp-vars:
   default_image_masked_services: []
   default_bluechi_nodename: "host"
   default_bluechi_manager_host_ip: "127.0.0.1"
+  default_qm_container_subuid: 1000000000:1500000000
+  default_qm_container_subgid: 1000000000:1500000000
+  default_container_subuid: 2500000000:1500000000
+  default_container_subgid: 2500000000:1500000000
+  default_extra_subuid: ""
+  default_extra_subgid: ""
   default_efipart_dos_type: 'ef'
   efipart_dos_type:
     mpp-eval: locals().get('efipart_dos_type', default_efipart_dos_type)
@@ -349,6 +355,18 @@ mpp-vars:
     mpp-eval: locals().get('bluechi_nodename',  default_bluechi_nodename)
   bluechi_manager_host_ip:
     mpp-eval: locals().get('bluechi_manager_host_ip',  default_bluechi_manager_host_ip)
+  qm_container_subuid:
+    mpp-eval: locals().get('qm_container_subuid',  default_qm_container_subuid)
+  qm_container_subgid:
+    mpp-eval: locals().get('qm_container_subgid',  default_qm_container_subgid)
+  container_subuid:
+    mpp-eval: locals().get('container_subuid',  default_container_subuid)
+  container_subgid:
+    mpp-eval: locals().get('container_subgid',  default_container_subgid)
+  extra_subuid:
+    mpp-eval: locals().get('extra_subuid',  default_extra_subuid)
+  extra_subgid:
+    mpp-eval: locals().get('extra_subgid',  default_extra_subgid)
   centos_gpg_key: |
     -----BEGIN PGP PUBLIC KEY BLOCK-----
     Version: GnuPG v2.0.22 (GNU/Linux)
