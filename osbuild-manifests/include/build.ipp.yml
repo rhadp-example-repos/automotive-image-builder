@@ -91,6 +91,26 @@ pipelines:
       - mpp-eval: distro_gpg_keys
       exclude:
         docs: true
+  - type: org.osbuild.mkdir
+    options:
+      paths:
+        - path: /usr/share/lorax/templates.d/auto
+          parents: true
+
+  - type: org.osbuild.copy
+    inputs:
+      inlinefile:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: remove
+          text:
+            remove ${product.name}
+    options:
+      paths:
+        - from:
+            mpp-format-string: input://inlinefile/{embedded['remove']}
+          to: tree:///usr/share/lorax/templates.d/auto/remove
   - type: org.osbuild.selinux
     options:
       file_contexts: etc/selinux/targeted/contexts/files/file_contexts
