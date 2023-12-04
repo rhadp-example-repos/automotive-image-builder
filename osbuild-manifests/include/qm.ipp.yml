@@ -87,6 +87,12 @@ pipelines:
           mpp-format-string: input://inlinefile4/{embedded['qm_container_storage_conf']}
         to: tree:///etc/containers/storage.conf
 
+  - type: org.osbuild.lorax-script
+    options:
+      path: auto/remove
+      product:
+        name: /etc/selinux/targeted/contexts/files/*
+
   - type: org.osbuild.copy
     inputs:
       tree:
