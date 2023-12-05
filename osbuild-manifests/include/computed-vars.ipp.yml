@@ -194,7 +194,7 @@ mpp-vars:
         - mpp-if: use_qm or use_bluechi
           then: bluechi-agent.service
         - mpp-if: use_qm or use_bluechi
-          then: bluechi.service
+          then: bluechi-controller.service
   ostree_prepare_root_conf:
     mpp-format-string: |
       [sysroot]
