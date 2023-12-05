@@ -34,6 +34,7 @@ mpp-vars:
       - acpi=off
       - net.naming-scheme=v252
       - slub_debug=FPZ
+      - fsck.mode=skip
   dracut_drivers:
     mpp-join:
     - mpp-eval: dracut_drivers
