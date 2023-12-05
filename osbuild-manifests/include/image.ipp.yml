@@ -286,6 +286,22 @@ pipelines:
             uuid:
               mpp-eval: bootfs_uuid
             label: boot
+      - mpp-if: use_separate_var
+        then:
+          type: org.osbuild.mkfs.ext4
+          devices:
+            device:
+              type: org.osbuild.loopback
+              options:
+                filename: disk.img
+                start:
+                  mpp-eval: image.layout['var'].start
+                size:
+                  mpp-eval: image.layout['var'].size
+          options:
+            uuid:
+              mpp-eval: varpart_uuid
+            label: var
     - mpp-if: use_luks
       then:
         - type: org.osbuild.luks2.format
@@ -439,6 +455,16 @@ pipelines:
                   mpp-eval: image.layout['boot_b'].start
                 size:
                   mpp-eval: image.layout['boot_b'].size
+          var:
+            mpp-if: use_separate_var
+            then:
+              type: org.osbuild.loopback
+              options:
+                filename: disk.img
+                start:
+                  mpp-eval: image.layout['var'].start
+                size:
+                  mpp-eval: image.layout['var'].size
           root:
             mpp-if: use_luks
             then:
@@ -477,6 +503,12 @@ pipelines:
           type: org.osbuild.ext4
           source: root
           target: /
+        - mpp-if: use_separate_var
+          then:
+            name: var
+            type: org.osbuild.ext4
+            source: var
+            target: /var
         - mpp-if: use_bootpart
           then:
             name: boot

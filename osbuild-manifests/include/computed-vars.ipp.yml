@@ -60,6 +60,14 @@ mpp-vars:
           path: /boot
           freq: 1
           passno: 1
+      - mpp-if: use_separate_var
+        then:
+          uuid:
+            mpp-eval: varpart_uuid
+          vfs_type: ext4
+          path: /var
+          freq: 1
+          passno: 1
     - mpp-eval: extra_fstab
   build_rpms:
     mpp-join:

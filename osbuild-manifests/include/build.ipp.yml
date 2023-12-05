@@ -47,6 +47,14 @@ mpp-define-image:
         uuid: $abootpart_uuid_b
         attrs:
           mpp-eval: inactive_gpt_attrs
+    - mpp-if: use_separate_var
+      then:
+        id: var
+        name: var
+        size: $varpart_size
+        type:
+          mpp-eval: "'0FC63DAF-8483-4772-8E79-3D69D8477DE4' if partition_label == 'gpt' else '83'"
+        uuid: $varpart_uuid
     - id: root
       name: root
       type:

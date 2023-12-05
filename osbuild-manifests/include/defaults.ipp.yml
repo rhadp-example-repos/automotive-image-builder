@@ -39,6 +39,7 @@ mpp-vars:
   default_efipart_size: 204800
   default_bootpart_size: 614400
   default_abootpart_size: 131072 # 64M
+  default_varpart_relative_size: 0.5 # 50% of image size
   default_active_gpt_attrs: # Default active setup for Qualcomm
     - 48
     - 49 # priority 0x3
@@ -64,6 +65,7 @@ mpp-vars:
   default_use_efipart: true
   default_use_bootpart: true
   default_use_ostree: false
+  default_use_separate_var: false
   default_image_uuid:
     mpp-eval: (str(__import__('uuid').uuid4()))
   default_use_composefs: false
@@ -80,6 +82,8 @@ mpp-vars:
     mpp-eval: ('68b2905b-df3e-4fb3-80fa-49d1e773aa33' if static_uuids else str(__import__('uuid').uuid4()))
   default_bootpart_uuid:
     mpp-eval: ('61b2905b-df3e-4fb3-80fa-49d1e773aa32' if static_uuids else str(__import__('uuid').uuid4()))
+  default_varpart_uuid:
+    mpp-eval: ('10475e3e-9356-11ee-b5b9-305a3ae2477d' if static_uuids else str(__import__('uuid').uuid4()))
   default_abootpart_uuid_a:
     mpp-eval: ('1dd3a986-997c-0c48-1d1b-b0d0399f3153' if static_uuids else str(__import__('uuid').uuid4()))
   default_abootpart_uuid_b:
@@ -221,6 +225,10 @@ mpp-vars:
     mpp-eval: locals().get('target_repos', default_target_repos)
   image_size:
     mpp-eval: locals().get('image_size', default_image_size)
+  varpart_relative_size:
+    mpp-eval: locals().get('varpart_relative_size', default_varpart_relative_size)
+  varpart_size:
+    mpp-eval: locals().get('varpart_size', int(int(image_size) * varpart_relative_size / 512))
   rootfs_uuid:
     mpp-eval: locals().get('rootfs_uuid', default_rootfs_uuid)
   bootfs_uuid:
@@ -237,6 +245,8 @@ mpp-vars:
     mpp-eval: locals().get('abootpart_b_uuid', default_abootpart_uuid_b)
   efipart_uuid:
     mpp-eval: locals().get('efipart_uuid', default_efipart_uuid)
+  varpart_uuid:
+    mpp-eval: locals().get('varpart_uuid', default_varpart_uuid)
   luks_uuid:
     mpp-eval: locals().get('luks_uuid', default_luks_uuid)
   kernel_opts:
@@ -317,6 +327,8 @@ mpp-vars:
     mpp-eval: locals().get('use_efipart', default_use_efipart)
   use_bootpart:
     mpp-eval: locals().get('use_bootpart', default_use_bootpart)
+  use_separate_var:
+    mpp-eval: locals().get('use_separate_var', default_use_separate_var)
   use_ostree:
     mpp-eval: locals().get('use_ostree', default_use_ostree)
   image_uuid:
