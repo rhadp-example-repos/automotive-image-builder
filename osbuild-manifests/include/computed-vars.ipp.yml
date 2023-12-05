@@ -114,8 +114,7 @@ mpp-vars:
       then:
         - ignore_loglevel
         - earlycon
-      else:
-        - quiet
+    - - systemd.show_status=auto
     - - libahci.ignore_sss=1 # Staggered spin-up
   image_repos:
     mpp-join:
