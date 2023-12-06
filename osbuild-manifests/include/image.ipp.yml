@@ -26,7 +26,7 @@ mpp-vars:
     - mpp-if: use_qm or use_bluechi
       then:
         from: input://extra-tree/bluechi.conf
-        to: tree:///etc/bluechi/bluechi.conf
+        to: tree:///etc/bluechi/controller.conf
     - mpp-if: use_qm or use_bluechi
       then:
         from: input://extra-tree/bluechi_agent.conf
