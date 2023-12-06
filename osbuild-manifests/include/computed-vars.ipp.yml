@@ -232,7 +232,7 @@ mpp-vars:
       ManagerHost= { bluechi_manager_host_ip }
   bluechi_conf:
     mpp-format-string: |
-      [bluechi]
+      [bluechi-controller]
       AllowedNodeNames={ bluechi_nodename },qm.{ bluechi_nodename }
   qm_subuid_content:
     mpp-format-string: |
