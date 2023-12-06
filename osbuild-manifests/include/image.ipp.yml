@@ -77,6 +77,10 @@ mpp-vars:
               paths:
               - path: /usr/lib/qm/rootfs
                 parents: true
+              - path: /etc/qm/
+                parents: true
+              - path: /var/qm/
+                parents: true
         - mpp-if: use_qm
           then:
             type: org.osbuild.copy
