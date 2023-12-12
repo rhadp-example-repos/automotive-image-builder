@@ -42,6 +42,8 @@ def parse_arguments(sys_argv):
                         help="directory where result objects are stored")
     parser.add_argument("--arch", metavar="ARCH", type=str, default=platform.machine(),
                         help="Arch to build for")
+    parser.add_argument("--cache-max-size", metavar="SIZE", type=str, default="unlimited",
+                        help="maximum size of the cache (bytes) or 'unlimited' for no restriction")
 
     return parser.parse_args(sys_argv[1:])
 
@@ -355,7 +357,11 @@ mkdir -p /work/osbuild_store
     tar xf $tar  --acls --selinux --xattrs -C /work/osbuild_store
   done
   echo === Running osbuild in vm ===
-  osbuild --store /work/osbuild_store --output-directory /work/output/osbuild {' '.join(map(lambda e: "--export " + e, args.export))} {' '.join(map(lambda cp: "--checkpoint " + cp, args.checkpoint))} /work/image.json
+  osbuild --store /work/osbuild_store --output-directory /work/output/osbuild \
+          --cache-max-size { args.cache_max_size } \
+          {' '.join(map(lambda e: "--export " + e, args.export))} \
+          {' '.join(map(lambda cp: "--checkpoint " + cp, args.checkpoint))} \
+          /work/image.json
   RES=$?
   echo $RES > /work/output/exit_status
 
