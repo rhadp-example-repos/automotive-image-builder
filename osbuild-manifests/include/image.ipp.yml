@@ -7,10 +7,6 @@ mpp-vars:
         to: tree:///usr/.auto-unlock-key
     - mpp-if: use_containers
       then:
-        from: input://extra-tree/storage.conf
-        to: tree:///etc/containers/storage.conf
-    - mpp-if: use_containers
-      then:
         from: input://extra-tree/containers.conf
         to: tree:///etc/containers/containers.conf
     - mpp-if: use_ostree
@@ -70,6 +66,18 @@ mpp-vars:
               mpp-eval: image_enabled_services
             masked_services:
               mpp-eval: image_masked_services
+        - mpp-if: use_containers
+          then:
+            type: org.osbuild.containers.storage.conf
+            options:
+              filename: /etc/containers/storage.conf
+              config:
+                storage:
+                  transient_store:
+                    mpp-eval: containers_transient_store
+                  options:
+                    additionalimagestores:
+                      - /usr/share/containers/storage
         - mpp-if: use_qm
           then:
             type: org.osbuild.mkdir
@@ -113,19 +121,6 @@ pipelines:
         - from:
             mpp-format-string: input://inlinefile/{embedded['luks-key']}
           to: tree:///luks-key
-  - type: org.osbuild.copy
-    inputs:
-      inlinefile:
-        type: org.osbuild.files
-        origin: org.osbuild.source
-        mpp-embed:
-          id: storage.conf
-          text: $containers_storage_conf
-    options:
-      paths:
-      - from:
-          mpp-format-string: input://inlinefile/{embedded['storage.conf']}
-        to: tree:///storage.conf
   - type: org.osbuild.copy
     inputs:
       inlinefile:
