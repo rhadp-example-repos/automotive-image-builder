@@ -66,6 +66,7 @@ mpp-vars:
   default_use_bootpart: true
   default_use_ostree: false
   default_use_separate_var: false
+  default_aboot_partlabel: system_a
   default_image_uuid:
     mpp-eval: (str(__import__('uuid').uuid4()))
   default_use_composefs: false
@@ -225,6 +226,8 @@ mpp-vars:
     mpp-eval: locals().get('target_repos', default_target_repos)
   image_size:
     mpp-eval: locals().get('image_size', default_image_size)
+  aboot_partlabel:
+    mpp-eval: locals().get('aboot_partlabel', default_aboot_partlabel)
   varpart_relative_size:
     mpp-eval: locals().get('varpart_relative_size', default_varpart_relative_size)
   varpart_size:
