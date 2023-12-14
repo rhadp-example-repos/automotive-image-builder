@@ -41,7 +41,14 @@ export CACHESIZE=1GB
 export CHECKPOINTS=build
 IMAGETYPES := regular ostree
 FORMATS := img qcow2 oci.tar repo oci-archive rootfs ext4 tar aboot oci-archive+qcow2 oci-archive+img
-aarch64_TARGETS := ridesx4 rpi4 qdrive3 abootqemu am62sk am69sk
+aarch64_TARGETS := \
+	beagleplay \
+	abootqemu \
+	am62sk \
+	am69sk \
+	ridesx4 \
+	rpi4 \
+	qdrive3
 COMMON_TARGETS := qemu aws
 HOST_TARGETS := $(COMMON_TARGETS) $($(HOST_ARCH)_TARGETS)
 ALL_TARGETS := $(COMMON_TARGETS) $(foreach a,$(ARCHES), $($(a)_TARGETS))
