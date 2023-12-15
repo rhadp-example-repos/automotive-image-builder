@@ -357,9 +357,17 @@ pipelines:
               options:
                 filename: disk.img
                 start:
-                  mpp-eval: image.layout['root'].start
+                  mpp-if: use_aboot
+                  then:
+                    mpp-eval: image.layout[aboot_partlabel].start
+                  else:
+                    mpp-eval: image.layout['root'].start
                 size:
-                  mpp-eval: image.layout['root'].size
+                  mpp-if: use_aboot
+                  then:
+                    mpp-eval: image.layout[aboot_partlabel].size
+                  else:
+                    mpp-eval: image.layout['root'].size
           lvm:
             mpp-if: use_luks
             then:
@@ -380,13 +388,24 @@ pipelines:
               options:
                 filename: disk.img
                 start:
-                  mpp-eval: image.layout['root'].start
+                  mpp-if: use_aboot
+                  then:
+                    mpp-eval: image.layout[aboot_partlabel].start
+                  else:
+                    mpp-eval: image.layout['root'].start
                 size:
-                  mpp-eval: image.layout['root'].size
+                  mpp-if: use_aboot
+                  then:
+                    mpp-eval: image.layout[aboot_partlabel].size
+                  else:
+                    mpp-eval: image.layout['root'].size
         options:
           uuid:
             mpp-eval: rootfs_uuid
-          label: root
+          label:
+            mpp-if: not use_aboot
+            then:
+              mpp-format-string: root
           verity: true
       - type: org.osbuild.copy
         inputs:
@@ -476,9 +495,17 @@ pipelines:
               options:
                 filename: disk.img
                 start:
-                  mpp-eval: image.layout['root'].start
+                  mpp-if: use_aboot
+                  then:
+                    mpp-eval: image.layout[aboot_partlabel].start
+                  else:
+                    mpp-eval: image.layout['root'].start
                 size:
-                  mpp-eval: image.layout['root'].size
+                  mpp-if: use_aboot
+                  then:
+                    mpp-eval: image.layout[aboot_partlabel].size
+                  else:
+                    mpp-eval: image.layout['root'].size
           root-raw:
             mpp-if: use_luks
             then:

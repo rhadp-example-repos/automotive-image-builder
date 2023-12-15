@@ -55,11 +55,19 @@ mpp-define-image:
         type:
           mpp-eval: "'0FC63DAF-8483-4772-8E79-3D69D8477DE4' if partition_label == 'gpt' else '83'"
         uuid: $varpart_uuid
-    - id: root
-      name: root
-      type:
-        mpp-eval: "'0FC63DAF-8483-4772-8E79-3D69D8477DE4' if partition_label == 'gpt' else '83'"
-      uuid: $rootpart_uuid
+    - mpp-if: use_aboot
+      then:
+        id: $aboot_partlabel
+        name: $aboot_partlabel
+        type:
+          mpp-eval: "'0FC63DAF-8483-4772-8E79-3D69D8477DE4' if partition_label == 'gpt' else '83'"
+        uuid: $rootpart_uuid
+      else:
+        id: root
+        name: root
+        type:
+          mpp-eval: "'0FC63DAF-8483-4772-8E79-3D69D8477DE4' if partition_label == 'gpt' else '83'"
+        uuid: $rootpart_uuid
 pipelines:
 - mpp-import-pipelines:
     path: distro/$distro_name.ipp.yml

@@ -343,7 +343,9 @@ pipelines:
         - /boot
         - /boot/efi
         rootfs:
-          label: root
+          mpp-if: not use_aboot
+          then:
+            label: root
         kernel_opts:
           mpp-eval: kernel_opts
   - type: org.osbuild.ostree.fillvar
