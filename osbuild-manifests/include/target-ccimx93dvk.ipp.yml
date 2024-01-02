@@ -1,0 +1,28 @@
+version: '2'
+mpp-vars:
+  use_grub2: false
+  use_efipart: false
+  use_efi_runtime: false
+  serial_console: "ttyLP5,115200"
+  image_size: 3221225472
+  dracut_compression: "lzo"
+  dracut_drivers:
+    mpp-join:
+    - mpp-eval: dracut_drivers
+    - - "ext4"
+      - "mmc_block"
+      - "mmc_core"
+      - "sdhci-esdhc-imx"
+  dracut_modules:
+    - "base"
+    - "bash"
+    - "dracut-systemd"
+    - "fs-lib"
+    - "kernel-modules"
+    - "rootfs-block"
+    - "shutdown"
+    - "systemd"
+    - "systemd-initrd"
+    - "terminfo"
+    - "udev-rules"
+pipelines: []
