@@ -67,11 +67,11 @@ pipelines:
               then:
                 mpp-eval: dracut_drivers
             add_drivers:
-              mpp-if: dracut_add_drivers
+              mpp-if: dracut_add_drivers and not dracut_drivers
               then:
                 mpp-eval: dracut_add_drivers
             omit_drivers:
-              mpp-if: dracut_omit_drivers
+              mpp-if: dracut_omit_drivers and not dracut_drivers
               then:
                 mpp-eval: dracut_omit_drivers
             filesystems:
