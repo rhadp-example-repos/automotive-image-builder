@@ -100,9 +100,8 @@ mpp-vars:
     - - mpp-if: not use_luks
         then: dm
   dracut_compression:
-    mpp-if: use_debug
+    mpp-if: use_debug and not dracut_compression
     then: gzip
-    else: cat
   kernel_opts:
     mpp-join:
     - mpp-eval: kernel_opts
