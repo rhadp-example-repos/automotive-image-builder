@@ -50,12 +50,16 @@ pipelines:
               mpp-if: dracut_compression
               then:
                 mpp-eval: dracut_compression
+            dracutmodules:
+              mpp-if: dracut_modules
+              then:
+                mpp-eval: dracut_modules
             add_dracutmodules:
-              mpp-if: dracut_add_modules
+              mpp-if: dracut_add_modules and not dracut_modules
               then:
                 mpp-eval: dracut_add_modules
             omit_dracutmodules:
-              mpp-if: dracut_omit_modules
+              mpp-if: dracut_omit_modules and not dracut_modules
               then:
                 mpp-eval: dracut_omit_modules
             drivers:
