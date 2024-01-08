@@ -48,7 +48,8 @@ aarch64_TARGETS := \
 	am69sk \
 	ridesx4 \
 	rpi4 \
-	qdrive3
+	qdrive3 \
+	ccimx93dvk
 COMMON_TARGETS := qemu aws
 HOST_TARGETS := $(COMMON_TARGETS) $($(HOST_ARCH)_TARGETS)
 ALL_TARGETS := $(COMMON_TARGETS) $(foreach a,$(ARCHES), $($(a)_TARGETS))

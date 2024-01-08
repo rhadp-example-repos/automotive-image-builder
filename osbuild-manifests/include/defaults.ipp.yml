@@ -113,6 +113,7 @@ mpp-vars:
     then: ttyAMA0
     else: ttyS0
   default_kernel_opts: []
+  default_dracut_modules: []
   default_dracut_add_modules:
       - base
       - dracut-systemd
@@ -264,6 +265,8 @@ mpp-vars:
     mpp-eval: locals().get('active_gpt_attrs', default_active_gpt_attrs)
   inactive_gpt_attrs:
     mpp-eval: locals().get('inactive_gpt_attrs', default_inactive_gpt_attrs)
+  dracut_modules:
+    mpp-eval: locals().get('dracut_modules', default_dracut_modules)
   dracut_add_modules:
     mpp-eval: locals().get('dracut_add_modules', default_dracut_add_modules)
   dracut_omit_modules:
