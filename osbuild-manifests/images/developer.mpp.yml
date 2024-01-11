@@ -85,6 +85,10 @@ pipelines:
               - qemu-kvm
               - fuse-devel
               - kernel-rpm-macros
+              # Dependencies to build ostree binaries
+              - glib2-devel
+              - e2fsprogs-devel
+              - gpgme-devel
               # Container tools
               - podman
               - buildah
