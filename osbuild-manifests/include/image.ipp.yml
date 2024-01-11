@@ -102,6 +102,8 @@ mpp-vars:
               paths:
                 - from: input://tree/
                   to: tree:///usr/lib/qm/rootfs/
+                - from: input://tree/etc/
+                  to: tree:///etc/qm/
 
 pipelines:
 # Some variables need to be written to files, do that here
