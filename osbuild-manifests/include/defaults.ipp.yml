@@ -162,6 +162,26 @@ mpp-vars:
   default_image_extra_stages: []
   default_image_enabled_services: []
   default_image_masked_services: []
+  default_image_masked_generators:
+    # legacy scripts not supported
+    - systemd-rc-local-generator
+    - systemd-sysv-generator
+    # Use systemd units in favour of legacy configs
+    - systemd-veritysetup-generator
+    - systemd-cryptsetup-generator
+    - systemd-integritysetup-generator
+    # Use fixed mountpoints
+    - systemd-gpt-auto-generator
+    # Disable custom kernel cmdline operations
+    - systemd-run-generator
+    - systemd-debug-generator
+    - selinux-autorelabel-generator.sh
+    # Not using systemd-boot
+    - systemd-bless-boot-generator
+    # Not using hibernate
+    - systemd-hibernate-resume-generator
+    # Not using systemd offline updates
+    - systemd-system-update-generator
   default_bluechi_nodename: "host"
   default_bluechi_manager_host_ip: "127.0.0.1"
   default_qm_container_subuid: 1000000000:1500000000
@@ -369,6 +389,8 @@ mpp-vars:
     mpp-eval: locals().get('image_enabled_services',  default_image_enabled_services)
   image_masked_services:
     mpp-eval: locals().get('image_masked_services',  default_image_masked_services)
+  image_masked_generators:
+    mpp-eval: locals().get('image_masked_generators',  default_image_masked_generators)
   bluechi_nodename:
     mpp-eval: locals().get('bluechi_nodename',  default_bluechi_nodename)
   bluechi_manager_host_ip:
