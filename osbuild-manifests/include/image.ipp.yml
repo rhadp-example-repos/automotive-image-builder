@@ -66,6 +66,8 @@ mpp-vars:
               mpp-eval: image_enabled_services
             masked_services:
               mpp-eval: image_masked_services
+            masked_generators:
+              mpp-eval: image_masked_generators
         - mpp-if: use_containers
           then:
             type: org.osbuild.containers.storage.conf
