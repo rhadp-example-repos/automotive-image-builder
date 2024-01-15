@@ -9,10 +9,6 @@ mpp-vars:
   use_ocibased: True
   oci_source: quay.io/automotive-toolchain/autosd
   oci_source_tag: minimal
-  extra_build_repos:
-    # For now we need a newer rpm-ostree (2023.10) for the container support;
-    - id: composefs-test
-      baseurl: https://download.copr.fedorainfracloud.org/results/alexl/composefs-test/centos-stream+epel-next-9-$arch
 pipelines:
 - mpp-import-pipelines:
     path: include/build.ipp.yml
