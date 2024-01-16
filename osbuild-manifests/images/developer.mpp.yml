@@ -37,7 +37,7 @@ pipelines:
             - mpp-eval: image_devel_repos
             - mpp-eval: extra_repos
             - - id: osbuild
-                baseurl: https://download.copr.fedorainfracloud.org/results/@osbuild/osbuild/centos-stream-9-$arch
+                baseurl: https://download.copr.fedorainfracloud.org/results/@osbuild/osbuild-stable/centos-stream-9-$arch
           packages:
             mpp-join:
             - mpp-eval: image_rpms
@@ -107,7 +107,7 @@ pipelines:
         - name: osbuild
           id: osbuild
           baseurl:
-            - https://download.copr.fedorainfracloud.org/results/@osbuild/osbuild/centos-stream-9-$arch
+            - https://download.copr.fedorainfracloud.org/results/@osbuild/osbuild-stable/centos-stream-9-$arch
   - type: org.osbuild.users
     options:
       users:

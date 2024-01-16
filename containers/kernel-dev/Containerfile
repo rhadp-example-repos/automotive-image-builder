@@ -2,7 +2,7 @@ FROM centos:stream9-development
 
 RUN dnf install -y 'dnf-command(config-manager)' && \
     dnf config-manager --set-enabled crb && \
-    dnf copr enable -y @osbuild/osbuild
+    dnf copr enable -y @osbuild/osbuild-stable
 
 RUN dnf install -y \
     "@Development Tools" \
