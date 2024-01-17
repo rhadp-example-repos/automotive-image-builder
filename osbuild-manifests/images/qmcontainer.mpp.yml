@@ -6,6 +6,7 @@ mpp-vars:
   use_bluechi: true
   qm_extra_rpms:
     - vsomeip3-routingmanager
+    - auto-apps
 
 pipelines:
 - mpp-import-pipelines:
