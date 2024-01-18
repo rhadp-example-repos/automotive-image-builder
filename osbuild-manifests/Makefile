@@ -44,6 +44,7 @@ FORMATS := img qcow2 oci.tar repo oci-archive rootfs ext4 tar aboot oci-archive+
 aarch64_TARGETS := \
 	beagleplay \
 	abootqemu \
+	abootqemukvm \
 	am62sk \
 	am69sk \
 	ridesx4 \
