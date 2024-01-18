@@ -141,7 +141,7 @@ mpp-vars:
       - virtiofs
   default_dracut_filesystems:
       - ext4
-  default_dracut_compression: ""
+  default_dracut_compression: "lz4"
   default_dracut_drivers: []
   default_dracut_add_drivers: []
   default_dracut_omit_drivers: []
