@@ -99,9 +99,6 @@ mpp-vars:
     - mpp-eval: dracut_omit_modules
     - - mpp-if: not use_luks
         then: dm
-  dracut_compression:
-    mpp-if: use_debug and not dracut_compression
-    then: gzip
   kernel_opts:
     mpp-join:
     - mpp-eval: kernel_opts
