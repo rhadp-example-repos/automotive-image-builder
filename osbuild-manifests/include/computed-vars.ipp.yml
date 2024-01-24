@@ -111,7 +111,9 @@ mpp-vars:
         - ignore_loglevel
         - earlycon
     - - systemd.show_status=auto
-    - - libahci.ignore_sss=1 # Staggered spin-up
+      - libahci.ignore_sss=1 # Staggered spin-up
+      - slub_debug=FPZ
+      - fsck.mode=skip
   image_repos:
     mpp-join:
       - mpp-eval: distro_repos
