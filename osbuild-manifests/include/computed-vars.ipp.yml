@@ -122,6 +122,10 @@ mpp-vars:
       - libahci.ignore_sss=1 # Staggered spin-up
       - slub_debug=FPZ
       - fsck.mode=skip
+      # Disable rcu_normal_after_boot (because we want to delay the setting of rcu_normal to rcu-normal.service)
+      - rcupdate.rcu_normal_after_boot=0
+      # Enable rcu_expedited for faster boot (will be disabled by rcu-normal.service)
+      - rcupdate.rcu_expedited=1
   image_repos:
     mpp-join:
       - mpp-eval: distro_repos
@@ -186,6 +190,7 @@ mpp-vars:
           then: bluechi-agent.service
         - mpp-if: use_qm or use_bluechi
           then: bluechi-controller.service
+        - rcu-normal.service
   image_masked_generators:
     mpp-join:
       - mpp-eval: image_masked_generators

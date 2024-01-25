@@ -1,0 +1,12 @@
+[Unit]
+Description=Disable expedited rcu updates
+Requires=boot-complete.target
+After=boot-complete.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/echo 1
+StandardOutput=file:/sys/kernel/rcu_normal
+
+[Install]
+WantedBy=default.target
