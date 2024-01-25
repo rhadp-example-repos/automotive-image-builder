@@ -182,6 +182,11 @@ mpp-vars:
     - systemd-hibernate-resume-generator
     # Not using systemd offline updates
     - systemd-system-update-generator
+  default_image_disabled_services:
+    # Not using remote filesystems
+    - remote-fs.target
+    # Not using systemd-boot
+    - systemd-boot-update.service
   default_bluechi_nodename: "host"
   default_bluechi_manager_host_ip: "127.0.0.1"
   default_qm_container_subuid: 1000000000:1500000000
@@ -391,6 +396,8 @@ mpp-vars:
     mpp-eval: locals().get('image_masked_services',  default_image_masked_services)
   image_masked_generators:
     mpp-eval: locals().get('image_masked_generators',  default_image_masked_generators)
+  image_disabled_services:
+    mpp-eval: locals().get('image_disabled_services',  default_image_disabled_services)
   bluechi_nodename:
     mpp-eval: locals().get('bluechi_nodename',  default_bluechi_nodename)
   bluechi_manager_host_ip:

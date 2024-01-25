@@ -62,6 +62,8 @@ mpp-vars:
               mpp-eval: timezone
         - type: org.osbuild.systemd
           options:
+            disabled_services:
+              mpp-eval: image_disabled_services
             enabled_services:
               mpp-eval: image_enabled_services
             masked_services:
