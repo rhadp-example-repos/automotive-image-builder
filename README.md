@@ -18,6 +18,5 @@ Automotive SIG documentation website. For more information, visit:
 Other important websites:
 * [Image Builder](https://www.osbuild.org/)
 * [Image Builder Documentation](https://www.osbuild.org/guides/introduction.html)
-* [Minimum Automotive Contents](https://tiny.distro.builders/workload-overview--automotive-workload-in--automotive-repositories-c9s.html)
   
   
