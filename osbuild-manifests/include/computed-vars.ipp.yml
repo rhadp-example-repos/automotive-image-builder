@@ -178,6 +178,11 @@ mpp-vars:
           then: bluechi-agent.service
         - mpp-if: use_qm or use_bluechi
           then: bluechi-controller.service
+  image_masked_generators:
+    mpp-join:
+      - mpp-eval: image_masked_generators
+      - - mpp-if: not use_ostree
+          then: ostree-system-generator
   ostree_prepare_root_conf:
     mpp-format-string: |
       [sysroot]
