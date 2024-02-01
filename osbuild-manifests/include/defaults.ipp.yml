@@ -69,7 +69,8 @@ mpp-vars:
   default_aboot_partlabel: system_a
   default_image_uuid:
     mpp-eval: (str(__import__('uuid').uuid4()))
-  default_use_composefs: false
+  default_use_composefs: true
+  default_use_composefs_signed: true
   default_use_transient_etc: false
   static_uuids:
     mpp-eval: locals().get('static_uuids', True)
@@ -366,6 +367,8 @@ mpp-vars:
     mpp-eval: locals().get('image_uuid', default_image_uuid)
   use_composefs:
     mpp-eval: locals().get('use_composefs', default_use_composefs)
+  use_composefs_signed:
+    mpp-eval: locals().get('use_composefs_signed', default_use_composefs_signed)
   use_ocibased:
     mpp-eval: locals().get('use_ocibased', False)
   use_transient_etc:

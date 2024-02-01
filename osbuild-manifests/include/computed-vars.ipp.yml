@@ -190,7 +190,7 @@ mpp-vars:
       [etc]
       { "transient=true" if use_transient_etc else "" }
       [composefs]
-      enabled={"signed" if use_composefs else "yes" if use_composefs else "maybe" }
+      enabled={"maybe" if not use_composefs else "signed" if use_composefs_signed else "yes" }
   build_info:
     mpp-format-string: |
       RELEASE="{release_name}"
@@ -248,5 +248,7 @@ mpp-vars:
   subgid_content: |-
     $subgid_content_qm
     $extra_subgid
+  rootpart_label:
+    mpp-eval: aboot_partlabel if use_aboot else "root"
 
 pipelines: []
