@@ -243,5 +243,7 @@ mpp-vars:
   subgid_content: |-
     $subgid_content_qm
     $extra_subgid
+  rootpart_label:
+    mpp-eval: aboot_partlabel if use_aboot else "root"
 
 pipelines: []

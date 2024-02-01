@@ -316,9 +316,9 @@ pipelines:
               options:
                 filename: disk.img
                 start:
-                  mpp-eval: image.layout['root'].start
+                  mpp-eval: image.layout[rootpart_label].start
                 size:
-                  mpp-eval: image.layout['root'].size
+                  mpp-eval: image.layout[rootpart_label].size
                 lock: true
           options:
             passphrase:
@@ -341,9 +341,9 @@ pipelines:
               options:
                 filename: disk.img
                 start:
-                  mpp-eval: image.layout['root'].start
+                  mpp-eval: image.layout[rootpart_label].start
                 size:
-                  mpp-eval: image.layout['root'].size
+                  mpp-eval: image.layout[rootpart_label].size
             device:
               type: org.osbuild.luks2
               parent: luks
@@ -363,17 +363,9 @@ pipelines:
               options:
                 filename: disk.img
                 start:
-                  mpp-if: use_aboot
-                  then:
-                    mpp-eval: image.layout[aboot_partlabel].start
-                  else:
-                    mpp-eval: image.layout['root'].start
+                  mpp-eval: image.layout[rootpart_label].start
                 size:
-                  mpp-if: use_aboot
-                  then:
-                    mpp-eval: image.layout[aboot_partlabel].size
-                  else:
-                    mpp-eval: image.layout['root'].size
+                  mpp-eval: image.layout[rootpart_label].size
           lvm:
             mpp-if: use_luks
             then:
@@ -394,17 +386,9 @@ pipelines:
               options:
                 filename: disk.img
                 start:
-                  mpp-if: use_aboot
-                  then:
-                    mpp-eval: image.layout[aboot_partlabel].start
-                  else:
-                    mpp-eval: image.layout['root'].start
+                  mpp-eval: image.layout[rootpart_label].start
                 size:
-                  mpp-if: use_aboot
-                  then:
-                    mpp-eval: image.layout[aboot_partlabel].size
-                  else:
-                    mpp-eval: image.layout['root'].size
+                  mpp-eval: image.layout[rootpart_label].size
         options:
           uuid:
             mpp-eval: rootfs_uuid
@@ -501,17 +485,9 @@ pipelines:
               options:
                 filename: disk.img
                 start:
-                  mpp-if: use_aboot
-                  then:
-                    mpp-eval: image.layout[aboot_partlabel].start
-                  else:
-                    mpp-eval: image.layout['root'].start
+                  mpp-eval: image.layout[rootpart_label].start
                 size:
-                  mpp-if: use_aboot
-                  then:
-                    mpp-eval: image.layout[aboot_partlabel].size
-                  else:
-                    mpp-eval: image.layout['root'].size
+                  mpp-eval: image.layout[rootpart_label].size
           root-raw:
             mpp-if: use_luks
             then:
@@ -519,9 +495,9 @@ pipelines:
               options:
                 filename: disk.img
                 start:
-                  mpp-eval: image.layout['root'].start
+                  mpp-eval: image.layout[rootpart_label].start
                 size:
-                  mpp-eval: image.layout['root'].size
+                  mpp-eval: image.layout[rootpart_label].size
           root-luks:
             mpp-if: use_luks
             then:
@@ -570,9 +546,9 @@ pipelines:
                 options:
                   filename: disk.img
                   start:
-                    mpp-eval: image.layout['root'].start
+                    mpp-eval: image.layout[rootpart_label].start
                   size:
-                    mpp-eval: image.layout['root'].size
+                    mpp-eval: image.layout[rootpart_label].size
             root-raw:
               mpp-if: use_luks
               then:
@@ -580,9 +556,9 @@ pipelines:
                 options:
                   filename: disk.img
                   start:
-                    mpp-eval: image.layout['root'].start
+                    mpp-eval: image.layout[rootpart_label].start
                   size:
-                    mpp-eval: image.layout['root'].size
+                    mpp-eval: image.layout[rootpart_label].size
             root-luks:
               mpp-if: use_luks
               then:
@@ -606,9 +582,9 @@ pipelines:
               options:
                 filename: disk.img
                 start:
-                  mpp-eval: image.layout['root'].start
+                  mpp-eval: image.layout[rootpart_label].start
                 size:
-                  mpp-eval: image.layout['root'].size
+                  mpp-eval: image.layout[rootpart_label].size
             device:
               type: org.osbuild.luks2
               parent: luks
