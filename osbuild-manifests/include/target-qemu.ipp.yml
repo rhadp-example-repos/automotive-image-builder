@@ -2,4 +2,11 @@ version: '2'
 mpp-vars:
   extra_build_rpms:
     - qemu-img
+  dracut_drivers:
+    mpp-join:
+    - mpp-eval: dracut_drivers
+    - - "nvme"
+      - "nvme_common"
+      - "nvme_core"
+      - "virtio_blk"
 pipelines: []

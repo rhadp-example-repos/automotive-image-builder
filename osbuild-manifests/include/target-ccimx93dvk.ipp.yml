@@ -9,8 +9,7 @@ mpp-vars:
   dracut_drivers:
     mpp-join:
     - mpp-eval: dracut_drivers
-    - - "ext4"
-      - "mmc_block"
+    - - "mmc_block"
       - "mmc_core"
       - "sdhci-esdhc-imx"
   dracut_modules:
