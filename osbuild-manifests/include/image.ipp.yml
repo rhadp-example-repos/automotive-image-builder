@@ -1,6 +1,8 @@
 version: '2'
 mpp-vars:
   extra_tree_content:
+    - from: input://extra-tree/rcu-normal.service
+      to: tree:///usr/lib/systemd/system/rcu-normal.service
     - mpp-if: use_luks and luks_auto_unlock
       then:
         from: input://extra-tree/luks-key
@@ -166,6 +168,20 @@ pipelines:
       - from:
           mpp-format-string: input://inlinefile/{embedded['build-info']}
         to: tree:///build-info
+
+  - type: org.osbuild.copy
+    inputs:
+      inlinefile1:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: rcu-normal.service
+          path: ../files/rcu-normal.service
+    options:
+      paths:
+      - from:
+          mpp-format-string: input://inlinefile1/{embedded['rcu-normal.service']}
+        to: tree:///rcu-normal.service
 
   - type: org.osbuild.copy
     inputs:
