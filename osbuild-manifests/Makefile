@@ -123,9 +123,9 @@ help:
 	@echo
 
 list-targets:
-	@echo Available image targets \(for $(HOST_ARCH)\) are:
-	@echo
-	@$(foreach d, $(DISTROS), $(foreach m, $(MANIFESTS), $(foreach t, $(HOST_TARGETS), $(foreach i,$(IMAGETYPES), echo -e "   "  $(call image-name,$d,$m,$t,$i,$(HOST_ARCH)).[$(subst $(SPACE),$(COMMA),$(FORMATS))];))))
+	$(info Available image targets (for ${HOST_ARCH} ) are:)
+	$(info )
+	@$(foreach d, $(DISTROS), $(foreach m, $(MANIFESTS), $(foreach t, $(HOST_TARGETS), $(foreach i,$(IMAGETYPES), $(info  $(NULL)  $(call image-name,$d,$m,$t,$i,$(HOST_ARCH)).[$(subst $(SPACE),$(COMMA),$(FORMATS))];)))) )
 	@echo
 
 # We pre-create all the toplevel dirs, so that they are owned by the user, not root (when created under sudo)
