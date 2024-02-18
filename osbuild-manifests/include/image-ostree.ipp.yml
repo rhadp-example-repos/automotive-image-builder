@@ -2,9 +2,6 @@ version: '2'
 mpp-vars:
   kernel_osbuild_tree: rootfs
   use_ostree: true
-  use_compliance_mode:
-    mpp-if: name == 'developer'
-    then: true
   image_rpms:
     mpp-join:
     - mpp-eval: base_rpms
@@ -393,23 +390,6 @@ pipelines:
         else:
           kernel:
             mpp-eval: rpms['rootfs'][kernel_core_package].evra
-  - mpp-if: use_compliance_mode
-    then:
-      type: org.osbuild-auto.ostree.config-compliance-mode
-      options:
-        deployment:
-          osname:
-            mpp-eval: osname
-          ref:
-            mpp-eval: ostree_ref
-      inputs:
-        commits:
-          type: org.osbuild.ostree
-          origin: org.osbuild.pipeline
-          references:
-            name:ostree-commit:
-              ref:
-                mpp-eval: ostree_ref
   - mpp-if: use_grub2
     then:
       type: org.osbuild.grub2
