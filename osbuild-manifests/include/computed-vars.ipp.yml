@@ -80,6 +80,8 @@ mpp-vars:
         then: aboot-update
       - mpp-if: use_aboot
         then: aboot-deploy
+      - mpp-if: use_composefs_signed
+        then: openssl
   boot_rpms:
     mpp-join:
     - mpp-eval: boot_rpms
