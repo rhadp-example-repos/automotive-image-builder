@@ -121,7 +121,16 @@ mpp-vars:
         - ignore_loglevel
         - earlycon
     - - systemd.show_status=auto
-      - libahci.ignore_sss=1 # Staggered spin-up
+      # Staggered spin-up
+      - libahci.ignore_sss=1
+      # Enabling these slub_debug options to address a specific safety concern related to heap memory
+      # integrity that only be achieved by setting the SLUB allocator to perform consistency checks.
+      #   F = Sanity checks on
+      #   P = Poisoning (object and padding)
+      #   Z = Add guard areas (red zones) before and after each heap object
+      # Note that enabling slub_debug will trigger the following warning on
+      # boot up:
+      # https://gitlab.com/redhat/centos-stream/src/kernel/centos-stream-9/-/blob/main/lib/vsprintf.c?ref_type=heads#L2230
       - slub_debug=FPZ
       - fsck.mode=skip
       # Disable rcu_normal_after_boot (because we want to delay the setting of rcu_normal to rcu-normal.service)
