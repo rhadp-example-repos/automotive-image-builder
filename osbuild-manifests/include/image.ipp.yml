@@ -43,6 +43,8 @@ mpp-vars:
       - - mpp-if: use_ostree
           then: rw
           else: ro
+        - mpp-if: use_ostree and use_aboot
+          then: ostree=true
         - loglevel=$kernel_loglevel
         - mpp-if: use_efi_runtime
           then: efi=runtime
