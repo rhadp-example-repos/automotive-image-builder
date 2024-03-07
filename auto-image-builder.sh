@@ -12,5 +12,5 @@ SCRIPTPATH=$(dirname "$SCRIPT")
 
 cd "$SCRIPTPATH"
 
-sudo podman run -v "$PWD":"$PWD" --rm --privileged --pull=newer --security-opt label=type:unconfined_t quay.io/centos-sig-automotive/automotive-osbuild /bin/bash -c "cd $PWD/osbuild-manifests/; make $@"
+podman run -v "$PWD":"$PWD" --rm --privileged --pull=newer --security-opt label=type:unconfined_t quay.io/centos-sig-automotive/automotive-osbuild /bin/bash -c "cd $PWD/osbuild-manifests/; make $@"
 
