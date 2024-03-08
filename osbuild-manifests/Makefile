@@ -47,6 +47,7 @@ aarch64_TARGETS := \
 	abootqemukvm \
 	am62sk \
 	am69sk \
+	j784s4evm \
 	tda4vm_sk \
 	ridesx4 \
 	rpi4 \
