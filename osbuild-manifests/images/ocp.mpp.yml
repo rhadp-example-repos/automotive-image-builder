@@ -1,7 +1,6 @@
 version: '2'
 mpp-vars:
   name: ocp
-  use_containers: true
   # image_size: '17179869184'
 pipelines:
 - mpp-import-pipelines:

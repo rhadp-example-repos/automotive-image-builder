@@ -1,7 +1,6 @@
 version: '2'
 mpp-vars:
   name: containerperf
-  use_containers: true
   kernel_opts:
     - rcupdate.rcu_normal_after_boot=1 # This is the default, but now its easy to change
 pipelines:
