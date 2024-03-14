@@ -811,3 +811,24 @@ pipelines:
     options:
       filename: rootfs.tar
       root-node: omit
+
+- name: rpmlist
+  runner: org.osbuild.centos9
+  stages:
+  - type: org.osbuild.copy
+    inputs:
+      inlinefile:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: rpmlist
+          text:
+            mpp-eval: |
+              __import__('json').dumps(
+              {pipeline:{name:info.url for (name, info) in rpms[pipeline].items()} for pipeline in rpms.keys()}
+              , indent=True, sort_keys=True)
+    options:
+      paths:
+        - from:
+            mpp-format-string: input://inlinefile/{embedded['rpmlist']}
+          to: tree:///rpmlist

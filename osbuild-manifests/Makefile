@@ -40,7 +40,7 @@ endif
 export CACHESIZE=1GB
 export CHECKPOINTS=build
 IMAGETYPES := regular ostree
-FORMATS := img qcow2 oci.tar repo oci-archive rootfs ext4 tar aboot oci-archive+qcow2 oci-archive+img
+FORMATS := img qcow2 oci.tar repo oci-archive rootfs ext4 tar aboot oci-archive+qcow2 oci-archive+img rpmlist
 aarch64_TARGETS := \
 	beagleplay \
 	abootqemu \
@@ -87,6 +87,7 @@ help:
 	@echo \ \* .oci-archive+qcow2: Generate an oci container image with the ostree commit plus a qcow image deploying the commit
 	@echo \ \* .oci-archive+img: Generate an oci container image with the ostree commit plus a image deploying the commit
 	@echo \ \* .aboot: Generate an ext4 root filesystem and an android boot image \(for aboot targets\)
+	@echo \ \* .rpmlist: Generate an json file listing the rpms used in the image
 	@echo
 	@echo You can pass variable declarations to osbuild-mpp with the DEFINES make variable.
 	@echo Multiple defines are separated by space, if you need a space inside a value escape it using \"\\ \".
