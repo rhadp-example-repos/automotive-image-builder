@@ -40,7 +40,7 @@ endif
 export CACHESIZE=1GB
 export CHECKPOINTS=build
 IMAGETYPES := regular ostree
-FORMATS := img qcow2 oci.tar repo oci-archive rootfs ext4 tar aboot oci-archive+qcow2 oci-archive+img
+FORMATS := img qcow2 oci.tar repo oci-archive rootfs ext4 tar aboot oci-archive+qcow2 oci-archive+img rpmlist
 aarch64_TARGETS := \
 	beagleplay \
 	abootqemu \
@@ -87,6 +87,7 @@ help:
 	@echo \ \* .oci-archive+qcow2: Generate an oci container image with the ostree commit plus a qcow image deploying the commit
 	@echo \ \* .oci-archive+img: Generate an oci container image with the ostree commit plus a image deploying the commit
 	@echo \ \* .aboot: Generate an ext4 root filesystem and an android boot image \(for aboot targets\)
+	@echo \ \* .rpmlist: Generate an json file listing the rpms used in the image
 	@echo
 	@echo You can pass variable declarations to osbuild-mpp with the DEFINES make variable.
 	@echo Multiple defines are separated by space, if you need a space inside a value escape it using \"\\ \".
@@ -102,9 +103,6 @@ help:
 	@echo  \ \ clean_downloads: Removes files downloaded during image builds
 	@echo  \ \ clean: Run clean_caches and clean_downloads
 	@echo  \ \ osbuildvm-images: Build a image that can be used to build images inside a VM
-	@echo  \ \ packages-image.json: create a manifest \"packages-image.json\" file with the list
-	@echo  \ \ of packages for that image. Relace \"image\" with your image, for example:
-	@echo  \ \ '  make packages-minimal.json'
 	@echo
 	@echo There are also some common conversion rules:
 	@echo  \ \ foo.aboot.simg will build aboot.img / rootfs.img and convert rootfs.img using img2simg
@@ -181,16 +179,6 @@ $(foreach d, $(DISTROS), \
 # Rule to pre-generate all manifests
 manifests: $(foreach d, $(DISTROS),$(foreach m, $(MANIFESTS), $(foreach a,$(ARCHES), $(foreach t, $(COMMON_TARGETS) $($(a)_TARGETS), $(foreach i,$(IMAGETYPES), $(BUILDDIR)/$(call image-name,$d,$m,$t,$i,$a).json)))))
 
-define packages-rule
-.PHONY: packages-$(call manifest-get-name,$1).json
-packages-$(call manifest-get-name,$1).json: $1
-	$(OSBUILD_MPP) -I . $$< -D arch=\"x86_64\" - | jq -f tools/extract-rpms.jq > $$@.x86_64
-	$(OSBUILD_MPP) -I . $$< -D arch=\"aarch64\" - | jq -f tools/extract-rpms.jq > $$@.aarch64
-	echo 1 | jq --indent 4 -f tools/create-packagelist.jq --slurpfile x86_64 $$@.x86_64 --slurpfile aarch64 $$@.aarch64 > $$@
-endef
-
-$(foreach m, $(MANIFESTS), $(eval $(call packages-rule,$m)))
-
 .PHONY: clean_downloads
 clean_downloads:
 	sudo rm -rf _build/osbuild_store/sources/org.osbuild.files/*
@@ -237,6 +225,9 @@ osbuildvm-images: $(BUILDDIR)
 
 %.tar.gz : %.tar
 	gzip -f $<
+
+minimal-rpms.txt: cs9-qemu-qmminimal-regular.$(HOST_ARCH).rpmlist cs9-qemu-qm-minimal-ostree.$(HOST_ARCH).rpmlist
+	jq  -r ".[] | .rootfs | keys[]" -s $< | sort | uniq > minimal-rpms.txt
 
 AUTOSIGREPO=https://mirror.stream.centos.org/SIGs/9-stream/automotive
 define u-boot-rule

@@ -35,6 +35,7 @@ EXPORT_BY_EXT[rootfs]=rootfs
 EXPORT_BY_EXT[ext4]=ext4
 EXPORT_BY_EXT[tar]=tar
 EXPORT_BY_EXT[aboot]=aboot
+EXPORT_BY_EXT[rpmlist]=rpmlist
 
 # Map extension to name of exported file by pipeline
 declare -A EXPORT_FILE_BY_EXT
@@ -47,6 +48,7 @@ EXPORT_FILE_BY_EXT[rootfs]=
 EXPORT_FILE_BY_EXT[ext4]=rootfs.ext4
 EXPORT_FILE_BY_EXT[tar]=rootfs.tar
 EXPORT_FILE_BY_EXT[aboot]=images
+EXPORT_FILE_BY_EXT[rpmlist]=rpmlist
 
 HOST_ARCH=$(arch)
 CURRENT_UIDGID="$(id -u):$(id -g)"
