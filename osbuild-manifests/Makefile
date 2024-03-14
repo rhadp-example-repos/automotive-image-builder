@@ -226,6 +226,9 @@ osbuildvm-images: $(BUILDDIR)
 %.tar.gz : %.tar
 	gzip -f $<
 
+minimal-rpms.txt: cs9-qemu-qmminimal-regular.$(HOST_ARCH).rpmlist cs9-qemu-qm-minimal-ostree.$(HOST_ARCH).rpmlist
+	jq  -r ".[] | .rootfs | keys[]" -s $< | sort | uniq > minimal-rpms.txt
+
 AUTOSIGREPO=https://mirror.stream.centos.org/SIGs/9-stream/automotive
 define u-boot-rule
 qemu-u-boot-$1.bin:
