@@ -83,7 +83,9 @@ mpp-vars:
                   mpp-eval: containers_transient_store
                 options:
                   additionalimagestores:
-                    - /usr/share/containers/storage
+                    - mpp-if: use_containers_extra_store
+                      then:
+                        mpp-eval: containers_extra_store
         - mpp-if: use_qm
           then:
             type: org.osbuild.mkdir

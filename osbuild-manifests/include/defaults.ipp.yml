@@ -157,6 +157,7 @@ mpp-vars:
     - "/usr/bin/bash"
   default_container_entrypoint: []
   default_extra_fstab: []
+  default_use_containers_extra_store: false
   default_containers_extra_store: /usr/share/containers/storage
   default_qm_containers_extra_store: /usr/share/containers/storage
   default_containers_transient_store: true
@@ -381,6 +382,8 @@ mpp-vars:
     mpp-eval: locals().get('container_cmd', default_container_cmd)
   extra_fstab:
     mpp-eval: locals().get('extra_fstab',  default_extra_fstab)
+  use_containers_extra_store:
+    mpp-eval: locals().get('use_containers_extra_store', default_use_containers_extra_store)
   containers_extra_store:
     mpp-eval: locals().get('containers_extra_store', default_containers_extra_store)
   qm_containers_extra_store:

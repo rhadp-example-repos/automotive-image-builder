@@ -1,6 +1,7 @@
 version: '2'
 mpp-vars:
   name: container
+  use_containers_extra_store: true
   qm_extra_rpms:
     - vsomeip3-routingmanager
 
@@ -61,7 +62,8 @@ pipelines:
     options:
       destination:
         type: containers-storage
-        storage-path: /usr/share/containers/storage
+        storage-path:
+          mpp-eval: containers_extra_store
   - type: org.osbuild.copy
     inputs:
       inlinefile1:
