@@ -195,8 +195,6 @@ mpp-vars:
       - mpp-eval: image_enabled_services
       - - mpp-if: tmp_is_tmpfs
           then: tmp.mount
-        - mpp-if: use_containers and containers_transient_store
-          then: podman-clean-transient.service
         - mpp-if: use_qm or use_bluechi
           then: bluechi-agent.service
         - mpp-if: use_qm or use_bluechi

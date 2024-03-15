@@ -20,6 +20,16 @@ pipelines:
             origin: org.osbuild.pipeline
             references:
             - name:rootfs
+        options:
+          paths:
+            - from: input://tree/
+              to: tree:///
+      - type: org.osbuild.mkdir
+        options:
+          paths:
+           mpp-eval: extra_tree_dirs
+      - type: org.osbuild.copy
+        inputs:
           extra-tree:
             type: org.osbuild.tree
             origin: org.osbuild.pipeline
@@ -27,10 +37,7 @@ pipelines:
             - name:extra-tree-content
         options:
           paths:
-            mpp-join:
-              - - from: input://tree/
-                  to: tree:///
-              - mpp-eval: extra_tree_content
+            mpp-eval: extra_tree_content
       - type: org.osbuild.users
         options:
           users:
@@ -39,6 +46,11 @@ pipelines:
                 mpp-eval: root_password
               key:
                 mpp-eval: root_ssh_key
+      - type: org.osbuild.systemd
+        options:
+          enabled_services:
+            - mpp-if: "containers_transient_store and 'podman' in rpms['rootfs']"
+              then: podman-clean-transient.service
     - mpp-eval: image_extra_stages
     - - type: org.osbuild.dracut.conf
         options:

@@ -1,7 +1,7 @@
 version: '2'
 mpp-vars:
   name: ocp
-  use_containers: true
+  use_containers_extra_store: true
   # image_size: '17179869184'
 pipelines:
 - mpp-import-pipelines:
@@ -56,7 +56,8 @@ pipelines:
     options:
       destination:
         type: containers-storage
-        storage-path: /usr/share/containers/storage
+        storage-path:
+          mpp-eval: containers_extra_store
   - type: org.osbuild.mkdir
     options:
       paths:

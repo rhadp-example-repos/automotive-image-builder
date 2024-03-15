@@ -1,5 +1,9 @@
 version: '2'
 mpp-vars:
+  extra_tree_dirs:
+    - path: /etc/containers
+      parents: true
+      exist_ok: true
   extra_tree_content:
     - from: input://extra-tree/rcu-normal.service
       to: tree:///usr/lib/systemd/system/rcu-normal.service
@@ -7,10 +11,8 @@ mpp-vars:
       then:
         from: input://extra-tree/luks-key
         to: tree:///usr/.auto-unlock-key
-    - mpp-if: use_containers
-      then:
-        from: input://extra-tree/containers.conf
-        to: tree:///etc/containers/containers.conf
+    - from: input://extra-tree/containers.conf
+      to: tree:///etc/containers/containers.conf
     - mpp-if: use_ostree
       then:
         from: input://extra-tree/ostree_prepare_root.conf
@@ -72,18 +74,18 @@ mpp-vars:
               mpp-eval: image_masked_services
             masked_generators:
               mpp-eval: image_masked_generators
-        - mpp-if: use_containers
-          then:
-            type: org.osbuild.containers.storage.conf
-            options:
-              filename: /etc/containers/storage.conf
-              config:
-                storage:
-                  transient_store:
-                    mpp-eval: containers_transient_store
-                  options:
-                    additionalimagestores:
-                      - /usr/share/containers/storage
+        - type: org.osbuild.containers.storage.conf
+          options:
+            filename: /etc/containers/storage.conf
+            config:
+              storage:
+                transient_store:
+                  mpp-eval: containers_transient_store
+                options:
+                  additionalimagestores:
+                    - mpp-if: use_containers_extra_store
+                      then:
+                        mpp-eval: containers_extra_store
         - mpp-if: use_qm
           then:
             type: org.osbuild.mkdir
