@@ -126,14 +126,19 @@ def find_ovmf(args):
     dirs = [
         "~/.local/share/ovmf",
         "/usr/share/OVMF",
-        "/usr/share/edk2/ovmf/"
+        "/usr/share/edk2/ovmf",
     ]
     if args.ovmf_dir:
-        dirs.append(args.ovmf_dir)
+        dirs.insert(0, args.ovmf_dir)
 
     for d in dirs:
         path = os.path.expanduser(d)
-        if os.path.exists(path):
+        if args.secureboot:
+            suffix = ".secboot"
+        else:
+            suffix = ""
+        if (os.path.exists(f"{path}/OVMF_CODE{suffix}.fd") and
+            os.path.exists(f"{path}/OVMF_VARS{suffix}.fd")):
             return path
 
     raise RuntimeError("Could not find OMVF")
