@@ -226,8 +226,22 @@ osbuildvm-images: $(BUILDDIR)
 %.tar.gz : %.tar
 	gzip -f $<
 
-minimal-rpms.txt: cs9-qemu-qmminimal-regular.$(HOST_ARCH).rpmlist cs9-qemu-qm-minimal-ostree.$(HOST_ARCH).rpmlist
-	jq  -r ".[] | .rootfs | keys[]" -s $< | sort | uniq > minimal-rpms.txt
+# Images and targets used to compute the core RPM set:
+CORE_IMAGES := qm-minimal
+CORE_TARGETS := qemu
+aarch64_CORE_TARGETS := ridesx4
+
+# Template rule for producing core rpm lists
+# $1 == distro name
+# $2 == Arch
+define core-rpms-rule
+$1-core-rpms-$2.txt: $(foreach t, $(IMAGETYPES), $(foreach i, $(CORE_IMAGES), $(foreach k, $(CORE_TARGETS) $($2_CORE_TARGETS), $1-$k-$i-$t.$2.rpmlist)))
+	jq  -r ".[] | .rootfs | keys[]" -s $$^ | sort | uniq > $$@
+endef
+
+$(foreach d, $(DISTROS), \
+ $(foreach a,$(ARCHES), \
+  $(eval $(call core-rpms-rule,$d,$a))))
 
 AUTOSIGREPO=https://mirror.stream.centos.org/SIGs/9-stream/automotive
 define u-boot-rule
