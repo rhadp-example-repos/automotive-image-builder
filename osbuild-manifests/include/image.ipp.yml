@@ -549,6 +549,26 @@ pipelines:
                   mpp-eval: image.layout['boot_b'].start
                 size:
                   mpp-eval: image.layout['boot_b'].size
+          vbmeta_a:
+            mpp-if: use_vbmetapart
+            then:
+              type: org.osbuild.loopback
+              options:
+                filename: disk.img
+                start:
+                  mpp-eval: image.layout['vbmeta_a'].start
+                size:
+                  mpp-eval: image.layout['vbmeta_a'].size
+          vbmeta_b:
+            mpp-if: use_vbmetapart
+            then:
+              type: org.osbuild.loopback
+              options:
+                filename: disk.img
+                start:
+                  mpp-eval: image.layout['vbmeta_b'].start
+                size:
+                  mpp-eval: image.layout['vbmeta_b'].size
           var:
             mpp-if: use_separate_var
             then:
