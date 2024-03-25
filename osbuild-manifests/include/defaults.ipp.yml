@@ -72,6 +72,9 @@ mpp-vars:
   default_use_composefs: true
   default_use_composefs_signed: true
   default_use_transient_etc: true
+  default_coredump_storage: none
+  default_journal_storage: persistent
+  default_systemd_timeout: 30s
   static_uuids:
     mpp-eval: locals().get('static_uuids', True)
   default_rootfs_uuid:
@@ -376,6 +379,12 @@ mpp-vars:
     mpp-eval: locals().get('use_ocibased', False)
   use_transient_etc:
     mpp-eval: locals().get('use_transient_etc', default_use_transient_etc)
+  journal_storage:
+    mpp-eval: locals().get('journal_storage', default_journal_storage)
+  coredump_storage:
+    mpp-eval: locals().get('coredump_storage', default_coredump_storage)
+  systemd_timeout:
+    mpp-eval: locals().get('systemd_timeout', default_systemd_timeout)
   container_entrypoint:
     mpp-eval: locals().get('container_entrypoint', default_container_entrypoint)
   container_cmd:

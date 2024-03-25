@@ -4,7 +4,17 @@ mpp-vars:
     - path: /etc/containers
       parents: true
       exist_ok: true
+    - path: /usr/lib/systemd/system.conf.d
+      parents: true
+      exist_ok: true
+    - path: /usr/lib/systemd/coredump.conf.d
+      parents: true
+      exist_ok: true
   extra_tree_content:
+    - from: input://extra-tree/systemd-system.conf
+      to: tree:///usr/lib/systemd/system.conf.d/10-automotive.conf
+    - from: input://extra-tree/coredump.conf
+      to: tree:///usr/lib/systemd/coredump.conf.d/10-automotive.conf
     - from: input://extra-tree/rcu-normal.service
       to: tree:///usr/lib/systemd/system/rcu-normal.service
     - mpp-if: use_luks and luks_auto_unlock
@@ -76,6 +86,14 @@ mpp-vars:
               mpp-eval: image_masked_services
             masked_generators:
               mpp-eval: image_masked_generators
+        - type: org.osbuild.systemd-journald
+          options:
+            filename:
+              10-automotive.conf
+            config:
+              Journal:
+                Storage:
+                  mpp-eval: journal_storage
         - type: org.osbuild.containers.storage.conf
           options:
             filename: /etc/containers/storage.conf
@@ -133,6 +151,32 @@ pipelines:
         - from:
             mpp-format-string: input://inlinefile/{embedded['luks-key']}
           to: tree:///luks-key
+  - type: org.osbuild.copy
+    inputs:
+      inlinefile:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: systemd_system.conf
+          text: $systemd_system_conf
+    options:
+      paths:
+      - from:
+          mpp-format-string: input://inlinefile/{embedded['systemd_system.conf']}
+        to: tree:///systemd-system.conf
+  - type: org.osbuild.copy
+    inputs:
+      inlinefile:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: coredump.conf
+          text: $coredump_conf
+    options:
+      paths:
+      - from:
+          mpp-format-string: input://inlinefile/{embedded['coredump.conf']}
+        to: tree:///coredump.conf
   - type: org.osbuild.copy
     inputs:
       inlinefile:
