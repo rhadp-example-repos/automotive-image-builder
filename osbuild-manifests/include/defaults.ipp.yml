@@ -53,6 +53,7 @@ mpp-vars:
     - 51
     - 52
     - 53 # remaining tries 0x7
+  default_extra_parts: []
   default_kernel_loglevel: 4
   default_timezone: UTC
   default_locale: en_US.UTF-8
@@ -294,6 +295,8 @@ mpp-vars:
     mpp-eval: locals().get('active_gpt_attrs', default_active_gpt_attrs)
   inactive_gpt_attrs:
     mpp-eval: locals().get('inactive_gpt_attrs', default_inactive_gpt_attrs)
+  extra_parts:
+    mpp-eval: locals().get('extra_parts', default_extra_parts)
   dracut_modules:
     mpp-eval: locals().get('dracut_modules', default_dracut_modules)
   dracut_add_modules:
