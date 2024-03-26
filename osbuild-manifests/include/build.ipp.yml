@@ -48,6 +48,9 @@ mpp-define-image:
             uuid: $abootpart_uuid_b
             attrs:
               mpp-eval: inactive_gpt_attrs
+      - mpp-if: use_testpart
+        then:
+          mpp-eval: test_partitions
       - mpp-eval: extra_parts
       - - mpp-if: use_separate_var
           then:
