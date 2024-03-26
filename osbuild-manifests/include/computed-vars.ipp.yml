@@ -270,6 +270,18 @@ mpp-vars:
   subgid_content: |-
     $subgid_content_qm
     $extra_subgid
+  systemd_system_conf:
+    mpp-format-string: |
+      [Manager]
+      DefaultTimeoutStartSec={systemd_timeout}
+      DefaultTimeoutStopSec={systemd_timeout}
+      DefaultTimeoutAbortSec={systemd_timeout}
+      DefaultRestartSec={systemd_timeout}
+      DefaultDeviceTimeoutSec={systemd_timeout}
+  coredump_conf:
+    mpp-format-string: |
+      [Coredump]
+      Storage={coredump_storage}
   rootpart_label:
     mpp-eval: aboot_partlabel if use_aboot else "root"
 
