@@ -284,5 +284,22 @@ mpp-vars:
       Storage={coredump_storage}
   rootpart_label:
     mpp-eval: aboot_partlabel if use_aboot else "root"
+  main_nmconnection:
+    mpp-format-string: |
+      [connection]
+      type=ethernet
+      id=Main connection
+      uuid={static_ip_uuid}
+      autoconnect=true
+      { "interface-name = " + static_ip_iface if static_ip_iface else "" }
+
+      [ipv4]
+      method=manual
+      address={static_ip}
+      dns={static_dns}
+      gateway={static_gw}
+
+      [ipv6]
+      method=disabled
 
 pipelines: []

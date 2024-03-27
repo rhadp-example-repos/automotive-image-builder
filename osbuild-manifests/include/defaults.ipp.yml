@@ -77,6 +77,12 @@ mpp-vars:
   default_coredump_storage: none
   default_journal_storage: persistent
   default_systemd_timeout: 30s
+  default_use_static_ip: false
+  default_static_ip: "10.0.2.15/24"
+  default_static_gw: "10.0.2.2"
+  default_static_dns: "10.0.2.3"
+  default_static_ip_iface: ""
+  default_static_ip_uuid: 6fb8f75a-7fde-4906-a51e-a70e56c58742
   static_uuids:
     mpp-eval: locals().get('static_uuids', True)
   default_rootfs_uuid:
@@ -391,6 +397,18 @@ mpp-vars:
     mpp-eval: locals().get('coredump_storage', default_coredump_storage)
   systemd_timeout:
     mpp-eval: locals().get('systemd_timeout', default_systemd_timeout)
+  use_static_ip:
+    mpp-eval: locals().get('use_static_ip', default_use_static_ip)
+  static_ip:
+    mpp-eval: locals().get('static_ip', default_static_ip)
+  static_ip_iface:
+    mpp-eval: locals().get('static_ip_iface', default_static_ip_iface)
+  static_gw:
+    mpp-eval: locals().get('static_gw', default_static_gw)
+  static_dns:
+    mpp-eval: locals().get('static_dns', default_static_dns)
+  static_ip_uuid:
+    mpp-eval: locals().get('static_ip_uuid', default_static_ip_uuid)
   container_entrypoint:
     mpp-eval: locals().get('container_entrypoint', default_container_entrypoint)
   container_cmd:
