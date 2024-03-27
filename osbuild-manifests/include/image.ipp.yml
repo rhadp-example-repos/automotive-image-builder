@@ -873,7 +873,7 @@ pipelines:
           text:
             mpp-eval: |
               __import__('json').dumps(
-              {pipeline:{name:{'url':info.url,'arch':info.arch,'evr':info.evr,'license':getattr(info, 'license_tag', None),'summary':getattr(info, 'summary', None), 'source_rpm':getattr(info, 'source_rpm', None), 'buildtime':getattr(info, 'buildtime', None), 'vendor':getattr(info, 'vendor', None)} for (name, info) in rpms[pipeline].items()} for pipeline in rpms.keys()}
+              {pipeline:{name:{'url':info.url,'arch':info.arch,'evr':info.evr,'license':getattr(info, 'license_tag', None),'summary':getattr(info, 'summary', None), 'sourcerpm':getattr(info, 'sourcerpm', None), 'buildtime':getattr(info, 'buildtime', None), 'vendor':getattr(info, 'vendor', None)} for (name, info) in rpms[pipeline].items()} for pipeline in rpms.keys()}
               , indent=True, sort_keys=True)
     options:
       paths:
