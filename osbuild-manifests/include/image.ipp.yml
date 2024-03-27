@@ -801,7 +801,11 @@ pipelines:
   build: name:build
   stages:
     mpp-join:
-    - - type: org.osbuild.copy
+    - - type: org.osbuild.mkdir
+        options:
+          paths:
+           mpp-eval: extra_tree_dirs
+      - type: org.osbuild.copy
         inputs:
           tree:
             type: org.osbuild.tree
