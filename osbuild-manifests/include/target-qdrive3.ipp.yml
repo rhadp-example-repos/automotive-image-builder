@@ -4,6 +4,7 @@ mpp-vars:
   use_abl: true
   use_aboot: true
   use_abootpart: true
+  use_vbmetapart: true
   use_bootpart: false
   use_efipart: false
   use_efi_runtime: false

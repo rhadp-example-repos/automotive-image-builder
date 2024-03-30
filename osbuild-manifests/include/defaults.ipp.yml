@@ -39,6 +39,7 @@ mpp-vars:
   default_efipart_size: 204800
   default_bootpart_size: 614400
   default_abootpart_size: 131072 # 64M
+  default_vbmetapart_size: 128 # 64K
   default_varpart_relative_size: 0.5 # 50% of image size
   default_active_gpt_attrs: # Default active setup for Qualcomm
     - 48
@@ -63,12 +64,14 @@ mpp-vars:
   default_use_bluechi: false
   default_use_aboot: false
   default_use_abootpart: false
+  default_use_vbmetapart: false
   default_use_efipart: true
   default_use_bootpart: true
   default_use_testpart: false
   default_use_ostree: false
   default_use_separate_var: false
   default_aboot_partlabel: system_a
+  default_vbmeta_partlabel: vbmeta_a
   default_image_uuid:
     mpp-eval: (str(__import__('uuid').uuid4()))
   default_use_composefs: true
@@ -101,6 +104,10 @@ mpp-vars:
     mpp-eval: ('1dd3a986-997c-0c48-1d1b-b0d0399f3153' if static_uuids else str(__import__('uuid').uuid4()))
   default_abootpart_uuid_b:
     mpp-eval: ('45105095-3847-4657-51f2-2a0144550453' if static_uuids else str(__import__('uuid').uuid4()))
+  default_vbmetapart_uuid_a:
+    mpp-eval: ('1dd3a986-997c-0c48-1d1b-b0d0399f3154' if static_uuids else str(__import__('uuid').uuid4()))
+  default_vbmetapart_uuid_b:
+    mpp-eval: ('45105095-3847-4657-51f2-2a0144550454' if static_uuids else str(__import__('uuid').uuid4()))
   default_rootpart_uuid:
     mpp-eval: ('6264d520-3fb9-423f-8ab8-7a0a8e3d3562' if static_uuids else str(__import__('uuid').uuid4()))
   default_luks_uuid:
@@ -287,6 +294,10 @@ mpp-vars:
     mpp-eval: locals().get('abootpart_a_uuid', default_abootpart_uuid_a)
   abootpart_uuid_b:
     mpp-eval: locals().get('abootpart_b_uuid', default_abootpart_uuid_b)
+  vbmetapart_uuid_a:
+    mpp-eval: locals().get('abootpart_a_uuid', default_vbmetapart_uuid_a)
+  vbmetapart_uuid_b:
+    mpp-eval: locals().get('abootpart_b_uuid', default_vbmetapart_uuid_b)
   efipart_uuid:
     mpp-eval: locals().get('efipart_uuid', default_efipart_uuid)
   varpart_uuid:
@@ -301,6 +312,8 @@ mpp-vars:
     mpp-eval: locals().get('bootpart_size', default_bootpart_size)
   abootpart_size:
     mpp-eval: locals().get('abootpart_size', default_abootpart_size)
+  vbmetapart_size:
+    mpp-eval: locals().get('vbmetapart_size', default_vbmetapart_size)
   active_gpt_attrs:
     mpp-eval: locals().get('active_gpt_attrs', default_active_gpt_attrs)
   inactive_gpt_attrs:
@@ -371,6 +384,8 @@ mpp-vars:
     mpp-eval: locals().get('use_aboot', default_use_aboot)
   use_abootpart:
     mpp-eval: locals().get('use_abootpart', default_use_abootpart)
+  use_vbmetapart:
+    mpp-eval: locals().get('use_vbmetapart', default_use_vbmetapart)
   use_efipart:
     mpp-eval: locals().get('use_efipart', default_use_efipart)
   use_bootpart:
