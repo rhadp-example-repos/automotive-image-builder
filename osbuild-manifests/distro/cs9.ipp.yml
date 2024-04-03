@@ -14,7 +14,7 @@ mpp-vars:
   - id: autosd
     baseurl: https://mirror.stream.centos.org/SIGs/9-stream/autosd/$arch/packages-main/
   - id: next
-    baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/next/epel-9-$arch/
+    baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/next/centos-stream+epel-next-9-$arch/
   distro_devel_repos:
   - id: crb
     baseurl: $distro_baseurl/CRB/$arch/os/
