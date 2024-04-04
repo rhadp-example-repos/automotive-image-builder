@@ -85,6 +85,8 @@ pipelines:
               - qemu-kvm
               - fuse-devel
               - kernel-rpm-macros
+              - mpp-if: use_aboot
+                then: aboot-update
               # Dependencies to build ostree binaries
               - glib2-devel
               - e2fsprogs-devel
