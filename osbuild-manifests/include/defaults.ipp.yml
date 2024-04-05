@@ -105,9 +105,9 @@ mpp-vars:
   default_abootpart_uuid_b:
     mpp-eval: ('45105095-3847-4657-51f2-2a0144550453' if static_uuids else str(__import__('uuid').uuid4()))
   default_vbmetapart_uuid_a:
-    mpp-eval: ('1dd3a986-997c-0c48-1d1b-b0d0399f3154' if static_uuids else str(__import__('uuid').uuid4()))
+    mpp-eval: ('da91d469-09b3-ce43-795e-3b86f3735143' if static_uuids else str(__import__('uuid').uuid4()))
   default_vbmetapart_uuid_b:
-    mpp-eval: ('45105095-3847-4657-51f2-2a0144550454' if static_uuids else str(__import__('uuid').uuid4()))
+    mpp-eval: ('305087ff-bf9a-910d-f3c4-606a8de7788a' if static_uuids else str(__import__('uuid').uuid4()))
   default_rootpart_uuid:
     mpp-eval: ('6264d520-3fb9-423f-8ab8-7a0a8e3d3562' if static_uuids else str(__import__('uuid').uuid4()))
   default_luks_uuid:
