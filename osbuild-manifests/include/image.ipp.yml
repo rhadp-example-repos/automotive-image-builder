@@ -806,6 +806,23 @@ pipelines:
       source: root
       target: /
 
+  - mpp-if: use_composefs and use_ostree
+    then:
+      type: org.osbuild.ostree.post-copy
+      devices:
+        root:
+          type: org.osbuild.loopback
+          options:
+            filename: rootfs.ext4
+            start: 0
+            size:
+              mpp-format-int: "{int(image.size) // 512}"
+      mounts:
+      - name: root
+        type: org.osbuild.ext4
+        source: root
+        target: /
+
 - mpp-if: use_aboot
   then:
     name: aboot
