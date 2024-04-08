@@ -39,5 +39,5 @@ SCRIPTPATH=$(dirname "$SCRIPT")
 
 cd "$SCRIPTPATH"
 
-podman run -v "$PWD":"$PWD" --rm --privileged $PULL_ARG --security-opt label=type:unconfined_t quay.io/centos-sig-automotive/automotive-osbuild /bin/bash -c "cd $PWD/osbuild-manifests/; make $@"
+podman run -v /dev:/dev -v "$PWD":"$PWD" --rm --privileged $PULL_ARG --security-opt label=type:unconfined_t quay.io/centos-sig-automotive/automotive-osbuild /bin/bash -c "cd $PWD/osbuild-manifests/; make $@"
 
