@@ -109,7 +109,7 @@ pipelines:
         - name: osbuild
           id: osbuild
           baseurl:
-            - https://download.copr.fedorainfracloud.org/results/@osbuild/osbuild-stable/centos-stream-9-$arch
+            - https://download.copr.fedorainfracloud.org/results/@osbuild/osbuild-stable/centos-stream-9-$basearch
   - type: org.osbuild.users
     options:
       users:
