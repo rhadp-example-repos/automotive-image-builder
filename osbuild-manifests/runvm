@@ -122,6 +122,20 @@ def run_http_server(path):
 
     return http_port
 
+def run_virtiofs_server(socket, sharedir):
+    vio_args = [
+        "/usr/libexec/virtiofsd",
+        "--socket-path=" + socket,
+        "-o", "source=" + sharedir,
+        "-o", "cache=always"
+    ]
+    if not is_verbose:
+        vio_args += [
+            "--log-level", "off"
+        ]
+    print_verbose(f"Running: {' '.join(vio_args)}")
+    return subprocess.Popen(vio_args)
+
 def find_ovmf(args):
     dirs = [
         "~/.local/share/ovmf",
@@ -301,6 +315,8 @@ def main():
                         help="Specify .iso to load")
     parser.add_argument("--noaccel", default=False, action="store_true",
                         help=f"Disable acceleration (kvm or hvf)")
+    parser.add_argument("--sharedir", action="store",
+                        help=f"Share directory using virtiofs")
     parser.add_argument("image", type=str, help="The image to boot")
     parser.add_argument('extra_args', nargs=argparse.REMAINDER, metavar="...", help="extra qemu arguments")
 
@@ -497,6 +513,23 @@ def main():
             "-boot", "d"
         ]
 
+    virtiod = None
+    if args.sharedir:
+        if not os.path.isdir(args.sharedir):
+            exit_error(f"Shared dir {args.sharedir} is not a valid directory")
+
+        vhostsocket = os.path.join(tmpdir.name, "vhost")
+
+        virtiod = run_virtiofs_server(vhostsocket, args.sharedir)
+
+        qemu_args += [
+            "-chardev", "socket,id=char0,path=" + vhostsocket,
+            "-device", "vhost-user-fs-pci,queue-size=1024,chardev=char0,tag=host",
+            "-object", "memory-backend-file,id=mem,size="+str(args.memory)+",mem-path=/dev/shm,share=on",
+            "-numa", "node,memdev=mem"
+        ]
+        print(f"Sharing directory {args.sharedir}, mount using 'mount -t virtiofs host /mnt'")
+
     qemu_args += args.extra_args
 
     print_verbose(f"Running: {' '.join(qemu_args)}")
@@ -508,6 +541,9 @@ def main():
 
     if watchdog_pid:
         os.kill(watchdog_pid, signal.SIGTERM)
+
+    if virtiod:
+        virtiod.terminate()
 
     tmpdir.cleanup()
 
