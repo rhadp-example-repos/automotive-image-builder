@@ -5,6 +5,7 @@ mpp-vars:
     baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/dui/fedora-rawhide-$arch/
   - id: cs9-ti-fw
     baseurl: https://download.copr.fedorainfracloud.org/results/eballetbo/cs9-ti-fw/centos-stream+epel-next-9-$arch/
+    priority: 1
   kernel_rpm: 'kernel'
   kernel_version: '6.6.1-300.ti'
   serial_console: 'ttyS2,115200n8'
