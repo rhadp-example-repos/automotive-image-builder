@@ -1,6 +1,6 @@
 version: '2'
 mpp-vars:
-  extra_repos:
+  target_repos:
   - id: centos-automotive-sig-dui
     baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/dui/fedora-39-$arch/
   - id: cs9-ti-fw
