@@ -67,6 +67,7 @@ mpp-vars:
   default_use_abootpart: false
   default_use_vbmetapart: false
   default_use_efipart: true
+  default_use_initoverlayfs: false
   default_use_bootpart: true
   default_use_testpart: false
   default_use_ostree: false
@@ -391,6 +392,8 @@ mpp-vars:
     mpp-eval: locals().get('use_vbmetapart', default_use_vbmetapart)
   use_efipart:
     mpp-eval: locals().get('use_efipart', default_use_efipart)
+  use_initoverlayfs:
+    mpp-eval: locals().get('use_initoverlayfs', default_use_initoverlayfs)
   use_bootpart:
     mpp-eval: locals().get('use_bootpart', default_use_bootpart)
   use_testpart:
