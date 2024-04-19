@@ -183,7 +183,9 @@ mpp-vars:
   default_tmp_is_tmpfs: true
   default_image_extra_stages: []
   default_image_enabled_services: []
-  default_image_masked_services: []
+  default_image_masked_services:
+    - systemd-hwdb-update.service
+    - ldconfig.service
   default_image_masked_generators:
     # legacy scripts not supported
     - systemd-rc-local-generator
