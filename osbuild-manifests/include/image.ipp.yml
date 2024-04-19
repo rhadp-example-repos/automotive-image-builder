@@ -76,6 +76,10 @@ mpp-vars:
           options:
             language:
               mpp-eval: locale
+        - type: org.osbuild.hostname
+          options:
+            hostname:
+              mpp-eval: hostname
         - type: org.osbuild.timezone
           options:
             zone:

@@ -58,6 +58,7 @@ mpp-vars:
   default_kernel_loglevel: 4
   default_timezone: UTC
   default_locale: en_US.UTF-8
+  default_hostname: localhost
   default_use_grub2: true
   default_use_abl: false
   default_use_qm: false
@@ -370,6 +371,8 @@ mpp-vars:
     mpp-eval: locals().get('kernel_loglevel', default_kernel_loglevel)
   locale:
     mpp-eval: locals().get('locale', default_locale)
+  hostname:
+    mpp-eval: locals().get('hostname', default_hostname)
   use_grub2:
     mpp-eval: locals().get('use_grub2', default_use_grub2)
   timezone:
