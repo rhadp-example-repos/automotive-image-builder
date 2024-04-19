@@ -71,6 +71,8 @@ mpp-vars:
   default_use_bootpart: true
   default_use_testpart: false
   default_use_ostree: false
+  default_use_autoinit: false
+  default_autoinit_root: /dev/vda3
   default_use_separate_var: false
   default_aboot_partlabel: system_a
   default_vbmeta_partlabel: vbmeta_a
@@ -405,6 +407,10 @@ mpp-vars:
     mpp-eval: locals().get('use_separate_var', default_use_separate_var)
   use_ostree:
     mpp-eval: locals().get('use_ostree', default_use_ostree)
+  use_autoinit:
+    mpp-eval: locals().get('use_autoinit', default_use_autoinit)
+  autoinit_root:
+    mpp-eval: locals().get('autoinit_root', default_autoinit_root)
   image_uuid:
     mpp-eval: locals().get('image_uuid', default_image_uuid)
   use_composefs:
