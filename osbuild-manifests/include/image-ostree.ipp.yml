@@ -92,11 +92,7 @@ pipelines:
           - mpp-if: "containers_transient_store and 'podman' in rpms['rootfs']"
             then: podman-clean-transient.service
     - mpp-eval: image_extra_stages
-    - - type: org.osbuild.fstab
-        options:
-          filesystems:
-            mpp-eval: fstab
-      - type: org.osbuild.selinux
+    - - type: org.osbuild.selinux
         options:
           file_contexts: etc/selinux/targeted/contexts/files/file_contexts
       - type: org.osbuild.dracut.conf

@@ -103,10 +103,6 @@ pipelines:
           else:
             kernel:
             - mpp-eval: rpms['rootfs'][kernel_core_package].evra
-      - type: org.osbuild.fstab
-        options:
-          filesystems:
-            mpp-eval: fstab
       - mpp-if: use_grub2
         then:
           type: org.osbuild.grub2

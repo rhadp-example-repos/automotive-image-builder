@@ -32,43 +32,59 @@ mpp-vars:
   # We need to define this ahead of image-ostree.ipp.yml for use below
   use_ostree:
     mpp-eval: use_ostree or image_type == 'ostree'
-  fstab:
-    mpp-join:
-    # NOTE: We don't add / when using ostree, because this causes systemd-remount-fs.service to
-    # try to remount what it thinks is a regular fs as read-write, which fails if using composefs
-    # This is fine as we pass rw on the kernel commanline if use_ostree anyway, so no need to remount
-    - - mpp-if: not use_ostree
-        then:
-          uuid:
-            mpp-eval: rootfs_uuid
-          vfs_type: ext4
-          path: /
-          freq: 1
-          passno: 1
-      - mpp-if: use_efipart
-        then:
-          label: ESP
-          vfs_type: vfat
-          path: /boot/efi
-          freq: 1
-          passno: 1
-      - mpp-if: use_bootpart
-        then:
-          uuid:
-            mpp-eval: bootfs_uuid
-          vfs_type: ext4
-          path: /boot
-          freq: 1
-          passno: 1
-      - mpp-if: use_separate_var
-        then:
-          uuid:
-            mpp-eval: varpart_uuid
-          vfs_type: ext4
-          path: /var
-          freq: 1
-          passno: 1
-    - mpp-eval: extra_fstab
+  _dash_escape: "\\x2d"
+  root_mount:
+    mpp-format-string: |
+      [Unit]
+      Before=local-fs.target
+      After=blockdev@dev-disk-by\\x2duuid-{rootfs_uuid.replace("-", _dash_escape)}.target
+
+      [Mount]
+      What=/dev/disk/by-uuid/$rootfs_uuid
+      Where=/
+      Type=ext4
+
+      [Install]
+      RequiredBy=local-fs.target
+  boot_mount:
+    mpp-format-string: |
+      [Unit]
+      Before=local-fs.target
+      After=blockdev@dev-disk-by\\x2duuid-{bootfs_uuid.replace("-", _dash_escape)}.target
+
+      [Mount]
+      What=/dev/disk/by-uuid/$bootfs_uuid
+      Where=/boot
+      Type=ext4
+
+      [Install]
+      RequiredBy=local-fs.target
+  boot_efi_mount:
+    mpp-format-string: |
+      [Unit]
+      Before=local-fs.target
+      After=blockdev@dev-disk-by\\x2dlabel-ESP.target
+
+      [Mount]
+      What=/dev/disk/by-label/ESP
+      Where=/boot/efi
+      Type=vfat
+
+      [Install]
+      RequiredBy=local-fs.target
+  var_mount:
+    mpp-format-string: |
+      [Unit]
+      Before=local-fs.target
+      After=blockdev@dev-disk-by\\x2duuid-{varpart_uuid.replace("-", _dash_escape)}.target
+
+      [Mount]
+      What=/dev/disk/by-uuid/varpart_uuid
+      Where=/var
+      Type=ext4
+
+      [Install]
+      RequiredBy=local-fs.target
   build_rpms:
     mpp-join:
     - mpp-eval: build_rpms
@@ -198,6 +214,12 @@ mpp-vars:
         - mpp-if: use_qm or use_bluechi
           then: bluechi-controller.service
         - rcu-normal.service
+        - mpp-if: use_efipart
+          then: boot-efi.mount
+        - mpp-if: use_bootpart
+          then: boot.mount
+        - mpp-if: use_separate_var
+          then: var.mount
   image_masked_generators:
     mpp-join:
       - mpp-eval: image_masked_generators
