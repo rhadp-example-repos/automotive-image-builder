@@ -1,6 +1,6 @@
 version: '2'
 mpp-vars:
-  extra_repos:
+  target_repos:
   - id: cs9-ti-fw
     baseurl: https://download.copr.fedorainfracloud.org/results/eballetbo/cs9-ti-fw/centos-stream+epel-next-9-$arch/
     priority: 1
