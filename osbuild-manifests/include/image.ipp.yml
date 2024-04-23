@@ -45,7 +45,18 @@ mpp-vars:
       then:
         from: input://extra-tree/main.nmconnection
         to: tree:////usr/lib/NetworkManager/system-connections/main.nmconnection
-
+    - mpp-if: use_bootpart
+      then:
+        from: input://extra-tree/boot.mount
+        to: tree:////usr/lib/systemd/system/boot.mount
+    - mpp-if: use_efipart
+      then:
+        from: input://extra-tree/boot-efi.mount
+        to: tree:////usr/lib/systemd/system/boot-efi.mount
+    - mpp-if: use_separate_var
+      then:
+        from: input://extra-tree/var.mount
+        to: tree:////usr/lib/systemd/system/var.mount
   dracut_install:
     mpp-join:
       - mpp-eval: dracut_install
@@ -54,9 +65,7 @@ mpp-vars:
           - /usr/.auto-unlock-key
   kernel_opts:
     mpp-join:
-      - - mpp-if: use_ostree
-          then: rw
-          else: ro
+      - - rw
         - mpp-if: use_ostree and use_aboot
           then: ostree=true
         - loglevel=$kernel_loglevel
@@ -146,6 +155,71 @@ pipelines:
 - name: extra-tree-content
   build: name:build
   stages:
+  - type: org.osbuild.copy
+    inputs:
+      inlinefile:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: root.mount
+          text: $root_mount
+    options:
+      paths:
+        - from:
+            mpp-format-string: input://inlinefile/{embedded['root.mount']}
+          to: tree:///root.mount
+  - type: org.osbuild.copy
+    inputs:
+      inlinefile:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: boot.mount
+          text: $boot_mount
+    options:
+      paths:
+        - from:
+            mpp-format-string: input://inlinefile/{embedded['boot.mount']}
+          to: tree:///boot.mount
+  - type: org.osbuild.copy
+    inputs:
+      inlinefile:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: boot-efi.mount
+          text: $boot_efi_mount
+    options:
+      paths:
+        - from:
+            mpp-format-string: input://inlinefile/{embedded['boot-efi.mount']}
+          to: tree:///boot-efi.mount
+  - type: org.osbuild.copy
+    inputs:
+      inlinefile:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: var.mount
+          text: var_mount
+    options:
+      paths:
+        - from:
+            mpp-format-string: input://inlinefile/{embedded['var.mount']}
+          to: tree:///var.mount
+  - type: org.osbuild.copy
+    inputs:
+      inlinefile:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-embed:
+          id: boot.mount
+          text: $boot_mount
+    options:
+      paths:
+        - from:
+            mpp-format-string: input://inlinefile/{embedded['boot.mount']}
+          to: tree:///boot.mount
   - type: org.osbuild.copy
     inputs:
       inlinefile:
@@ -723,33 +797,6 @@ pipelines:
         type: qcow2
         compat: '1.1'
 
-# We need a smaller fstab for the non-partitioned case
-- name: ext4-fstab
-  build: name:build
-  stages:
-  # We copy /etc to get the right selinux context on the new file
-  - type: org.osbuild.copy
-    inputs:
-      image-tree:
-        type: org.osbuild.tree
-        origin: org.osbuild.pipeline
-        references:
-        - name:image-tree
-    options:
-      paths:
-      - from: input://image-tree/etc
-        to: tree:///etc
-  - type: org.osbuild.fstab
-    options:
-      filesystems:
-        mpp-join:
-          - - uuid:
-                mpp-eval: rootfs_uuid
-              vfs_type: ext4
-              path: /
-          - mpp-eval:
-              extra_fstab
-
 - name: ext4
   build: name:build
   stages:
@@ -779,22 +826,11 @@ pipelines:
         origin: org.osbuild.pipeline
         references:
         - name:image-tree
-      fstab:
-        mpp-if: not use_ostree
-        then:
-          type: org.osbuild.tree
-          origin: org.osbuild.pipeline
-          references:
-          - name:ext4-fstab
     options:
       paths:
         mpp-join:
         - - from: input://tree/
             to: mount://root/
-        - mpp-if: not use_ostree
-          then:
-            - from: input://fstab/etc/fstab
-              to: mount://root/etc/fstab
         - mpp-eval: locals().get('extra_image_copy_' + image_type, [])
     devices:
       root:
