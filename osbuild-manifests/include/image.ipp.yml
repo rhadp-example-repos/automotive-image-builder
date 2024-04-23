@@ -161,19 +161,6 @@ pipelines:
         type: org.osbuild.files
         origin: org.osbuild.source
         mpp-embed:
-          id: root.mount
-          text: $root_mount
-    options:
-      paths:
-        - from:
-            mpp-format-string: input://inlinefile/{embedded['root.mount']}
-          to: tree:///root.mount
-  - type: org.osbuild.copy
-    inputs:
-      inlinefile:
-        type: org.osbuild.files
-        origin: org.osbuild.source
-        mpp-embed:
           id: boot.mount
           text: $boot_mount
     options:
@@ -201,25 +188,12 @@ pipelines:
         origin: org.osbuild.source
         mpp-embed:
           id: var.mount
-          text: var_mount
+          text: $var_mount
     options:
       paths:
         - from:
             mpp-format-string: input://inlinefile/{embedded['var.mount']}
           to: tree:///var.mount
-  - type: org.osbuild.copy
-    inputs:
-      inlinefile:
-        type: org.osbuild.files
-        origin: org.osbuild.source
-        mpp-embed:
-          id: boot.mount
-          text: $boot_mount
-    options:
-      paths:
-        - from:
-            mpp-format-string: input://inlinefile/{embedded['boot.mount']}
-          to: tree:///boot.mount
   - type: org.osbuild.copy
     inputs:
       inlinefile:
