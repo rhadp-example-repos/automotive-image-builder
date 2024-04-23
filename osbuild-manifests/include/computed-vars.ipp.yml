@@ -218,11 +218,6 @@ mpp-vars:
           then: boot.mount
         - mpp-if: use_separate_var
           then: var.mount
-  image_masked_generators:
-    mpp-join:
-      - mpp-eval: image_masked_generators
-      - - mpp-if: not use_ostree
-          then: ostree-system-generator
   ostree_prepare_root_conf:
     mpp-format-string: |
       [sysroot]
