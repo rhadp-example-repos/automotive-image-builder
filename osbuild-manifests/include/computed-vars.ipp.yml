@@ -33,19 +33,6 @@ mpp-vars:
   use_ostree:
     mpp-eval: use_ostree or image_type == 'ostree'
   _dash_escape: "\\x2d"
-  root_mount:
-    mpp-format-string: |
-      [Unit]
-      Before=local-fs.target
-      After=blockdev@dev-disk-by\\x2duuid-{rootfs_uuid.replace("-", _dash_escape)}.target
-
-      [Mount]
-      What=/dev/disk/by-uuid/$rootfs_uuid
-      Where=/
-      Type=ext4
-
-      [Install]
-      RequiredBy=local-fs.target
   boot_mount:
     mpp-format-string: |
       [Unit]
