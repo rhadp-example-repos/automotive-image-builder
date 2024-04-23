@@ -201,7 +201,7 @@ pipelines:
         origin: org.osbuild.source
         mpp-embed:
           id: var.mount
-          text: var_mount
+          text: $var_mount
     options:
       paths:
         - from:
