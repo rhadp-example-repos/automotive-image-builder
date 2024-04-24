@@ -88,6 +88,9 @@ mpp-vars:
   boot_rpms:
     mpp-join:
     - mpp-eval: boot_rpms
+    - mpp-if: use_autoinit
+      then:
+        - autoinit
     - - $kernel_rpm
   base_rpms:
     mpp-join:
@@ -97,6 +100,10 @@ mpp-vars:
         then: lvm2
       - mpp-if: use_aboot
         then: aboot-deploy
+  dracut_modules:
+    - mpp-if: use_autoinit
+      then:
+        autoinit
   dracut_add_drivers:
     mpp-join:
     - mpp-eval: dracut_add_drivers
@@ -121,6 +128,10 @@ mpp-vars:
       then:
         - ignore_loglevel
         - earlycon
+    - mpp-if: use_autoinit
+      then:
+        - autoinit.root=$autoinit_root
+        - autoinit.rw
     - - systemd.show_status=auto
       # Staggered spin-up
       - libahci.ignore_sss=1
