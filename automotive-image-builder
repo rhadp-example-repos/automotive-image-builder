@@ -1,0 +1,115 @@
+#!/usr/bin/env python3
+
+import argparse
+import sys
+import os
+import platform
+import subprocess
+import json
+import shlex
+
+is_verbose = False
+def print_verbose(s):
+    if is_verbose:
+        print(s)
+base_dir = "/usr/lib/automotive-image-builder"
+include_dirs = []
+
+
+def print_error(s):
+    print(s, file=sys.stderr)
+
+def exit_error(s):
+    print_error("Error: " + s)
+    sys.exit(1)
+
+def list_dist(args):
+    distros = set()
+    for inc in include_dirs:
+        for f in os.listdir(os.path.join(inc, "distro")):
+            if f.endswith(".ipp.yml"):
+                distros.add(f[:-8])
+    for d in sorted(distros):
+        print(d)
+
+def prepare(args):
+    defines = {
+        "_basedir": base_dir,
+        "arch": args.arch,
+        "target": args.target,
+        "image_type": args.image_type,
+    }
+
+    for d in args.define:
+        parts = d.split("=", 2)
+        if len(parts) != 2:
+            exit_error ("Invalid define '" + d + "', should be key=$VALUE")
+        k = parts[0]
+        try:
+            v = json.loads(parts[1])
+        except json.decoder.JSONDecodeError as e:
+            exit_error ("Invalid json value '" + parts[1] + "': " + str(e))
+        defines[k] = v
+
+    cmdline = [ args.osbuild_mpp,   ]
+    for inc in include_dirs:
+        cmdline += [ "-I", inc ]
+
+    for k in sorted(defines.keys()):
+        v = defines[k]
+        cmdline += [ "-D", f'{k}={json.dumps(v)}' ]
+
+    for arg in args.mpp_arg:
+        cmdline += [ arg ]
+
+    cmdline += [ args.manifest, "test.json" ]
+
+    print_verbose("Running: " + shlex.join(cmdline))
+
+    subprocess.run(cmdline)
+
+def main():
+    parser = argparse.ArgumentParser(description="Build automotive images")
+    parser.add_argument("--verbose", default=False, action="store_true")
+    parser.add_argument("--include", action="append",type=str,default=[],
+                        help=f"Add include directory")
+    subparsers = parser.add_subparsers(help='sub-command help')
+
+    parser_list_dist = subparsers.add_parser('list-dist', help='list available distributions')
+    parser_list_dist.set_defaults(func=list_dist)
+
+    parser_mpp = subparsers.add_parser('generate', help='Generate osbuild manifest')
+    parser_mpp.add_argument("--arch", default=platform.machine(), action="store",
+                        help=f"Arch to run for (default {platform.machine()})")
+    parser_mpp.add_argument("--osbuild-mpp", action="store",type=str,default="osbuild-mpp",
+                        help=f"Use this osbuild-mpp binary")
+    parser_mpp.add_argument("--target", action="store",type=str,default="qemu",
+                        help=f"Build for this target")
+    parser_mpp.add_argument("--image-type", action="store",type=str,default="regular",
+                        help=f"Build this image type (regular, ostree)")
+    parser_mpp.add_argument("--distro", action="store",type=str,default="cs9",
+                        help=f"Build for this distro specification")
+    parser_mpp.add_argument("--mpp-arg", action="append",type=str,default=[],
+                        help=f"Add custom mpp arg")
+    parser_mpp.add_argument("--define", action="append",type=str,default=[],
+                        help=f"Define key=json-value")
+    parser_mpp.add_argument("manifest", type=str, help="Source manifest file")
+    parser_mpp.add_argument("out", type=str, help="Output osbuild json")
+    parser_mpp.set_defaults(func=prepare)
+
+    args = parser.parse_args(sys.argv[1:])
+
+    global is_verbose
+    is_verbose = args.verbose
+
+    global base_dir
+    bin_dir = os.path.dirname(os.path.realpath(__file__))
+    if os.path.isfile(os.path.join(bin_dir, ".fromsrc")):
+        base_dir = bin_dir;
+    global include_dirs
+    include_dirs = [ base_dir ] + args.include
+
+    return args.func(args)
+
+if __name__ == "__main__":
+    sys.exit(main())
