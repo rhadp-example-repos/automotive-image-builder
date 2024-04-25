@@ -298,7 +298,7 @@ pipelines:
         origin: org.osbuild.source
         mpp-embed:
           id: rcu-normal.service
-          path: ../files/rcu-normal.service
+          path: files/rcu-normal.service
     options:
       paths:
       - from:
