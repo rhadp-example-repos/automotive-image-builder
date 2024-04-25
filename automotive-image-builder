@@ -23,6 +23,14 @@ def exit_error(s):
     print_error("Error: " + s)
     sys.exit(1)
 
+def ostree_refs(path):
+    r = subprocess.run(["ostree", "refs", "--repo", path], capture_output=True)
+    return r.stdout.decode("utf-8").rstrip().split("\n")
+
+def ostree_rev_parse(path, ref):
+    r = subprocess.run(["ostree", "rev-parse", "--repo", path, ref], capture_output=True)
+    return r.stdout.decode("utf-8").rstrip()
+
 def list_dist(args):
     distros = set()
     for inc in include_dirs:
@@ -41,13 +49,26 @@ def list_targets(args):
     for d in sorted(targets):
         print(d)
 
-def ostree_refs(path):
-    r = subprocess.run(["ostree", "refs", "--repo", path], capture_output=True)
-    return r.stdout.decode("utf-8").rstrip().split("\n")
+def split_filename(path):
+    bn = os.path.basename(path)
+    bn, arch, ext  = bn.split(".", 2)
+    dist, target, rest  = bn.split("-", 2)
+    image, imagetype = rest.rsplit("-", 1)
+    return {
+        "dist": dist,
+        "target": target,
+        "image": image,
+        "imagetype": imagetype,
+        "arch": arch
+    }
 
-def ostree_rev_parse(path, ref):
-    r = subprocess.run(["ostree", "rev-parse", "--repo", path, ref], capture_output=True)
-    return r.stdout.decode("utf-8").rstrip()
+def flags_from_filename(args):
+    p = split_filename(args.filename);
+    print(f'--distro {p["dist"]} --target {p["target"]} --image-type {p["imagetype"]}  --arch {p["arch"]}')
+
+def image_from_filename(args):
+    p = split_filename(args.filename);
+    print(p["image"])
 
 def prepare(args):
     defines = {
@@ -86,7 +107,7 @@ def prepare(args):
     for arg in args.mpp_arg:
         cmdline += [ arg ]
 
-    cmdline += [ args.manifest, "test.json" ]
+    cmdline += [ args.manifest, args.out ]
 
     print_verbose("Running: " + shlex.join(cmdline))
 
@@ -104,6 +125,14 @@ def main():
 
     parser_list_dist = subparsers.add_parser('list-targets', help='list available targets')
     parser_list_dist.set_defaults(func=list_targets)
+
+    parser_fff = subparsers.add_parser('flags-from-filename', help='parse flags from filename')
+    parser_fff.add_argument("filename", type=str, help="filename")
+    parser_fff.set_defaults(func=flags_from_filename)
+
+    parser_iff = subparsers.add_parser('image-from-filename', help='parse image name from filename')
+    parser_iff.add_argument("filename", type=str, help="filename")
+    parser_iff.set_defaults(func=image_from_filename)
 
     parser_mpp = subparsers.add_parser('generate', help='Generate osbuild manifest')
     parser_mpp.add_argument("--arch", default=platform.machine(), action="store",
