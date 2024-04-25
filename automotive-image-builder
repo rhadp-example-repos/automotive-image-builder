@@ -32,6 +32,23 @@ def list_dist(args):
     for d in sorted(distros):
         print(d)
 
+def list_targets(args):
+    targets = set()
+    for inc in include_dirs:
+        for f in os.listdir(os.path.join(inc, "targets")):
+            if f.endswith(".ipp.yml"):
+                targets.add(f[:-8])
+    for d in sorted(targets):
+        print(d)
+
+def ostree_refs(path):
+    r = subprocess.run(["ostree", "refs", "--repo", path], capture_output=True)
+    return r.stdout.decode("utf-8").rstrip().split("\n")
+
+def ostree_rev_parse(path, ref):
+    r = subprocess.run(["ostree", "rev-parse", "--repo", path, ref], capture_output=True)
+    return r.stdout.decode("utf-8").rstrip()
+
 def prepare(args):
     defines = {
         "_basedir": base_dir,
@@ -39,6 +56,13 @@ def prepare(args):
         "target": args.target,
         "image_type": args.image_type,
     }
+
+    if args.ostree_repo:
+        revs = {}
+        for ref in ostree_refs(args.ostree_repo):
+            rev = ostree_rev_parse(args.ostree_repo, ref)
+            revs[ref] = rev
+        defines["ostree_parent_refs"] = revs
 
     for d in args.define:
         parts = d.split("=", 2)
@@ -78,6 +102,9 @@ def main():
     parser_list_dist = subparsers.add_parser('list-dist', help='list available distributions')
     parser_list_dist.set_defaults(func=list_dist)
 
+    parser_list_dist = subparsers.add_parser('list-targets', help='list available targets')
+    parser_list_dist.set_defaults(func=list_targets)
+
     parser_mpp = subparsers.add_parser('generate', help='Generate osbuild manifest')
     parser_mpp.add_argument("--arch", default=platform.machine(), action="store",
                         help=f"Arch to run for (default {platform.machine()})")
@@ -93,6 +120,8 @@ def main():
                         help=f"Add custom mpp arg")
     parser_mpp.add_argument("--define", action="append",type=str,default=[],
                         help=f"Define key=json-value")
+    parser_mpp.add_argument("--ostree-repo", action="store",type=str,
+                        help=f"Path to ostree repo")
     parser_mpp.add_argument("manifest", type=str, help="Source manifest file")
     parser_mpp.add_argument("out", type=str, help="Output osbuild json")
     parser_mpp.set_defaults(func=prepare)
