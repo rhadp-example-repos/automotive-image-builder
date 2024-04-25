@@ -1,9 +1,0 @@
-*.json
-!*.mpp.json
-*.qcow2
-*.img
-*.rootfs
-*.aboot
-*.repo
-_build
-*.oci.tar

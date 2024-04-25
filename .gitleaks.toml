@@ -1,9 +1,0 @@
-[allowlist]
-  description = "This repository contains a few passwords for demo accounts, it is fine"
-  paths = [
-    '''ignore\.d''',
-  ]
-  files = [
-     '''*\.mpp\.json$'''
-  ]
-
