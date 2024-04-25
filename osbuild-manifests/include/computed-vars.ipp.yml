@@ -132,6 +132,8 @@ mpp-vars:
       then:
         - autoinit.root=$autoinit_root
         - autoinit.rw
+        - mpp-if: use_debug or use_kernel_debug_package
+          then: autoinit.debug
     - - systemd.show_status=auto
       # Staggered spin-up
       - libahci.ignore_sss=1
