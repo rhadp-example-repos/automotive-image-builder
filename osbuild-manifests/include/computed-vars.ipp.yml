@@ -18,7 +18,7 @@ mpp-vars:
       mpp-eval: kernel_rpm
     else:
       mpp-eval: kernel_package if not kernel_version else kernel_package + "-" + kernel_version
-  use_debug:
+  use_kernel_debug_package:
     mpp-if: "'debug' in locals().get('kernel_package')"
     then: true
   distro_gpg_keys:
@@ -124,7 +124,7 @@ mpp-vars:
     - mpp-if: use_serial_console
       then:
         - console=$serial_console
-    - mpp-if: use_debug
+    - mpp-if: use_debug or use_kernel_debug_package
       then:
         - ignore_loglevel
         - earlycon

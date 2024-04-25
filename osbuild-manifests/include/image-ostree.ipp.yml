@@ -185,7 +185,7 @@ pipelines:
           options:
             preptree: true
             kernel:
-              mpp-if: use_debug
+              mpp-if: use_kernel_debug_package
               then:
                 mpp-eval: rpms['rootfs'][kernel_core_package].evra+'+debug'
               else:
@@ -383,7 +383,7 @@ pipelines:
     then:
       type: org.osbuild-auto.aboot.update
       options:
-        mpp-if: use_debug
+        mpp-if: use_kernel_debug_package
         then:
           kernel:
             mpp-eval: rpms['rootfs'][kernel_core_package].evra+'+debug'
