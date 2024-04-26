@@ -54,17 +54,27 @@ def list_targets(args):
     for d in sorted(targets):
         print(d)
 
+# The sample-images file formats are:
+#   distro-target-the-image-name-imagetype[@optionaltag].arch.someextension
 def split_filename(path):
     bn = os.path.basename(path)
     bn, arch, ext  = bn.split(".", 2)
     dist, target, rest  = bn.split("-", 2)
+
+    tag = ""
+    r = rest.split("@", 1)
+    rest = r[0]
+    if len(r) == 2:
+        tag = r[1]
+
     image, imagetype = rest.rsplit("-", 1)
     return {
         "dist": dist,
         "target": target,
         "image": image,
         "imagetype": imagetype,
-        "arch": arch
+        "arch": arch,
+        "tag": tag
     }
 
 def flags_from_filename(args):
