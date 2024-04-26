@@ -1,0 +1,34 @@
+Name:           automotive-image-builder
+Version:        @@VERSION@@
+Release:        1%{?dist}
+Summary:        A tool to build (and run) automotive images
+
+License:        MIT
+URL:            https://gitlab.com/CentOS/automotive/src/automotive-image-builder
+Source0:        automotive-image-builder-%{version}.tar.gz
+
+BuildArch:	noarch
+BuildRequires:  make
+
+%description
+Tool to build (and run) automotive images
+
+%prep
+%autosetup
+
+%build
+
+
+%install
+%make_install
+
+%files
+%license LICENSE
+%doc README.md
+%{_bindir}/automotive-image-builder
+%{_bindir}/automotive-image-runner
+%{_prefix}/lib/automotive-image-builder
+
+%changelog
+* Fri Apr 26 2024 Alexander Larsson <alexl@redhat.com>
+- Initial version
