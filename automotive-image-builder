@@ -23,6 +23,11 @@ def exit_error(s):
     print_error("Error: " + s)
     sys.exit(1)
 
+def ostree_repo_init(path):
+    if not os.path.isdir(path):
+        print_verbose(f"Initializing repo {path}")
+        subprocess.run(["ostree", "init", "--repo", path, "--mode", "archive"])
+
 def ostree_refs(path):
     r = subprocess.run(["ostree", "refs", "--repo", path], capture_output=True)
     return r.stdout.decode("utf-8").rstrip().split("\n")
@@ -79,6 +84,7 @@ def prepare(args):
     }
 
     if args.ostree_repo:
+        ostree_repo_init(args.ostree_repo)
         revs = {}
         for ref in ostree_refs(args.ostree_repo):
             rev = ostree_rev_parse(args.ostree_repo, ref)
@@ -134,7 +140,7 @@ def main():
     parser_iff.add_argument("filename", type=str, help="filename")
     parser_iff.set_defaults(func=image_from_filename)
 
-    parser_mpp = subparsers.add_parser('generate', help='Generate osbuild manifest')
+    parser_mpp = subparsers.add_parser('compose', help='Compose osbuild manifest')
     parser_mpp.add_argument("--arch", default=platform.machine(), action="store",
                         help=f"Arch to run for (default {platform.machine()})")
     parser_mpp.add_argument("--osbuild-mpp", action="store",type=str,default="osbuild-mpp",
