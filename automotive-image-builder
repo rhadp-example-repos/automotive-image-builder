@@ -129,11 +129,15 @@ def prepare(args):
 
     subprocess.run(cmdline)
 
+def no_subcommand(args):
+    print ("No subcommand specified")
+
 def main():
     parser = argparse.ArgumentParser(description="Build automotive images")
     parser.add_argument("--verbose", default=False, action="store_true")
     parser.add_argument("--include", action="append",type=str,default=[],
                         help=f"Add include directory")
+    parser.set_defaults(func=no_subcommand)
     subparsers = parser.add_subparsers(help='sub-command help')
 
     parser_list_dist = subparsers.add_parser('list-dist', help='list available distributions')
