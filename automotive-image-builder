@@ -142,11 +142,11 @@ def main():
     parser_list_dist = subparsers.add_parser('list-targets', help='list available targets')
     parser_list_dist.set_defaults(func=list_targets)
 
-    parser_fff = subparsers.add_parser('flags-from-filename', help='parse flags from filename')
+    parser_fff = subparsers.add_parser('flags-from-filename', help='Extract flags from sample-images style filenames')
     parser_fff.add_argument("filename", type=str, help="filename")
     parser_fff.set_defaults(func=flags_from_filename)
 
-    parser_iff = subparsers.add_parser('image-from-filename', help='parse image name from filename')
+    parser_iff = subparsers.add_parser('image-from-filename', help='Etract image name from sample-images style filenames')
     parser_iff.add_argument("filename", type=str, help="filename")
     parser_iff.set_defaults(func=image_from_filename)
 
