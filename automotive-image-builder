@@ -26,14 +26,14 @@ def exit_error(s):
 def ostree_repo_init(path):
     if not os.path.isdir(path):
         print_verbose(f"Initializing repo {path}")
-        subprocess.run(["ostree", "init", "--repo", path, "--mode", "archive"])
+        subprocess.run(["ostree", "init", "--repo", path, "--mode", "archive"], check=True)
 
 def ostree_refs(path):
-    r = subprocess.run(["ostree", "refs", "--repo", path], capture_output=True)
+    r = subprocess.run(["ostree", "refs", "--repo", path], capture_output=True, check=True)
     return r.stdout.decode("utf-8").rstrip().split("\n")
 
 def ostree_rev_parse(path, ref):
-    r = subprocess.run(["ostree", "rev-parse", "--repo", path, ref], capture_output=True)
+    r = subprocess.run(["ostree", "rev-parse", "--repo", path, ref], capture_output=True, check=True)
     return r.stdout.decode("utf-8").rstrip()
 
 def list_dist(args):
@@ -112,7 +112,7 @@ def prepare(args):
             exit_error ("Invalid json value '" + parts[1] + "': " + str(e))
         defines[k] = v
 
-    cmdline = [ args.osbuild_mpp,   ]
+    cmdline = [ args.osbuild_mpp ]
     for inc in include_dirs:
         cmdline += [ "-I", inc ]
 
@@ -127,7 +127,10 @@ def prepare(args):
 
     print_verbose("Running: " + shlex.join(cmdline))
 
-    subprocess.run(cmdline)
+    try:
+        subprocess.run(cmdline, check=True)
+    except subprocess.CalledProcessError:
+        sys.exit(1) # osbuild-mpp will have printed the error
 
 def no_subcommand(args):
     print ("No subcommand specified")
