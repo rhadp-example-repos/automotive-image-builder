@@ -54,37 +54,6 @@ def list_targets(args):
     for d in sorted(targets):
         print(d)
 
-# The sample-images file formats are:
-#   distro-target-the-image-name-imagetype[@optionaltag].arch.someextension
-def split_filename(path):
-    bn = os.path.basename(path)
-    bn, arch, ext  = bn.split(".", 2)
-    dist, target, rest  = bn.split("-", 2)
-
-    tag = ""
-    r = rest.split("@", 1)
-    rest = r[0]
-    if len(r) == 2:
-        tag = r[1]
-
-    image, imagetype = rest.rsplit("-", 1)
-    return {
-        "dist": dist,
-        "target": target,
-        "image": image,
-        "imagetype": imagetype,
-        "arch": arch,
-        "tag": tag
-    }
-
-def flags_from_filename(args):
-    p = split_filename(args.filename);
-    print(f'--distro {p["dist"]} --target {p["target"]} --image-type {p["imagetype"]}  --arch {p["arch"]}')
-
-def image_from_filename(args):
-    p = split_filename(args.filename);
-    print(p["image"])
-
 def prepare(args):
     defines = {
         "_basedir": base_dir,
@@ -148,14 +117,6 @@ def main():
 
     parser_list_dist = subparsers.add_parser('list-targets', help='list available targets')
     parser_list_dist.set_defaults(func=list_targets)
-
-    parser_fff = subparsers.add_parser('flags-from-filename', help='Extract flags from sample-images style filenames')
-    parser_fff.add_argument("filename", type=str, help="filename")
-    parser_fff.set_defaults(func=flags_from_filename)
-
-    parser_iff = subparsers.add_parser('image-from-filename', help='Etract image name from sample-images style filenames')
-    parser_iff.add_argument("filename", type=str, help="filename")
-    parser_iff.set_defaults(func=image_from_filename)
 
     parser_mpp = subparsers.add_parser('compose', help='Compose osbuild manifest')
     parser_mpp.add_argument("--arch", default=platform.machine(), action="store",
