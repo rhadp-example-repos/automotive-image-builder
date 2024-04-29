@@ -30,7 +30,10 @@ def ostree_repo_init(path):
 
 def ostree_refs(path):
     r = subprocess.run(["ostree", "refs", "--repo", path], capture_output=True, check=True)
-    return r.stdout.decode("utf-8").rstrip().split("\n")
+    out = r.stdout.decode("utf-8").rstrip()
+    if out:
+        return out.split("\n")
+    return []
 
 def ostree_rev_parse(path, ref):
     r = subprocess.run(["ostree", "rev-parse", "--repo", path, ref], capture_output=True, check=True)
