@@ -863,7 +863,7 @@ pipelines:
           - from: input://ext4/rootfs.ext4
             to: tree:///images/rootfs.img
           - from:
-              mpp-if: use_debug
+              mpp-if: use_kernel_debug_package
               then:
                 mpp-format-string: "input://tree/boot/aboot-{rpms[kernel_osbuild_tree][kernel_core_package].evra}+debug.img"
               else:

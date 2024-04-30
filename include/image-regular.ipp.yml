@@ -96,7 +96,7 @@ pipelines:
                 mpp-eval: dracut_install
       - type: org.osbuild.dracut
         options:
-          mpp-if: use_debug
+          mpp-if: use_kernel_debug_package
           then:
             kernel:
             - mpp-eval: rpms['rootfs'][kernel_core_package].evra+"+debug"
@@ -158,7 +158,7 @@ pipelines:
                 mpp-format-string: "{aboot_dtb_file}"
         - type: org.osbuild-auto.aboot.update
           options:
-            mpp-if: use_debug
+            mpp-if: use_kernel_debug_package
             then:
               kernel:
                 mpp-eval: rpms['rootfs'][kernel_core_package].evra+'+debug'

@@ -34,34 +34,7 @@ mpp-vars:
       - pd_ignore_unused
       - acpi=off
       - net.naming-scheme=v252
-  dracut_drivers:
-    mpp-join:
-    - mpp-eval: dracut_drivers
-    - - "clk_qcom"
-      - "clk_rpmh"
-      - "cmd_db"
-      - "gcc_sa8775p"
-      - "governor_simpleondemand"
-      - "gpucc_sa8775p"
-      - "icc_bcm_voter"
-      - "icc_rpmh"
-      - "phy_qcom_qmp_ufs"
-      - "pinctrl_msm"
-      - "pinctrl_sa8775p"
-      - "pinctrl_spmi_mpp"
-      - "qcom_geni_se"
-      - "qcom_geni_serial"
-      - "qcom_rng"
-      - "qcom_rpmh"
-      - "qcom_rpmh_regulator"
-      - "qcom_spmi_pmic"
-      - "qnoc_sa8775p"
-      - "regmap_spmi"
-      - "rpmhpd"
-      - "spmi"
-      - "ufshcd_core"
-      - "ufshcd_pltfrm"
-      - "ufs_qcom"
+  dracut_drivers: []
   dracut_omit_drivers:
     mpp-join:
     - mpp-eval: dracut_omit_drivers
