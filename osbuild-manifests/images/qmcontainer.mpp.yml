@@ -1,7 +1,7 @@
 version: '2'
 mpp-vars:
   name: container
-  use_containers_extra_store: true
+  use_qm_containers_extra_store: true
   use_qm: true
   use_bluechi: true
   qm_extra_rpms:
