@@ -14,6 +14,11 @@ mpp-vars:
   default_osname: centos
   default_uefi_vendor: centos
   default_kernel_package: kernel-automotive
+  default_bootfstype: "ext4"
+  default_initoverlayfs_builder: "dracut -M -o \"initoverlayfs fcoe\""
+  default_initrd_builder: "dracut -M -o \"initoverlayfs fcoe\""
+  default_erofs_compression: ""
+  default_bootfs_hint: ""
   default_kernel_version: ""
   default_release_name: ""
   default_release_package: centos-release-automotive
@@ -295,6 +300,16 @@ mpp-vars:
     mpp-eval: locals().get('bootfs_uuid', default_bootfs_uuid)
   parttab_uuid:
     mpp-eval: locals().get('parttab_uuid', default_parttab_uuid)
+  bootfstype:
+    mpp-eval: locals().get('bootfstype', default_bootfstype)
+  initrd_builder:
+    mpp-eval: locals().get('initrd_builder', default_initrd_builder)
+  initoverlayfs_builder:
+    mpp-eval: locals().get('initoverlayfs_builder', default_initoverlayfs_builder)
+  bootfs_hint:
+    mpp-eval: locals().get('bootfs_hint', default_bootfs_hint)
+  erofs_compression:
+    mpp-eval: locals().get('erofs_compression', default_erofs_compression)
   rootpart_uuid:
     mpp-eval: locals().get('rootpart_uuid', default_rootpart_uuid)
   bootpart_uuid:
