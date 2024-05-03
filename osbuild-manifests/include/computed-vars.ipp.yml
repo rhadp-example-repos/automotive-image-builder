@@ -134,6 +134,11 @@ mpp-vars:
         - autoinit.rw
         - mpp-if: use_debug or use_kernel_debug_package
           then: autoinit.debug
+    - mpp-if: use_module_sig_enforce
+      then:
+        # Only allow modules with a valid signature to be loaded by the kernel.
+        # https://www.kernel.org/doc/html/latest/admin-guide/module-signing.html#non-valid-signatures-and-unsigned-modules
+        - module.sig_enforce=1
     - - systemd.show_status=auto
       # Staggered spin-up
       - libahci.ignore_sss=1
