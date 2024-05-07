@@ -97,6 +97,17 @@ def create_osbuild_manifest(args, manifest, out):
             exit_error ("Invalid json value '" + parts[1] + "': " + str(e))
         defines[k] = v
 
+    for df in args.define_file:
+        try:
+            with open(df) as f:
+                file_defines = json.load(f)
+            if not isinstance(file_defines, dict):
+                exit_error("Define file must be json dict")
+            for k,v in file_defines.items():
+                defines[k]=v
+        except json.decoder.JSONDecodeError as e:
+            exit_error ("Invalid json define file '" + df + "': " + str(e))
+
     cmdline = [ args.osbuild_mpp ]
     for inc in include_dirs:
         cmdline += [ "-I", inc ]
@@ -274,6 +285,8 @@ def main():
                         help=f"Add custom mpp arg")
     format_parser.add_argument("--define", action="append",type=str,default=[],
                         help=f"Define key=json-value")
+    format_parser.add_argument("--define-file", action="append",type=str,default=[],
+                        help=f"Add json file of defines")
     format_parser.add_argument("--ostree-repo", action="store",type=str,
                         help=f"Path to ostree repo")
 
