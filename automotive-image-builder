@@ -90,12 +90,12 @@ def create_osbuild_manifest(args, manifest, out):
         parts = d.split("=", 2)
         if len(parts) != 2:
             exit_error ("Invalid define '" + d + "', should be key=$VALUE")
-            k = parts[0]
+        k = parts[0]
         try:
             v = json.loads(parts[1])
         except json.decoder.JSONDecodeError as e:
             exit_error ("Invalid json value '" + parts[1] + "': " + str(e))
-            defines[k] = v
+        defines[k] = v
 
     cmdline = [ args.osbuild_mpp ]
     for inc in include_dirs:
