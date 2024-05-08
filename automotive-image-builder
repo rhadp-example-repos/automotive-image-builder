@@ -75,6 +75,7 @@ def create_osbuild_manifest(args, manifest, out):
         "_basedir": base_dir,
         "arch": args.arch,
         "target": args.target,
+        "distro_name": args.distro,
         "image_type": args.image_type,
     }
 
