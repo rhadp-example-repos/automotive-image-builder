@@ -204,7 +204,7 @@ mpp-vars:
 
       [storage.options]
       additionalimagestores = [
-         "{qm_containers_extra_store}"
+         { '"' + qm_containers_extra_store + '"' if use_qm_containers_extra_store else "" }
       ]
 
       [storage.options.overlay]
