@@ -74,6 +74,9 @@ def run(args, cmdline, use_sudo=False, use_container=False):
             podman_args.append("-v")
             podman_args.append(v + ":" + v)
 
+        if args.container_autoupdate:
+            podman_args.append("--pull=newer")
+
         cmdline = ["podman", "run",  ] + podman_args + [args.container] + cmdline
 
     if use_sudo and vars(args).get("sudo", False):
@@ -293,8 +296,13 @@ def main():
 
     parser = argparse.ArgumentParser(description="Build automotive images")
     parser.add_argument("--verbose", default=False, action="store_true")
-    parser.add_argument("--container", action="store", type=str, default="",
-                        help="Container image to run osbuild tools inside")
+    parser.add_argument("--container", default=False, action="store_true",
+                        help="Use containerized build")
+    container_image_name_default = "quay.io/centos-sig-automotive/automotive-osbuild"
+    parser.add_argument("--container-image-name", action="store", type=str, default=container_image_name_default,
+                        help=f"Container image name, {container_image_name_default} is default if this option remains unused")
+    parser.add_argument("--container-autoupdate", default=False, action="store_true",
+                        help="Automatically pull new container image if available")
     parser.add_argument("--include", action="append",type=str,default=[],
                         help=f"Add include directory")
     parser.set_defaults(func=no_subcommand)
@@ -313,7 +321,7 @@ def main():
                         help=f"Use this osbuild-mpp binary")
     format_parser.add_argument("--target", action="store",type=str,default="qemu",
                         help=f"Build for this target")
-    format_parser.add_argument("--image-type", action="store",type=str,default="regular",
+    format_parser.add_argument("--image-type", action="store",type=str,default="ostree",
                         help=f"Build this image type (regular, ostree)")
     format_parser.add_argument("--distro", action="store",type=str,default="cs9",
                         help=f"Build for this distro specification")
@@ -352,6 +360,9 @@ def main():
     parser_build.set_defaults(func=build)
 
     args = parser.parse_args(sys.argv[1:])
+
+    if args.container:
+        args.container = args.container_image_name
 
     global is_verbose
     is_verbose = args.verbose
