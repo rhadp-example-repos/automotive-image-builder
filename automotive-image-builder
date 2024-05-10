@@ -58,9 +58,8 @@ def list_targets(args, tmpdir):
     for d in sorted(targets):
         print(d)
 
-def run(cmdline, sudo=False):
-
-    if sudo:
+def run(args, cmdline, use_sudo=False,):
+    if use_sudo and vars(args).get("sudo", False):
         cmdline = ["sudo"] + cmdline
 
     print_verbose("Running: " + shlex.join(cmdline))
@@ -122,7 +121,7 @@ def create_osbuild_manifest(args, manifest, out):
 
     cmdline += [ manifest, out ]
 
-    run(cmdline)
+    run(args, cmdline)
 
 def compose(args, tmpdir):
     return create_osbuild_manifest(args, args.manifest, args.out)
@@ -185,14 +184,14 @@ def export(args, outputdir, dest, dest_is_directory, export):
     if data.get("is_dir", False):
         # The mv won't replace existing destination, so first remove it
         if os.path.isdir(dest) or os.path.isfile(dest):
-            run(["rm", "-rf", dest], args.sudo)
+            run(args, ["rm", "-rf", dest], use_sudo=True)
 
     if not data.get("no_chown", False):
-        run(["chown", f"{os.getuid()}:{os.getgid()}", export_file], args.sudo)
+        run(args, ["chown", f"{os.getuid()}:{os.getgid()}", export_file], use_sudo=True)
 
-    run(["mv", export_file, dest], args.sudo)
+    run(args, ["mv", export_file, dest], use_sudo=True)
 
-def build(args, tmpdir):
+def _build(args, tmpdir):
     if args.nosudo:
         args.sudo=False
 
@@ -234,23 +233,31 @@ def build(args, tmpdir):
 
     cmdline += [ osbuild_manifest ]
 
-    run(cmdline, args.sudo)
+    run(args, cmdline, use_sudo=True)
 
     if len(args.export) == 1:
         # Export directly to args.out
         export(args, outputdir, args.out, False, args.export[0])
     else:
         if os.path.isdir(args.out) or os.path.isfile(args.out):
-            run(["rm", "-rf", args.out], args.sudo)
+            run(args, ["rm", "-rf", args.out], use_sudo=True)
         os.mkdir(args.out)
         for exp in args.export:
             export(args, outputdir, args.out, True, exp)
 
     if args.ostree_repo:
         repodir = os.path.join(outputdir, "ostree-commit/repo")
-        run(["ostree", "pull-local",  "--repo=" + args.ostree_repo, repodir])
+        run(args, ["ostree", "pull-local",  "--repo=" + args.ostree_repo, repodir])
 
-    run(["rm", "-rf", outputdir], args.sudo)
+    run(args, ["rm", "-rf", outputdir], use_sudo=True)
+
+def build(args, tmpdir):
+    try:
+        _build(args, tmpdir)
+    finally:
+        # Ensure we can clean up
+        if args.sudo:
+            run(args, ["rm", "-rf", tmpdir], use_sudo=True)
 
 def no_subcommand(args):
     print ("No subcommand specified")
