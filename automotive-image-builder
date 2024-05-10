@@ -15,7 +15,7 @@ def print_verbose(s):
         print(s)
 base_dir = "/usr/lib/automotive-image-builder"
 include_dirs = []
-
+volumes = set()
 
 def print_error(s):
     print(s, file=sys.stderr)
@@ -23,6 +23,14 @@ def print_error(s):
 def exit_error(s):
     print_error("Error: " + s)
     sys.exit(1)
+
+def add_volume(dir):
+    global volumes
+    volumes.add(os.path.realpath(dir))
+
+def add_volume_for(file):
+    global volumes
+    volumes.add(os.path.dirname(os.path.realpath(file)))
 
 def ostree_repo_init(path):
     if not os.path.isdir(path):
@@ -58,7 +66,16 @@ def list_targets(args, tmpdir):
     for d in sorted(targets):
         print(d)
 
-def run(args, cmdline, use_sudo=False,):
+def run(args, cmdline, use_sudo=False, use_container=False):
+    if use_container and args.container:
+        podman_args = ["--rm", "--privileged", "--security-opt", "label=type:unconfined_t",
+                       "--workdir", os.path.realpath(os.getcwd()) ]
+        for v in sorted(volumes):
+            podman_args.append("-v")
+            podman_args.append(v + ":" + v)
+
+        cmdline = ["podman", "run",  ] + podman_args + [args.container] + cmdline
+
     if use_sudo and vars(args).get("sudo", False):
         cmdline = ["sudo"] + cmdline
 
@@ -70,6 +87,9 @@ def run(args, cmdline, use_sudo=False,):
         sys.exit(1) # cmd will have printed the error
 
 def create_osbuild_manifest(args, manifest, out):
+    add_volume_for(manifest)
+    add_volume_for(out)
+
     defines = {
         "_basedir": base_dir,
         "arch": args.arch,
@@ -121,7 +141,7 @@ def create_osbuild_manifest(args, manifest, out):
 
     cmdline += [ manifest, out ]
 
-    run(args, cmdline)
+    run(args, cmdline, use_container=True)
 
 def compose(args, tmpdir):
     return create_osbuild_manifest(args, args.manifest, args.out)
@@ -198,6 +218,8 @@ def _build(args, tmpdir):
     if len(args.export) == 0:
         exit_error("No --export option given")
 
+    add_volume_for(args.out)
+
     osbuild_manifest = os.path.join(tmpdir, "osbuild.json")
     if args.osbuild_manifest:
         osbuild_manifest = args.osbuild_manifest
@@ -207,6 +229,7 @@ def _build(args, tmpdir):
     builddir = tmpdir
     if args.build_dir:
         builddir = args.build_dir
+    add_volume(builddir)
 
     cmdline = [ "osbuild" ]
 
@@ -236,7 +259,7 @@ def _build(args, tmpdir):
 
     cmdline += [ osbuild_manifest ]
 
-    run(args, cmdline, use_sudo=True)
+    run(args, cmdline, use_sudo=True, use_container=True)
 
     if len(args.export) == 1:
         # Export directly to args.out
@@ -270,6 +293,8 @@ def main():
 
     parser = argparse.ArgumentParser(description="Build automotive images")
     parser.add_argument("--verbose", default=False, action="store_true")
+    parser.add_argument("--container", action="store", type=str, default="",
+                        help="Container image to run osbuild tools inside")
     parser.add_argument("--include", action="append",type=str,default=[],
                         help=f"Add include directory")
     parser.set_defaults(func=no_subcommand)
@@ -337,6 +362,10 @@ def main():
         base_dir = bin_dir;
     global include_dirs
     include_dirs = [ base_dir ] + args.include
+    global volumes
+    add_volume(os.getcwd())
+    for d in include_dirs:
+        add_volume(d)
 
     with tempfile.TemporaryDirectory(prefix="automotive-image-builder-", dir="/var/tmp") as tmpdir:
         return args.func(args, tmpdir)
