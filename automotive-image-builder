@@ -7,6 +7,7 @@ import platform
 import subprocess
 import json
 import shlex
+import shutil
 import tempfile
 
 is_verbose = False
@@ -77,7 +78,11 @@ def run(args, cmdline, use_sudo=False, use_container=False):
         if args.container_autoupdate:
             podman_args.append("--pull=newer")
 
-        cmdline = ["podman", "run",  ] + podman_args + [args.container] + cmdline
+        conman = "podman"
+        if shutil.which("podman") is None and shutil.which("docker") is not None:
+            conman = "docker"
+
+        cmdline = [conman, "run",  ] + podman_args + [args.container] + cmdline
 
     if use_sudo and vars(args).get("sudo", False):
         cmdline = ["sudo"] + cmdline
