@@ -15,7 +15,7 @@ def print_verbose(s):
         print(s)
 base_dir = "/usr/lib/automotive-image-builder"
 include_dirs = []
-
+volumes = set()
 
 def print_error(s):
     print(s, file=sys.stderr)
@@ -23,6 +23,14 @@ def print_error(s):
 def exit_error(s):
     print_error("Error: " + s)
     sys.exit(1)
+
+def add_volume(dir):
+    global volumes
+    volumes.add(os.path.realpath(dir))
+
+def add_volume_for(file):
+    global volumes
+    volumes.add(os.path.dirname(os.path.realpath(file)))
 
 def ostree_repo_init(path):
     if not os.path.isdir(path):
@@ -58,9 +66,17 @@ def list_targets(args, tmpdir):
     for d in sorted(targets):
         print(d)
 
-def run(cmdline, sudo=False):
+def run(args, cmdline, use_sudo=False, use_container=False):
+    if use_container and args.container:
+        podman_args = ["--rm", "--privileged", "--security-opt", "label=type:unconfined_t",
+                       "--workdir", os.path.realpath(os.getcwd()) ]
+        for v in sorted(volumes):
+            podman_args.append("-v")
+            podman_args.append(v + ":" + v)
 
-    if sudo:
+        cmdline = ["podman", "run",  ] + podman_args + [args.container] + cmdline
+
+    if use_sudo and vars(args).get("sudo", False):
         cmdline = ["sudo"] + cmdline
 
     print_verbose("Running: " + shlex.join(cmdline))
@@ -71,6 +87,9 @@ def run(cmdline, sudo=False):
         sys.exit(1) # cmd will have printed the error
 
 def create_osbuild_manifest(args, manifest, out):
+    add_volume_for(manifest)
+    add_volume_for(out)
+
     defines = {
         "_basedir": base_dir,
         "arch": args.arch,
@@ -122,7 +141,7 @@ def create_osbuild_manifest(args, manifest, out):
 
     cmdline += [ manifest, out ]
 
-    run(cmdline)
+    run(args, cmdline, use_container=True)
 
 def compose(args, tmpdir):
     return create_osbuild_manifest(args, args.manifest, args.out)
@@ -185,16 +204,21 @@ def export(args, outputdir, dest, dest_is_directory, export):
     if data.get("is_dir", False):
         # The mv won't replace existing destination, so first remove it
         if os.path.isdir(dest) or os.path.isfile(dest):
-            run(["rm", "-rf", dest], args.sudo)
+            run(args, ["rm", "-rf", dest], use_sudo=True)
 
     if not data.get("no_chown", False):
-        run(["chown", f"{os.getuid()}:{os.getgid()}", export_file], args.sudo)
+        run(args, ["chown", f"{os.getuid()}:{os.getgid()}", export_file], use_sudo=True)
 
-    run(["mv", export_file, dest], args.sudo)
+    run(args, ["mv", export_file, dest], use_sudo=True)
 
-def build(args, tmpdir):
+def _build(args, tmpdir):
     if args.nosudo:
         args.sudo=False
+
+    if len(args.export) == 0:
+        exit_error("No --export option given")
+
+    add_volume_for(args.out)
 
     osbuild_manifest = os.path.join(tmpdir, "osbuild.json")
     if args.osbuild_manifest:
@@ -205,6 +229,7 @@ def build(args, tmpdir):
     builddir = tmpdir
     if args.build_dir:
         builddir = args.build_dir
+    add_volume(builddir)
 
     cmdline = [ "osbuild" ]
 
@@ -234,32 +259,42 @@ def build(args, tmpdir):
 
     cmdline += [ osbuild_manifest ]
 
-    run(cmdline, args.sudo)
+    run(args, cmdline, use_sudo=True, use_container=True)
 
     if len(args.export) == 1:
         # Export directly to args.out
         export(args, outputdir, args.out, False, args.export[0])
     else:
         if os.path.isdir(args.out) or os.path.isfile(args.out):
-            run(["rm", "-rf", args.out], args.sudo)
+            run(args, ["rm", "-rf", args.out], use_sudo=True)
         os.mkdir(args.out)
         for exp in args.export:
             export(args, outputdir, args.out, True, exp)
 
     if args.ostree_repo:
         repodir = os.path.join(outputdir, "ostree-commit/repo")
-        run(["ostree", "pull-local",  "--repo=" + args.ostree_repo, repodir])
+        run(args, ["ostree", "pull-local",  "--repo=" + args.ostree_repo, repodir])
 
-    run(["rm", "-rf", outputdir], args.sudo)
+    run(args, ["rm", "-rf", outputdir], use_sudo=True)
 
-def no_subcommand(args):
-    print ("No subcommand specified")
+def build(args, tmpdir):
+    try:
+        _build(args, tmpdir)
+    finally:
+        # Ensure we can clean up
+        if args.sudo:
+            run(args, ["rm", "-rf", tmpdir], use_sudo=True)
+
+def no_subcommand(args, tmpdir):
+    print ("No subcommand specified, see --help for usage")
 
 def main():
     isRoot = os.getuid() == 0
 
     parser = argparse.ArgumentParser(description="Build automotive images")
     parser.add_argument("--verbose", default=False, action="store_true")
+    parser.add_argument("--container", action="store", type=str, default="",
+                        help="Container image to run osbuild tools inside")
     parser.add_argument("--include", action="append",type=str,default=[],
                         help=f"Add include directory")
     parser.set_defaults(func=no_subcommand)
@@ -303,13 +338,14 @@ def main():
                         help=f"Max cache size")
     parser_build.add_argument("--osbuild-arg", action="append",type=str,default=[],
                         help=f"Add custom osbuil arg")
-    parser_build.add_argument("--sudo", default=not isRoot, action="store_true")
-    parser_build.add_argument("--nosudo", default=False, action="store_true")
     parser_build.add_argument("--export", action="append",type=str,default=[],
                         help=f"Export this image type")
     parser_build.add_argument("--build-dir", action="store",type=str,
                         help=f"Directory where intermediary files are stored)")
-
+    parser_build.add_argument("--sudo", default=not isRoot, action="store_true",
+                              help="Use sudo to start programs that need privileges (default if not run as root)")
+    parser_build.add_argument("--nosudo", default=False, action="store_true",
+                              help="Don't use sudo to start programs")
 
     parser_build.add_argument("manifest", type=str, help="Source manifest file")
     parser_build.add_argument("out", type=str, help="Output path")
@@ -326,6 +362,10 @@ def main():
         base_dir = bin_dir;
     global include_dirs
     include_dirs = [ base_dir ] + args.include
+    global volumes
+    add_volume(os.getcwd())
+    for d in include_dirs:
+        add_volume(d)
 
     with tempfile.TemporaryDirectory(prefix="automotive-image-builder-", dir="/var/tmp") as tmpdir:
         return args.func(args, tmpdir)
