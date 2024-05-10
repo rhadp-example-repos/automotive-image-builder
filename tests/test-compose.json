@@ -1,0 +1,20 @@
+{
+    "default-manifest": "test.mpp.yml",
+    "distro": ["cs9", "autosd"],
+    "arch": [ "x86_64", "aarch64" ],
+    "image-type": [ "regular", "ostree" ],
+    "target": [ "qemu",
+                {
+                    "value": "ridesx4",
+                    "arch-is": "aarch64"
+                }
+              ],
+    "defines": [
+        "",
+        { "value": "use_qm=true",
+          "manifest": "test_qm.mpp.yml"},
+        { "value": "use_aboot=true",
+          "arch-is": "aarch64"
+        }
+    ]
+}

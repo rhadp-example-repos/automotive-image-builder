@@ -1,0 +1,110 @@
+#!/usr/bin/python3
+
+import argparse
+import sys
+import os
+import platform
+import subprocess
+import json
+import shlex
+import tempfile
+
+tests = sys.argv[1]
+
+tests_dir = os.path.dirname(os.path.realpath(tests))
+
+f = open(tests);
+tests = json.load(f)
+
+def convert_elem(elem):
+    res = elem
+    if isinstance(elem, str):
+        res = { "value": elem }
+    return res
+
+def convert_list(elem):
+    res = []
+    if isinstance(elem, list):
+        for e in elem:
+            res.append(convert_elem(e))
+    else:
+        res.append(convert_elem(elem))
+    return res
+
+default_manifest = tests["default-manifest"]
+distros = convert_list(tests["distro"])
+arches = convert_list(tests["arch"])
+targets = convert_list(tests["target"])
+image_types = convert_list(tests["image-type"])
+defines = convert_list(tests["defines"])
+
+def collect_args(elms, arg):
+    res = []
+    for elm in elms:
+        if arg in elm:
+            v = elm[arg]
+            if not v in res:
+                res.append(v)
+    return res
+
+def filter_by_arch(elms, arch):
+    arch_is = collect_args(elms, "arch-is");
+    if arch_is:
+        return not arch in arch_is
+    return False;
+
+
+to_run = []
+for distro in distros:
+    for arch in arches:
+        for target in targets:
+            for image_type in image_types:
+                for define in defines:
+                    elms = [arch, target, image_type, define]
+                    if filter_by_arch(elms, arch["value"]):
+                        continue
+
+                    args = [ "--distro", distro["value"], "--arch", arch["value"], "--target", target["value"], "--image-type", image_type["value"]]
+                    if define["value"]:
+                        args += ["--define", define["value"]]
+
+                    manifests = collect_args(elms, "manifest")
+                    if manifests:
+                        for m in manifests:
+                            to_run.append(args + [os.path.join(tests_dir, m)])
+                    else:
+                        to_run.append(args + [os.path.join(tests_dir, default_manifest)])
+
+for args in to_run:
+    cmdline = ["./automotive-image-builder", "compose"]
+    cmdline += args
+    cmdline += ["test.json"]
+
+    print("Running: " + shlex.join(cmdline))
+    try:
+        subprocess.run(cmdline, check=True)
+    except subprocess.CalledProcessError:
+        print("*** Failed to compose, exiting ***")
+        sys.exit(1) # cmd will have printed the error
+
+    with open("test.json") as f:
+        try:
+            manifest_data = json.load(f)
+        except json.decoder.JSONDecodeError as e:
+            print ("Invalid generated json manifest  '" + parts[1] + "': " + str(e))
+            print("*** Failed to validate, exiting ***")
+            sys.exit(1)
+
+    cmdline = ["osbuild", "--inspect", "test.json"]
+    r = subprocess.run(cmdline, capture_output=True)
+    if r.returncode != 0:
+        stdout = r.stdout.decode("utf-8")
+        stderr = r.stderr.decode("utf-8")
+        if stderr:
+            print(stderr)
+        res = json.loads(stdout)
+        print(res["title"])
+        for e in res["errors"]:
+            print(e["message"], " at ",e["path"])
+        print("*** Failed to validate, exiting ***")
+        sys.exit(1) # cmd will have printed the error

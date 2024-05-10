@@ -20,8 +20,8 @@ install:
 	install -m 0644 -t $(DESTDIR)$(DATADIR)/files files/*
 
 .PHONY: test
-test: tests/test.mpp.yml
-	tests/test.sh
+test:
+	tests/test-compose tests/test-compose.json
 
 .PHONY: automotive-image-builder.spec
 automotive-image-builder.spec: automotive-image-builder.spec.in
