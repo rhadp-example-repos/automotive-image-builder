@@ -313,13 +313,14 @@ def main():
                         help=f"Max cache size")
     parser_build.add_argument("--osbuild-arg", action="append",type=str,default=[],
                         help=f"Add custom osbuil arg")
-    parser_build.add_argument("--sudo", default=not isRoot, action="store_true")
-    parser_build.add_argument("--nosudo", default=False, action="store_true")
     parser_build.add_argument("--export", action="append",type=str,default=[],
                         help=f"Export this image type")
     parser_build.add_argument("--build-dir", action="store",type=str,
                         help=f"Directory where intermediary files are stored)")
-
+    parser_build.add_argument("--sudo", default=not isRoot, action="store_true",
+                              help="Use sudo to start programs that need privileges (default if not run as root)")
+    parser_build.add_argument("--nosudo", default=False, action="store_true",
+                              help="Don't use sudo to start programs")
 
     parser_build.add_argument("manifest", type=str, help="Source manifest file")
     parser_build.add_argument("out", type=str, help="Output path")
