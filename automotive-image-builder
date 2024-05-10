@@ -238,6 +238,7 @@ def _build(args, tmpdir):
     if args.build_dir:
         builddir = args.build_dir
     add_volume(builddir)
+    add_volume("/dev")
 
     cmdline = [ "osbuild" ]
 
@@ -350,7 +351,7 @@ def main():
     parser_build.add_argument("--cache-max-size", action="store",type=str,
                         help=f"Max cache size")
     parser_build.add_argument("--osbuild-arg", action="append",type=str,default=[],
-                        help=f"Add custom osbuil arg")
+                        help=f"Add custom osbuild arg")
     parser_build.add_argument("--export", action="append",type=str,default=[],
                         help=f"Export this image type")
     parser_build.add_argument("--build-dir", action="store",type=str,
