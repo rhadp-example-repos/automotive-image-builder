@@ -262,8 +262,8 @@ def build(args, tmpdir):
         if args.sudo:
             run(args, ["rm", "-rf", tmpdir], use_sudo=True)
 
-def no_subcommand(args):
-    print ("No subcommand specified")
+def no_subcommand(args, tmpdir):
+    print ("No subcommand specified, see --help for usage")
 
 def main():
     isRoot = os.getuid() == 0
