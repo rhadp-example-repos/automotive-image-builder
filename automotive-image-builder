@@ -195,6 +195,9 @@ def _build(args, tmpdir):
     if args.nosudo:
         args.sudo=False
 
+    if len(args.export) == 0:
+        exit_error("No --export option given")
+
     osbuild_manifest = os.path.join(tmpdir, "osbuild.json")
     if args.osbuild_manifest:
         osbuild_manifest = args.osbuild_manifest
