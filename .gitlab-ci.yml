@@ -1,0 +1,10 @@
+default:
+  image: quay.io/centos-sig-automotive/automotive-osbuild
+
+stages:
+  - test
+
+compose-test-job:
+  stage: test
+  script:
+    - tests/test-compose tests/test-compose.json
