@@ -164,7 +164,7 @@ def create_osbuild_manifest(args, manifest, out):
 
     cmdline += [ manifest, out ]
 
-    run(args, cmdline, use_container=True)
+    run(args, cmdline)
 
 def compose(args, tmpdir):
     return create_osbuild_manifest(args, args.manifest, args.out)
@@ -315,6 +315,11 @@ def no_subcommand(args, tmpdir):
 def main():
     isRoot = os.getuid() == 0
 
+    global base_dir
+    bin_dir = os.path.dirname(os.path.realpath(__file__))
+    if os.path.isfile(os.path.join(bin_dir, ".fromsrc")):
+        base_dir = bin_dir;
+
     parser = argparse.ArgumentParser(description="Build automotive images")
     parser.add_argument("--verbose", default=False, action="store_true")
     parser.add_argument("--container", default=False, action="store_true",
@@ -338,7 +343,7 @@ def main():
     format_parser = argparse.ArgumentParser(add_help=False)
     format_parser.add_argument("--arch", default=platform.machine(), action="store",
                         help=f"Arch to run for (default {platform.machine()})")
-    format_parser.add_argument("--osbuild-mpp", action="store",type=str,default="osbuild-mpp",
+    format_parser.add_argument("--osbuild-mpp", action="store",type=str,default=os.path.join(base_dir, "mpp/aib-osbuild-mpp"),
                         help=f"Use this osbuild-mpp binary")
     format_parser.add_argument("--target", action="store",type=str,default="qemu",
                         help=f"Build for this target")
@@ -390,10 +395,6 @@ def main():
     global is_verbose
     is_verbose = args.verbose
 
-    global base_dir
-    bin_dir = os.path.dirname(os.path.realpath(__file__))
-    if os.path.isfile(os.path.join(bin_dir, ".fromsrc")):
-        base_dir = bin_dir;
     global include_dirs
     include_dirs = [ base_dir ] + args.include
     global volumes

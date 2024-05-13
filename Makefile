@@ -5,6 +5,8 @@ BINDIR=$(PREFIX)/bin
 DATADIR=$(PREFIX)/lib/automotive-image-builder
 DESTDIR=
 
+OSBUILD_MPP_TAG=v118
+
 .PHONY: all
 all:
 	@echo Run "make install DESTDIR=..." to install, otherwise run directly from checkout
@@ -18,6 +20,9 @@ install:
 	done
 	mkdir -p $(DESTDIR)$(DATADIR)/files
 	install -m 0644 -t $(DESTDIR)$(DATADIR)/files files/*
+	mkdir -p $(DESTDIR)$(DATADIR)/mpp/aibosbuild/util
+	install  -t $(DESTDIR)$(DATADIR)/mpp mpp/aib-osbuild-mpp
+	install  -t $(DESTDIR)$(DATADIR)/mpp/aibosbuild/util mpp/aibosbuild/util/*.py
 
 .PHONY: test
 test:
@@ -36,3 +41,6 @@ rpm: dist
 
 srpm: dist
 	rpmbuild --define "_sourcedir $(shell pwd)" -bs automotive-image-builder.spec
+
+import-mpp:
+	./import-osbuild-mpp.sh $(OSBUILD_MPP_TAG)
