@@ -136,6 +136,21 @@ def create_osbuild_manifest(args, manifest, out):
         except json.decoder.JSONDecodeError as e:
             exit_error ("Invalid json define file '" + df + "': " + str(e))
 
+    for d in args.extend_define:
+        parts = d.split("=", 2)
+        if len(parts) != 2:
+            exit_error ("Invalid extend-define '" + d + "', should be key=$VALUE")
+        k = parts[0]
+        try:
+            v = json.loads(parts[1])
+            if not isinstance(v, list):
+                v = [v]
+        except json.decoder.JSONDecodeError as e:
+            exit_error ("Invalid json value '" + parts[1] + "': " + str(e))
+        if not k in defines:
+            defines[k] = []
+        defines[k].extend(v)
+
     cmdline = [ args.osbuild_mpp ]
     for inc in include_dirs:
         cmdline += [ "-I", inc ]
@@ -337,6 +352,8 @@ def main():
                         help=f"Define key=json-value")
     format_parser.add_argument("--define-file", action="append",type=str,default=[],
                         help=f"Add json file of defines")
+    format_parser.add_argument("--extend-define", action="append",type=str,default=[],
+                        help=f"Extend array by item or list key=json-value")
     format_parser.add_argument("--ostree-repo", action="store",type=str,
                         help=f"Path to ostree repo")
 
