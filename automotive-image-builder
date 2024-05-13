@@ -144,7 +144,7 @@ def create_osbuild_manifest(args, manifest, out):
 
     cmdline += [ manifest, out ]
 
-    run(args, cmdline, use_container=True)
+    run(args, cmdline)
 
 def compose(args, tmpdir):
     return create_osbuild_manifest(args, args.manifest, args.out)
