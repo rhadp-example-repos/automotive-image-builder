@@ -94,6 +94,18 @@ def run(args, cmdline, use_sudo=False, use_container=False):
     except subprocess.CalledProcessError:
         sys.exit(1) # cmd will have printed the error
 
+def parse_define(d, option):
+    parts = d.split("=", 2)
+    if len(parts) != 2:
+        exit_error (f"Invalid option passed to {option}: '{d}', should be key=value")
+    k = parts[0]
+    json_v = parts[1]
+    try:
+        v = json.loads(json_v)
+    except json.decoder.JSONDecodeError as e:
+        exit_error (f"Invalid value passed to {option}: '{json_v}': " + str(e))
+    return k, v
+
 def create_osbuild_manifest(args, manifest, out):
     add_volume_for(manifest)
     add_volume_for(out)
@@ -115,14 +127,7 @@ def create_osbuild_manifest(args, manifest, out):
             defines["ostree_parent_refs"] = revs
 
     for d in args.define:
-        parts = d.split("=", 2)
-        if len(parts) != 2:
-            exit_error ("Invalid define '" + d + "', should be key=$VALUE")
-        k = parts[0]
-        try:
-            v = json.loads(parts[1])
-        except json.decoder.JSONDecodeError as e:
-            exit_error ("Invalid json value '" + parts[1] + "': " + str(e))
+        k, v = parse_define(d, "--define")
         defines[k] = v
 
     for df in args.define_file:
@@ -137,16 +142,9 @@ def create_osbuild_manifest(args, manifest, out):
             exit_error ("Invalid json define file '" + df + "': " + str(e))
 
     for d in args.extend_define:
-        parts = d.split("=", 2)
-        if len(parts) != 2:
-            exit_error ("Invalid extend-define '" + d + "', should be key=$VALUE")
-        k = parts[0]
-        try:
-            v = json.loads(parts[1])
-            if not isinstance(v, list):
-                v = [v]
-        except json.decoder.JSONDecodeError as e:
-            exit_error ("Invalid json value '" + parts[1] + "': " + str(e))
+        k, v = parse_define(d, "--extend-define")
+        if not isinstance(v, list):
+            v = [v]
         if not k in defines:
             defines[k] = []
         defines[k].extend(v)
