@@ -309,6 +309,10 @@ def _build(args, tmpdir):
 
     run(args, cmdline, use_sudo=True, use_container=True)
 
+    if args.ostree_repo:
+        repodir = os.path.join(outputdir, "ostree-commit/repo")
+        run(args, ["ostree", "pull-local",  "--repo=" + args.ostree_repo, repodir])
+
     if len(args.export) == 1:
         # Export directly to args.out
         export(args, outputdir, args.out, False, args.export[0])
@@ -318,10 +322,6 @@ def _build(args, tmpdir):
         os.mkdir(args.out)
         for exp in args.export:
             export(args, outputdir, args.out, True, exp)
-
-    if args.ostree_repo:
-        repodir = os.path.join(outputdir, "ostree-commit/repo")
-        run(args, ["ostree", "pull-local",  "--repo=" + args.ostree_repo, repodir])
 
     run(args, ["rm", "-rf", outputdir], use_sudo=True)
 
