@@ -2,3 +2,4 @@
 _test.json
 automotive-image-builder.spec
 automotive-image-builder*.tar.gz
+__pycache__
