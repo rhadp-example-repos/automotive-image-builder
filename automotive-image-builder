@@ -94,6 +94,25 @@ def run(args, cmdline, use_sudo=False, use_container=False):
     except subprocess.CalledProcessError:
         sys.exit(1) # cmd will have printed the error
 
+# Its a pain to have to quote simple strings in arguments, if the
+# json parsing fails we try to parse it as a string
+def define_value_looks_like_string(v):
+    v = v.lstrip()
+    if len(v) == 0:
+        return False
+    # Dont' start with numerics
+    if v[0].isnumeric():
+        return False
+    # No case mis-spellings of true/false like False
+    if v.lower() == "false" or v.lower() == "true":
+        return False
+    # No json type character or escapes
+    invalid_chars = '"{}[]\\'
+    for invalid_char in invalid_chars:
+        if invalid_char in v:
+            return False
+    return True
+
 def parse_define(d, option):
     parts = d.split("=", 2)
     if len(parts) != 2:
@@ -103,7 +122,14 @@ def parse_define(d, option):
     try:
         v = json.loads(json_v)
     except json.decoder.JSONDecodeError as e:
-        exit_error (f"Invalid value passed to {option}: '{json_v}': " + str(e))
+        # Try it as a string too
+        if define_value_looks_like_string(json_v):
+            try:
+                v = json.loads('"' + json_v + '"')
+            except json.decoder.JSONDecodeError:
+                exit_error (f"Invalid value passed to {option}: '{json_v}': " + str(e))
+        else:
+            exit_error (f"Invalid value passed to {option}: '{json_v}': " + str(e))
     return k, v
 
 def create_osbuild_manifest(args, manifest, out):
