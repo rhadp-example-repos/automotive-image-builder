@@ -2,7 +2,7 @@
     "default-manifest": "test.mpp.yml",
     "distro": ["cs9", "autosd"],
     "arch": [ "x86_64", "aarch64" ],
-    "image-type": [ "regular", "ostree" ],
+    "mode": [ "image", "package" ],
     "target": [ "qemu",
                 {
                     "value": "ridesx4",

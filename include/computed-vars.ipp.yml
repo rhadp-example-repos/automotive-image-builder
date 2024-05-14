@@ -31,7 +31,7 @@ mpp-vars:
         $redhat_gpg_key
   # We need to define this ahead of image-ostree.ipp.yml for use below
   use_ostree:
-    mpp-eval: use_ostree or image_type == 'ostree'
+    mpp-eval: use_ostree or image_mode == 'image'
   _dash_escape: "\\x2d"
   boot_mount:
     mpp-format-string: |
@@ -239,7 +239,7 @@ mpp-vars:
       UUID="{image_uuid}"
       TIMESTAMP="{build_timestamp}"
       IMAGE_NAME="{name}"
-      IMAGE_TYPE="{image_type}"
+      IMAGE_MODE="{image_mode}"
       IMAGE_TARGET="{target}"
   qm_importfile:
     mpp-if: use_qm

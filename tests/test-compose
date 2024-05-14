@@ -35,7 +35,7 @@ default_manifest = tests["default-manifest"]
 distros = convert_list(tests["distro"])
 arches = convert_list(tests["arch"])
 targets = convert_list(tests["target"])
-image_types = convert_list(tests["image-type"])
+modes = convert_list(tests["mode"])
 defines = convert_list(tests["defines"])
 
 def collect_args(elms, arg):
@@ -58,13 +58,13 @@ to_run = []
 for distro in distros:
     for arch in arches:
         for target in targets:
-            for image_type in image_types:
+            for mode in modes:
                 for define in defines:
-                    elms = [arch, target, image_type, define]
+                    elms = [arch, target, mode, define]
                     if filter_by_arch(elms, arch["value"]):
                         continue
 
-                    args = [ "--distro", distro["value"], "--arch", arch["value"], "--target", target["value"], "--image-type", image_type["value"]]
+                    args = [ "--distro", distro["value"], "--arch", arch["value"], "--target", target["value"], "--mode", mode["value"]]
                     if define["value"]:
                         args += ["--define", define["value"]]
 

@@ -141,7 +141,7 @@ def create_osbuild_manifest(args, manifest, out):
         "arch": args.arch,
         "target": args.target,
         "distro_name": args.distro,
-        "image_type": args.image_type,
+        "image_mode": args.mode,
     }
 
     if args.ostree_repo:
@@ -371,8 +371,8 @@ def main():
                         help=f"Use this osbuild-mpp binary")
     format_parser.add_argument("--target", action="store",type=str,default="qemu",
                         help=f"Build for this target")
-    format_parser.add_argument("--image-type", action="store",type=str,default="ostree",
-                        help=f"Build this image type (regular, ostree)")
+    format_parser.add_argument("--mode", action="store",type=str,default="image",
+                        help=f"Build this image mode (package, image)")
     format_parser.add_argument("--distro", action="store",type=str,default="cs9",
                         help=f"Build for this distro specification")
     format_parser.add_argument("--mpp-arg", action="append",type=str,default=[],

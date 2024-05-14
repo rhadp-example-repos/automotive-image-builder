@@ -352,7 +352,7 @@ pipelines:
         to: tree:///bluechi.conf
 
 - mpp-import-pipelines:
-    path: image-$image_type.ipp.yml
+    path: mode-$image_mode.ipp.yml
 - name: image
   build: name:build
   stages:
@@ -548,18 +548,18 @@ pipelines:
             references:
             - name:build
           extra-tree:
-            mpp-if: "'extra_image_source_' + image_type in locals()"
+            mpp-if: "'extra_image_source_' + image_mode in locals()"
             then:
               type: org.osbuild.tree
               origin: org.osbuild.pipeline
               references:
-                - mpp-format-string: "name:{locals().get('extra_image_source_' + image_type)}"
+                - mpp-format-string: "name:{locals().get('extra_image_source_' + image_mode)}"
         options:
           paths:
             mpp-join:
             - - from: input://tree/
                 to: mount://root/
-            - mpp-eval: locals().get('extra_image_copy_' + image_type, [])
+            - mpp-eval: locals().get('extra_image_copy_' + image_mode, [])
         devices:
           efi:
             mpp-if: use_efipart
@@ -805,7 +805,7 @@ pipelines:
         mpp-join:
         - - from: input://tree/
             to: mount://root/
-        - mpp-eval: locals().get('extra_image_copy_' + image_type, [])
+        - mpp-eval: locals().get('extra_image_copy_' + image_mode, [])
     devices:
       root:
         type: org.osbuild.loopback
