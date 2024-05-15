@@ -142,6 +142,8 @@ def create_osbuild_manifest(args, manifest, out):
         "target": args.target,
         "distro_name": args.distro,
         "image_mode": args.mode,
+        # This is a leftover for backwards compatibilty:
+        "image_type": "ostree" if args.mode == "image" else "regular",
     }
 
     if args.ostree_repo:
