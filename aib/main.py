@@ -138,6 +138,78 @@ def parse_define(d, option):
             exit_error (f"Invalid value passed to {option}: '{json_v}': " + str(e))
     return k, v
 
+def parse_args(args):
+    isRoot = os.getuid() == 0
+    parser = argparse.ArgumentParser(description="Build automotive images")
+    parser.add_argument("--verbose", default=False, action="store_true")
+    parser.add_argument("--container", default=False, action="store_true",
+                        help="Use containerized build")
+    container_image_name_default = "quay.io/centos-sig-automotive/automotive-osbuild"
+    parser.add_argument("--container-image-name", action="store", type=str, default=container_image_name_default,
+                        help=f"Container image name, {container_image_name_default} is default if this option remains unused")
+    parser.add_argument("--container-autoupdate", default=False, action="store_true",
+                        help="Automatically pull new container image if available")
+    parser.add_argument("--include", action="append",type=str,default=[],
+                        help=f"Add include directory")
+    parser.set_defaults(func=no_subcommand)
+    subparsers = parser.add_subparsers(help='sub-command help')
+
+    parser_list_dist = subparsers.add_parser('list-dist', help='list available distributions')
+    parser_list_dist.set_defaults(func=list_dist)
+
+    parser_list_dist = subparsers.add_parser('list-targets', help='list available targets')
+    parser_list_dist.set_defaults(func=list_targets)
+
+    format_parser = argparse.ArgumentParser(add_help=False)
+    format_parser.add_argument("--arch", default=platform.machine(), action="store",
+                        help=f"Arch to run for (default {platform.machine()})")
+    format_parser.add_argument("--osbuild-mpp", action="store",type=str,default=os.path.join(base_dir, "mpp/aib-osbuild-mpp"),
+                        help=f"Use this osbuild-mpp binary")
+    format_parser.add_argument("--target", action="store",type=str,default="qemu",
+                        help=f"Build for this target")
+    format_parser.add_argument("--mode", action="store",type=str,default="image",
+                        help=f"Build this image mode (package, image)")
+    format_parser.add_argument("--distro", action="store",type=str,default="cs9",
+                        help=f"Build for this distro specification")
+    format_parser.add_argument("--mpp-arg", action="append",type=str,default=[],
+                        help=f"Add custom mpp arg")
+    format_parser.add_argument("--cache", action="store",type=str,
+                        help=f"Add mpp cache-directory to use")
+    format_parser.add_argument("--define", action="append",type=str,default=[],
+                        help=f"Define key=json-value")
+    format_parser.add_argument("--define-file", action="append",type=str,default=[],
+                        help=f"Add json file of defines")
+    format_parser.add_argument("--extend-define", action="append",type=str,default=[],
+                        help=f"Extend array by item or list key=json-value")
+    format_parser.add_argument("--ostree-repo", action="store",type=str,
+                        help=f"Path to ostree repo")
+
+    parser_compose = subparsers.add_parser('compose', help='Compose osbuild manifest', parents=[format_parser])
+    parser_compose.add_argument("manifest", type=str, help="Source manifest file")
+    parser_compose.add_argument("out", type=str, help="Output osbuild json")
+    parser_compose.set_defaults(func=compose)
+
+    parser_build = subparsers.add_parser('build', help='Compose osbuild manifest', parents=[format_parser])
+    parser_build.add_argument("--osbuild-manifest", action="store",type=str,
+                        help=f"Path to store osbuild manifest")
+    parser_build.add_argument("--cache-max-size", action="store",type=str,
+                        help=f"Max cache size")
+    parser_build.add_argument("--osbuild-arg", action="append",type=str,default=[],
+                        help=f"Add custom osbuild arg")
+    parser_build.add_argument("--export", action="append",type=str,default=[],
+                        help=f"Export this image type")
+    parser_build.add_argument("--build-dir", action="store",type=str,
+                        help=f"Directory where intermediary files are stored)")
+    parser_build.add_argument("--sudo", default=not isRoot, action="store_true",
+                              help="Use sudo to start programs that need privileges (default if not run as root)")
+    parser_build.add_argument("--nosudo", default=False, action="store_true",
+                              help="Don't use sudo to start programs")
+
+    parser_build.add_argument("manifest", type=str, help="Source manifest file")
+    parser_build.add_argument("out", type=str, help="Output path")
+    parser_build.set_defaults(func=build)
+    return parser.parse_args(args)
+
 def create_osbuild_manifest(args, manifest, out):
 
     if not os.path.isfile(manifest):
@@ -353,83 +425,12 @@ def no_subcommand(args, tmpdir):
     print ("No subcommand specified, see --help for usage")
 
 def main():
-    isRoot = os.getuid() == 0
-
     global base_dir
     bin_dir = os.path.dirname(os.path.realpath(__file__))
     if os.path.isfile(os.path.join(bin_dir, ".fromsrc")):
-        base_dir = bin_dir;
+        base_dir = bin_dir
 
-    parser = argparse.ArgumentParser(description="Build automotive images")
-    parser.add_argument("--verbose", default=False, action="store_true")
-    parser.add_argument("--container", default=False, action="store_true",
-                        help="Use containerized build")
-    container_image_name_default = "quay.io/centos-sig-automotive/automotive-osbuild"
-    parser.add_argument("--container-image-name", action="store", type=str, default=container_image_name_default,
-                        help=f"Container image name, {container_image_name_default} is default if this option remains unused")
-    parser.add_argument("--container-autoupdate", default=False, action="store_true",
-                        help="Automatically pull new container image if available")
-    parser.add_argument("--include", action="append",type=str,default=[],
-                        help=f"Add include directory")
-    parser.set_defaults(func=no_subcommand)
-    subparsers = parser.add_subparsers(help='sub-command help')
-
-    parser_list_dist = subparsers.add_parser('list-dist', help='list available distributions')
-    parser_list_dist.set_defaults(func=list_dist)
-
-    parser_list_dist = subparsers.add_parser('list-targets', help='list available targets')
-    parser_list_dist.set_defaults(func=list_targets)
-
-    format_parser = argparse.ArgumentParser(add_help=False)
-    format_parser.add_argument("--arch", default=platform.machine(), action="store",
-                        help=f"Arch to run for (default {platform.machine()})")
-    format_parser.add_argument("--osbuild-mpp", action="store",type=str,default=os.path.join(base_dir, "mpp/aib-osbuild-mpp"),
-                        help=f"Use this osbuild-mpp binary")
-    format_parser.add_argument("--target", action="store",type=str,default="qemu",
-                        help=f"Build for this target")
-    format_parser.add_argument("--mode", action="store",type=str,default="image",
-                        help=f"Build this image mode (package, image)")
-    format_parser.add_argument("--distro", action="store",type=str,default="cs9",
-                        help=f"Build for this distro specification")
-    format_parser.add_argument("--mpp-arg", action="append",type=str,default=[],
-                        help=f"Add custom mpp arg")
-    format_parser.add_argument("--cache", action="store",type=str,
-                        help=f"Add mpp cache-directory to use")
-    format_parser.add_argument("--define", action="append",type=str,default=[],
-                        help=f"Define key=json-value")
-    format_parser.add_argument("--define-file", action="append",type=str,default=[],
-                        help=f"Add json file of defines")
-    format_parser.add_argument("--extend-define", action="append",type=str,default=[],
-                        help=f"Extend array by item or list key=json-value")
-    format_parser.add_argument("--ostree-repo", action="store",type=str,
-                        help=f"Path to ostree repo")
-
-    parser_compose = subparsers.add_parser('compose', help='Compose osbuild manifest', parents=[format_parser])
-    parser_compose.add_argument("manifest", type=str, help="Source manifest file")
-    parser_compose.add_argument("out", type=str, help="Output osbuild json")
-    parser_compose.set_defaults(func=compose)
-
-    parser_build = subparsers.add_parser('build', help='Compose osbuild manifest', parents=[format_parser])
-    parser_build.add_argument("--osbuild-manifest", action="store",type=str,
-                        help=f"Path to store osbuild manifest")
-    parser_build.add_argument("--cache-max-size", action="store",type=str,
-                        help=f"Max cache size")
-    parser_build.add_argument("--osbuild-arg", action="append",type=str,default=[],
-                        help=f"Add custom osbuild arg")
-    parser_build.add_argument("--export", action="append",type=str,default=[],
-                        help=f"Export this image type")
-    parser_build.add_argument("--build-dir", action="store",type=str,
-                        help=f"Directory where intermediary files are stored)")
-    parser_build.add_argument("--sudo", default=not isRoot, action="store_true",
-                              help="Use sudo to start programs that need privileges (default if not run as root)")
-    parser_build.add_argument("--nosudo", default=False, action="store_true",
-                              help="Don't use sudo to start programs")
-
-    parser_build.add_argument("manifest", type=str, help="Source manifest file")
-    parser_build.add_argument("out", type=str, help="Output path")
-    parser_build.set_defaults(func=build)
-
-    args = parser.parse_args(sys.argv[1:])
+    args = parse_args(sys.argv[1:])
 
     if args.container:
         args.container = args.container_image_name
