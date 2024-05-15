@@ -133,6 +133,10 @@ def parse_define(d, option):
     return k, v
 
 def create_osbuild_manifest(args, manifest, out):
+
+    if not os.path.isfile(manifest):
+        exit_error(f"Error: No such file {manifest}")
+
     add_volume_for(manifest)
     add_volume_for(out)
 
@@ -332,7 +336,7 @@ def build(args, tmpdir):
         _build(args, tmpdir)
     finally:
         # Ensure we can clean up
-        if args.sudo:
+        if args.sudo and os.path.isdir(os.path.join(tmpdir, "image_output")):
             run(args, ["rm", "-rf", tmpdir], use_sudo=True)
 
 def no_subcommand(args, tmpdir):
