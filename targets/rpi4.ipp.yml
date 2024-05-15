@@ -21,7 +21,10 @@ mpp-vars:
     - - bcm2835
       - bcm2835-mailbox
       - sdhci
-      - simplefb
+  dracut_force_drivers:
+    mpp-join:
+    - mpp-eval: dracut_force_drives
+    - - simplefb
   partition_label: dos
   target_repos:
   - id: cs9-rpi4-fw
