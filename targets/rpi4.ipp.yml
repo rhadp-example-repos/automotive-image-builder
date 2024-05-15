@@ -21,6 +21,7 @@ mpp-vars:
     - - bcm2835
       - bcm2835-mailbox
       - sdhci
+      - simplefb
   partition_label: dos
   target_repos:
   - id: cs9-rpi4-fw
