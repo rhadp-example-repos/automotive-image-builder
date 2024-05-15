@@ -14,7 +14,7 @@ is_verbose = False
 def print_verbose(s):
     if is_verbose:
         print(s)
-base_dir = "/usr/lib/automotive-image-builder"
+base_dir = ""
 include_dirs = []
 volumes = set()
 
@@ -426,11 +426,8 @@ def no_subcommand(args, tmpdir):
 
 def main():
     global base_dir
-    bin_dir = os.path.dirname(os.path.realpath(__file__))
-    if os.path.isfile(os.path.join(bin_dir, ".fromsrc")):
-        base_dir = bin_dir
-
-    args = parse_args(sys.argv[1:])
+    base_dir = sys.argv[1]
+    args = parse_args(sys.argv[2:])
 
     if args.container:
         args.container = args.container_image_name

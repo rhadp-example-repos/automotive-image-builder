@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+BASEDIR=/usr/lib/automotive-image-builder
 
 PYTHONPATH="${BASEDIR}/aib" exec python3 "${BASEDIR}/aib/main.py" "${BASEDIR}" "$@"
