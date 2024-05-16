@@ -1,8 +1,5 @@
 version: '2'
 mpp-vars:
-  name: container
-
-mpp-vars:
   extra_image_rpms:
     mpp-join:
     - mpp-eval: extra_image_rpms
