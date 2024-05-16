@@ -69,8 +69,10 @@ def list_targets(args, tmpdir):
 
 def run(args, cmdline, use_sudo=False, use_container=False, use_non_root_user_in_container=False):
     if use_container and args.container:
-        podman_args = ["--rm", "--privileged", "--security-opt", "label=type:unconfined_t",
-                       "--workdir", os.path.realpath(os.getcwd()) ]
+
+        podman_args = ["--rm", "--privileged", "--workdir", os.path.realpath(os.getcwd()) ]
+        if not use_non_root_user_in_container:
+            podman_args.extend(["--security-opt", "label=type:unconfined_t"])
         for v in sorted(volumes):
             podman_args.append("-v")
             podman_args.append(v + ":" + v)
