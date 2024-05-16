@@ -23,7 +23,7 @@ mpp-vars:
       - sdhci
   dracut_force_drivers:
     mpp-join:
-    - mpp-eval: dracut_force_drives
+    - mpp-eval: dracut_force_drivers
     - - simplefb
   partition_label: dos
   target_repos:

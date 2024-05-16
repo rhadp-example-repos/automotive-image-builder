@@ -8,3 +8,12 @@ compose-test-job:
   stage: test
   script:
     - tests/test-compose tests/test-compose.json
+
+compose-test-modified-distro-target:
+  stage: test
+  script:
+    - 'tests/test-compose tests/test-compose.json "$(git diff --name-only ${CI_MERGE_REQUEST_DIFF_BASE_SHA} | grep ^distro/ | xargs -r basename -s .ipp.yml)" "$(git diff --name-only ${CI_MERGE_REQUEST_DIFF_BASE_SHA} | grep ^targets/ | xargs -r basename -s .ipp.yml)"'
+  rules:
+    - changes:
+      - targets/*.ipp.yml
+      - distro/*.ipp.yml

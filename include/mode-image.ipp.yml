@@ -133,6 +133,10 @@ pipelines:
               mpp-if: dracut_omit_drivers
               then:
                 mpp-eval: dracut_omit_drivers
+            force_drivers:
+              mpp-if: dracut_force_drivers
+              then:
+                mpp-eval: dracut_force_drivers
             filesystems:
               mpp-if: dracut_filesystems
               then:
