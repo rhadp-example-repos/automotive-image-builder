@@ -35,6 +35,10 @@ default_manifest = tests["default-manifest"]
 distros = convert_list(tests["distro"])
 arches = convert_list(tests["arch"])
 targets = convert_list(tests["target"])
+if len(sys.argv) > 2:
+   targets = convert_list(sys.argv[2:])
+else:
+   targets = convert_list(tests["target"])
 modes = convert_list(tests["mode"])
 defines = convert_list(tests["defines"])
 

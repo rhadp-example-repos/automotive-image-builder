@@ -8,3 +8,11 @@ compose-test-job:
   stage: test
   script:
     - tests/test-compose tests/test-compose.json
+
+compose-test-modified-targets:
+  stage: test
+  script:
+    - tests/test-compose tests/test-compose.json $(git diff --name-only $CI_COMMIT_BEFORE_SHA $CI_COMMIT_SHA | grep ^targets/ | xargs basename -s .ipp.yml)
+  rules:
+    - changes:
+      - targets/*.ipp.yml
