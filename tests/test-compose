@@ -36,9 +36,11 @@ distros = convert_list(tests["distro"])
 arches = convert_list(tests["arch"])
 targets = convert_list(tests["target"])
 if len(sys.argv) > 2:
-   targets = convert_list(sys.argv[2:])
+    targets = []
+    for target in sys.argv[2:]:
+        targets.append({"value": target, "arch-is": "aarch64"})
 else:
-   targets = convert_list(tests["target"])
+    targets = convert_list(tests["target"])
 modes = convert_list(tests["mode"])
 defines = convert_list(tests["defines"])
 
