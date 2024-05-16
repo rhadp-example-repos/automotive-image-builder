@@ -498,7 +498,7 @@ def main():
 
     print_verbose(f"Image: {args.image}")
 
-    if args.image.endswith(".raw"):
+    if args.image.endswith(".raw") or args.image.endswith(".img"):
         qemu_args += [
             "-drive", f"file={args.image},index=0,media=disk,format=raw,if=virtio,snapshot={bool_arg(args.snapshot)}",
         ]
