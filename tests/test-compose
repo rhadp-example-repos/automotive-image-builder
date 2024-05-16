@@ -32,15 +32,18 @@ def convert_list(elem):
     return res
 
 default_manifest = tests["default-manifest"]
-distros = convert_list(tests["distro"])
 arches = convert_list(tests["arch"])
+distros = convert_list(tests["distro"])
 targets = convert_list(tests["target"])
-if len(sys.argv) > 2:
-    targets = []
-    for target in sys.argv[2:]:
-        targets.append({"value": target, "arch-is": "aarch64"})
-else:
-    targets = convert_list(tests["target"])
+# override distros and targets
+if len(sys.argv) > 3:
+    if sys.argv[2]:
+        distros = convert_list(sys.argv[2].split())
+    if sys.argv[3]:
+        targets = []
+# only aarch64 for now since we do not have an information which archs are supported per target
+        for target in sys.argv[3].split():
+            targets.append({"value": target, "arch-is": "aarch64"})
 modes = convert_list(tests["mode"])
 defines = convert_list(tests["defines"])
 
