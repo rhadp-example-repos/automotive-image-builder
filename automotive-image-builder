@@ -67,7 +67,7 @@ def list_targets(args, tmpdir):
     for d in sorted(targets):
         print(d)
 
-def run(args, cmdline, use_sudo=False, use_container=False):
+def run(args, cmdline, use_sudo=False, use_container=False, use_non_root_user_in_container=False):
     if use_container and args.container:
         podman_args = ["--rm", "--privileged", "--security-opt", "label=type:unconfined_t",
                        "--workdir", os.path.realpath(os.getcwd()) ]
@@ -77,6 +77,10 @@ def run(args, cmdline, use_sudo=False, use_container=False):
 
         if args.container_autoupdate:
             podman_args.append("--pull=newer")
+
+        if use_non_root_user_in_container:
+            podman_args.append("--user")
+            podman_args.append(f"{os.getuid()}:{os.getgid()}")
 
         conman = "podman"
         if shutil.which("podman") is None and shutil.which("docker") is not None:
@@ -197,7 +201,7 @@ def create_osbuild_manifest(args, manifest, out):
 
     cmdline += [ manifest, out ]
 
-    run(args, cmdline)
+    run(args, cmdline, use_sudo=True, use_container=True, use_non_root_user_in_container=True)
 
 def compose(args, tmpdir):
     return create_osbuild_manifest(args, args.manifest, args.out)
