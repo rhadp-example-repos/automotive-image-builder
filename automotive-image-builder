@@ -192,6 +192,9 @@ def create_osbuild_manifest(args, manifest, out):
     for arg in args.mpp_arg:
         cmdline += [ arg ]
 
+    if args.cache:
+        cmdline += [ "--cache", args.cache ]
+
     cmdline += [ manifest, out ]
 
     run(args, cmdline)
@@ -383,6 +386,8 @@ def main():
                         help=f"Build for this distro specification")
     format_parser.add_argument("--mpp-arg", action="append",type=str,default=[],
                         help=f"Add custom mpp arg")
+    format_parser.add_argument("--cache", action="store",type=str,
+                        help=f"Add mpp cache-directory to use")
     format_parser.add_argument("--define", action="append",type=str,default=[],
                         help=f"Define key=json-value")
     format_parser.add_argument("--define-file", action="append",type=str,default=[],
