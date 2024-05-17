@@ -33,7 +33,7 @@ mpp-vars:
   distro_module_id: platform:eln
   distro_gpg_keys: |
     -----BEGIN PGP PUBLIC KEY BLOCK-----
-    
+
     mQINBGPQTCwBEADFUL0EQLzwpKHtlPkacVI156F2LnWp6K69g/6yzllidHI3b7EV
     QgQ9/Kdou6wNuOahNKa6WcEi6grEXexD7pAcu4xdRUp79XxQy5pC7Aq2/Dwf0vRL
     2y0kqof+C7iSzhHsfLoaqKKeh2njAo1KLZXYTHAWAMbXEyO/FJevaHLXe2+yYd7j

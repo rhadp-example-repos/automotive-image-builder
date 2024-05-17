@@ -28,7 +28,7 @@ mpp-vars:
   distro_gpg_keys: |
     -----BEGIN PGP PUBLIC KEY BLOCK-----
     Comment: GPG-KEY-fedora-38
-    
+
     mQINBGIC2cYBEADJye1aE0AR17qwj6wsHWlCQlcihmqkL8s4gbOk1IevBbH4iXJx
     lu6bN+NhTcCCX6eHmaL5Pwb/bpkMmLR+/r1D2cLDK24YzvN6kJnwRQUTf2dbqYmg
     mNBgIMm+kAabBZPwUHUzyQ9CT/WJpYr1OYu8JIkdxF35nrPewnnOUUqxqbi8fXRQ
