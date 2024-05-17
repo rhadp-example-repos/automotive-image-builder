@@ -43,7 +43,7 @@ if len(sys.argv) > 3:
         targets = []
 # only aarch64 for now since we do not have an information which archs are supported per target
         for target in sys.argv[3].split():
-            targets.append({"value": target, "arch-is": "aarch64"})
+            targets.append({"value": target, "arch-is": "aarch64", "distro-is": ["cs9"]})
 modes = convert_list(tests["mode"])
 defines = convert_list(tests["defines"])
 
