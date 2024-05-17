@@ -151,7 +151,7 @@ def parse_args(args):
     parser.add_argument("--container-autoupdate", default=False, action="store_true",
                         help="Automatically pull new container image if available")
     parser.add_argument("--include", action="append",type=str,default=[],
-                        help=f"Add include directory")
+                        help="Add include directory")
     parser.set_defaults(func=no_subcommand)
     subparsers = parser.add_subparsers(help='sub-command help')
 
@@ -165,25 +165,25 @@ def parse_args(args):
     format_parser.add_argument("--arch", default=platform.machine(), action="store",
                         help=f"Arch to run for (default {platform.machine()})")
     format_parser.add_argument("--osbuild-mpp", action="store",type=str,default=os.path.join(base_dir, "mpp/aib-osbuild-mpp"),
-                        help=f"Use this osbuild-mpp binary")
+                        help="Use this osbuild-mpp binary")
     format_parser.add_argument("--target", action="store",type=str,default="qemu",
-                        help=f"Build for this target")
+                        help="Build for this target")
     format_parser.add_argument("--mode", action="store",type=str,default="image",
-                        help=f"Build this image mode (package, image)")
+                        help="Build this image mode (package, image)")
     format_parser.add_argument("--distro", action="store",type=str,default="cs9",
-                        help=f"Build for this distro specification")
+                        help="Build for this distro specification")
     format_parser.add_argument("--mpp-arg", action="append",type=str,default=[],
-                        help=f"Add custom mpp arg")
+                        help="Add custom mpp arg")
     format_parser.add_argument("--cache", action="store",type=str,
-                        help=f"Add mpp cache-directory to use")
+                        help="Add mpp cache-directory to use")
     format_parser.add_argument("--define", action="append",type=str,default=[],
-                        help=f"Define key=json-value")
+                        help="Define key=json-value")
     format_parser.add_argument("--define-file", action="append",type=str,default=[],
-                        help=f"Add json file of defines")
+                        help="Add json file of defines")
     format_parser.add_argument("--extend-define", action="append",type=str,default=[],
-                        help=f"Extend array by item or list key=json-value")
+                        help="Extend array by item or list key=json-value")
     format_parser.add_argument("--ostree-repo", action="store",type=str,
-                        help=f"Path to ostree repo")
+                        help="Path to ostree repo")
 
     parser_compose = subparsers.add_parser('compose', help='Compose osbuild manifest', parents=[format_parser])
     parser_compose.add_argument("manifest", type=str, help="Source manifest file")
@@ -192,15 +192,15 @@ def parse_args(args):
 
     parser_build = subparsers.add_parser('build', help='Compose osbuild manifest', parents=[format_parser])
     parser_build.add_argument("--osbuild-manifest", action="store",type=str,
-                        help=f"Path to store osbuild manifest")
+                        help="Path to store osbuild manifest")
     parser_build.add_argument("--cache-max-size", action="store",type=str,
-                        help=f"Max cache size")
+                        help="Max cache size")
     parser_build.add_argument("--osbuild-arg", action="append",type=str,default=[],
-                        help=f"Add custom osbuild arg")
+                        help="Add custom osbuild arg")
     parser_build.add_argument("--export", action="append",type=str,default=[],
-                        help=f"Export this image type")
+                        help="Export this image type")
     parser_build.add_argument("--build-dir", action="store",type=str,
-                        help=f"Directory where intermediary files are stored)")
+                        help="Directory where intermediary files are stored)")
     parser_build.add_argument("--sudo", default=not isRoot, action="store_true",
                               help="Use sudo to start programs that need privileges (default if not run as root)")
     parser_build.add_argument("--nosudo", default=False, action="store_true",
