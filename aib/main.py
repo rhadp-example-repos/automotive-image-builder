@@ -10,20 +10,11 @@ import shlex
 import shutil
 import tempfile
 
-is_verbose = False
-def print_verbose(s):
-    if is_verbose:
-        print(s)
+from . import log, exit_error
+
 base_dir = ""
 include_dirs = []
 volumes = set()
-
-def print_error(s):
-    print(s, file=sys.stderr)
-
-def exit_error(s):
-    print_error("Error: " + s)
-    sys.exit(1)
 
 def add_volume(dir):
     global volumes
@@ -35,7 +26,7 @@ def add_volume_for(file):
 
 def ostree_repo_init(path):
     if not os.path.isdir(path):
-        print_verbose(f"Initializing repo {path}")
+        log.debug("Initializing repo %s", path)
         subprocess.run(["ostree", "init", "--repo", path, "--mode", "archive"], check=True)
 
 def ostree_refs(path):
@@ -49,7 +40,7 @@ def ostree_rev_parse(path, ref):
     r = subprocess.run(["ostree", "rev-parse", "--repo", path, ref], capture_output=True, check=True)
     return r.stdout.decode("utf-8").rstrip()
 
-def list_dist(args, tmpdir):
+def list_dist(_args, _tmpdir):
     distros = set()
     for inc in include_dirs:
         for f in os.listdir(os.path.join(inc, "distro")):
@@ -58,7 +49,7 @@ def list_dist(args, tmpdir):
     for d in sorted(distros):
         print(d)
 
-def list_targets(args, tmpdir):
+def list_targets(_args, _tmpdir):
     targets = set()
     for inc in include_dirs:
         for f in os.listdir(os.path.join(inc, "targets")):
@@ -93,7 +84,7 @@ def run(args, cmdline, use_sudo=False, use_container=False, use_non_root_user_in
     if use_sudo and vars(args).get("sudo", False):
         cmdline = ["sudo"] + cmdline
 
-    print_verbose("Running: " + shlex.join(cmdline))
+    log.debug("Running: %s", shlex.join(cmdline))
 
     try:
         subprocess.run(cmdline, check=True)
@@ -122,7 +113,7 @@ def define_value_looks_like_string(v):
 def parse_define(d, option):
     parts = d.split("=", 2)
     if len(parts) != 2:
-        exit_error (f"Invalid option passed to {option}: '{d}', should be key=value")
+        exit_error("Invalid option passed to %s: '%s', should be key=value", option, d)
     k = parts[0]
     json_v = parts[1]
     try:
@@ -133,9 +124,9 @@ def parse_define(d, option):
             try:
                 v = json.loads('"' + json_v + '"')
             except json.decoder.JSONDecodeError:
-                exit_error (f"Invalid value passed to {option}: '{json_v}': " + str(e))
+                exit_error("Invalid value passed to %s: '%s': %s", option, json_v, e)
         else:
-            exit_error (f"Invalid value passed to {option}: '{json_v}': " + str(e))
+            exit_error("Invalid value passed to %s: '%s': %s", option, json_v, e)
     return k, v
 
 def parse_args(args):
@@ -212,9 +203,8 @@ def parse_args(args):
     return parser.parse_args(args)
 
 def create_osbuild_manifest(args, manifest, out):
-
     if not os.path.isfile(manifest):
-        exit_error(f"Error: No such file {manifest}")
+        exit_error("No such file %s", manifest)
 
     add_volume_for(manifest)
     add_volume_for(out)
@@ -250,7 +240,7 @@ def create_osbuild_manifest(args, manifest, out):
             for k,v in file_defines.items():
                 defines[k]=v
         except json.decoder.JSONDecodeError as e:
-            exit_error ("Invalid json define file '" + df + "': " + str(e))
+            exit_error("Invalid json define file '%s': %s", df, e)
 
     for d in args.extend_define:
         k, v = parse_define(d, "--extend-define")
@@ -321,7 +311,7 @@ export_datas = {
 def get_export_data(exp):
     if exp in export_datas:
         return export_datas[exp]
-    exit_error (f"Unsupported export '{exp}'")
+    exit_error("Unsupported export '%s'", exp)
 
 def export(args, outputdir, dest, dest_is_directory, export):
     exportdir = os.path.join(outputdir, export)
@@ -422,8 +412,8 @@ def build(args, tmpdir):
         if args.sudo and (os.path.isdir(os.path.join(tmpdir, "osbuild_store")) or os.path.isdir(os.path.join(tmpdir, "image_output"))):
             run(args, ["rm", "-rf", tmpdir], use_sudo=True)
 
-def no_subcommand(args, tmpdir):
-    print ("No subcommand specified, see --help for usage")
+def no_subcommand(_args, _tmpdir):
+    log.info("No subcommand specified, see --help for usage")
 
 def main():
     global base_dir
@@ -433,8 +423,8 @@ def main():
     if args.container:
         args.container = args.container_image_name
 
-    global is_verbose
-    is_verbose = args.verbose
+    if args.verbose:
+        log.setLevel("DEBUG")
 
     global include_dirs
     include_dirs = [ base_dir ] + args.include

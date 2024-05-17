@@ -21,10 +21,10 @@ def test_invalid_subcommand():
         parse_args(["invalid", "--help"])
     assert e.value.code == 2
 
-def test_no_subcommand(capsys):
+def test_no_subcommand(caplog):
     args = parse_args([])
-    args.func(args=args, tmpdir="")
-    assert "No subcommand specified, see --help for usage" in capsys.readouterr().out
+    args.func(_args=args, _tmpdir="")
+    assert "No subcommand specified, see --help for usage" in caplog.text
 
 def test_build_required_positional(capsys):
     with pytest.raises(SystemExit) as e:
