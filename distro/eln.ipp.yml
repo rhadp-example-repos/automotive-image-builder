@@ -10,26 +10,26 @@ mpp-vars:
   release_rpm: fedora-release
   linux_firmware_rpm: linux-firmware
   distro_repos:
-  - id: baseos
-    baseurl: $distro_baseurl/BaseOS/$arch/os/
-  - id: appstream
-    baseurl: $distro_baseurl/AppStream/$arch/os/
-  - id: extras
-    baseurl: $distro_baseurl/Extras/$arch/os/
-  - id: next
-    baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/next/fedora-eln-$arch/
+    - id: baseos
+      baseurl: $distro_baseurl/BaseOS/$arch/os/
+    - id: appstream
+      baseurl: $distro_baseurl/AppStream/$arch/os/
+    - id: extras
+      baseurl: $distro_baseurl/Extras/$arch/os/
+    - id: next
+      baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/next/fedora-eln-$arch/
   distro_devel_repos:
-  - id: crb
-    baseurl: $distro_baseurl/CRB/$arch/os/
+    - id: crb
+      baseurl: $distro_baseurl/CRB/$arch/os/
   distro_debug_repos:
-  - id: baseos-debug
-    baseurl: $distro_baseurl/BaseOS/$arch/debug/tree/
-  - id: appstream-debug
-    baseurl: $distro_baseurl/AppStream/$arch/debug/tree/
-  - id: crb-debug
-    baseurl: $distro_baseurl/CRB/$arch/debug/tree/
-  - id: autosd-debug
-    baseurl: https://mirror.stream.centos.org/SIGs/9-stream/autosd/$arch/packages-main/debug/
+    - id: baseos-debug
+      baseurl: $distro_baseurl/BaseOS/$arch/debug/tree/
+    - id: appstream-debug
+      baseurl: $distro_baseurl/AppStream/$arch/debug/tree/
+    - id: crb-debug
+      baseurl: $distro_baseurl/CRB/$arch/debug/tree/
+    - id: autosd-debug
+      baseurl: https://mirror.stream.centos.org/SIGs/9-stream/autosd/$arch/packages-main/debug/
   distro_module_id: platform:eln
   distro_gpg_keys: |
     -----BEGIN PGP PUBLIC KEY BLOCK-----

@@ -74,88 +74,88 @@ mpp-vars:
       RequiredBy=local-fs.target
   build_rpms:
     mpp-join:
-    - mpp-eval: build_rpms
-    - - mpp-if: use_luks
-        then: cryptsetup
-      - mpp-if: use_luks
-        then: lvm2
-      - mpp-if: use_aboot
-        then: aboot-update
-      - mpp-if: use_aboot
-        then: aboot-deploy
-      - mpp-if: use_composefs_signed
-        then: openssl
+      - mpp-eval: build_rpms
+      - - mpp-if: use_luks
+          then: cryptsetup
+        - mpp-if: use_luks
+          then: lvm2
+        - mpp-if: use_aboot
+          then: aboot-update
+        - mpp-if: use_aboot
+          then: aboot-deploy
+        - mpp-if: use_composefs_signed
+          then: openssl
   boot_rpms:
     mpp-join:
-    - mpp-eval: boot_rpms
-    - mpp-if: use_autoinit
-      then:
-        - autoinit
-    - - $kernel_rpm
+      - mpp-eval: boot_rpms
+      - mpp-if: use_autoinit
+        then:
+          - autoinit
+      - - $kernel_rpm
   base_rpms:
     mpp-join:
-    - mpp-eval: base_rpms
-    - - $linux_firmware_rpm
-      - mpp-if: use_luks
-        then: lvm2
-      - mpp-if: use_aboot
-        then: aboot-deploy
+      - mpp-eval: base_rpms
+      - - $linux_firmware_rpm
+        - mpp-if: use_luks
+          then: lvm2
+        - mpp-if: use_aboot
+          then: aboot-deploy
   dracut_modules:
     - mpp-if: use_autoinit
       then:
         autoinit
   dracut_add_drivers:
     mpp-join:
-    - mpp-eval: dracut_add_drivers
-    - mpp-if: use_composefs
-      then:
-        - erofs
-        - overlay
-        - loop
+      - mpp-eval: dracut_add_drivers
+      - mpp-if: use_composefs
+        then:
+          - erofs
+          - overlay
+          - loop
   dracut_omit_modules:
     mpp-join:
-    - mpp-eval: dracut_omit_modules
-    - - mpp-if: not use_luks
-        then: dm
+      - mpp-eval: dracut_omit_modules
+      - - mpp-if: not use_luks
+          then: dm
   kernel_opts:
     mpp-join:
-    - mpp-eval: kernel_opts
-    - mpp-eval: extra_kernel_opts
-    - mpp-if: use_serial_console
-      then:
-        - console=$serial_console
-    - mpp-if: use_debug or use_kernel_debug_package
-      then:
-        - ignore_loglevel
-        - earlycon
-    - mpp-if: use_autoinit
-      then:
-        - autoinit.root=$autoinit_root
-        - autoinit.rw
-        - mpp-if: use_debug or use_kernel_debug_package
-          then: autoinit.debug
-    - mpp-if: use_module_sig_enforce
-      then:
-        # Only allow modules with a valid signature to be loaded by the kernel.
-        # https://www.kernel.org/doc/html/latest/admin-guide/module-signing.html#non-valid-signatures-and-unsigned-modules
-        - module.sig_enforce=1
-    - - systemd.show_status=auto
-      # Staggered spin-up
-      - libahci.ignore_sss=1
-      # Enabling these slub_debug options to address a specific safety concern related to heap memory
-      # integrity that only be achieved by setting the SLUB allocator to perform consistency checks.
-      #   F = Sanity checks on
-      #   P = Poisoning (object and padding)
-      #   Z = Add guard areas (red zones) before and after each heap object
-      # Note that enabling slub_debug will trigger the following warning on
-      # boot up:
-      # https://gitlab.com/redhat/centos-stream/src/kernel/centos-stream-9/-/blob/main/lib/vsprintf.c?ref_type=heads#L2230
-      - slub_debug=FPZ
-      - fsck.mode=skip
-      # Disable rcu_normal_after_boot (because we want to delay the setting of rcu_normal to rcu-normal.service)
-      - rcupdate.rcu_normal_after_boot=0
-      # Enable rcu_expedited for faster boot (will be disabled by rcu-normal.service)
-      - rcupdate.rcu_expedited=1
+      - mpp-eval: kernel_opts
+      - mpp-eval: extra_kernel_opts
+      - mpp-if: use_serial_console
+        then:
+          - console=$serial_console
+      - mpp-if: use_debug or use_kernel_debug_package
+        then:
+          - ignore_loglevel
+          - earlycon
+      - mpp-if: use_autoinit
+        then:
+          - autoinit.root=$autoinit_root
+          - autoinit.rw
+          - mpp-if: use_debug or use_kernel_debug_package
+            then: autoinit.debug
+      - mpp-if: use_module_sig_enforce
+        then:
+          # Only allow modules with a valid signature to be loaded by the kernel.
+          # https://www.kernel.org/doc/html/latest/admin-guide/module-signing.html#non-valid-signatures-and-unsigned-modules
+          - module.sig_enforce=1
+      - - systemd.show_status=auto
+        # Staggered spin-up
+        - libahci.ignore_sss=1
+        # Enabling these slub_debug options to address a specific safety concern related to heap memory
+        # integrity that only be achieved by setting the SLUB allocator to perform consistency checks.
+        #   F = Sanity checks on
+        #   P = Poisoning (object and padding)
+        #   Z = Add guard areas (red zones) before and after each heap object
+        # Note that enabling slub_debug will trigger the following warning on
+        # boot up:
+        # https://gitlab.com/redhat/centos-stream/src/kernel/centos-stream-9/-/blob/main/lib/vsprintf.c?ref_type=heads#L2230
+        - slub_debug=FPZ
+        - fsck.mode=skip
+        # Disable rcu_normal_after_boot (because we want to delay the setting of rcu_normal to rcu-normal.service)
+        - rcupdate.rcu_normal_after_boot=0
+        # Enable rcu_expedited for faster boot (will be disabled by rcu-normal.service)
+        - rcupdate.rcu_expedited=1
   image_repos:
     mpp-join:
       - mpp-eval: distro_repos

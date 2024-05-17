@@ -146,32 +146,32 @@ mpp-vars:
   default_kernel_opts: []
   default_dracut_modules: []
   default_dracut_add_modules:
-      - base
-      - dracut-systemd
-      - fs-lib
-      - kernel-modules
-      - kernel-modules-extra
-      - rootfs-block
-      - shutdown
-      - systemd
-      - systemd-initrd
-      - terminfo
-      - udev-rules
-      - usrmount
+    - base
+    - dracut-systemd
+    - fs-lib
+    - kernel-modules
+    - kernel-modules-extra
+    - rootfs-block
+    - shutdown
+    - systemd
+    - systemd-initrd
+    - terminfo
+    - udev-rules
+    - usrmount
   default_dracut_omit_modules:
-      - bash
-      - i18n
-      - lunmask
-      - mdraid
-      - memstrack
-      - nss-softokn
-      - nvdimm
-      - qemu
-      - resume
-      - terminfo
-      - virtiofs
+    - bash
+    - i18n
+    - lunmask
+    - mdraid
+    - memstrack
+    - nss-softokn
+    - nvdimm
+    - qemu
+    - resume
+    - terminfo
+    - virtiofs
   default_dracut_filesystems:
-      - ext4
+    - ext4
   default_dracut_compression: "lz4"
   # If set, this replaces the default driver set, we use it for targets to set the hw-specific drivers
   default_dracut_drivers: []

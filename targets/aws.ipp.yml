@@ -1,19 +1,19 @@
 version: '2'
 mpp-vars:
   extra_image_rpms:
-  - openssh-server
-  - openssh-clients
-  - sudo
-  - tuned
-  - cloud-init
-  - cloud-utils-growpart
-  - gdisk
-  - NetworkManager-cloud-setup
-  - rsync
-  - qemu-guest-agent
-  - chrony
+    - openssh-server
+    - openssh-clients
+    - sudo
+    - tuned
+    - cloud-init
+    - cloud-utils-growpart
+    - gdisk
+    - NetworkManager-cloud-setup
+    - rsync
+    - qemu-guest-agent
+    - chrony
   extra_build_rpms:
-  - python3-pyyaml
+    - python3-pyyaml
   image_extra_stages:
     mpp-join:
       - mpp-eval: image_extra_stages
@@ -25,16 +25,16 @@ mpp-vars:
         - type: org.osbuild.systemd
           options:
             enabled_services:
-            - sshd
-            - NetworkManager
-            - nm-cloud-setup.service
-            - nm-cloud-setup.timer
-            - cloud-init
-            - cloud-init-local
-            - cloud-config
-            - cloud-final
-            - reboot.target
-            - tuned
+              - sshd
+              - NetworkManager
+              - nm-cloud-setup.service
+              - nm-cloud-setup.timer
+              - cloud-init
+              - cloud-init-local
+              - cloud-config
+              - cloud-final
+              - reboot.target
+              - tuned
             default_target: multi-user.target
         - type: org.osbuild.systemd-logind
           options:
@@ -59,16 +59,16 @@ mpp-vars:
         - type: org.osbuild.chrony
           options:
             servers:
-            - hostname: 169.254.169.123
-              prefer: true
-              iburst: true
-              minpoll: 4
-              maxpoll: 4
+              - hostname: 169.254.169.123
+                prefer: true
+                iburst: true
+                minpoll: 4
+                maxpoll: 4
             leapsectz: ""
         - type: org.osbuild.keymap
           options:
             keymap: us
             x11-keymap:
               layouts:
-              - us
+                - us
 pipelines: []

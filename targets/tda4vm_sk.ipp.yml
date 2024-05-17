@@ -1,11 +1,11 @@
 version: '2'
 mpp-vars:
   target_repos:
-  - id: centos-automotive-sig-dui
-    baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/dui/fedora-39-$arch/
-  - id: cs9-ti-fw
-    baseurl: https://download.copr.fedorainfracloud.org/results/eballetbo/cs9-ti-fw/centos-stream+epel-next-9-$arch/
-    priority: 1
+    - id: centos-automotive-sig-dui
+      baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/dui/fedora-39-$arch/
+    - id: cs9-ti-fw
+      baseurl: https://download.copr.fedorainfracloud.org/results/eballetbo/cs9-ti-fw/centos-stream+epel-next-9-$arch/
+      priority: 1
   kernel_rpm: 'kernel'
   kernel_version: '6.6.1-300.ti'
   serial_console: 'ttyS2,115200n8'
@@ -16,30 +16,30 @@ mpp-vars:
     heads: 64
     sectors-per-track: 32
   extra_image_rpms:
-  - uboot-images-armv8
+    - uboot-images-armv8
   image_extra_stages:
     mpp-join:
-    - mpp-eval: image_extra_stages
-    - - type: org.osbuild.copy
-        inputs:
-          rootfs:
-            type: org.osbuild.tree
-            origin: org.osbuild.pipeline
-            references:
-            - name:rootfs
-        options:
-          paths:
-          - from:
-              mpp-format-string: input://rootfs/usr/share/uboot/j721e_evm_r5/tiboot3-j721e-gp-evm.bin
-            to: tree:///boot/efi/tiboot3.bin
-          - from:
-              mpp-format-string: input://rootfs/usr/share/uboot/j721e_evm_a72/tispl.bin_unsigned
-            to: tree:///boot/efi/tispl.bin
-          - from:
-              mpp-format-string: input://rootfs/usr/share/uboot/j721e_evm_a72/u-boot.img_unsigned
-            to: tree:///boot/efi/u-boot.img
-          - from:
-              mpp-format-string: input://rootfs/usr/share/uboot/j721e_evm_r5/sysfw-j721e-gp-evm.itb
-            to: tree:///boot/efi/sysfw.itb
+      - mpp-eval: image_extra_stages
+      - - type: org.osbuild.copy
+          inputs:
+            rootfs:
+              type: org.osbuild.tree
+              origin: org.osbuild.pipeline
+              references:
+                - name:rootfs
+          options:
+            paths:
+              - from:
+                  mpp-format-string: input://rootfs/usr/share/uboot/j721e_evm_r5/tiboot3-j721e-gp-evm.bin
+                to: tree:///boot/efi/tiboot3.bin
+              - from:
+                  mpp-format-string: input://rootfs/usr/share/uboot/j721e_evm_a72/tispl.bin_unsigned
+                to: tree:///boot/efi/tispl.bin
+              - from:
+                  mpp-format-string: input://rootfs/usr/share/uboot/j721e_evm_a72/u-boot.img_unsigned
+                to: tree:///boot/efi/u-boot.img
+              - from:
+                  mpp-format-string: input://rootfs/usr/share/uboot/j721e_evm_r5/sysfw-j721e-gp-evm.itb
+                to: tree:///boot/efi/sysfw.itb
 
 pipelines: []
