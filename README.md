@@ -2,8 +2,8 @@
 
 Automotive image builder is a tool to create various kinds of OS
 images based on CentOS derived OSes. The images can support
-package-based mode (called "regular") as well as image-based mode
-(called "ostree").
+package-based mode (called "package") as well as image-based mode
+(called "image").
 
 The main tool is called `automotive-image-builder`, and the basic
 operation it does is called "composing" manifests. The compose
@@ -16,7 +16,7 @@ selected packages and container images is chosen during the compose.
 
 For example, to build a qcow2 image you can run:
 
- $ automotive-image-builder compose --distro cs9 --image-type regular --target qemu my-image.mpp.yml osbuild.json
+ $ automotive-image-builder compose --distro cs9 --mode package --target qemu my-image.mpp.yml osbuild.json
  $ sudo osbuild --store osbuild_store --output-directory output --export qcow2 osbuild.json
 
 This will first compose the osbuild.json file, and then build it and export the "qcow2" output, which
