@@ -140,7 +140,8 @@ def parse_define(d, option):
 
 def parse_args(args):
     isRoot = os.getuid() == 0
-    parser = argparse.ArgumentParser(description="Build automotive images")
+    parser = argparse.ArgumentParser(prog="automotive-image-builder",
+                                     description="Build automotive images")
     parser.add_argument("--verbose", default=False, action="store_true")
     parser.add_argument("--container", default=False, action="store_true",
                         help="Use containerized build")
