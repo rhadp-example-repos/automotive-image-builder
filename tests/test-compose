@@ -56,12 +56,30 @@ def collect_args(elms, arg):
                 res.append(v)
     return res
 
+def collect_list_args(elms, arg):
+    res = []
+    for elm in elms:
+        if arg in elm:
+            v = elm[arg]
+            if not v in res:
+                res.extend(v)
+    return res
+
+
 def filter_by_arch(elms, arch):
     arch_is = collect_args(elms, "arch-is");
     if arch_is:
         return not arch in arch_is
     return False;
 
+def filter_by_distro(elms, distro):
+    distro_is = collect_list_args(elms, "distro-is");
+    if distro_is and not distro in distro_is:
+        return True
+    distro_is_not = collect_list_args(elms, "distro-is-not");
+    if distro_is_not and distro in distro_is_not:
+        return True
+    return False;
 
 to_run = []
 for distro in distros:
@@ -71,6 +89,8 @@ for distro in distros:
                 for define in defines:
                     elms = [arch, target, mode, define]
                     if filter_by_arch(elms, arch["value"]):
+                        continue
+                    if filter_by_distro(elms, distro["value"]):
                         continue
 
                     args = [ "--distro", distro["value"], "--arch", arch["value"], "--target", target["value"], "--mode", mode["value"]]
