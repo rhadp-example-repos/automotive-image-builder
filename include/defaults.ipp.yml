@@ -518,12 +518,12 @@ mpp-vars:
       type: 4EF7C492-D028-41C6-B47A-BBD33850CB31
       uuid: 3AF03249-A080-FA96-E1E5-8AD411AB7001
       name: reserved1_a
-      attrs: [50,60]
+      attrs: [50, 60]
     - size: 16384
       type: 4E351956-AA2A-479E-B5F7-163DA39F14F6
       uuid: 767BEED8-EC0C-9F70-3508-888D56898ADA
       name: reserved2_a
-      attrs: [50,60]
+      attrs: [50, 60]
     - size: 24576
       type: D7F253DB-4DF4-4137-BA8D-8F8DA874F9F5
       uuid: A5D5920D-7C5D-1866-A79B-70EAEA56B9A5
@@ -543,17 +543,17 @@ mpp-vars:
       type: EB1AD2EE-8C54-41C2-8361-7271635A1AB5
       uuid: 81608641-534F-7818-6CF3-EB0B2B334FC7
       name: la_vbmeta_a
-      attrs: [50,60]
+      attrs: [50, 60]
     - size: 1000
       type: E80D40F1-F0FE-486C-B7D6-B7225AC36C0E
       uuid: DC2409FD-02E0-8B9B-3ED5-AACBE4FCF2A9
       name: la_vb_sys_a
-      attrs: [50,60]
+      attrs: [50, 60]
     - size: 1000
       type: A6DE3586-5EBD-46AA-99E3-044A53B22104
       uuid: 80291E4A-1DBF-5A4E-8C87-8F1A02830926
       name: la_v_boot_a
-      attrs: [50,60]
+      attrs: [50, 60]
     - size: 1000
       type: CE93EC25-EE18-49A4-9C9B-3E08F8E0BE70
       uuid: 6D496290-18D8-63A7-2915-25ABBC85C8F8
@@ -583,27 +583,27 @@ mpp-vars:
       type: DEA0BA2C-CBDD-4805-B4F9-F428251C3E98
       uuid: E2423ECC-1F06-B1F9-C2D1-748F4D86117A
       name: foo_a
-      attrs: [0,50]
+      attrs: [0, 50]
     - size: 1280
       type: 7A3DF1A3-A31A-454D-BD78-DF259ED486BE
       uuid: E7FED1EB-392F-6D04-EDC9-DF831BC6B0F9
       name: foo_bkup_a
-      attrs: [0,50]
+      attrs: [0, 50]
     - size: 129
       type: 5A325AE4-4276-B66D-0ADD-3494DF27706A
       uuid: 983F9994-A42A-3644-117C-AF82C2496A44
       name: foo_config_a
-      attrs: [0,50]
+      attrs: [0, 50]
     - size: 20
       type: CB74CA22-2F0D-4B82-A1D6-C4213F348D73
       uuid: 8F6F68D1-28A4-C850-06AA-8A543A8FF46E
       name: shrm_a
-      attrs: [50,60]
+      attrs: [50, 60]
     - size: 2400
       type: 00000000-0000-0000-0000-000000000000
       uuid: 113B1BCE-4131-7714-97F7-CB718B6D8CFB
       name: last_parti
-      attrs: [0,60]
+      attrs: [0, 60]
     - size: 1280
       type: DEA0BA2C-CBDD-4805-B4F9-F428251C3E98
       uuid: B6A4E91B-E7C3-D694-1AC1-343970FFA226
@@ -628,12 +628,12 @@ mpp-vars:
       type: 00000000-0000-0000-0000-000000000000
       uuid: F794506C-EF79-3D92-58C5-32937DD975C3
       name: last_parti
-      attrs: [0,60]
+      attrs: [0, 60]
     - size: 26
       type: 50D0ABE4-F594-4641-981B-DF602E400F34
       uuid: A5ECA3D7-C6E3-C985-EF49-57DFF300D51B
       name: ALIGN_TO_128K_1
-      attrs: [0,60]
+      attrs: [0, 60]
     - size: 1
       type: A19F205F-CCD8-4B6D-8F1E-2D9BC24CFFB1
       uuid: 5E789AC8-58AE-F83B-93AE-7885332467CE
@@ -648,17 +648,17 @@ mpp-vars:
       type: 00000000-0000-0000-0000-000000000000
       uuid: EF471D32-36A1-3328-F15F-48FB8CEE5162
       name: last_parti
-      attrs: [0,60]
+      attrs: [0, 60]
     - size: 64
       type: D69E90A5-4CAB-0071-F6DF-AB977F141A7F
       uuid: F397ECB3-67D3-DF67-F3B8-694A850B2448
       name: aop_a
-      attrs: [50,60]
+      attrs: [50, 60]
     - size: 1000
       type: A053AA7F-40B8-4B1C-BA08-2F68AC71A4F4
       uuid: 559599A7-FD71-18E5-6B97-4840B05EF2ED
       name: tz_a
-      attrs: [50,60]
+      attrs: [50, 60]
     - size: 1000
       type: E1A6A689-0C8D-4CC6-B4E8-55A4320FBD8A
       uuid: 9289B634-92B5-F9CB-C4ED-85DF654F210B
@@ -673,52 +673,52 @@ mpp-vars:
       type: EBD0A0A2-B9E5-4433-87C0-68B6B72699C7
       uuid: 3FABD9D1-ABA4-0079-3C70-5FCE50F967AD
       name: modem_a
-      attrs: [50,60]
+      attrs: [50, 60]
     - size: 1000
       type: 6690B4CE-70E9-4817-B9F1-25D64D888357
       uuid: DCC3CD25-22AB-1CCC-2697-D561D3D0AEC3
       name: core_nhlos_a
-      attrs: [0,50]
+      attrs: [0, 50]
     - size: 1024
       type: EA02D680-8712-4552-A3BE-E6087829C1E6
       uuid: F1B79BEA-AD3F-AD36-3C7C-1F4E0EA9AD3A
       name: mdtpsecapp_a
-      attrs: [50,60]
+      attrs: [50, 60]
     - size: 1000
       type: 3878408A-E263-4B67-B878-6340B35B11E3
       uuid: A37D094A-8AFE-DBF5-DEB6-B1D9E5204898
       name: mdtp_a
-      attrs: [50,60]
+      attrs: [50, 60]
     - size: 128
       type: A11D2A7C-D82A-4C2F-8A01-1805240E6626
       uuid: 1ECFCE1D-C164-A7C9-0505-2156D88088ED
       name: keymaster_a
-      attrs: [50,60]
+      attrs: [50, 60]
     - size: 256
       type: BD6928A1-4CE0-A038-4F3A-1495E3EDDFFB
       uuid: B35108BB-6890-225F-38B4-0BC27C35E9BB
       name: bar_a
-      attrs: [50,60]
+      attrs: [50, 60]
     - size: 1000
       type: 7EFE5010-2A1A-4A1A-B8BC-990257813512
       uuid: FE2AB686-0D0E-E807-FF5C-2D43D993B65C
       name: dsp_a
-      attrs: [50,60]
+      attrs: [50, 60]
     - size: 1000
       type: 20117F86-E985-4357-B9EE-374BC1D8487D
       uuid: 930EA65F-D07E-ADD1-B26A-CB4F9DEF7AC9
       name: boot_a
-      attrs: [48,49,50,51,52,53]
+      attrs: [48, 49, 50, 51, 52, 53]
     - size: 128
       type: 73471795-AB54-43F9-A847-4F72EA5CBEF5
       uuid: 9959174A-EAFF-296C-33C6-5CB526CABF34
       name: clib_a
-      attrs: [50,60]
+      attrs: [50, 60]
     - size: 256
       type: 8EA64893-1267-4A1B-947C-7C362ACAAD2C
       uuid: CCF53529-6117-1942-4CE2-B8F4851D2BE3
       name: clib64_a
-      attrs: [50,60]
+      attrs: [50, 60]
     - size: 32
       type: F65D4B16-343D-4E25-AAFC-BE99B6556A6D
       uuid: 91A4247C-5AAC-9EF3-034C-BC99E5F5BF4B
@@ -743,27 +743,27 @@ mpp-vars:
       type: E6E98DA2-E22A-4D12-AB33-169E7DEAA507
       uuid: 8FCC0D7C-0214-35E5-2390-C26472B70E2F
       name: ggdp_a
-      attrs: [0,50]
+      attrs: [0, 50]
     - size: 8
       type: E126A436-757E-42D0-8D19-0F362F7A62B8
       uuid: 6A4FD3E9-D920-B9E0-839D-D7F1D6DC235A
       name: multiimgoem_a
-      attrs: [50,60]
+      attrs: [50, 60]
     - size: 8
       type: 846C6F05-EB46-4C0A-A1A3-3648EF3F9D0E
       uuid: 9DA1EDD3-E9A8-76E9-5113-7FCD4DC648DE
       name: multiimgqti_a
-      attrs: [50,60]
+      attrs: [50, 60]
     - size: 256
       type: 17911177-C9E6-4372-933C-804B678E666F
       uuid: A1C29E74-4233-477D-8B16-533A6A522E90
       name: imagefv_a
-      attrs: [50,60]
+      attrs: [50, 60]
     - size: 16
       type: 3FA03C7A-9FDC-498B-A2A8-DE11EE339790
       uuid: E6C560B8-AB93-7876-7F56-2895424152BE
       name: usb4fw_a
-      attrs: [50,60]
+      attrs: [50, 60]
     - size: 1
       type: 65ADDCF4-0C5C-4D9A-AC2D-D90B5CBFCD03
       uuid: E9F165F4-66AD-9811-6724-D78F078B31EC
@@ -814,7 +814,7 @@ mpp-vars:
       type: 4B7A15D6-322C-42AC-8110-88B7DA0C5D77
       uuid: DA91D469-09B3-CE43-795E-3B86F3735143
       name: vbmeta_a
-      attrs: [50,60]
+      attrs: [50, 60]
     - size: 2
       type: 69CFD37F-3D6B-48ED-9739-23015606BE65
       uuid: E60E3E4B-BE22-24DC-C8DB-5E1027F909B3
@@ -823,12 +823,12 @@ mpp-vars:
       type: 6CB747F1-C2EF-4092-ADD0-CA39F79C7AF4
       uuid: AAF48D41-BCB0-5604-366F-319B2502F14D
       name: bluetooth_a
-      attrs: [50,60]
+      attrs: [50, 60]
     - size: 1000
       type: 06EF844E-08FC-494E-89EB-396D4D6C5B27
       uuid: B84361CE-FBED-E370-3F80-B2BCAE88DACA
       name: vm_a
-      attrs: [50,60]
+      attrs: [50, 60]
     - size: 1000
       type: 68ED1658-2B71-4DAA-8E46-1510560045C9
       uuid: BACF40FD-5D9F-C390-FCC4-03468864B0E9
@@ -959,7 +959,7 @@ mpp-vars:
       type: 20117F86-E985-4357-B9EE-374BC1D8487D
       uuid: EDBDAC67-E215-23BB-263F-672C831B481C
       name: boot_b
-      attrs: [48,49,51,52,53]
+      attrs: [48, 49, 51, 52, 53]
     - size: 1000
       type: 68ED1658-2B71-4DAA-8E46-1510560045C9
       uuid: 283DD53C-D749-68AC-261D-104D9CD22F76
