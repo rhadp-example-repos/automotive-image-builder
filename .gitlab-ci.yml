@@ -17,3 +17,13 @@ compose-test-modified-distro-target:
     - changes:
       - targets/*.ipp.yml
       - distro/*.ipp.yml
+
+unit-test-job:
+  image: python:latest
+  before_script:
+    - python3 --version; pip --version
+    - python3 -m pip install --upgrade pip
+    - python3 -m pip install pytest
+  stage: test
+  script:
+    - pytest aib/tests

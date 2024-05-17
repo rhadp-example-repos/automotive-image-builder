@@ -13,13 +13,16 @@ all:
 
 install:
 	mkdir -p $(DESTDIR)$(BINDIR)
-	install -t $(DESTDIR)$(BINDIR) automotive-image-builder automotive-image-runner
+	install automotive-image-builder.installed $(DESTDIR)$(BINDIR)/automotive-image-builder
+	install -t $(DESTDIR)$(BINDIR) automotive-image-runner
 	for dir in distro include targets ; do \
 		mkdir -p $(DESTDIR)$(DATADIR)/$$dir ; \
 		install -m 0644 -t $(DESTDIR)$(DATADIR)/$$dir $$dir/*.yml ; \
 	done
 	mkdir -p $(DESTDIR)$(DATADIR)/files
 	install -m 0644 -t $(DESTDIR)$(DATADIR)/files files/*
+	mkdir -p $(DESTDIR)$(DATADIR)/aib
+	install  -t $(DESTDIR)$(DATADIR)/aib aib/*.py
 	mkdir -p $(DESTDIR)$(DATADIR)/mpp/aibosbuild/util
 	install  -t $(DESTDIR)$(DATADIR)/mpp mpp/aib-osbuild-mpp
 	install  -t $(DESTDIR)$(DATADIR)/mpp/aibosbuild/util mpp/aibosbuild/util/*.py
