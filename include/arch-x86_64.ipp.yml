@@ -16,8 +16,8 @@ mpp-vars:
       - mpp-eval: build_rpms
       - mpp-if: use_grub2
         then:
-        - grub2-efi-x64
-        - grub2-efi-x64-cdboot
-        - grub2-tools-efi
-        - shim-x64
+          - grub2-efi-x64
+          - grub2-efi-x64-cdboot
+          - grub2-tools-efi
+          - shim-x64
 pipelines: []

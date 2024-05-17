@@ -8,10 +8,10 @@ mpp-vars:
   dracut_compression: "lzo"
   dracut_drivers:
     mpp-join:
-    - mpp-eval: dracut_drivers
-    - - "mmc_block"
-      - "mmc_core"
-      - "sdhci-esdhc-imx"
+      - mpp-eval: dracut_drivers
+      - - "mmc_block"
+        - "mmc_core"
+        - "sdhci-esdhc-imx"
   dracut_modules:
     - "base"
     - "bash"

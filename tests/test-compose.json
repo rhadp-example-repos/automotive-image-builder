@@ -6,15 +6,18 @@
     "target": [ "qemu",
                 {
                     "value": "ridesx4",
-                    "arch-is": "aarch64"
+                    "arch-is": "aarch64",
+                    "distro-is-not": "eln"
                 }
               ],
     "defines": [
         "",
         { "value": "use_qm=true",
-          "manifest": "test_qm.mpp.yml"},
+          "manifest": "test_qm.mpp.yml",
+          "distro-is-not": "eln"},
         { "value": "use_aboot=true",
-          "arch-is": "aarch64"
+          "arch-is": "aarch64",
+          "distro-is-not": "eln"
         }
     ]
 }

@@ -47,3 +47,6 @@ srpm: dist
 
 import-mpp:
 	./import-osbuild-mpp.sh $(OSBUILD_MPP_TAG)
+
+yamllint:
+	yamllint -c .yamllint distro/ include/ targets/

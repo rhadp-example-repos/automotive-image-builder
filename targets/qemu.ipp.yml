@@ -4,9 +4,9 @@ mpp-vars:
     - qemu-img
   dracut_drivers:
     mpp-join:
-    - mpp-eval: dracut_drivers
-    - - "nvme"
-      - "nvme_common"
-      - "nvme_core"
-      - "virtio_blk"
+      - mpp-eval: dracut_drivers
+      - - "nvme"
+        - "nvme_common"
+        - "nvme_core"
+        - "virtio_blk"
 pipelines: []

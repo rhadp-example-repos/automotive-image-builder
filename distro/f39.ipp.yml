@@ -10,24 +10,24 @@ mpp-vars:
   release_rpm: fedora-release
   linux_firmware_rpm: linux-firmware
   distro_repos:
-  - id: fedora
-    baseurl: $distro_baseurl/releases/$distro_version/Everything/$arch/os/
-  - id: fedora-updates
-    baseurl: $distro_baseurl/updates/$distro_version/Everything/$arch/
-  - id: next
-    baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/next/fedora-39-$arch/
+    - id: fedora
+      baseurl: $distro_baseurl/releases/$distro_version/Everything/$arch/os/
+    - id: fedora-updates
+      baseurl: $distro_baseurl/updates/$distro_version/Everything/$arch/
+    - id: next
+      baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/next/fedora-39-$arch/
   distro_devel_repos:
-  - id: fedora-updates-devel
-    baseurl: $distro_baseurl/updates/$distro_version/Everything/$arch/
-  - id: next-devel
-    baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/next/fedora-39-$arch/
+    - id: fedora-updates-devel
+      baseurl: $distro_baseurl/updates/$distro_version/Everything/$arch/
+    - id: next-devel
+      baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/next/fedora-39-$arch/
   distro_debug_repos:
-  - id: next-debug
-    baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/next/fedora-39-$arch/
+    - id: next-debug
+      baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/next/fedora-39-$arch/
   distro_module_id: platform:f39
   distro_gpg_keys: |
     -----BEGIN PGP PUBLIC KEY BLOCK-----
-    
+
     mQINBGLykg8BEADURjKtgQpQNoluifXia+U3FuqGCTQ1w7iTqx1UvNhLX6tb9Qjy
     l/vjl1iXxucrd2JBnrT/21BdtaABhu2hPy7bpcGEkG8MDinAMZBzcyzHcS/JiGHZ
     d/YmMWQUgbDlApbxFSGWiXMgT0Js5QdcywHI5oiCmV0lkZ+khZ4PkVWmk6uZgYWf

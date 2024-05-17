@@ -29,6 +29,6 @@ mpp-vars:
       then: autosig-qemu-dtb
   kernel_opts:
     mpp-join:
-    - mpp-eval: kernel_opts
-    - - acpi=off
+      - mpp-eval: kernel_opts
+      - - acpi=off
 pipelines: []
