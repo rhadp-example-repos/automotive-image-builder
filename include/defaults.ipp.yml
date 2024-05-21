@@ -91,10 +91,12 @@ mpp-vars:
   default_journal_storage: persistent
   default_systemd_timeout: 30s
   default_use_static_ip: false
-  default_static_ip: "10.0.2.15/24"
+  default_static_ip: "10.0.2.15"
+  default_static_ip_prefixlen: "24"
   default_static_gw: "10.0.2.2"
   default_static_dns: "10.0.2.3"
-  default_static_ip_iface: ""
+  default_static_ip_iface: eth0
+  default_static_ip_module: "virtio_net"
   default_static_ip_uuid: 6fb8f75a-7fde-4906-a51e-a70e56c58742
   static_uuids:
     mpp-eval: locals().get('static_uuids', True)
@@ -459,6 +461,10 @@ mpp-vars:
     mpp-eval: locals().get('use_static_ip', default_use_static_ip)
   static_ip:
     mpp-eval: locals().get('static_ip', default_static_ip)
+  static_ip_prefixlen:
+    mpp-eval: locals().get('static_ip_prefixlen', default_static_ip_prefixlen)
+  static_ip_module:
+    mpp-eval: locals().get('static_ip_module', default_static_ip_module)
   static_ip_iface:
     mpp-eval: locals().get('static_ip_iface', default_static_ip_iface)
   static_gw:
@@ -1171,7 +1177,6 @@ mpp-vars:
     - grub2-tools-minimal
     - lz4
   base_rpms:
-    - NetworkManager
     - e2fsprogs
     - efibootmgr
     - glibc-langpack-en

@@ -47,8 +47,16 @@ mpp-vars:
         to: tree:///etc/bluechi/agent.conf
     - mpp-if: use_static_ip
       then:
-        from: input://extra-tree/main.nmconnection
-        to: tree:////usr/lib/NetworkManager/system-connections/main.nmconnection
+        from: input://extra-tree/main.nmstate
+        to: tree:///etc/main.nmstate
+    - mpp-if: use_static_ip
+      then:
+        from: input://extra-tree/main-nmstate.service
+        to: tree:///usr/lib/systemd/system/main-nmstate.service
+    - mpp-if: use_static_ip
+      then:
+        from: input://extra-tree/resolv.conf
+        to: tree:///etc/resolv.conf
     - mpp-if: use_bootpart
       then:
         from: input://extra-tree/boot.mount
@@ -282,18 +290,39 @@ pipelines:
             type: org.osbuild.files
             origin: org.osbuild.source
             mpp-embed:
-              id: main.nmconnection
-              text: $main_nmconnection
+              id: main.nmstate
+              text: $main_nmstate
         options:
           paths:
             - from:
-                mpp-format-string: input://inlinefile/{embedded['main.nmconnection']}
-              to: tree:///main.nmconnection
-      - type: org.osbuild.chmod
+                mpp-format-string: input://inlinefile/{embedded['main.nmstate']}
+              to: tree:///main.nmstate
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: main-nmstate.service
+              text: $main_nmstate_service
         options:
-          items:
-            /main.nmconnection:
-              mode: "0600"
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['main-nmstate.service']}
+              to: tree:///main-nmstate.service
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: resolv.conf
+              text: $resolv_conf
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['resolv.conf']}
+              to: tree:///resolv.conf
       - type: org.osbuild.copy
         inputs:
           inlinefile:
