@@ -29,6 +29,10 @@ mpp-vars:
         to: tree:///usr/lib/ostree/prepare-root.conf
     - from: input://extra-tree/build-info
       to: tree:///etc/build-info
+    - mpp-if: load_modules
+      then:
+        from: input://extra-tree/auto-modules.conf
+        to: tree:///usr/lib/modules-load.d/auto-modules.conf
     - from: input://extra-tree/subuid
       to: tree:///etc/subuid
     - from: input://extra-tree/subgid
@@ -194,6 +198,19 @@ pipelines:
             - from:
                 mpp-format-string: input://inlinefile/{embedded['var.mount']}
               to: tree:///var.mount
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: auto-modules.conf
+              text: $auto_modules_conf
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['auto-modules.conf']}
+              to: tree:///auto-modules.conf
       - type: org.osbuild.copy
         inputs:
           inlinefile:

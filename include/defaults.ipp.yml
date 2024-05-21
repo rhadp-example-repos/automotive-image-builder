@@ -14,6 +14,7 @@ mpp-vars:
   default_osname: centos
   default_uefi_vendor: centos
   default_kernel_package: kernel-automotive
+  default_load_modules: []
   default_bootfstype: "ext4"
   default_initoverlayfs_builder: "dracut -M -o \"initoverlayfs fcoe\""
   default_initrd_builder: "dracut -M -o \"initoverlayfs fcoe\""
@@ -258,6 +259,8 @@ mpp-vars:
     mpp-eval: locals().get('kernel_package', default_kernel_package)
   kernel_version:
     mpp-eval: locals().get('kernel_version', default_kernel_version)
+  load_modules:
+    mpp-eval: locals().get('load_modules', default_load_modules)
   linux_firmware_rpm:
     mpp-eval: locals().get('linux_firmware_rpm', default_linux_firmware_rpm)
   release_name:
