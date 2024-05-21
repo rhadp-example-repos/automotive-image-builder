@@ -100,6 +100,12 @@ mpp-vars:
           then: lvm2
         - mpp-if: use_aboot
           then: aboot-deploy
+        - mpp-if: use_static_ip
+          then: iproute
+        - mpp-if: use_static_ip
+          then: nmstate
+        - mpp-if: not use_static_ip
+          then: NetworkManager
   dracut_modules:
     - mpp-if: use_autoinit
       then:
@@ -156,6 +162,14 @@ mpp-vars:
         - rcupdate.rcu_normal_after_boot=0
         # Enable rcu_expedited for faster boot (will be disabled by rcu-normal.service)
         - rcupdate.rcu_expedited=1
+  load_modules:
+    mpp-join:
+      - mpp-eval: load_modules
+      - - mpp-if: use_static_ip and static_ip_module
+          then: $static_ip_module
+  auto_modules_conf:
+    mpp-format-string: |
+      {' '.join(load_modules)}
   image_repos:
     mpp-join:
       - mpp-eval: distro_repos
@@ -225,6 +239,8 @@ mpp-vars:
           then: boot.mount
         - mpp-if: use_separate_var
           then: var.mount
+        - mpp-if: use_static_ip
+          then: main-nmstate.service
   ostree_prepare_root_conf:
     mpp-format-string: |
       [sysroot]
@@ -304,22 +320,46 @@ mpp-vars:
       Storage={coredump_storage}
   rootpart_label:
     mpp-eval: aboot_partlabel if use_aboot else "root"
-  main_nmconnection:
+  main_nmstate:
     mpp-format-string: |
-      [connection]
-      type=ethernet
-      id=Main connection
-      uuid={static_ip_uuid}
-      autoconnect=true
-      { "interface-name = " + static_ip_iface if static_ip_iface else "" }
+      ---
+      interfaces:
+        - name: {static_ip_iface}
+          type: ethernet
+          state: up
+          ipv4:
+            enabled: true
+            dhcp: false
+            address:
+              - ip: {static_ip}
+                prefix-length: {static_ip_prefixlen}
+          ipv6:
+            enabled: false
+      routes:
+        config:
+          - destination: 0.0.0.0/0
+            next-hop-interface: {static_ip_iface}
+            next-hop-address: {static_gw}
+      dns-resolver:
+        config:
+          server:
+            - {static_dns}
+  main_nmstate_service:
+    mpp-format-string: |
+      [Unit]
+      After=systemd-modules-load.service
+      Before=systemd-udevd.service
+      DefaultDependencies=no
 
-      [ipv4]
-      method=manual
-      address={static_ip}
-      dns={static_dns}
-      gateway={static_gw}
+      [Service]
+      Type=oneshot
+      ExecStart=/usr/bin/nmstatectl apply --kernel --no-verify /etc/main.nmstate
+      ExecStart=/usr/sbin/ip route add default via {static_gw} dev {static_ip_iface}
+      RemainAfterExit=yes
 
-      [ipv6]
-      method=disabled
-
+      [Install]
+      WantedBy=default.target
+  resolv_conf:
+    mpp-format-string: |
+      nameserver {static_dns}
 pipelines: []
