@@ -6,23 +6,14 @@ import os
 import platform
 import subprocess
 import json
-import shlex
-import shutil
 import tempfile
 
+from .runner import Runner
 from . import log, exit_error
 
 base_dir = ""
 include_dirs = []
-volumes = set()
 
-def add_volume(dir):
-    global volumes
-    volumes.add(os.path.realpath(dir))
-
-def add_volume_for(file):
-    global volumes
-    volumes.add(os.path.dirname(os.path.realpath(file)))
 
 def ostree_repo_init(path):
     if not os.path.isdir(path):
@@ -40,7 +31,7 @@ def ostree_rev_parse(path, ref):
     r = subprocess.run(["ostree", "rev-parse", "--repo", path, ref], capture_output=True, check=True)
     return r.stdout.decode("utf-8").rstrip()
 
-def list_dist(_args, _tmpdir):
+def list_dist(_args, _tmpdir, _runner):
     distros = set()
     for inc in include_dirs:
         for f in os.listdir(os.path.join(inc, "distro")):
@@ -49,7 +40,7 @@ def list_dist(_args, _tmpdir):
     for d in sorted(distros):
         print(d)
 
-def list_targets(_args, _tmpdir):
+def list_targets(_args, _tmpdir, _runner):
     targets = set()
     for inc in include_dirs:
         for f in os.listdir(os.path.join(inc, "targets")):
@@ -58,38 +49,6 @@ def list_targets(_args, _tmpdir):
     for d in sorted(targets):
         print(d)
 
-def run(args, cmdline, use_sudo=False, use_container=False, use_non_root_user_in_container=False):
-    if use_container and args.container:
-
-        podman_args = ["--rm", "--privileged", "--workdir", os.path.realpath(os.getcwd()) ]
-        if not use_non_root_user_in_container:
-            podman_args.extend(["--security-opt", "label=type:unconfined_t"])
-        for v in sorted(volumes):
-            podman_args.append("-v")
-            podman_args.append(v + ":" + v)
-
-        if args.container_autoupdate:
-            podman_args.append("--pull=newer")
-
-        if use_non_root_user_in_container:
-            podman_args.append("--user")
-            podman_args.append(f"{os.getuid()}:{os.getgid()}")
-
-        conman = "podman"
-        if shutil.which("podman") is None and shutil.which("docker") is not None:
-            conman = "docker"
-
-        cmdline = [conman, "run",  ] + podman_args + [args.container] + cmdline
-
-    if use_sudo and vars(args).get("sudo", False):
-        cmdline = ["sudo"] + cmdline
-
-    log.debug("Running: %s", shlex.join(cmdline))
-
-    try:
-        subprocess.run(cmdline, check=True)
-    except subprocess.CalledProcessError:
-        sys.exit(1) # cmd will have printed the error
 
 # Its a pain to have to quote simple strings in arguments, if the
 # json parsing fails we try to parse it as a string
@@ -202,12 +161,12 @@ def parse_args(args):
     parser_build.set_defaults(func=build)
     return parser.parse_args(args)
 
-def create_osbuild_manifest(args, manifest, out):
+def create_osbuild_manifest(args, manifest, out, runner):
     if not os.path.isfile(manifest):
         exit_error("No such file %s", manifest)
 
-    add_volume_for(manifest)
-    add_volume_for(out)
+    runner.add_volume_for(manifest)
+    runner.add_volume_for(out)
 
     defines = {
         "_basedir": base_dir,
@@ -266,10 +225,10 @@ def create_osbuild_manifest(args, manifest, out):
 
     cmdline += [ manifest, out ]
 
-    run(args, cmdline, use_sudo=True, use_container=True, use_non_root_user_in_container=True)
+    runner.run(cmdline, use_sudo=True, use_container=True, use_non_root_user_in_container=True)
 
-def compose(args, tmpdir):
-    return create_osbuild_manifest(args, args.manifest, args.out)
+def compose(args, _tmpdir, runner):
+    return create_osbuild_manifest(args, args.manifest, args.out, runner)
 
 export_datas = {
     "qcow2": {
@@ -313,7 +272,7 @@ def get_export_data(exp):
         return export_datas[exp]
     exit_error("Unsupported export '%s'", exp)
 
-def export(args, outputdir, dest, dest_is_directory, export):
+def export(outputdir, dest, dest_is_directory, export, runner):
     exportdir = os.path.join(outputdir, export)
     data = get_export_data(export)
 
@@ -329,33 +288,33 @@ def export(args, outputdir, dest, dest_is_directory, export):
     if data.get("is_dir", False):
         # The mv won't replace existing destination, so first remove it
         if os.path.isdir(dest) or os.path.isfile(dest):
-            run(args, ["rm", "-rf", dest], use_sudo=True)
+            runner.run(["rm", "-rf", dest], use_sudo=True)
 
     if not data.get("no_chown", False):
-        run(args, ["chown", f"{os.getuid()}:{os.getgid()}", export_file], use_sudo=True)
+        runner.run(["chown", f"{os.getuid()}:{os.getgid()}", export_file], use_sudo=True)
 
-    run(args, ["mv", export_file, dest], use_sudo=True)
+    runner.run(["mv", export_file, dest], use_sudo=True)
 
-def _build(args, tmpdir):
+def _build(args, tmpdir, runner):
     if args.nosudo:
         args.sudo=False
 
     if len(args.export) == 0:
         exit_error("No --export option given")
 
-    add_volume_for(args.out)
+    runner.add_volume_for(args.out)
 
     osbuild_manifest = os.path.join(tmpdir, "osbuild.json")
     if args.osbuild_manifest:
         osbuild_manifest = args.osbuild_manifest
 
-    create_osbuild_manifest(args, args.manifest, osbuild_manifest)
+    create_osbuild_manifest(args, args.manifest, osbuild_manifest, runner)
 
     builddir = tmpdir
     if args.build_dir:
         builddir = args.build_dir
-    add_volume(builddir)
-    add_volume("/dev")
+    runner.add_volume(builddir)
+    runner.add_volume("/dev")
 
     cmdline = [ "osbuild" ]
 
@@ -385,34 +344,35 @@ def _build(args, tmpdir):
 
     cmdline += [ osbuild_manifest ]
 
-    run(args, cmdline, use_sudo=True, use_container=True)
+    runner.run(cmdline, use_sudo=True, use_container=True)
 
     if args.ostree_repo:
         repodir = os.path.join(outputdir, "ostree-commit/repo")
-        run(args, ["ostree", "pull-local",  "--repo=" + args.ostree_repo, repodir])
+        runner.run(["ostree", "pull-local",  "--repo=" + args.ostree_repo, repodir])
 
     if len(args.export) == 1:
         # Export directly to args.out
-        export(args, outputdir, args.out, False, args.export[0])
+        export(outputdir, args.out, False, args.export[0], runner)
     else:
         if os.path.isdir(args.out) or os.path.isfile(args.out):
-            run(args, ["rm", "-rf", args.out], use_sudo=True)
+            runner.run(["rm", "-rf", args.out], use_sudo=True)
         os.mkdir(args.out)
         for exp in args.export:
-            export(args, outputdir, args.out, True, exp)
+            export(outputdir, args.out, True, exp, runner)
 
-    run(args, ["rm", "-rf", outputdir], use_sudo=True)
+    runner.run(["rm", "-rf", outputdir], use_sudo=True)
 
-def build(args, tmpdir):
+def build(args, tmpdir, runner):
     try:
-        _build(args, tmpdir)
+        _build(args, tmpdir, runner)
     finally:
 
         # Ensure we can clean up these directories, that can have weird permissions
-        if args.sudo and (os.path.isdir(os.path.join(tmpdir, "osbuild_store")) or os.path.isdir(os.path.join(tmpdir, "image_output"))):
-            run(args, ["rm", "-rf", tmpdir], use_sudo=True)
+        if args.sudo and (os.path.isdir(os.path.join(tmpdir, "osbuild_store")) or
+                          os.path.isdir(os.path.join(tmpdir, "image_output"))):
+            runner.run(["rm", "-rf", tmpdir], use_sudo=True)
 
-def no_subcommand(_args, _tmpdir):
+def no_subcommand(_args, _tmpdir, _runner):
     log.info("No subcommand specified, see --help for usage")
 
 def main():
@@ -420,21 +380,18 @@ def main():
     base_dir = sys.argv[1]
     args = parse_args(sys.argv[2:])
 
-    if args.container:
-        args.container = args.container_image_name
-
     if args.verbose:
         log.setLevel("DEBUG")
 
     global include_dirs
     include_dirs = [ base_dir ] + args.include
-    global volumes
-    add_volume(os.getcwd())
+    runner = Runner(args)
+    runner.add_volume(os.getcwd())
     for d in include_dirs:
-        add_volume(d)
+        runner.add_volume(d)
 
     with tempfile.TemporaryDirectory(prefix="automotive-image-builder-", dir="/var/tmp") as tmpdir:
-        return args.func(args, tmpdir)
+        return args.func(args, tmpdir, runner)
 
 if __name__ == "__main__":
     sys.exit(main())

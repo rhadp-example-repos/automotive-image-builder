@@ -23,7 +23,7 @@ def test_invalid_subcommand():
 
 def test_no_subcommand(caplog):
     args = parse_args([])
-    args.func(_args=args, _tmpdir="")
+    args.func(_args=args, _tmpdir="", _runner=None)
     assert "No subcommand specified, see --help for usage" in caplog.text
 
 def test_build_required_positional(capsys):
