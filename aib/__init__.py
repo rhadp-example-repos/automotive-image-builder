@@ -1,12 +1,34 @@
 import logging
 import sys
 
+from dataclasses import dataclass, field
+from functools import cached_property
+from typing import Any, List
+
+
+@dataclass
+class AIBParameters:
+    args: Any
+    base_dir: str
+
+    @cached_property
+    def include_dirs(self):
+        return [self.base_dir] + self.args.include
+
+    def func(self, tmpdir, runner):
+        return self.args.func(self, tmpdir, runner)
+
+    def __getattr__(self, name: str) -> Any:
+        return vars(self.args).get(name)
+
+
 class CustomFormatter(logging.Formatter):
     def format(self, record):
         log_fmt = logging.Formatter('%(message)s')
         if record.levelno >= logging.WARNING:
             log_fmt = logging.Formatter('%(levelname)s: %(message)s')
         return log_fmt.format(record)
+
 
 class InfoFilter(logging.Filter):
     def filter(self, record):
