@@ -9,10 +9,8 @@ import json
 import tempfile
 
 from .runner import Runner
+from . import AIBParameters
 from . import log, exit_error
-
-base_dir = ""
-include_dirs = []
 
 
 def ostree_repo_init(path):
@@ -31,18 +29,18 @@ def ostree_rev_parse(path, ref):
     r = subprocess.run(["ostree", "rev-parse", "--repo", path, ref], capture_output=True, check=True)
     return r.stdout.decode("utf-8").rstrip()
 
-def list_dist(_args, _tmpdir, _runner):
+def list_dist(args, _tmpdir, _runner):
     distros = set()
-    for inc in include_dirs:
+    for inc in args.include_dirs:
         for f in os.listdir(os.path.join(inc, "distro")):
             if f.endswith(".ipp.yml"):
                 distros.add(f[:-8])
     for d in sorted(distros):
         print(d)
 
-def list_targets(_args, _tmpdir, _runner):
+def list_targets(args, _tmpdir, _runner):
     targets = set()
-    for inc in include_dirs:
+    for inc in args.include_dirs:
         for f in os.listdir(os.path.join(inc, "targets")):
             if f.endswith(".ipp.yml"):
                 targets.add(f[:-8])
@@ -88,7 +86,7 @@ def parse_define(d, option):
             exit_error("Invalid value passed to %s: '%s': %s", option, json_v, e)
     return k, v
 
-def parse_args(args):
+def parse_args(args, base_dir):
     isRoot = os.getuid() == 0
     parser = argparse.ArgumentParser(prog="automotive-image-builder",
                                      description="Build automotive images")
@@ -161,15 +159,15 @@ def parse_args(args):
     parser_build.set_defaults(func=build)
     return parser.parse_args(args)
 
-def create_osbuild_manifest(args, manifest, out, runner):
-    if not os.path.isfile(manifest):
-        exit_error("No such file %s", manifest)
+def create_osbuild_manifest(args, out, runner):
+    if not os.path.isfile(args.manifest):
+        exit_error("No such file %s", args.manifest)
 
-    runner.add_volume_for(manifest)
+    runner.add_volume_for(args.manifest)
     runner.add_volume_for(out)
 
     defines = {
-        "_basedir": base_dir,
+        "_basedir": args.base_dir,
         "arch": args.arch,
         "target": args.target,
         "distro_name": args.distro,
@@ -210,7 +208,7 @@ def create_osbuild_manifest(args, manifest, out, runner):
         defines[k].extend(v)
 
     cmdline = [ args.osbuild_mpp ]
-    for inc in include_dirs:
+    for inc in args.include_dirs:
         cmdline += [ "-I", inc ]
 
     for k in sorted(defines.keys()):
@@ -223,12 +221,12 @@ def create_osbuild_manifest(args, manifest, out, runner):
     if args.cache:
         cmdline += [ "--cache", args.cache ]
 
-    cmdline += [ manifest, out ]
+    cmdline += [ args.manifest, out ]
 
     runner.run(cmdline, use_sudo=True, use_container=True, use_non_root_user_in_container=True)
 
 def compose(args, _tmpdir, runner):
-    return create_osbuild_manifest(args, args.manifest, args.out, runner)
+    return create_osbuild_manifest(args, args.out, runner)
 
 export_datas = {
     "qcow2": {
@@ -308,7 +306,7 @@ def _build(args, tmpdir, runner):
     if args.osbuild_manifest:
         osbuild_manifest = args.osbuild_manifest
 
-    create_osbuild_manifest(args, args.manifest, osbuild_manifest, runner)
+    create_osbuild_manifest(args, osbuild_manifest, runner)
 
     builddir = tmpdir
     if args.build_dir:
@@ -376,22 +374,18 @@ def no_subcommand(_args, _tmpdir, _runner):
     log.info("No subcommand specified, see --help for usage")
 
 def main():
-    global base_dir
     base_dir = sys.argv[1]
-    args = parse_args(sys.argv[2:])
+    args = AIBParameters(args=parse_args(sys.argv[2:], base_dir),
+                         base_dir=base_dir)
 
     if args.verbose:
         log.setLevel("DEBUG")
 
-    global include_dirs
-    include_dirs = [ base_dir ] + args.include
     runner = Runner(args)
     runner.add_volume(os.getcwd())
-    for d in include_dirs:
-        runner.add_volume(d)
 
     with tempfile.TemporaryDirectory(prefix="automotive-image-builder-", dir="/var/tmp") as tmpdir:
-        return args.func(args, tmpdir, runner)
+        return args.func(tmpdir, runner)
 
 if __name__ == "__main__":
     sys.exit(main())

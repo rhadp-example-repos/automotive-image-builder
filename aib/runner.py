@@ -22,8 +22,10 @@ class Runner:
     def __init__(self, args):
         self.container = args.container_image_name if args.container else ""
         self.container_autoupdate = args.container_autoupdate
-        self.sudo = vars(args).get("sudo", False)
+        self.sudo = vars(args.args).get("sudo", False)
         self.volumes = Volumes()
+        for d in args.include_dirs:
+            self.add_volume(d)
 
     def _collect_podman_args(self, use_non_root_user_in_container):
         podman_args = ["--rm", "--privileged",
