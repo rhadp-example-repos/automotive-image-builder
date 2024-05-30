@@ -1,0 +1,18 @@
+version: '2'
+mpp-vars:
+  kernel_rpm: 'kernel'
+  linux_firmware_rpm: 'linux-firmware'
+  serial_console: 'ttyS0,115200n81'
+  dracut_modules:
+    - "base"
+    - "bash"
+    - "dracut-systemd"
+    - "fs-lib"
+    - "kernel-modules"
+    - "rootfs-block"
+    - "shutdown"
+    - "systemd"
+    - "systemd-initrd"
+    - "terminfo"
+    - "udev-rules"
+pipelines: []
