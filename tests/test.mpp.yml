@@ -2,19 +2,9 @@ version: '2'
 mpp-vars:
   name: minimal
 pipelines:
-- mpp-import-pipelines:
-    path: include/build.ipp.yml
 - name: rootfs
   build: name:build
   stages:
-  - type: org.osbuild.kernel-cmdline
-    options:
-      root_fs_uuid:
-        mpp-if: not use_abl
-        then:
-          mpp-eval: rootfs_uuid
-      kernel_opts:
-        mpp-eval: ''' '' .join(kernel_opts)'
   - type: org.osbuild.rpm
     options:
       gpgkeys:
@@ -53,5 +43,3 @@ pipelines:
             mpp-eval: guest_gid
           uid:
             mpp-eval: guest_uid
-- mpp-import-pipelines:
-    path: include/image.ipp.yml

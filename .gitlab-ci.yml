@@ -37,7 +37,7 @@ unit-test-job:
   before_script:
     - python3 --version; pip --version
     - python3 -m pip install --upgrade pip
-    - python3 -m pip install pytest
+    - python3 -m pip install pytest pyyaml
   stage: test
   script:
     - pytest aib/tests

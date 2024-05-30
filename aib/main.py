@@ -6,6 +6,7 @@ import os
 import platform
 import subprocess
 import json
+import yaml
 import tempfile
 
 from .runner import Runner
@@ -159,9 +160,48 @@ def parse_args(args, base_dir):
     parser_build.set_defaults(func=build)
     return parser.parse_args(args)
 
-def create_osbuild_manifest(args, out, runner):
+def is_import_pipeline(pipeline, path):
+    if not type(pipeline) == dict:
+        return False
+    if not "mpp-import-pipelines" in pipeline:
+        return False
+    import_op = pipeline["mpp-import-pipelines"]
+    return import_op.get("path") == path
+
+def rewrite_manifest(manifest):
+    pipelines = manifest.get("pipelines")
+    if len(pipelines) == 0:
+        exit_error("No pipelines section in manifest")
+
+    rootfs = None
+    for p in pipelines:
+        if p.get("name") == "rootfs":
+            rootfs = p
+            break
+
+    # We wrap the user specified pipelines with build.ipp.yml first and image.ipp.yml last
+    if not is_import_pipeline(pipelines[0], "include/build.ipp.yml"):
+        pipelines.insert(0, { "mpp-import-pipelines": { "path": "include/build.ipp.yml" } })
+
+    if not is_import_pipeline(pipelines[-1], "include/image.ipp.yml"):
+        pipelines.append({ "mpp-import-pipelines": { "path": "include/image.ipp.yml" } })
+
+    # Also, we need to inject some workarounds in the rootfs stage
+    if rootfs:
+        # See comment in kernel_cmdline_stage variable
+        rootfs.get("stages", []).insert(0, {"mpp-eval": "kernel_cmdline_stage"})
+
+def create_osbuild_manifest(args, tmpdir, out, runner):
     if not os.path.isfile(args.manifest):
         exit_error("No such file %s", args.manifest)
+
+    with open(args.manifest) as f:
+        try:
+            manifest = yaml.safe_load(f)
+        except yaml.YAMLError as exc:
+            exit_error("Error parsing %s: %s", args.manifest, exc)
+
+    rewrite_manifest(manifest)
 
     runner.add_volume_for(args.manifest)
     runner.add_volume_for(out)
@@ -221,12 +261,18 @@ def create_osbuild_manifest(args, out, runner):
     if args.cache:
         cmdline += [ "--cache", args.cache ]
 
-    cmdline += [ args.manifest, out ]
+    rewritten_manifest_path = os.path.join(tmpdir, os.path.basename(args.manifest))
+    # TODO: Remove
+    rewritten_manifest_path = os.path.join("/tmp", os.path.basename(args.manifest))
+    with open(rewritten_manifest_path, "w") as f:
+        yaml.dump(manifest, f, sort_keys=False)
+
+    cmdline += [ rewritten_manifest_path, out ]
 
     runner.run(cmdline, use_sudo=True, use_container=True, use_non_root_user_in_container=True)
 
-def compose(args, _tmpdir, runner):
-    return create_osbuild_manifest(args, args.out, runner)
+def compose(args, tmpdir, runner):
+    return create_osbuild_manifest(args, tmpdir, args.out, runner)
 
 export_datas = {
     "qcow2": {
@@ -306,7 +352,7 @@ def _build(args, tmpdir, runner):
     if args.osbuild_manifest:
         osbuild_manifest = args.osbuild_manifest
 
-    create_osbuild_manifest(args, osbuild_manifest, runner)
+    create_osbuild_manifest(args, tmpdir, osbuild_manifest, runner)
 
     builddir = tmpdir
     if args.build_dir:
