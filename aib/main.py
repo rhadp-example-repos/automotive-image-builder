@@ -173,11 +173,23 @@ def rewrite_manifest(manifest):
     if len(pipelines) == 0:
         exit_error("No pipelines section in manifest")
 
+    rootfs = None
+    for p in pipelines:
+        if p.get("name") == "rootfs":
+            rootfs = p
+            break
+
+    # We wrap the user specified pipelines with build.ipp.yml first and image.ipp.yml last
     if not is_import_pipeline(pipelines[0], "include/build.ipp.yml"):
         pipelines.insert(0, { "mpp-import-pipelines": { "path": "include/build.ipp.yml" } })
 
     if not is_import_pipeline(pipelines[-1], "include/image.ipp.yml"):
         pipelines.append({ "mpp-import-pipelines": { "path": "include/image.ipp.yml" } })
+
+    # Also, we need to inject some workarounds in the rootfs stage
+    if rootfs:
+        # See comment in kernel_cmdline_stage variable
+        rootfs.get("stages", []).insert(0, {"mpp-eval": "kernel_cmdline_stage"})
 
 def create_osbuild_manifest(args, tmpdir, out, runner):
     if not os.path.isfile(args.manifest):
