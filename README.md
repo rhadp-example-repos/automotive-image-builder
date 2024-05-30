@@ -175,8 +175,8 @@ then add a stage like this to the rootfs (or qm_rootfs) pipeline:
           mpp-eval: containers_extra_store
 ```
 
-This can then be run from the image. We recommend using a (quadlet
-.container)[https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html] file to start the
+This can then be run from the image. We recommend using a [quadlet
+.container]([https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html) file to start the
 container from systemd. One can be installed like this:
 
 ```
