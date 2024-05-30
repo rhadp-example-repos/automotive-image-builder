@@ -1,0 +1,37 @@
+version: '2'
+mpp-vars:
+  name: example-manifest
+pipelines:
+- name: rootfs
+  build: name:build
+  stages:
+  - type: org.osbuild.rpm
+    options:
+      gpgkeys:
+      - mpp-eval: distro_gpg_keys
+      disable_dracut: true
+      exclude:
+        docs: true
+    inputs:
+      packages:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-depsolve:
+          architecture: $arch
+          ignore-weak-deps: true
+          module-platform-id: $distro_module_id
+          baseurl: $distro_baseurl_repo
+          repos:
+            mpp-eval: image_repos
+          packages:
+            mpp-join:
+            - mpp-eval: image_rpms
+            - - emacs
+              - git
+  - type: org.osbuild.users
+    options:
+      users:
+        guest:
+          password: "$6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU."
+          gid: 999
+          uid: 999
