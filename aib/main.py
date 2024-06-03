@@ -5,8 +5,9 @@ import sys
 import os
 import platform
 import json
-import yaml
 import tempfile
+
+import yaml
 
 from .exports import export
 from .runner import Runner
