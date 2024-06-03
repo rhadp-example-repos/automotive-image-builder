@@ -4,31 +4,15 @@ import argparse
 import sys
 import os
 import platform
-import subprocess
 import json
 import yaml
 import tempfile
 
 from .runner import Runner
+from .ostree import OSTree
 from . import AIBParameters
 from . import log, exit_error
 
-
-def ostree_repo_init(path):
-    if not os.path.isdir(path):
-        log.debug("Initializing repo %s", path)
-        subprocess.run(["ostree", "init", "--repo", path, "--mode", "archive"], check=True)
-
-def ostree_refs(path):
-    r = subprocess.run(["ostree", "refs", "--repo", path], capture_output=True, check=True)
-    out = r.stdout.decode("utf-8").rstrip()
-    if out:
-        return out.split("\n")
-    return []
-
-def ostree_rev_parse(path, ref):
-    r = subprocess.run(["ostree", "rev-parse", "--repo", path, ref], capture_output=True, check=True)
-    return r.stdout.decode("utf-8").rstrip()
 
 def list_dist(args, _tmpdir, _runner):
     distros = set()
@@ -217,10 +201,10 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
     }
 
     if args.ostree_repo:
-        ostree_repo_init(args.ostree_repo)
+        ostree = OSTree(args.ostree_repo)
         revs = {}
-        for ref in ostree_refs(args.ostree_repo):
-            rev = ostree_rev_parse(args.ostree_repo, ref)
+        for ref in ostree.refs():
+            rev = ostree.rev_parse(ref)
             revs[ref] = rev
             defines["ostree_parent_refs"] = revs
 
