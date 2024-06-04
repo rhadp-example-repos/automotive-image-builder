@@ -4,31 +4,17 @@ import argparse
 import sys
 import os
 import platform
-import subprocess
 import json
-import yaml
 import tempfile
 
+import yaml
+
+from .exports import export
 from .runner import Runner
+from .ostree import OSTree
 from . import AIBParameters
 from . import log, exit_error
 
-
-def ostree_repo_init(path):
-    if not os.path.isdir(path):
-        log.debug("Initializing repo %s", path)
-        subprocess.run(["ostree", "init", "--repo", path, "--mode", "archive"], check=True)
-
-def ostree_refs(path):
-    r = subprocess.run(["ostree", "refs", "--repo", path], capture_output=True, check=True)
-    out = r.stdout.decode("utf-8").rstrip()
-    if out:
-        return out.split("\n")
-    return []
-
-def ostree_rev_parse(path, ref):
-    r = subprocess.run(["ostree", "rev-parse", "--repo", path, ref], capture_output=True, check=True)
-    return r.stdout.decode("utf-8").rstrip()
 
 def list_dist(args, _tmpdir, _runner):
     distros = set()
@@ -217,10 +203,10 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
     }
 
     if args.ostree_repo:
-        ostree_repo_init(args.ostree_repo)
+        ostree = OSTree(args.ostree_repo)
         revs = {}
-        for ref in ostree_refs(args.ostree_repo):
-            rev = ostree_rev_parse(args.ostree_repo, ref)
+        for ref in ostree.refs():
+            rev = ostree.rev_parse(ref)
             revs[ref] = rev
             defines["ostree_parent_refs"] = revs
 
@@ -273,71 +259,6 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
 
 def compose(args, tmpdir, runner):
     return create_osbuild_manifest(args, tmpdir, args.out, runner)
-
-export_datas = {
-    "qcow2": {
-        "filename": "disk.qcow2"
-    },
-    "image": {
-        "filename": "disk.img"
-    },
-    "ostree-commit": {
-        "filename": "repo",
-        "is_dir": True,
-    },
-    "container": {
-        "filename": "container.tar"
-    },
-    "ostree-oci-image": {
-        "filename": "image.oci-archive"
-    },
-    "rootfs": {
-        "filename": None,
-        "is_dir": True,
-        "no_chown": True
-    },
-    "ext4": {
-        "filename": "rootfs.ext4"
-    },
-    "tar": {
-        "filename": "rootfs.tar"
-    },
-    "aboot": {
-        "filename": "images",
-        "is_dir": True,
-    },
-    "rpmlist": {
-        "filename": "rpmlist"
-    }
-}
-
-def get_export_data(exp):
-    if exp in export_datas:
-        return export_datas[exp]
-    exit_error("Unsupported export '%s'", exp)
-
-def export(outputdir, dest, dest_is_directory, export, runner):
-    exportdir = os.path.join(outputdir, export)
-    data = get_export_data(export)
-
-    filename = data["filename"]
-    if filename:
-        export_file = os.path.join(exportdir, filename)
-    else:
-        export_file = os.path.join(exportdir)
-
-    if dest_is_directory:
-        dest = os.path.join(dest, os.path.basename(export_file))
-
-    if data.get("is_dir", False):
-        # The mv won't replace existing destination, so first remove it
-        if os.path.isdir(dest) or os.path.isfile(dest):
-            runner.run(["rm", "-rf", dest], use_sudo=True)
-
-    if not data.get("no_chown", False):
-        runner.run(["chown", f"{os.getuid()}:{os.getgid()}", export_file], use_sudo=True)
-
-    runner.run(["mv", export_file, dest], use_sudo=True)
 
 def _build(args, tmpdir, runner):
     if args.nosudo:
