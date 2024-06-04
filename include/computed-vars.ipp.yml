@@ -66,7 +66,7 @@ mpp-vars:
       After=blockdev@dev-disk-by\\x2duuid-{varpart_uuid.replace("-", _dash_escape)}.target
 
       [Mount]
-      What=/dev/disk/by-uuid/varpart_uuid
+      What=/dev/disk/by-uuid/$varpart_uuid
       Where=/var
       Type=ext4
 
