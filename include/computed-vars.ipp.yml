@@ -5,6 +5,7 @@ version: '2'
 # things that depend on what was set in that.
 
 mpp-vars:
+  newline: "\n"
   # Backwards compatibility by checking if the deprecated kernel_rpm variable is set
   kernel_core_package:
     mpp-if: locals().get('kernel_rpm')
@@ -182,7 +183,7 @@ mpp-vars:
           then: $static_ip_module
   auto_modules_conf:
     mpp-format-string: |
-      {' '.join(load_modules)}
+      {newline.join(load_modules)}
   image_repos:
     mpp-join:
       - mpp-eval: distro_repos
