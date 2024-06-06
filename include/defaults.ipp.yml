@@ -201,7 +201,7 @@ mpp-vars:
   default_containers_read_only: true
   default_tmp_is_tmpfs: true
   default_image_extra_stages: []
-  default_image_enabled_services: ["stalld"]
+  default_image_enabled_services: []
   default_image_masked_services:
     - systemd-hwdb-update.service
     - ldconfig.service
@@ -1191,5 +1191,4 @@ mpp-vars:
     - rootfiles
     - selinux-policy-targeted
     - systemd-udev
-    - stalld
     - mpp-eval: release_rpm
