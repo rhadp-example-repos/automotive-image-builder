@@ -154,7 +154,19 @@ def is_import_pipeline(pipeline, path):
     import_op = pipeline["mpp-import-pipelines"]
     return import_op.get("path") == path
 
-def rewrite_manifest(manifest):
+def make_embed_path_abs(stage, path):
+    for k, v in stage.items():
+        try:
+            embed_path = v["path"]
+        except (KeyError, TypeError):
+            if isinstance(v, dict):
+                make_embed_path_abs(v, path)
+            continue
+
+        if k == "mpp-embed" and not os.path.isabs(embed_path):
+            v["path"] = os.path.join(path, embed_path)
+
+def rewrite_manifest(manifest, path):
     pipelines = manifest.get("pipelines")
     if len(pipelines) == 0:
         exit_error("No pipelines section in manifest")
@@ -163,7 +175,8 @@ def rewrite_manifest(manifest):
     for p in pipelines:
         if p.get("name") == "rootfs":
             rootfs = p
-            break
+        for stage in p.get("stages", []):
+            make_embed_path_abs(stage, path)
 
     # We wrap the user specified pipelines with build.ipp.yml first and image.ipp.yml last
     if not is_import_pipeline(pipelines[0], "include/build.ipp.yml"):
@@ -187,7 +200,7 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
         except yaml.YAMLError as exc:
             exit_error("Error parsing %s: %s", args.manifest, exc)
 
-    rewrite_manifest(manifest)
+    rewrite_manifest(manifest, os.path.dirname(args.manifest))
 
     runner.add_volume_for(args.manifest)
     runner.add_volume_for(out)
@@ -248,8 +261,6 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
         cmdline += [ "--cache", args.cache ]
 
     rewritten_manifest_path = os.path.join(tmpdir, os.path.basename(args.manifest))
-    # TODO: Remove
-    rewritten_manifest_path = os.path.join("/tmp", os.path.basename(args.manifest))
     with open(rewritten_manifest_path, "w") as f:
         yaml.dump(manifest, f, sort_keys=False)
 
