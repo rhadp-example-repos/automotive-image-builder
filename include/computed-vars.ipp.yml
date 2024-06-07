@@ -91,9 +91,6 @@ mpp-vars:
       - mpp-eval: boot_rpms
       - mpp-if: use_autoinit
         then:
-          - autoinit
-      - mpp-if: use_systemd_initrd_automotive
-        then:
           - util-linux-automotive
           - dracut-automotive
       - - $kernel_rpm
@@ -113,9 +110,6 @@ mpp-vars:
           then: NetworkManager
   dracut_modules:
     - mpp-if: use_autoinit
-      then:
-        autoinit
-    - mpp-if: use_systemd_initrd_automotive
       then:
         systemd-initrd-automotive
   dracut_add_drivers:
@@ -142,15 +136,9 @@ mpp-vars:
         then:
           - ignore_loglevel
           - earlycon
-      - mpp-if: use_autoinit
+      - mpp-if: use_autoinit_root
         then:
-          - autoinit.root=$autoinit_root
-          - autoinit.rw
-          - mpp-if: use_debug or use_kernel_debug_package
-            then: autoinit.debug
-      - mpp-if: use_systemd_initrd_automotive_root
-        then:
-          - mount-sysroot.root=$systemd_initrd_automotive_root
+          - mount-sysroot.root=$autoinit_root
           - mount-sysroot.rw
           - mpp-if: use_debug or use_kernel_debug_package
             then: mount-sysroot.debug
