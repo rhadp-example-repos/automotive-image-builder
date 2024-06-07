@@ -148,7 +148,7 @@ mpp-vars:
           - autoinit.rw
           - mpp-if: use_debug or use_kernel_debug_package
             then: autoinit.debug
-      - mpp-if: use_systemd_initrd_automotive
+      - mpp-if: use_systemd_initrd_automotive_root
         then:
           - mount-sysroot.root=$systemd_initrd_automotive_root
           - mount-sysroot.rw

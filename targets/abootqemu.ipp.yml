@@ -14,6 +14,7 @@ mpp-vars:
   use_bootpart: false
   use_efipart: false
   use_efi_runtime: false
+  use_systemd_initrd_automotive: true
   aboot_pagesize: 4096
   aboot_kernel_offset: "0x40000000"
   aboot_partition_a: "/dev/disk/by-partlabel/boot_a"
