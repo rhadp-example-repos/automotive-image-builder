@@ -9,8 +9,8 @@ mpp-vars:
   use_bootpart: false
   use_efipart: false
   use_efi_runtime: false
-#  use_autoinit: true
-#  use_autoinit_root: true
+  use_autoinit: true
+  use_autoinit_root: true
   autoinit_root: /dev/sde38
   serial_console: "ttyMSM0,115200,n8"
   aboot_pagesize: 4096
