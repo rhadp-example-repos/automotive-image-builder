@@ -138,6 +138,9 @@ mpp-vars:
   default_use_module_sig_enforce: true
   use_module_sig_enforce:
     mpp-eval: locals().get('use_module_sig_enforce', default_use_module_sig_enforce)
+  default_sign_kernel_modules: false
+  sign_kernel_modules:
+    mpp-eval: locals().get('sign_kernel_modules', default_sign_kernel_modules)
   default_luks_use_integrity: false
   default_luks_auto_unlock: false
   luks_auto_unlock:
@@ -1175,6 +1178,7 @@ mpp-vars:
     - systemd
     - tar
     - xz
+    - zstd
   boot_rpms:
     - dracut-config-generic
     - grub2-tools-minimal
