@@ -10,4 +10,10 @@ mpp-vars:
         - "nvme_common"
         - "nvme_core"
         - "virtio_blk"
+        - "sd_mod"
+        - "ahci"
+  kernel_opts:
+    mpp-join:
+      - mpp-eval: kernel_opts
+      - - rd.modules-load=sd_mod,ahci
 pipelines: []
