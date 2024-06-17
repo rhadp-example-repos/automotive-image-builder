@@ -15,5 +15,6 @@ mpp-vars:
   kernel_opts:
     mpp-join:
       - mpp-eval: kernel_opts
-      - - rd.modules-load=sd_mod,ahci
+      - - mpp-if: use_autoinit # With autoinit, udev will not load block drivers
+          then: rd.modules-load=nvme
 pipelines: []
