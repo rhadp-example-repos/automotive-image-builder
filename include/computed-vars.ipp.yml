@@ -164,6 +164,8 @@ mpp-vars:
         - rcupdate.rcu_normal_after_boot=0
         # Enable rcu_expedited for faster boot (will be disabled by rcu-normal.service)
         - rcupdate.rcu_expedited=1
+        # Disable all cgroups v1 interfaces
+        - cgroup_no_v1=named,all
   load_modules:
     mpp-join:
       - mpp-eval: load_modules
