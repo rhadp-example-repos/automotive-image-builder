@@ -19,6 +19,13 @@ mpp-vars:
         - mpp-if: name == 'developer'
           then: ostree-compliance-mode
         - skopeo  # Needed for upgrading from an OCI remove image
+  extra_image_copy:
+    mpp-join:
+      - mpp-eval: extra_image_copy
+      - - mpp-if: use_separate_var
+          then:
+            from: input://tree/ostree/deploy/$osname/var/
+            to: mount://root/var/
 pipelines:
   - name: build-keys
     build: name:build

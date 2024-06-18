@@ -174,6 +174,10 @@ mpp-vars:
   auto_modules_conf:
     mpp-format-string: |
       {newline.join(load_modules)}
+  extra_image_copy:
+    mpp-join:
+      - mpp-eval: extra_image_copy
+      - mpp-eval: locals().get('extra_image_copy_' + image_mode, [])
   image_repos:
     mpp-join:
       - mpp-eval: distro_repos
