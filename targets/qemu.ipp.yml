@@ -1,6 +1,6 @@
 version: '2'
 mpp-vars:
-  use_autoinit: true
+  use_autoinit: false # For now, there is some CI issue
   extra_build_rpms:
     - qemu-img
   dracut_drivers:
@@ -15,5 +15,6 @@ mpp-vars:
   kernel_opts:
     mpp-join:
       - mpp-eval: kernel_opts
-      - - rd.modules-load=sd_mod,ahci
+      - - mpp-if: use_autoinit # With autoinit, udev will not load block drivers
+          then: rd.modules-load=nvme
 pipelines: []
