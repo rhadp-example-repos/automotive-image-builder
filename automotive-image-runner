@@ -301,6 +301,8 @@ def main():
                         help=f"Enable watchdog")
     parser.add_argument("--tpm2", default=False, action="store_true",
                         help=f"Enable TPM2")
+    parser.add_argument("--nvme", default=False, action="store_true",
+                        help=f"Use nvme instead of virtio")
     parser.add_argument("--snapshot", default=False, action="store_true",
                         help=f"Work on a snapshot  of the image")
     parser.add_argument("--ovmf-dir", action="store",
@@ -498,14 +500,18 @@ def main():
 
     print_verbose(f"Image: {args.image}")
 
+    disk_if = "virtio"
+    if args.nvme:
+        disk_if = "none"
+        qemu_args += [ "-device", "nvme,serial=deadbeef,drive=rootdisk"  ]
+
+    disk_format = "qcow2"
     if args.image.endswith(".raw") or args.image.endswith(".img"):
-        qemu_args += [
-            "-drive", f"file={args.image},index=0,media=disk,format=raw,if=virtio,snapshot={bool_arg(args.snapshot)}",
-        ]
-    else: # assume qcow2
-        qemu_args += [
-            "-drive", f"file={args.image},index=0,media=disk,format=qcow2,if=virtio,snapshot={bool_arg(args.snapshot)}",
-        ]
+        disk_format = "raw"
+
+    qemu_args += [
+        "-drive", f"file={args.image},index=0,media=disk,format={disk_format},if={disk_if},id=rootdisk,snapshot={bool_arg(args.snapshot)}",
+    ]
 
     if args.cdrom:
         qemu_args += [
