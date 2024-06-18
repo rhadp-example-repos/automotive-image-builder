@@ -1,6 +1,6 @@
 version: '2'
 mpp-vars:
-  use_autoinit: true
+  use_autoinit: false # For now, there is some CI issue
   extra_build_rpms:
     - qemu-img
   dracut_drivers:
