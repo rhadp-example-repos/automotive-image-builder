@@ -617,7 +617,7 @@ pipelines:
                 mpp-join:
                   - - from: input://tree/
                       to: mount://root/
-                  - mpp-eval: locals().get('extra_image_copy_' + image_mode, [])
+                  - mpp-eval: extra_image_copy
             devices:
               efi:
                 mpp-if: use_efipart
