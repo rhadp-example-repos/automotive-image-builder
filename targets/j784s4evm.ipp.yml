@@ -4,7 +4,7 @@ mpp-vars:
     - id: cs9-ti-fw
       baseurl: https://download.copr.fedorainfracloud.org/results/eballetbo/cs9-ti-fw/centos-stream+epel-next-9-$arch/
       priority: 1
-  serial_console: 'ttyS2,115200n8'
+  consoles: 'ttyS2,115200n8'
   partition_label: dos
   efipart_dos_type: '0c'
   efipart_bootable: true
