@@ -12,7 +12,7 @@ mpp-vars:
   use_autoinit: true
   use_autoinit_root: true
   autoinit_root: /dev/sde38
-  serial_console: "ttyMSM0,115200,n8"
+  consoles: "ttyMSM0,115200,n8"
   aboot_pagesize: 4096
   aboot_kernel_offset: "0x80208000"
   aboot_partition_a: "/dev/disk/by-partlabel/boot_a"

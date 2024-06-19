@@ -2,7 +2,7 @@ version: '2'
 mpp-vars:
   kernel_rpm: 'kernel'
   linux_firmware_rpm: 'linux-firmware'
-  serial_console: 'ttyS0,115200n81'
+  consoles: 'ttyS0,115200n81 tty0'
   dracut_modules:
     - "base"
     - "bash"

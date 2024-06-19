@@ -143,8 +143,7 @@ mpp-vars:
   luks_auto_unlock:
     mpp-eval: locals().get('luks_auto_unlock', default_luks_auto_unlock)
   default_use_efi_runtime: true
-  default_use_serial_console: true
-  default_serial_console:
+  default_consoles:
     mpp-if: arch == 'aarch64'
     then: ttyAMA0
     else: ttyS0
@@ -403,10 +402,8 @@ mpp-vars:
     mpp-eval: locals().get('luks_use_integrity', default_luks_use_integrity)
   use_efi_runtime:
     mpp-eval: locals().get('use_efi_runtime', default_use_efi_runtime)
-  use_serial_console:
-    mpp-eval: locals().get('use_serial_console', default_use_serial_console)
-  serial_console:
-    mpp-eval: locals().get('serial_console', default_serial_console)
+  consoles:
+    mpp-eval: locals().get('consoles', default_consoles)
   kernel_loglevel:
     mpp-eval: locals().get('kernel_loglevel', default_kernel_loglevel)
   locale:

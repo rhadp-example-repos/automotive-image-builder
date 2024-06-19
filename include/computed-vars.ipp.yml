@@ -129,9 +129,9 @@ mpp-vars:
     mpp-join:
       - mpp-eval: kernel_opts
       - mpp-eval: extra_kernel_opts
-      - mpp-if: use_serial_console
+      - mpp-if: consoles
         then:
-          - console=$serial_console
+          mpp-eval: "list(map(lambda c: 'console=' + c, consoles.split()))"
       - mpp-if: use_debug or use_kernel_debug_package
         then:
           - ignore_loglevel
