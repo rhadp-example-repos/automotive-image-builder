@@ -136,6 +136,10 @@ mpp-vars:
         then:
           - ignore_loglevel
           - earlycon
+          # Configure the DMA unmap operations to invalidate IOMMU hardware TLBs synchronously.
+          # This can catch some issues, however there is a performance penalty associated with
+          # this option, so only enable this for debug builds.
+          - iommu.strict=1
       - mpp-if: use_autoinit_root
         then:
           - mount-sysroot.root=$autoinit_root
