@@ -37,8 +37,8 @@ mpp-vars:
   default_target_repos: []
   default_root_password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.
   default_guest_password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.
-  default_guest_uid: 999
-  default_guest_gid: 999
+  default_guest_uid: 2000
+  default_guest_gid: 2000
   default_root_ssh_key: ""
   default_ssh_permit_root_login: false
   default_ssh_permit_password_auth: false
