@@ -1,0 +1,33 @@
+version: '2'
+mpp-vars:
+  target_repos:
+    - id: renesas-board-support
+      baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/renesas-board-support/centos-stream-9-$arch/
+      priority: 1
+  extra_image_rpms:
+    - kernel-upstream-dtb
+  consoles: "ttySC0,1843200"
+  use_efi_runtime: false
+  dracut_drivers:
+    mpp-join:
+      - mpp-eval: dracut_drivers
+      - - "fixed"
+        - "gpio-rcar"
+        - "mmc_block"
+        - "mmc_core"
+        - "renesas_sdhi_core"
+        - "renesas_sdhi_internal_dmac"
+        - "tmio_mmc_core"
+  dracut_modules:
+    - "base"
+    - "bash"
+    - "dracut-systemd"
+    - "fs-lib"
+    - "kernel-modules"
+    - "rootfs-block"
+    - "shutdown"
+    - "systemd"
+    - "systemd-initrd"
+    - "terminfo"
+    - "udev-rules"
+pipelines: []
