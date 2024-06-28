@@ -173,9 +173,42 @@ mpp-vars:
                   to: tree:///usr/lib/qm/rootfs/
                 - from: input://tree/etc/
                   to: tree:///etc/qm/
+        - mpp-if: sign_kernel_modules
+          then:
+            type: org.osbuild-auto.kernel.sign-modules
+            inputs:
+              tree:
+                type: org.osbuild.tree
+                origin: org.osbuild.pipeline
+                references:
+                  - name:kernel-keys
+            options:
+              key: input://tree/kernel.key
+              x509: input://tree/kernel.x509
+        - mpp-if: sign_kernel_modules
+          then:
+            type: org.osbuild-auto.kernel.add-cert
+            inputs:
+              tree:
+                type: org.osbuild.tree
+                origin: org.osbuild.pipeline
+                references:
+                  - name:kernel-keys
+            options:
+              x509: input://tree/kernel.x509
 
 pipelines:
   # Some variables need to be written to files, do that here
+  - name: kernel-keys
+    build: name:build
+    stages:
+      - mpp-if: sign_kernel_modules
+        then:
+          type: org.osbuild-auto.kernel.genkey
+          options:
+            key: /kernel.key
+            x509: /kernel.x509
+
   - name: extra-tree-content
     build: name:build
     stages:

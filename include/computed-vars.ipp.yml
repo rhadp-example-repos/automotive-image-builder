@@ -13,6 +13,12 @@ mpp-vars:
       mpp-eval: kernel_rpm + "-core"
     else:
       mpp-eval: kernel_package + "-core"
+  kernel_devel_rpm:
+    mpp-if: locals().get('kernel_rpm')
+    then:
+      mpp-eval: kernel_rpm + "-devel"
+    else:
+      mpp-eval: kernel_package + "-devel" if not kernel_version else kernel_package + "-devel-" + kernel_version
   kernel_rpm:
     mpp-if: locals().get('kernel_rpm')
     then:
@@ -86,6 +92,7 @@ mpp-vars:
           then: aboot-deploy
         - mpp-if: use_composefs_signed
           then: openssl
+      - - $kernel_devel_rpm
   boot_rpms:
     mpp-join:
       - mpp-eval: boot_rpms
