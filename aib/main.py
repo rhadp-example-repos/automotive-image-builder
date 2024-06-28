@@ -9,7 +9,7 @@ import tempfile
 
 import yaml
 
-from .exports import export
+from .exports import export, EXPORT_DATAS
 from .runner import Runner
 from .ostree import OSTree
 from . import AIBParameters
@@ -34,6 +34,10 @@ def list_targets(args, _tmpdir, _runner):
     for d in sorted(targets):
         print(d)
 
+def list_exports(args, _tmpdir, _runner):
+    exports = EXPORT_DATAS.keys()
+    for d in sorted(exports):
+        print(d)
 
 # Its a pain to have to quote simple strings in arguments, if the
 # json parsing fails we try to parse it as a string
@@ -95,6 +99,9 @@ def parse_args(args, base_dir):
 
     parser_list_dist = subparsers.add_parser('list-targets', help='list available targets')
     parser_list_dist.set_defaults(func=list_targets)
+
+    parser_list_export = subparsers.add_parser('list-exports', help='list available exports')
+    parser_list_export.set_defaults(func=list_exports)
 
     format_parser = argparse.ArgumentParser(add_help=False)
     format_parser.add_argument("--arch", default=platform.machine(), action="store",
