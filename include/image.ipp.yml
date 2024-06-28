@@ -202,10 +202,12 @@ pipelines:
   - name: kernel-keys
     build: name:build
     stages:
-      - type: org.osbuild-auto.kernel.genkey
-        options:
-          key: /kernel.key
-          x509: /kernel.x509
+      - mpp-if: sign_kernel_modules
+        then:
+          type: org.osbuild-auto.kernel.genkey
+          options:
+            key: /kernel.key
+            x509: /kernel.x509
 
   - name: extra-tree-content
     build: name:build
