@@ -59,7 +59,7 @@ def define_value_looks_like_string(v):
     return True
 
 def parse_define(d, option):
-    parts = d.split("=", 2)
+    parts = d.split("=", 1)
     if len(parts) != 2:
         exit_error("Invalid option passed to %s: '%s', should be key=value", option, d)
     k = parts[0]
