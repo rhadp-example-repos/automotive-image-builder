@@ -51,3 +51,15 @@ yamllint-job:
   stage: test
   script:
     - make yamllint
+
+build-image-x86-job:
+  image: quay.io/centos-sig-automotive/automotive-osbuild
+  stage: test
+  script:
+    - ./automotive-image-builder build --mode=image --export qcow2 example.mpp.yml example.qcow2
+
+build-package-x86-job:
+  image: quay.io/centos-sig-automotive/automotive-osbuild
+  stage: test
+  script:
+    - ./automotive-image-builder build --mode=package --export image example.mpp.yml example.qcow2
