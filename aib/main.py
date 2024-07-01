@@ -9,12 +9,12 @@ import tempfile
 
 import yaml
 
+from .utils import yaml_load_ordered
 from .exports import export, EXPORT_DATAS
 from .runner import Runner
 from .ostree import OSTree
 from . import AIBParameters
 from . import log, exit_error
-
 
 def list_dist(args, _tmpdir, _runner):
     distros = set()
@@ -39,42 +39,16 @@ def list_exports(args, _tmpdir, _runner):
     for d in sorted(exports):
         print(d)
 
-# Its a pain to have to quote simple strings in arguments, if the
-# json parsing fails we try to parse it as a string
-def define_value_looks_like_string(v):
-    v = v.lstrip()
-    if len(v) == 0:
-        return False
-    # Dont' start with numerics
-    if v[0].isnumeric():
-        return False
-    # No case mis-spellings of true/false like False
-    if v.lower() == "false" or v.lower() == "true":
-        return False
-    # No json type character or escapes
-    invalid_chars = '"{}[]\\'
-    for invalid_char in invalid_chars:
-        if invalid_char in v:
-            return False
-    return True
-
 def parse_define(d, option):
     parts = d.split("=", 1)
     if len(parts) != 2:
         exit_error("Invalid option passed to %s: '%s', should be key=value", option, d)
     k = parts[0]
-    json_v = parts[1]
+    yaml_v = parts[1]
     try:
-        v = json.loads(json_v)
-    except json.decoder.JSONDecodeError as e:
-        # Try it as a string too
-        if define_value_looks_like_string(json_v):
-            try:
-                v = json.loads('"' + json_v + '"')
-            except json.decoder.JSONDecodeError:
-                exit_error("Invalid value passed to %s: '%s': %s", option, json_v, e)
-        else:
-            exit_error("Invalid value passed to %s: '%s': %s", option, json_v, e)
+        v = yaml_load_ordered(yaml_v)
+    except yaml.parser.ParserError as e:
+            exit_error("Invalid value passed to %s: '%s': %s", option, yaml_v, e)
     return k, v
 
 def parse_args(args, base_dir):
@@ -119,11 +93,11 @@ def parse_args(args, base_dir):
     format_parser.add_argument("--cache", action="store",type=str,
                         help="Add mpp cache-directory to use")
     format_parser.add_argument("--define", action="append",type=str,default=[],
-                        help="Define key=json-value")
+                        help="Define key=yaml-value")
     format_parser.add_argument("--define-file", action="append",type=str,default=[],
-                        help="Add json file of defines")
+                        help="Add yaml file of defines")
     format_parser.add_argument("--extend-define", action="append",type=str,default=[],
-                        help="Extend array by item or list key=json-value")
+                        help="Extend array by item or list key=yaml-value")
     format_parser.add_argument("--ostree-repo", action="store",type=str,
                         help="Path to ostree repo")
 
@@ -237,13 +211,13 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
     for df in args.define_file:
         try:
             with open(df) as f:
-                file_defines = json.load(f)
+                file_defines = yaml_load_ordered(f)
             if not isinstance(file_defines, dict):
-                exit_error("Define file must be json dict")
+                exit_error("Define file must be yaml dict")
             for k,v in file_defines.items():
                 defines[k]=v
-        except json.decoder.JSONDecodeError as e:
-            exit_error("Invalid json define file '%s': %s", df, e)
+        except yaml.parser.ParserError as e:
+            exit_error("Invalid yaml define file '%s': %s", df, e)
 
     for d in args.extend_define:
         k, v = parse_define(d, "--extend-define")
