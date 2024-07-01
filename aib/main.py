@@ -370,6 +370,7 @@ def main():
     runner.add_volume(os.getcwd())
 
     with tempfile.TemporaryDirectory(prefix="automotive-image-builder-", dir="/var/tmp") as tmpdir:
+        runner.add_volume(tmpdir)
         return args.func(tmpdir, runner)
 
 if __name__ == "__main__":
