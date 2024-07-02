@@ -46,7 +46,7 @@ mpp-vars:
   default_bootpart_size: 614400
   default_abootpart_size: 131072 # 64M
   default_vbmetapart_size: 128 # 64K
-  default_varpart_relative_size: 0.5 # 50% of image size
+  default_varpart_relative_size: 0.3 # 30% of image size
   default_active_gpt_attrs: # Default active setup for Qualcomm
     - 48
     - 49 # priority 0x3
