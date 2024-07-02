@@ -27,9 +27,16 @@ install:
 	install  -t $(DESTDIR)$(DATADIR)/mpp mpp/aib-osbuild-mpp
 	install  -t $(DESTDIR)$(DATADIR)/mpp/aibosbuild/util mpp/aibosbuild/util/*.py
 
-.PHONY: test
-test:
+.PHONY: test-compose
+test-compose:
 	tests/test-compose tests/test-compose.json
+
+.PHONY: test-unit
+test-unit:
+	pytest aib/tests
+
+.PHONY: test
+test: test-compose test-unit yamllint
 
 .PHONY: automotive-image-builder.spec
 automotive-image-builder.spec: automotive-image-builder.spec.in

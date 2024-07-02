@@ -127,12 +127,14 @@ def test_collect_podman_args(container_autoupdate, use_non_root, volumes):
     index = 4
     assert podman_args[:3] == ["--rm", "--privileged", "--workdir"]
     # Check volumes are added
+    if podman_args[index:index+2] == ["-v", f"{BASE_DIR}:{BASE_DIR}"]:
+        index += 2 # Due to volume sorted by path this can appear before or after the other volumes
     for v in volumes:
         assert podman_args[index] == "-v"
         assert v in podman_args[index+1] and ":" in podman_args[index+1]
         index += 2
-    assert podman_args[index:index+2] == ["-v", f"{BASE_DIR}:{BASE_DIR}"]
-    index += 2
+    if podman_args[index:index+2] == ["-v", f"{BASE_DIR}:{BASE_DIR}"]:
+        index += 2 # Due to volume sorted by path this can appear before or after the other volumes
     # Check container autoupdate
     if container_autoupdate:
         assert podman_args[index] == "--pull=newer"
