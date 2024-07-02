@@ -10,7 +10,14 @@ mpp-define-image:
     label: $partition_label
     partitions:
       mpp-join:
-        - - mpp-if: use_efipart
+        - - mpp-if: use_sblpart
+            then:
+              id: sbl
+              name: sbl
+              size: $sblpart_size
+              type:
+                mpp-eval: "'00000000-0000-0000-0000-000000000000' if partition_label == 'gpt' else '0'"
+          - mpp-if: use_efipart
             then:
               id: efi
               name: efi

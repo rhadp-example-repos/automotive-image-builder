@@ -43,6 +43,7 @@ mpp-vars:
   default_ssh_permit_root_login: false
   default_ssh_permit_password_auth: false
   default_image_size: '8589934592'
+  default_sblpart_size: 8192 # 4M
   default_efipart_size: 204800
   default_bootpart_size: 614400
   default_abootpart_size: 131072 # 64M
@@ -73,6 +74,7 @@ mpp-vars:
   default_use_aboot: false
   default_use_abootpart: false
   default_use_vbmetapart: false
+  default_use_sblpart: false
   default_use_efipart: true
   default_use_initoverlayfs: false
   default_use_bootpart: true
@@ -347,6 +349,8 @@ mpp-vars:
     mpp-eval: locals().get('luks_uuid', default_luks_uuid)
   kernel_opts:
     mpp-eval: locals().get('kernel_opts', default_kernel_opts)
+  sblpart_size:
+    mpp-eval: locals().get('sblpart_size', default_sblpart_size)
   efipart_size:
     mpp-eval: locals().get('efipart_size', default_efipart_size)
   bootpart_size:
@@ -429,6 +433,8 @@ mpp-vars:
     mpp-eval: locals().get('use_abootpart', default_use_abootpart)
   use_vbmetapart:
     mpp-eval: locals().get('use_vbmetapart', default_use_vbmetapart)
+  use_sblpart:
+    mpp-eval: locals().get('use_sblpart', default_use_sblpart)
   use_efipart:
     mpp-eval: locals().get('use_efipart', default_use_efipart)
   use_initoverlayfs:
