@@ -145,7 +145,7 @@ def make_embed_path_abs(stage, path):
             continue
 
         if k == "mpp-embed" and not os.path.isabs(embed_path):
-            v["path"] = os.path.join(path, embed_path)
+            v["path"] = os.path.normpath(os.path.join(os.path.abspath(path), embed_path))
 
 def rewrite_manifest(manifest, path):
     pipelines = manifest.get("pipelines")

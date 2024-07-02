@@ -62,7 +62,7 @@ from aib.main import rewrite_manifest
          "stages": [
              {'mpp-eval': 'kernel_cmdline_stage'},
              {"inputs": {'root_extra_content_0': {'mpp-embed': {'id': 'aefb4c0',
-                                                                'path': '/new/absolute/path/../files/relative/path/file1.txt'},
+                                                                'path': '/new/absolute/files/relative/path/file1.txt'},
                                                   'origin': 'org.osbuild.source',
                                                   'type': 'org.osbuild.files'},
                          'root_extra_content_1': {'mpp-embed': {'id': '6e3b505',
@@ -110,7 +110,7 @@ from aib.main import rewrite_manifest
                                                   'origin': 'org.osbuild.source',
                                                   'type': 'org.osbuild.files'},
                         'root_extra_content_1': {'mpp-embed': {'id': '6e3b505',
-                                                                'path': '/new/absolute/path/../files/relative/path/file2.txt'},
+                                                                'path': '/new/absolute/files/relative/path/file2.txt'},
                                                   'origin': 'org.osbuild.source',
                                                   'type': 'org.osbuild.files'}
                         },
@@ -143,7 +143,7 @@ from aib.main import rewrite_manifest
         {"name": "qm_rootfs",
          "stages": [
              {"inputs": {'qm_extra_content': {'mpp-embed': {'id': '292759f',
-                                                                'path': '/new/absolute/path/../files/relative/path/file1.txt'},
+                                                                'path': '/new/absolute/files/relative/path/file1.txt'},
                                                   'origin': 'org.osbuild.source',
                                                   'type': 'org.osbuild.files'},
                         },
