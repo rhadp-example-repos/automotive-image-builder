@@ -61,9 +61,9 @@ Additionally, there a a variety of variables supported that modifies how the man
 can be defined either in your manifest using the "mpp-var" block at the top, or by specifying them
 on the command-line like this:
 
-* `--define VAR=VALUE`: Sets the variable to the specified value, which is a json value.
+* `--define VAR=VALUE`: Sets the variable to the specified value, which is a yaml value.
 
-* `--define-file PATH`: Loads variables from a json dict in a file, where the keys are variable names.
+* `--define-file PATH`: Loads variables from a yaml dict in a file, where the keys are variable names.
 
 * `--extend-define VAR=VALUE`: Similar to `--define`, but this is only useable for list-based variable
   and will extend the list already in the variable (or start a new list if it is unset). This
