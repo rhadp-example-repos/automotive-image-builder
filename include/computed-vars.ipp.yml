@@ -289,12 +289,12 @@ mpp-vars:
     mpp-format-string: |
       [bluechi-agent]
       NodeName={ bluechi_nodename }
-      ManagerHost= { bluechi_manager_host_ip }
+      ControllerHost= { bluechi_manager_host_ip }
   qm_bluechi_agent_conf:
     mpp-format-string: |
       [bluechi-agent]
       NodeName=qm.{ bluechi_nodename }
-      ManagerHost= { bluechi_manager_host_ip }
+      ControllerHost= { bluechi_manager_host_ip }
   bluechi_conf:
     mpp-format-string: |
       [bluechi-controller]
