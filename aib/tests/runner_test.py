@@ -17,8 +17,8 @@ class AnyListContaining(str):
     ([]),
     (["--container"]),
     # Test with sudo (build option)
-    (["build", "--sudo", "a", "b"]),
-    (["--container", "build", "--sudo", "a", "b"]),
+    (["build", "--sudo", "--export", "qcow2", "a", "b"]),
+    (["--container", "build", "--sudo", "--export", "qcow2", "a", "b"]),
 ])
 @patch("aib.runner.subprocess")
 def test_run_args(subprocess_mock, args):
@@ -35,8 +35,8 @@ def test_run_args(subprocess_mock, args):
     ([]),
     (["--container"]),
     # Test with sudo (build option)
-    (["build", "--sudo", "a", "b"]),
-    (["--container", "build", "--sudo", "a", "b"]),
+    (["build", "--sudo", "--export", "qcow2", "a", "b"]),
+    (["--container", "build", "--sudo", "--export", "qcow2", "a", "b"]),
 ])
 @patch("aib.runner.subprocess")
 @patch("aib.runner.shutil")
@@ -58,8 +58,8 @@ def test_run_args_container(shutil_mock, subprocess_mock, args):
     ([]),
     (["--container"]),
     # Test with sudo (build option)
-    (["build", "--sudo", "a", "b"]),
-    (["--container", "build", "--sudo", "a", "b"]),
+    (["build", "--sudo", "--export", "qcow2", "a", "b"]),
+    (["--container", "build", "--sudo", "--export", "qcow2", "a", "b"]),
 ])
 @patch("aib.runner.subprocess")
 @patch("aib.runner.shutil")
@@ -81,8 +81,8 @@ def test_run_args_container_non_root(shutil_mock, subprocess_mock, args):
     ([]),
     (["--container"]),
     # Test with sudo (build option)
-    (["build", "--sudo", "a", "b"]),
-    (["--container", "build", "--sudo", "a", "b"]),
+    (["build", "--sudo", "--export", "qcow2", "a", "b"]),
+    (["--container", "build", "--sudo", "--export", "qcow2", "a", "b"]),
 ])
 @patch("aib.runner.subprocess")
 @patch("aib.runner.shutil")

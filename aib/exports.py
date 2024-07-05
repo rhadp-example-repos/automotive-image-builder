@@ -1,6 +1,6 @@
 import os
 
-from . import exit_error
+from .exceptions import UnsupportedExport
 
 EXPORT_DATAS = {
     "qcow2": {
@@ -59,7 +59,7 @@ EXPORT_DATAS = {
 def get_export_data(exp):
     if exp in EXPORT_DATAS:
         return EXPORT_DATAS[exp]
-    exit_error("Unsupported export '%s'", exp)
+    raise UnsupportedExport(exp)
 
 
 def export(outputdir, dest, dest_is_directory, export, runner):

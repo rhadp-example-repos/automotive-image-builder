@@ -13,8 +13,10 @@ from .utils import yaml_load_ordered
 from .exports import export, EXPORT_DATAS, get_export_data
 from .runner import Runner
 from .ostree import OSTree
+from . import exceptions
 from . import AIBParameters
-from . import log, exit_error
+from . import log
+
 
 def list_dist(args, _tmpdir, _runner):
     distros = set()
@@ -42,13 +44,13 @@ def list_exports(args, _tmpdir, _runner):
 def parse_define(d, option):
     parts = d.split("=", 1)
     if len(parts) != 2:
-        exit_error("Invalid option passed to %s: '%s', should be key=value", option, d)
+        raise exceptions.InvalidOption(option, d)
     k = parts[0]
     yaml_v = parts[1]
     try:
         v = yaml_load_ordered(yaml_v)
     except yaml.parser.ParserError as e:
-            exit_error("Invalid value passed to %s: '%s': %s", option, yaml_v, e)
+        raise exceptions.InvalidOption(option, yaml_v) from e
     return k, v
 
 def parse_args(args, base_dir):
@@ -114,7 +116,7 @@ def parse_args(args, base_dir):
     parser_build.add_argument("--osbuild-arg", action="append",type=str,default=[],
                         help="Add custom osbuild arg")
     parser_build.add_argument("--export", action="append",type=str,default=[],
-                        help="Export this image type")
+                        help="Export this image type", required=True)
     parser_build.add_argument("--build-dir", action="store",type=str,
                         help="Directory where intermediary files are stored)")
     parser_build.add_argument("--sudo", default=not isRoot, action="store_true",
@@ -150,7 +152,7 @@ def make_embed_path_abs(stage, path):
 def rewrite_manifest(manifest, path):
     pipelines = manifest.get("pipelines")
     if len(pipelines) == 0:
-        exit_error("No pipelines section in manifest")
+        raise exceptions.MissingSection("pipelines")
 
     rootfs = None
     for p in pipelines:
@@ -172,14 +174,11 @@ def rewrite_manifest(manifest, path):
         rootfs.get("stages", []).insert(0, {"mpp-eval": "kernel_cmdline_stage"})
 
 def create_osbuild_manifest(args, tmpdir, out, runner):
-    if not os.path.isfile(args.manifest):
-        exit_error("No such file %s", args.manifest)
-
     with open(args.manifest) as f:
         try:
             manifest = yaml.safe_load(f)
         except yaml.YAMLError as exc:
-            exit_error("Error parsing %s: %s", args.manifest, exc)
+            raise exceptions.ManifestParseError(args.manifest) from exc
 
     rewrite_manifest(manifest, os.path.dirname(args.manifest))
 
@@ -213,11 +212,11 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
             with open(df) as f:
                 file_defines = yaml_load_ordered(f)
             if not isinstance(file_defines, dict):
-                exit_error("Define file must be yaml dict")
+                raise DefineFileError("Define file must be yaml dict")
             for k,v in file_defines.items():
                 defines[k]=v
         except yaml.parser.ParserError as e:
-            exit_error("Invalid yaml define file '%s': %s", df, e)
+            raise DefineFileError(f"Invalid yaml define file '{df}': {e}") from e
 
     for d in args.extend_define:
         k, v = parse_define(d, "--extend-define")
@@ -255,9 +254,6 @@ def compose(args, tmpdir, runner):
 def _build(args, tmpdir, runner):
     if args.nosudo:
         args.sudo=False
-
-    if len(args.export) == 0:
-        exit_error("No --export option given")
 
     runner.add_volume_for(args.out)
 
@@ -348,7 +344,14 @@ def main():
 
     with tempfile.TemporaryDirectory(prefix="automotive-image-builder-", dir="/var/tmp") as tmpdir:
         runner.add_volume(tmpdir)
-        return args.func(tmpdir, runner)
+        try:
+            return args.func(tmpdir, runner)
+        except (exceptions.AIBException, FileNotFoundError) as e:
+            log.error("%s", e)
+            sys.exit(1)
+        except Exception:
+            log.error("Unexpected exception occurred!")
+            raise
 
 if __name__ == "__main__":
     sys.exit(main())

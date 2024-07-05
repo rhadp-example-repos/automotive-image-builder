@@ -1,9 +1,9 @@
 import logging
 import sys
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from functools import cached_property
-from typing import Any, List
+from typing import Any
 
 
 @dataclass
@@ -50,7 +50,3 @@ h2.setFormatter(CustomFormatter())
 # add the handlers to the logger
 log.addHandler(h1)
 log.addHandler(h2)
-
-def exit_error(s, *args):
-    log.error(s, *args)
-    sys.exit(1)
