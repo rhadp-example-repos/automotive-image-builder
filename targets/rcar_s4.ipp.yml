@@ -6,6 +6,7 @@ mpp-vars:
       priority: 1
   extra_image_rpms:
     - kernel-upstream-dtb
+    - can-utils
   consoles: "ttySC0,1843200"
   use_efi_runtime: false
   dracut_drivers:
