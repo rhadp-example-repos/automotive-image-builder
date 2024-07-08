@@ -333,7 +333,7 @@ def no_subcommand(_args, _tmpdir, _runner):
     log.info("No subcommand specified, see --help for usage")
 
 def main():
-    base_dir = sys.argv[1]
+    base_dir = os.path.realpath(sys.argv[1])
     args = AIBParameters(args=parse_args(sys.argv[2:], base_dir),
                          base_dir=base_dir)
 
