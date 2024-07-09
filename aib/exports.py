@@ -2,7 +2,6 @@ import os
 
 from . import exit_error
 
-
 EXPORT_DATAS = {
     "qcow2": {
         "filename": "disk.qcow2"
@@ -37,19 +36,37 @@ EXPORT_DATAS = {
     },
     "rpmlist": {
         "filename": "rpmlist"
+    },
+    "ext4.simg": {
+        "export_arg": "ext4",
+        "filename": "rootfs.ext4",
+        "convert": "simg",
+    },
+    "simg": {
+        "export_arg": "image",
+        "filename": "disk.img",
+        "convert": "simg",
+    },
+    "aboot.simg": {
+        "export_arg": "aboot",
+        "filename": "images",
+        "is_dir": True,
+        "convert": "simg",
+        "convert_filename": "images/rootfs.img"
     }
 }
 
-
-def _get_export_data(exp):
+def get_export_data(exp):
     if exp in EXPORT_DATAS:
         return EXPORT_DATAS[exp]
     exit_error("Unsupported export '%s'", exp)
 
 
 def export(outputdir, dest, dest_is_directory, export, runner):
+    data = get_export_data(export)
+    export = data.get("export_arg", export)
     exportdir = os.path.join(outputdir, export)
-    data = _get_export_data(export)
+    export_is_dir = data.get("is_dir", False)
 
     filename = data["filename"]
     if filename:
@@ -57,10 +74,24 @@ def export(outputdir, dest, dest_is_directory, export, runner):
     else:
         export_file = os.path.join(exportdir)
 
+    convert = data.get("convert", "")
+    if convert == "simg":
+        if "convert_filename" in data:
+            convert_file = os.path.join(exportdir, data["convert_filename"])
+        else:
+            convert_file = export_file
+        converted_file = convert_file + ".simg"
+
+        runner.run(["img2simg", convert_file, converted_file], use_sudo=True, use_container=True)
+        if export_is_dir:
+            runner.run(["rm", "-rf", convert_file], use_sudo=True)
+        else:
+            export_file = converted_file
+
     if dest_is_directory:
         dest = os.path.join(dest, os.path.basename(export_file))
 
-    if data.get("is_dir", False):
+    if export_is_dir:
         # The mv won't replace existing destination, so first remove it
         if os.path.isdir(dest) or os.path.isfile(dest):
             runner.run(["rm", "-rf", dest], use_sudo=True)
