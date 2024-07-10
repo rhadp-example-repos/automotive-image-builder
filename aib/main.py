@@ -10,7 +10,7 @@ import tempfile
 import yaml
 
 from .utils import yaml_load_ordered
-from .exports import export, EXPORT_DATAS
+from .exports import export, EXPORT_DATAS, get_export_data
 from .runner import Runner
 from .ostree import OSTree
 from . import AIBParameters
@@ -270,6 +270,7 @@ def _build(args, tmpdir, runner):
     builddir = tmpdir
     if args.build_dir:
         builddir = args.build_dir
+        os.makedirs(builddir, exist_ok=True)
     runner.add_volume(builddir)
     runner.add_volume("/dev")
 
@@ -291,6 +292,8 @@ def _build(args, tmpdir, runner):
 
     has_repo=False
     for exp in args.export:
+        data = get_export_data(exp)
+        exp = data.get("export_arg", exp)
         if exp == "ostree-commit":
             has_repo=True
         cmdline += ["--export", exp]
