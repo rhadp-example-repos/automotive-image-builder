@@ -10,6 +10,7 @@ Source0:        automotive-image-builder-%{version}.tar.gz
 BuildArch:	noarch
 BuildRequires:  make
 Requires:       ostree
+Requires:       python3-pyyaml
 
 %description
 Tool to build (and run) automotive images
