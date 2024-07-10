@@ -80,6 +80,7 @@ mpp-vars:
   default_use_bootpart: true
   default_use_testpart: false
   default_use_ostree: false
+  default_is_autoinit_supported: true
   default_use_autoinit: false
   default_use_autoinit_root: false
   default_autoinit_root: /dev/vda3
@@ -447,6 +448,8 @@ mpp-vars:
     mpp-eval: locals().get('use_separate_var', default_use_separate_var)
   use_ostree:
     mpp-eval: locals().get('use_ostree', default_use_ostree)
+  is_autoinit_supported:
+    mpp-eval: locals().get('is_autoinit_supported', default_is_autoinit_supported)
   use_autoinit:
     mpp-eval: locals().get('use_autoinit', default_use_autoinit)
   use_autoinit_root:
