@@ -19,6 +19,6 @@ mpp-vars:
   kernel_opts:
     mpp-join:
       - mpp-eval: kernel_opts
-      - - mpp-if: use_autoinit # With autoinit, udev will not load block drivers
+      - - mpp-if: is_autoinit_supported and use_autoinit # With autoinit, udev will not load block drivers
           then: rd.modules-load=nvme
 pipelines: []

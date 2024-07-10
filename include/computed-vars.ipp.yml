@@ -96,7 +96,7 @@ mpp-vars:
   boot_rpms:
     mpp-join:
       - mpp-eval: boot_rpms
-      - mpp-if: use_autoinit
+      - mpp-if: is_autoinit_supported and use_autoinit
         then:
           - util-linux-automotive
           - dracut-automotive
@@ -116,7 +116,7 @@ mpp-vars:
         - mpp-if: not use_static_ip
           then: NetworkManager
   dracut_modules:
-    - mpp-if: use_autoinit
+    - mpp-if: is_autoinit_supported and use_autoinit
       then:
         systemd-initrd-automotive
   dracut_add_drivers:
@@ -147,7 +147,7 @@ mpp-vars:
           # This can catch some issues, however there is a performance penalty associated with
           # this option, so only enable this for debug builds.
           - iommu.strict=1
-      - mpp-if: use_autoinit_root
+      - mpp-if: is_autoinit_supported and use_autoinit_root
         then:
           - mount-sysroot.root=$autoinit_root
           - mount-sysroot.rw

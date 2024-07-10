@@ -4,6 +4,7 @@ mpp-vars:
   distro_version: eln
   distro_baseurl: https://odcs.fedoraproject.org/composes/production/latest-Fedora-ELN/compose/
   distro_baseurl_repo: $distro_baseurl/compose/BaseOS/$arch/os/
+  is_autoinit_supported: false
   osname: fedora
   uefi_vendor: fedora
   kernel_package: kernel
