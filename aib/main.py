@@ -270,6 +270,7 @@ def _build(args, tmpdir, runner):
     builddir = tmpdir
     if args.build_dir:
         builddir = args.build_dir
+        os.makedirs(builddir, exist_ok=True)
     runner.add_volume(builddir)
     runner.add_volume("/dev")
 
