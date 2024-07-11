@@ -35,6 +35,7 @@ mpp-vars:
   default_qm_extra_repos: []
   default_qm_extra_rpms: []
   default_target_repos: []
+  default_target_build_repos: []
   default_root_password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.
   default_guest_password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.
   default_guest_uid: 2000
@@ -306,6 +307,8 @@ mpp-vars:
     mpp-eval: locals().get('qm_extra_rpms', default_qm_extra_rpms)
   target_repos:
     mpp-eval: locals().get('target_repos', default_target_repos)
+  target_build_repos:
+    mpp-eval: locals().get('target_build_repos', default_target_build_repos)
   image_size:
     mpp-eval: locals().get('image_size', default_image_size)
   aboot_partlabel:
