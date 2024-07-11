@@ -10,7 +10,7 @@ mpp-vars:
     - id: rawhide
       baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/nxp-board-support/fedora-rawhide-$arch/
       priority: 1
-  kernel_rpm: 'kernel'
+  kernel_package: 'kernel'
   serial_console: 'ttyLF0,115200'
   use_sblpart: true
   partition_label: dos
