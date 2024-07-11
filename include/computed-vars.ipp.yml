@@ -92,7 +92,8 @@ mpp-vars:
           then: aboot-deploy
         - mpp-if: use_composefs_signed
           then: openssl
-      - - $kernel_devel_rpm
+      - - mpp-if: sign_kernel_modules
+          then: $kernel_devel_rpm
   boot_rpms:
     mpp-join:
       - mpp-eval: boot_rpms
