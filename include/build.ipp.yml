@@ -121,7 +121,7 @@ pipelines:
               baseurl: $distro_baseurl_repo
               repos:
                 mpp-join:
-                  - mpp-eval: distro_repos
+                  - mpp-eval: build_repos
                   - mpp-eval: extra_build_repos
               packages:
                 mpp-join:
