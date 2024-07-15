@@ -3,8 +3,8 @@ mpp-vars:
   target_repos:
     - id: centos-automotive-sig-dui
       baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/dui/fedora-rawhide-$arch/
-    - id: cs9-ti-fw
-      baseurl: https://download.copr.fedorainfracloud.org/results/eballetbo/cs9-ti-fw/centos-stream+epel-next-9-$arch/
+    - id: ti-board-support
+      baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/ti-board-support/$distro_chroot/
       priority: 1
   kernel_package: 'kernel'
   consoles: 'ttyS2,115200n8'
@@ -15,7 +15,7 @@ mpp-vars:
     heads: 64
     sectors-per-track: 32
   extra_image_rpms:
-    - uboot-images-armv8
+    - ti-uboot-images-armv8
   image_extra_stages:
     mpp-join:
       - mpp-eval: image_extra_stages
@@ -29,13 +29,13 @@ mpp-vars:
           options:
             paths:
               - from:
-                  mpp-format-string: input://rootfs//usr/share/uboot/beagleplay_r5/tiboot3-am62x-gp-evm.bin
+                  mpp-format-string: input://rootfs//usr/share/uboot/am62x_beagleplay_r5/tiboot3-am62x-gp-evm.bin
                 to: tree:///boot/efi/tiboot3.bin
               - from:
-                  mpp-format-string: input://rootfs/usr/share/uboot/beagleplay_a53/tispl.bin_unsigned
+                  mpp-format-string: input://rootfs/usr/share/uboot/am62x_beagleplay_a53/tispl.bin_unsigned
                 to: tree:///boot/efi/tispl.bin
               - from:
-                  mpp-format-string: input://rootfs/usr/share/uboot/beagleplay_a53/u-boot.img_unsigned
+                  mpp-format-string: input://rootfs/usr/share/uboot/am62x_beagleplay_a53/u-boot.img_unsigned
                 to: tree:///boot/efi/u-boot.img
 
 pipelines: []
