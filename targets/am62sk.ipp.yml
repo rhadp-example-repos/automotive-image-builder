@@ -3,8 +3,8 @@ mpp-vars:
   target_repos:
     - id: centos-automotive-sig-dui
       baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/dui/fedora-rawhide-$arch/
-    - id: cs9-ti-fw
-      baseurl: https://download.copr.fedorainfracloud.org/results/eballetbo/cs9-ti-fw/centos-stream+epel-next-9-$arch/
+    - id: ti-board-support
+      baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/ti-board-support/$distro_chroot/
       priority: 1
   kernel_package: 'kernel'
   consoles: 'ttyS2,115200n8'
@@ -15,7 +15,7 @@ mpp-vars:
     heads: 64
     sectors-per-track: 32
   extra_image_rpms:
-    - uboot-images-armv8
+    - ti-uboot-images-armv8
   image_extra_stages:
     mpp-join:
       - mpp-eval: image_extra_stages
