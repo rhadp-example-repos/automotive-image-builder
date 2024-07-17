@@ -7,6 +7,8 @@ mpp-vars:
   extra_image_rpms:
     - kernel-upstream-dtb
     - can-utils
+    # Requires for the vcan module to be available
+    - kernel-automotive-modules-extra
   consoles: "ttySC0,1843200"
   use_efi_runtime: false
   dracut_drivers:
