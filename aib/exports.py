@@ -80,7 +80,7 @@ def export(outputdir, dest, dest_is_directory, export, runner):
             convert_file = os.path.join(exportdir, data["convert_filename"])
         else:
             convert_file = export_file
-        converted_file = convert_file + ".simg"
+        converted_file = convert_file.removesuffix(".img") + ".simg"
 
         runner.run(["img2simg", convert_file, converted_file], use_sudo=True, use_container=True)
         if export_is_dir:
