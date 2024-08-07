@@ -111,8 +111,6 @@ mpp-vars:
         - mpp-if: use_aboot
           then: aboot-deploy
         - mpp-if: use_static_ip
-          then: iproute
-        - mpp-if: use_static_ip
           then: nmstate
         - mpp-if: not use_static_ip
           then: NetworkManager
@@ -378,12 +376,8 @@ mpp-vars:
       [Service]
       Type=oneshot
       ExecStart=/usr/bin/nmstatectl apply --kernel --no-verify /etc/main.nmstate
-      ExecStart=/usr/sbin/ip route add default via {static_gw} dev {static_ip_iface}
       RemainAfterExit=yes
 
       [Install]
       WantedBy=default.target
-  resolv_conf:
-    mpp-format-string: |
-      nameserver {static_dns}
 pipelines: []
