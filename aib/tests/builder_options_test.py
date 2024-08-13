@@ -31,19 +31,19 @@ def test_build_required_positional(capsys):
     with pytest.raises(SystemExit) as e:
         parse_args(["build"], base_dir="")
     assert e.value.code == 2
-    assert "error: the following arguments are required: manifest, out" in capsys.readouterr().err
+    assert "error: the following arguments are required: --export, manifest, out" in capsys.readouterr().err
 
 @pytest.mark.parametrize("mpp_args,expected", [
     (["--mpp-arg=--cache", "--mpp-arg", "/path/to/cache"], ["--cache", "/path/to/cache"]),
     (["--mpp-arg=--cache", "--mpp-arg=/path/to/cache"], ["--cache", "/path/to/cache"]),
 ])
 def test_build_mpp_arg(mpp_args, expected):
-    args = parse_args(["build"] + mpp_args + ["manifest", "out"], base_dir="")
+    args = parse_args(["build"] + mpp_args + ["--export", "qcow2"] + ["manifest", "out"], base_dir="")
     assert args.mpp_arg == expected
 
 def test_build_cache_arg():
     cache_path = "/path/to/cache"
-    args = parse_args(["build", "--cache", cache_path, "manifest", "out"], base_dir="")
+    args = parse_args(["build", "--cache", cache_path, "--export", "qcow2", "manifest", "out"], base_dir="")
     assert args.cache == cache_path
 
 @pytest.mark.parametrize("includes", [
