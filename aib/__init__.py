@@ -1,4 +1,5 @@
 import logging
+import os
 import sys
 
 from dataclasses import dataclass
@@ -14,6 +15,10 @@ class AIBParameters:
     @cached_property
     def include_dirs(self):
         return [self.base_dir] + self.args.include
+
+    @cached_property
+    def build_dir(self):
+        return os.path.expanduser(self.args.build_dir) if self.args.build_dir else None
 
     def func(self, tmpdir, runner):
         return self.args.func(self, tmpdir, runner)
