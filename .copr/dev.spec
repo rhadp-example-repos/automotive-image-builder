@@ -1,0 +1,1 @@
+../automotive-image-builder.spec.in

@@ -38,19 +38,17 @@ test-unit:
 .PHONY: test
 test: test-compose test-unit yamllint
 
-.PHONY: automotive-image-builder.spec
-automotive-image-builder.spec: automotive-image-builder.spec.in
-	sed s/@@VERSION@@/$(VERSION)/ $< > $@
+rpm:
+	./.copr/build-rpm.sh -bb automotive-image-builder.spec.in
 
-.PHONY: dist
-dist: automotive-image-builder.spec
-	git archive -o automotive-image-builder-$(VERSION).tar.gz --prefix=automotive-image-builder-$(VERSION)/ --add-file automotive-image-builder.spec HEAD
+srpm:
+	./.copr/build-rpm.sh -bs automotive-image-builder.spec.in
 
-rpm: dist
-	rpmbuild --define "_sourcedir $(shell pwd)" -ba automotive-image-builder.spec
+rpm_dev:
+	./.copr/build-rpm.sh -bb .copr/dev.spec
 
-srpm: dist
-	rpmbuild --define "_sourcedir $(shell pwd)" -bs automotive-image-builder.spec
+srpm_dev:
+	./.copr/build-rpm.sh -bs .copr/dev.spec
 
 import-mpp:
 	./import-osbuild-mpp.sh $(OSBUILD_MPP_TAG)
