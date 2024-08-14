@@ -21,7 +21,7 @@ For example, to build a qcow2 image you can run:
 You can also combine these two in one command:
 
 ```shell
- $ automotive-image-builder compose --distro cs9 --mode package --target qemu --export qcow2 my-image.mpp.yml osbuild.json
+ $ automotive-image-builder build --distro cs9 --mode package --target qemu --export qcow2 my-image.mpp.yml osbuild.json
 ```
 
 These will first compose the osbuild.json file, and then build it and export the "qcow2" output,
