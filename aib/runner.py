@@ -69,7 +69,15 @@ class Runner:
                 use_non_root_user_in_container) + cmdline
 
         if use_sudo and self.sudo:
-            cmdline = ["sudo"] + cmdline
+            allowed_env_vars = [
+                "REGISTRY_AUTH_FILE",
+                "CONTAINERS_CONF",
+                "CONTAINERS_REGISTRIES_CONF",
+                "CONTAINERS_STORAGE_CONF"
+            ]
+            sudo_cmd = ["sudo",
+                        "--preserve-env={}".format(",".join(allowed_env_vars))]
+            cmdline = sudo_cmd + cmdline
 
         log.debug("Running: %s", shlex.join(cmdline))
 
