@@ -5,7 +5,7 @@ BINDIR=$(PREFIX)/bin
 DATADIR=$(PREFIX)/lib/automotive-image-builder
 DESTDIR=
 
-OSBUILD_MPP_TAG=v118
+OSBUILD_MPP_TAG=v124
 
 .PHONY: all
 all:
