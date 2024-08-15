@@ -188,6 +188,10 @@ pipelines:
                   mpp-if: "locals().get('aboot_dtb_file') != None"
                   then:
                     mpp-format-string: "{aboot_dtb_file}"
+                compress_kernel:
+                  mpp-if: "aboot_compress_kernel != None"
+                  then:
+                    mpp-eval: aboot_compress_kernel
             - type: org.osbuild-auto.aboot.update
               options:
                 mpp-if: use_kernel_debug_package
