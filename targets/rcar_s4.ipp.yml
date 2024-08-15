@@ -1,7 +1,25 @@
 version: '2'
 mpp-vars:
   consoles: "ttySC0,1843200"
+  use_grub2: false
+  use_aboot: true
+  use_abl: false
+  use_abootpart: true
+  use_vbmetapart: true
+  use_bootpart: false
+  use_efipart: false
   use_efi_runtime: false
+  aboot_pagesize: 4096
+  aboot_base: "0x48000000"
+  aboot_kernel_offset: "0x00008000"
+  aboot_ramdisk_offset: "0x01000000"
+  aboot_second_offset: "0x00f00000"
+  aboot_tags_offset: "0x00000100"
+  aboot_partition_a: "/dev/disk/by-partlabel/boot_a"
+  aboot_partition_b: "/dev/disk/by-partlabel/boot_b"
+  aboot_dtb_file: "renesas/r8a779f0-spider.dtb"
+  # Renesas' u-boot doesn't like any compression
+  aboot_compress_kernel: false
   dracut_drivers:
     mpp-join:
       - mpp-eval: dracut_drivers
