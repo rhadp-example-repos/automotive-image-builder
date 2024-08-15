@@ -1,3 +1,4 @@
+# Fedora 40
 version: '2'
 mpp-vars:
   distro_name: f40

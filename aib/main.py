@@ -17,29 +17,71 @@ from . import exceptions
 from . import AIBParameters
 from . import log
 
+def extract_comment_header(path):
+    lines = []
+    with open(path, mode="r") as file:
+        for line in file:
+            line = line.strip()
+            if line[0] != '#':
+                break
+            lines.append(line[1:])
+
+    # Unindent
+    min_indent = -1
+    for line in lines:
+        indent = 0
+        for c in line:
+            if c == ' ':
+                indent = indent + 1
+            else:
+                if min_indent < 0:
+                    min_indent = indent
+                else:
+                    min_indent = min(indent, min_indent)
+                break
+
+    if min_indent > 0:
+        for i in range(len(lines)):
+            lines[i] = lines[i][min_indent:]
+
+    # Remove trailing empty lines
+    while len(lines) > 0 and lines[-1] == "":
+        lines.pop()
+
+    return "\n".join(lines)
+
+def list_ipp_items(args, item_type):
+    items = {}
+    for inc in args.include_dirs:
+        subdir = os.path.join(inc, item_type)
+        for f in os.listdir(subdir):
+            if f.endswith(".ipp.yml"):
+                item = f[:-8]
+                if not item in items:
+                    items[item] = os.path.join(subdir, f)
+    for d in sorted(items.keys()):
+        if args.quiet:
+            print(d)
+        else:
+            path = items[d]
+            header = extract_comment_header(path)
+            paras = header.split("\n\n")
+            first_para = paras[0].replace("\n", " ")
+            print(f"{d} - {first_para}")
 
 def list_dist(args, _tmpdir, _runner):
-    distros = set()
-    for inc in args.include_dirs:
-        for f in os.listdir(os.path.join(inc, "distro")):
-            if f.endswith(".ipp.yml"):
-                distros.add(f[:-8])
-    for d in sorted(distros):
-        print(d)
+    list_ipp_items(args, "distro")
 
 def list_targets(args, _tmpdir, _runner):
-    targets = set()
-    for inc in args.include_dirs:
-        for f in os.listdir(os.path.join(inc, "targets")):
-            if f.endswith(".ipp.yml"):
-                targets.add(f[:-8])
-    for d in sorted(targets):
-        print(d)
+    list_ipp_items(args, "targets")
 
 def list_exports(args, _tmpdir, _runner):
     exports = EXPORT_DATAS.keys()
     for d in sorted(exports):
-        print(d)
+        if args.quiet:
+            print(d)
+        else:
+            print(f"{d} - {EXPORT_DATAS[d].get('desc', '')}")
 
 def parse_define(d, option):
     parts = d.split("=", 1)
@@ -72,12 +114,15 @@ def parse_args(args, base_dir):
 
     parser_list_dist = subparsers.add_parser('list-dist', help='list available distributions')
     parser_list_dist.set_defaults(func=list_dist)
+    parser_list_dist.add_argument("--quiet", default=False, action="store_true")
 
-    parser_list_dist = subparsers.add_parser('list-targets', help='list available targets')
-    parser_list_dist.set_defaults(func=list_targets)
+    parser_list_target = subparsers.add_parser('list-targets', help='list available targets')
+    parser_list_target.set_defaults(func=list_targets)
+    parser_list_target.add_argument("--quiet", default=False, action="store_true")
 
     parser_list_export = subparsers.add_parser('list-exports', help='list available exports')
     parser_list_export.set_defaults(func=list_exports)
+    parser_list_export.add_argument("--quiet", default=False, action="store_true")
 
     format_parser = argparse.ArgumentParser(add_help=False)
     format_parser.add_argument("--arch", default=platform.machine(), action="store",

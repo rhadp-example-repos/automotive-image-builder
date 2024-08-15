@@ -1,3 +1,4 @@
+# Target for the Raspberry Pi 4
 version: '2'
 mpp-vars:
   extra_image_source_ostree: ostree-tree

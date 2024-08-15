@@ -1,3 +1,4 @@
+# Target for general virtualized images (typically for qemu)
 version: '2'
 mpp-vars:
   use_autoinit: true
