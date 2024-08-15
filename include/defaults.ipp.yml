@@ -49,6 +49,7 @@ mpp-vars:
   default_bootpart_size: 614400
   default_abootpart_size: 131072 # 64M
   default_vbmetapart_size: 128 # 64K
+  default_aboot_compress_kernel: null
   default_varpart_relative_size: 0.3 # 30% of image size
   default_active_gpt_attrs: # Default active setup for Qualcomm
     - 48
@@ -313,6 +314,8 @@ mpp-vars:
     mpp-eval: locals().get('image_size', default_image_size)
   aboot_partlabel:
     mpp-eval: locals().get('aboot_partlabel', default_aboot_partlabel)
+  aboot_compress_kernel:
+    mpp-eval: locals().get('aboot_compress_kernel', default_aboot_compress_kernel)
   varpart_relative_size:
     mpp-eval: locals().get('varpart_relative_size', default_varpart_relative_size)
   varpart_size:
