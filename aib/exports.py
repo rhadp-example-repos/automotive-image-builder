@@ -4,50 +4,63 @@ from .exceptions import UnsupportedExport
 
 EXPORT_DATAS = {
     "qcow2": {
+        "desc": "Disk image in qcow2 format",
         "filename": "disk.qcow2"
     },
     "image": {
+        "desc": "Raw disk image",
         "filename": "disk.img"
     },
     "ostree-commit": {
+        "desc": "OSTree repo containing a commit",
         "filename": "repo",
         "is_dir": True,
     },
     "container": {
+        "desc": "Container image",
         "filename": "container.tar"
     },
     "ostree-oci-image": {
+        "desc": "Container OCI image archive",
         "filename": "image.oci-archive"
     },
     "rootfs": {
+        "desc": "Directory with image rootfs files",
         "filename": None,
         "is_dir": True,
         "no_chown": True
     },
     "ext4": {
+        "desc": "Ext4 filesystem image without partitions",
         "filename": "rootfs.ext4"
     },
     "tar": {
+        "desc": "Tar archive with files from rootfs",
         "filename": "rootfs.tar"
     },
     "aboot": {
+        "desc": "Aboot image",
         "filename": "images",
         "is_dir": True,
     },
     "rpmlist": {
+        "desc": "List of rpms that are in the image",
         "filename": "rpmlist"
     },
     "ext4.simg": {
+        "desc": "Ext4 filesystem partition in simg format",
         "export_arg": "ext4",
         "filename": "rootfs.ext4",
         "convert": "simg",
     },
     "simg": {
+        "desc": "Partitioned image in simg format",
         "export_arg": "image",
         "filename": "disk.img",
         "convert": "simg",
     },
     "aboot.simg": {
+        "desc": "Aboot image in simg format",
         "export_arg": "aboot",
         "filename": "images",
         "is_dir": True,

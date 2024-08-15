@@ -1,3 +1,4 @@
+# CentOS Stream 9
 version: '2'
 mpp-vars:
   distro_name: cs9
