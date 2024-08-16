@@ -1,3 +1,4 @@
+# Target for Renesas R-Car S4 with stock functionality
 version: '2'
 mpp-vars:
   consoles: "ttySC0,1843200"

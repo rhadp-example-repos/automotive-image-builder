@@ -1,3 +1,4 @@
+# Target for Renesas R-Car S4 with CAN bus enablement, requires CAN unlock app running on G4MH cores to boot
 version: '2'
 mpp-vars:
   # this overrides grub2 with a hack to include devicetree entry with 8a779f0-spider-can DTB that's needed for CAN bus support
