@@ -75,6 +75,7 @@ mpp-vars:
   default_use_bluechi: false
   default_use_aboot: false
   default_use_abootpart: false
+  default_use_tuned_realtime: false
   default_use_vbmetapart: false
   default_use_sblpart: false
   default_use_efipart: true
@@ -438,6 +439,8 @@ mpp-vars:
     mpp-eval: locals().get('use_aboot', default_use_aboot)
   use_abootpart:
     mpp-eval: locals().get('use_abootpart', default_use_abootpart)
+  use_tuned_realtime:
+    mpp-eval: locals().get('use_tuned_realtime', default_use_tuned_realtime)
   use_vbmetapart:
     mpp-eval: locals().get('use_vbmetapart', default_use_vbmetapart)
   use_sblpart:

@@ -110,6 +110,10 @@ mpp-vars:
           then: lvm2
         - mpp-if: use_aboot
           then: aboot-deploy
+        - mpp-if: use_tuned_realtime
+          then: tuned
+        - mpp-if: use_tuned_realtime
+          then: tuned-profiles-realtime
         - mpp-if: use_static_ip
           then: nmstate
         - mpp-if: not use_static_ip
@@ -157,6 +161,19 @@ mpp-vars:
           # Only allow modules with a valid signature to be loaded by the kernel.
           # https://www.kernel.org/doc/html/latest/admin-guide/module-signing.html#non-valid-signatures-and-unsigned-modules
           - module.sig_enforce=1
+      # tuned currently relies on grub to add the boot time required parameters for realtime.
+      # We replicate these parameters here as some images do not have grub.
+      # There is currently a feature request upstream, this can be removed once tuned no longer requires grub.
+      # Reference complete cmdline from tuned realtime profile:
+      #  skew_tick=1 tsc=reliable rcupdate.rcu_normal_after_boot=1 isolcpus=${managed_irq}${isolated_cores} intel_pstate=disable nosoftlockup
+      # tsc=reliable is intentionally ommitted as it is only applicable to x86_64 (not the main target of this feature as of now)
+      # intel_pstate=disable is intentionally ommitted as it is only applicable to x86_64 (not the main target of this feature as of now)
+      # rcupdate.rcu_normal_after_boot is intentionally ommitted as it negatively impacts boot time and is already set separately below
+      - mpp-if: use_tuned_realtime
+        then:
+          - skew_tick=1
+          - nosoftlockup
+          - isolcpus=managed_irq,domain,$tuned_realtime_isolcpus
       - - systemd.show_status=auto
         # Staggered spin-up
         - libahci.ignore_sss=1
@@ -263,6 +280,8 @@ mpp-vars:
           then: var.mount
         - mpp-if: use_static_ip
           then: main-nmstate.service
+        - mpp-if: use_tuned_realtime
+          then: tuned.service
   ostree_prepare_root_conf:
     mpp-format-string: |
       [sysroot]

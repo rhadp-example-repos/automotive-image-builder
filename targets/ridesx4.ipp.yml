@@ -22,6 +22,9 @@ mpp-vars:
   aboot_base: "0x1208800"
   aboot_dtb_file: "qcom/sa8775p-ride.dtb"
   image_size: 17179824128
+  # Uncomment and adjust the settings below to enable realtime settings
+  #use_tuned_realtime: true
+  #tuned_realtime_isolcpus: "1-N"
   extra_image_rpms:
     - aboot-deploy
     - stmmac-mac-generator
