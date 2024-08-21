@@ -103,6 +103,11 @@ pipelines:
                 - greenboot-task-runner.service
                 - mpp-if: "containers_transient_store and 'podman' in rpms['rootfs']"
                   then: podman-clean-transient.service
+              disabled_services:
+                - mpp-if: use_aboot
+                  then: greenboot-grub2-set-success.service
+                - mpp-if: use_aboot
+                  then: greenboot-grub2-set-counter.service
         - mpp-eval: image_extra_stages
         - - type: org.osbuild.selinux
             options:
