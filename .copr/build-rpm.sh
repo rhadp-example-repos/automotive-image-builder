@@ -108,5 +108,8 @@ fi
 #Copy rpm packages to the output_dir
 find .rpmbuild -name "*.rpm" -exec cp {} "$OUTPUT_DIR" \;
 
+#Copy tar file to the output_dir
+find .rpmbuild -name "*.tar.gz" -exec cp {} "$OUTPUT_DIR" \;
+
 # Clean .rpmbuild directory
 rm -fr .rpmbuild
