@@ -72,7 +72,8 @@ mpp-vars:
   default_use_grub2: true
   default_use_abl: false
   default_use_qm: false
-  default_use_bluechi: false
+  default_use_bluechi_agent: false
+  default_use_bluechi_controller: false
   default_use_aboot: false
   default_use_abootpart: false
   default_use_vbmetapart: false
@@ -242,7 +243,8 @@ mpp-vars:
     # Not using systemd-boot
     - systemd-boot-update.service
   default_bluechi_nodename: "host"
-  default_bluechi_manager_host_ip: "127.0.0.1"
+  default_bluechi_controller_host_ip: "127.0.0.1"
+  default_bluechi_controller_allowed_node_names: []
   default_qm_container_subuid: 1000000000:1500000000
   default_qm_container_subgid: 1000000000:1500000000
   default_container_subuid: 2500000000:1500000000
@@ -432,8 +434,10 @@ mpp-vars:
     mpp-eval: locals().get('use_abl', default_use_abl)
   use_qm:
     mpp-eval: locals().get('use_qm', default_use_qm)
-  use_bluechi:
-    mpp-eval: locals().get('use_bluechi', default_use_bluechi)
+  use_bluechi_agent:
+    mpp-eval: locals().get('use_bluechi_agent', default_use_bluechi_agent)
+  use_bluechi_controller:
+    mpp-eval: locals().get('use_bluechi_controller', default_use_bluechi_controller)
   use_aboot:
     mpp-eval: locals().get('use_aboot', default_use_aboot)
   use_abootpart:
@@ -524,8 +528,10 @@ mpp-vars:
     mpp-eval: locals().get('image_disabled_services',  default_image_disabled_services)
   bluechi_nodename:
     mpp-eval: locals().get('bluechi_nodename',  default_bluechi_nodename)
-  bluechi_manager_host_ip:
-    mpp-eval: locals().get('bluechi_manager_host_ip',  default_bluechi_manager_host_ip)
+  bluechi_controller_host_ip:
+    mpp-eval: locals().get('bluechi_controller_host_ip',  default_bluechi_controller_host_ip)
+  bluechi_controller_allowed_node_names:
+    mpp-eval: locals().get('bluechi_controller_allowed_node_names',  default_bluechi_controller_allowed_node_names)
   qm_container_subuid:
     mpp-eval: locals().get('qm_container_subuid',  default_qm_container_subuid)
   qm_container_subgid:
