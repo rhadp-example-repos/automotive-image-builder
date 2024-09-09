@@ -1,12 +1,4 @@
 version: '2'
-mpp-vars:
-  extra_image_rpms:
-    mpp-join:
-      - mpp-eval: extra_image_rpms
-      - - qm
-        - bluechi
-        - bluechi-agent
-        - bluechictl
 
 pipelines:
   - name: qm_rootfs_base
@@ -41,7 +33,8 @@ pipelines:
                     - podman
                     - selinux-policy-targeted
                     - procps-ng
-                    - bluechi-agent
+                    - mpp-if: use_bluechi_agent
+                      then: bluechi-agent
 
       - type: org.osbuild.copy
         inputs:
@@ -77,9 +70,11 @@ pipelines:
             - from:
                 mpp-format-string: input://inlinefile2/{embedded['qm_subgid']}
               to: tree:///etc/subgid
-            - from:
-                mpp-format-string: input://inlinefile3/{embedded['qm_agent_bluechi_conf']}
-              to: tree:///etc/bluechi/agent.conf
+            - mpp-if: use_bluechi_agent
+              then:
+                from:
+                  mpp-format-string: input://inlinefile3/{embedded['qm_agent_bluechi_conf']}
+                to: tree:///etc/bluechi/agent.conf
             - from:
                 mpp-format-string: input://inlinefile4/{embedded['qm_container_storage_conf']}
               to: tree:///etc/containers/storage.conf
@@ -119,4 +114,5 @@ pipelines:
       - type: org.osbuild.systemd
         options:
           enabled_services:
-            - bluechi-agent.service
+            - mpp-if: use_bluechi_agent
+              then: bluechi-agent.service

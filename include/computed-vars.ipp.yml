@@ -28,6 +28,12 @@ mpp-vars:
   use_kernel_debug_package:
     mpp-if: "'debug' in locals().get('kernel_package')"
     then: true
+  # use_bluechi is a backwards compat option that enables both use_bluechi_agent and use_bluechi_controller
+  # Also for historic reasons use_qm also currenlty implies both bluechi angent and controller
+  use_bluechi_agent:
+    mpp-eval: use_bluechi_agent or locals().get('use_bluechi') or use_qm
+  use_bluechi_controller:
+    mpp-eval: use_bluechi_controller or locals().get('use_bluechi') or use_qm
   distro_gpg_keys:
     mpp-if: locals().get('distro_gpg_keys')
     then:
@@ -114,6 +120,12 @@ mpp-vars:
           then: nmstate
         - mpp-if: not use_static_ip
           then: NetworkManager
+        - mpp-if: use_bluechi_agent
+          then: bluechi-agent
+        - mpp-if: use_bluechi_controller
+          then: bluechi-controller
+        - mpp-if: use_qm
+          then: qm
   dracut_modules:
     - mpp-if: is_autoinit_supported and use_autoinit
       then:
@@ -250,9 +262,9 @@ mpp-vars:
       - mpp-eval: image_enabled_services
       - - mpp-if: tmp_is_tmpfs
           then: tmp.mount
-        - mpp-if: use_qm or use_bluechi
+        - mpp-if: use_bluechi_agent
           then: bluechi-agent.service
-        - mpp-if: use_qm or use_bluechi
+        - mpp-if: use_bluechi_controller
           then: bluechi-controller.service
         - rcu-normal.service
         - mpp-if: use_efipart
@@ -283,25 +295,26 @@ mpp-vars:
     mpp-if: use_qm
     then: "qm"
     else: "empty"
-  use_bluechi:
-    mpp-if: use_qm
-    then: true
-    else:
-      mpp-eval: use_bluechi
   bluechi_agent_conf:
     mpp-format-string: |
       [bluechi-agent]
       NodeName={ bluechi_nodename }
-      ControllerHost= { bluechi_manager_host_ip }
+      ControllerHost= { bluechi_controller_host_ip }
   qm_bluechi_agent_conf:
     mpp-format-string: |
       [bluechi-agent]
       NodeName=qm.{ bluechi_nodename }
-      ControllerHost= { bluechi_manager_host_ip }
+      ControllerHost= { bluechi_controller_host_ip }
+  bluechi_controller_allowed_node_names:
+    mpp-if: not bluechi_controller_allowed_node_names
+    then:
+      - $bluechi_nodename
+      - mpp-if: use_qm
+        then: qm.$bluechi_nodename
   bluechi_conf:
     mpp-format-string: |
       [bluechi-controller]
-      AllowedNodeNames={ bluechi_nodename },qm.{ bluechi_nodename }
+      AllowedNodeNames={ ','.join(bluechi_controller_allowed_node_names) }
   qm_subuid_content:
     mpp-format-string: |
       containers:{ qm_container_subuid }

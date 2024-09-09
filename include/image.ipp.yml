@@ -37,11 +37,11 @@ mpp-vars:
       to: tree:///etc/subuid
     - from: input://extra-tree/subgid
       to: tree:///etc/subgid
-    - mpp-if: use_qm or use_bluechi
+    - mpp-if: use_bluechi_controller
       then:
         from: input://extra-tree/bluechi.conf
         to: tree:///etc/bluechi/controller.conf
-    - mpp-if: use_qm or use_bluechi
+    - mpp-if: use_bluechi_agent
       then:
         from: input://extra-tree/bluechi_agent.conf
         to: tree:///etc/bluechi/agent.conf
