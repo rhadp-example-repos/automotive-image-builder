@@ -9,6 +9,7 @@ git_config_pre:
 	git config --global --add safe.directory $(REPO_DIR)
 
 srpm: installdeps git_config_pre
+	git fetch --tags
 	.copr/build-rpm.sh -bs "$(spec)" "$(outdir)"
 
 .PHONY: installdeps srpm git_config_pre
