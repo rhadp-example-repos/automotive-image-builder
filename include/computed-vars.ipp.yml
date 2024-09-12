@@ -320,6 +320,11 @@ mpp-vars:
   qm_subgid_content:
     mpp-format-string: |
       containers:{ qm_container_subgid }
+  qm_autosd_conf:
+    mpp-format-string: |
+       [Service]
+       MemoryMax={ qm_memory_max }
+       MemoryHigh={ qm_memory_high }
   subuid_content_qm:
     mpp-if: use_qm
     then:

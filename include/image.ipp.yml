@@ -10,6 +10,11 @@ mpp-vars:
     - path: /usr/lib/systemd/coredump.conf.d
       parents: true
       exist_ok: true
+    - mpp-if: use_qm
+      then:
+        path: /usr/share/containers/systemd/qm.container.d
+        parents: true
+        exist_ok: true
   extra_tree_content:
     - from: input://extra-tree/systemd-system.conf
       to: tree:///usr/lib/systemd/system.conf.d/10-automotive.conf
@@ -65,6 +70,10 @@ mpp-vars:
       then:
         from: input://extra-tree/var.mount
         to: tree:////usr/lib/systemd/system/var.mount
+    - mpp-if: use_qm
+      then:
+        from: input://extra-tree/qm-autosd.conf
+        to: tree:////usr/share/containers/systemd/qm.container.d/10-autosd.conf
   dracut_install:
     mpp-join:
       - mpp-eval: dracut_install
@@ -424,6 +433,20 @@ pipelines:
             - from:
                 mpp-format-string: input://inlinefile2/{embedded['bluechi_conf']}
               to: tree:///bluechi.conf
+
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: qm_autosd_conf
+              text: $qm_autosd_conf
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['qm_autosd_conf']}
+              to: tree:///qm-autosd.conf
 
   - mpp-import-pipelines:
       path: mode-$image_mode.ipp.yml
