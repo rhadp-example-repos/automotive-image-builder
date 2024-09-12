@@ -34,6 +34,8 @@ mpp-vars:
   default_extra_repos: []
   default_qm_extra_repos: []
   default_qm_extra_rpms: []
+  default_qm_memory_max: infinity
+  default_qm_memory_high: infinity
   default_target_repos: []
   default_target_build_repos: []
   default_root_password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.
@@ -308,6 +310,10 @@ mpp-vars:
     mpp-eval: locals().get('qm_extra_repos', default_qm_extra_repos)
   qm_extra_rpms:
     mpp-eval: locals().get('qm_extra_rpms', default_qm_extra_rpms)
+  qm_memory_max:
+    mpp-eval: locals().get('qm_memory_max', default_qm_memory_max)
+  qm_memory_high:
+    mpp-eval: locals().get('qm_memory_high', default_qm_memory_high)
   target_repos:
     mpp-eval: locals().get('target_repos', default_target_repos)
   target_build_repos:

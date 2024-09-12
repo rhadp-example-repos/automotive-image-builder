@@ -89,6 +89,7 @@ are:
 Here are some commonly used variable supported and what they mean:
 
 * `use_qm`: If this is true, then the support for the qm partion is included in the image, see below for details
+* `qm_memory_max`: Set the maximum memory that can be used by the QM partition (see MemoryMax systemd option for format)
 * `use_bluechi_agent`: If this is true, then the support for bluechi-agent is included and configured in the host and (if enabled) in the qm partition
 * `use_bluechi_controller`: If this is true, then the support for bluechi-controller is included and configured in the host
 * `extra_rpms`: Many manifests (e.g. in sample-images) support this variable to add extra rpms to the image
