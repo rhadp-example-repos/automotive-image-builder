@@ -162,7 +162,7 @@ def parse_args(args, base_dir):
                         help="Add custom osbuild arg")
     parser_build.add_argument("--export", action="append",type=str,default=[],
                         help="Export this image type", required=True)
-    parser_build.add_argument("--build-dir", action="store",type=str,
+    parser_build.add_argument("--build-dir", action="store",type=str,default=os.getenv("OSBUILD_BUILDDIR"),
                         help="Directory where intermediary files are stored)")
     parser_build.add_argument("--sudo", default=not isRoot, action="store_true",
                               help="Use sudo to start programs that need privileges (default if not run as root)")
