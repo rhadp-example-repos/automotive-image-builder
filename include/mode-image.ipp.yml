@@ -71,7 +71,13 @@ pipelines:
               users:
                 root:
                   password:
-                    mpp-eval: root_password
+                    mpp-if: root_password
+                    then:
+                      mpp-eval: root_password
+                  key:
+                    mpp-if: root_ssh_key
+                    then:
+                      mpp-eval: root_ssh_key
           - mpp-if: use_composefs
             then:
               type: org.osbuild.copy
