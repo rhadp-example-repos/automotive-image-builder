@@ -56,12 +56,6 @@ pipelines:
             mpp-embed:
               id: qm_agent_bluechi_conf
               text: $qm_bluechi_agent_conf
-          inlinefile4:
-            type: org.osbuild.files
-            origin: org.osbuild.source
-            mpp-embed:
-              id: qm_container_storage_conf
-              text: $qm_containers_storage_conf
         options:
           paths:
             - from:
@@ -75,9 +69,19 @@ pipelines:
                 from:
                   mpp-format-string: input://inlinefile3/{embedded['qm_agent_bluechi_conf']}
                 to: tree:///etc/bluechi/agent.conf
-            - from:
-                mpp-format-string: input://inlinefile4/{embedded['qm_container_storage_conf']}
-              to: tree:///etc/containers/storage.conf
+
+      - type: org.osbuild.containers.storage.conf
+        options:
+          filename: /etc/containers/storage.conf
+          config:
+            storage:
+              transient_store:
+                mpp-eval: containers_transient_store
+              options:
+                additionalimagestores:
+                  - mpp-if: use_qm_containers_extra_store
+                    then:
+                      mpp-eval: qm_containers_extra_store
 
       - type: org.osbuild.lorax-script
         options:

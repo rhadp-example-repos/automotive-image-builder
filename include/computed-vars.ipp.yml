@@ -241,21 +241,6 @@ mpp-vars:
       # a kernel keyring for use within the container.
       #
       keyring = false
-  qm_containers_storage_conf:
-    mpp-format-string: |
-      [storage]
-      driver = "overlay"
-      runroot = "/run/containers/storage"
-      graphroot = "/var/lib/containers/storage"
-      { "transient_store = true" if containers_transient_store else "" }
-
-      [storage.options]
-      additionalimagestores = [
-         { '"' + qm_containers_extra_store + '"' if use_qm_containers_extra_store else "" }
-      ]
-
-      [storage.options.overlay]
-      mountopt = "nodev,metacopy=on"
   image_enabled_services:
     mpp-join:
       - mpp-eval: image_enabled_services
