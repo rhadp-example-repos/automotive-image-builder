@@ -1,3 +1,4 @@
+# Target for the TI J784S4XEVM Evaluation Board (https://www.ti.com/tool/J784S4XEVM)
 version: '2'
 mpp-vars:
   target_repos:
