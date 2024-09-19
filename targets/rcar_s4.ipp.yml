@@ -21,26 +21,4 @@ mpp-vars:
   aboot_dtb_file: "renesas/r8a779f0-spider.dtb"
   # Renesas' u-boot doesn't like any compression
   aboot_compress_kernel: false
-  dracut_drivers:
-    mpp-join:
-      - mpp-eval: dracut_drivers
-      - - "fixed"
-        - "gpio-rcar"
-        - "mmc_block"
-        - "mmc_core"
-        - "renesas_sdhi_core"
-        - "renesas_sdhi_internal_dmac"
-        - "tmio_mmc_core"
-  dracut_modules:
-    - "base"
-    - "bash"
-    - "dracut-systemd"
-    - "fs-lib"
-    - "kernel-modules"
-    - "rootfs-block"
-    - "shutdown"
-    - "systemd"
-    - "systemd-initrd"
-    - "terminfo"
-    - "udev-rules"
 pipelines: []
