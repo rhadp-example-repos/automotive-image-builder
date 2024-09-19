@@ -1,3 +1,4 @@
+# Target for the NXP S32G3 Vehicle Networking Reference Design Board
 version: '2'
 mpp-vars:
   target_repos:

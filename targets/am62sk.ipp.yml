@@ -1,3 +1,4 @@
+# Target for the TI SK-AM62 Evaluation Board (https://www.ti.com/tool/SK-AM62)
 version: '2'
 mpp-vars:
   target_repos:

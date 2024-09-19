@@ -1,3 +1,4 @@
+# Target for the TI BeaglePlay Board (https://www.beagleboard.org/boards/beagleplay)
 version: '2'
 mpp-vars:
   target_repos:
