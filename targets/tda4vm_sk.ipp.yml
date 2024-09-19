@@ -3,7 +3,7 @@ version: '2'
 mpp-vars:
   target_repos:
     - id: centos-automotive-sig-dui
-      baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/dui/fedora-39-$arch/
+      baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/dui/fedora-rawhide-$arch/
     - id: ti-board-support
       baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/ti-board-support/$distro_chroot/
       priority: 1
