@@ -24,8 +24,6 @@ pipelines:
                   - mpp-eval: image_repos
                   - mpp-eval: extra_repos
                   - mpp-eval: qm_extra_repos
-                  - - id: copr-sample-apps
-                      baseurl: https://download.copr.fedorainfracloud.org/results/alexl/cs9-sample-images/centos-stream-9-$arch/
               packages:
                 mpp-join:
                   - mpp-eval: qm_extra_rpms
