@@ -74,6 +74,7 @@ mpp-vars:
   default_use_grub2: true
   default_use_abl: false
   default_use_qm: false
+  default_qm_pipeline: qm_rootfs
   default_use_bluechi_agent: false
   default_use_bluechi_controller: false
   default_use_aboot: false
@@ -442,6 +443,8 @@ mpp-vars:
     mpp-eval: locals().get('use_abl', default_use_abl)
   use_qm:
     mpp-eval: locals().get('use_qm', default_use_qm)
+  qm_pipeline:
+    mpp-eval: locals().get('qm_pipeline', default_qm_pipeline)
   use_bluechi_agent:
     mpp-eval: locals().get('use_bluechi_agent', default_use_bluechi_agent)
   use_bluechi_controller:

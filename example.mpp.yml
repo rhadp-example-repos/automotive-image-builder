@@ -1,24 +1,9 @@
 version: '2'
 mpp-vars:
   name: example-manifest
+  # In case use_qm is enabled
+  qm_pipeline: qm_rootfs_base
 pipelines:
-# In case use_qm is enabled
-- name: qm_rootfs
-  build: name:build
-  stages:
-  - mpp-if: use_qm
-    then:
-      type: org.osbuild.copy
-      inputs:
-        tree:
-          type: org.osbuild.tree
-          origin: org.osbuild.pipeline
-          references:
-            - name:qm_rootfs_base
-      options:
-        paths:
-          - from: input://tree/
-            to: tree:///
 
 - name: rootfs
   build: name:build
