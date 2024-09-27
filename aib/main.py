@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import base64
 import sys
 import os
 import platform
@@ -153,6 +154,10 @@ def parse_args(args, base_dir):
     parser_compose.add_argument("out", type=str, help="Output osbuild json")
     parser_compose.set_defaults(func=compose)
 
+    parser_listrpms = subparsers.add_parser('list-rpms', help='List rpms', parents=[format_parser])
+    parser_listrpms.add_argument("manifest", type=str, help="Source manifest file, or - for empty")
+    parser_listrpms.set_defaults(func=listrpms)
+
     parser_build = subparsers.add_parser('build', help='Compose osbuild manifest', parents=[format_parser])
     parser_build.add_argument("--osbuild-manifest", action="store",type=str,
                         help="Path to store osbuild manifest")
@@ -301,6 +306,32 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
 
 def compose(args, tmpdir, runner):
     return create_osbuild_manifest(args, tmpdir, args.out, runner)
+
+def extract_rpmlist_json(osbuild_manifest):
+    with open(osbuild_manifest) as f:
+        d = json.load(f)
+
+    pipelines = d["pipelines"]
+    rpmlist = None
+    for p in pipelines:
+        if p.get("name") == "rpmlist":
+            rpmlist = p
+            break
+    inline_digest = list(rpmlist["stages"][0]["inputs"]["inlinefile"]["references"])[0]
+
+    inline_items = d["sources"]["org.osbuild.inline"]["items"]
+    data_b64 = inline_items[inline_digest]["data"]
+    return base64.b64decode(data_b64).decode("utf8")
+
+
+def listrpms(args, tmpdir, runner):
+    osbuild_manifest = os.path.join(tmpdir, "osbuild.json")
+
+    create_osbuild_manifest(args, tmpdir, osbuild_manifest, runner)
+
+    data = extract_rpmlist_json(osbuild_manifest)
+
+    print(data)
 
 def _build(args, tmpdir, runner):
     if args.nosudo:
