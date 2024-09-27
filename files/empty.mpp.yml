@@ -1,10 +1,10 @@
 version: '2'
 mpp-vars:
-  name: example-manifest
+  name: empty
   # In case use_qm is enabled
   qm_pipeline: qm_rootfs_base
-pipelines:
 
+pipelines:
 - name: rootfs
   build: name:build
   stages:
@@ -25,16 +25,10 @@ pipelines:
           module-platform-id: $distro_module_id
           baseurl: $distro_baseurl_repo
           repos:
-            mpp-eval: image_repos
+            mpp-join:
+             - mpp-eval: image_repos
+             - mpp-eval: extra_repos
           packages:
             mpp-join:
             - mpp-eval: image_rpms
-            - - emacs
-              - git
-  - type: org.osbuild.users
-    options:
-      users:
-        guest:
-          password: "$6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU."
-          gid: 999
-          uid: 999
+            - mpp-eval: extra_rpms

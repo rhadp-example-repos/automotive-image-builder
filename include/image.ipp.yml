@@ -171,7 +171,7 @@ mpp-vars:
                 type: org.osbuild.tree
                 origin: org.osbuild.pipeline
                 references:
-                  - name:qm_rootfs
+                  - mpp-format-string: name:{qm_pipeline}
             options:
               paths:
                 - from: input://tree/
@@ -450,6 +450,7 @@ pipelines:
 
   - mpp-import-pipelines:
       path: mode-$image_mode.ipp.yml
+
   - name: image
     build: name:build
     stages:
