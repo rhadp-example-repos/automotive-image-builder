@@ -172,7 +172,13 @@ def parse_args(args, base_dir):
     parser_build.add_argument("manifest", type=str, help="Source manifest file")
     parser_build.add_argument("out", type=str, help="Output path")
     parser_build.set_defaults(func=build)
-    return parser.parse_args(args)
+
+    res = parser.parse_args(args)
+    if "manifest" in res:
+        if res.manifest == "-":
+            res.manifest = os.path.join(base_dir, "files/empty.mpp.yml")
+
+    return res
 
 def is_import_pipeline(pipeline, path):
     if not type(pipeline) == dict:

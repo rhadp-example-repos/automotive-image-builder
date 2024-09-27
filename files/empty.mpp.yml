@@ -1,0 +1,34 @@
+version: '2'
+mpp-vars:
+  name: empty
+  # In case use_qm is enabled
+  qm_pipeline: qm_rootfs_base
+
+pipelines:
+- name: rootfs
+  build: name:build
+  stages:
+  - type: org.osbuild.rpm
+    options:
+      gpgkeys:
+      - mpp-eval: distro_gpg_keys
+      disable_dracut: true
+      exclude:
+        docs: true
+    inputs:
+      packages:
+        type: org.osbuild.files
+        origin: org.osbuild.source
+        mpp-depsolve:
+          architecture: $arch
+          ignore-weak-deps: true
+          module-platform-id: $distro_module_id
+          baseurl: $distro_baseurl_repo
+          repos:
+            mpp-join:
+             - mpp-eval: image_repos
+             - mpp-eval: extra_repos
+          packages:
+            mpp-join:
+            - mpp-eval: image_rpms
+            - mpp-eval: extra_rpms
