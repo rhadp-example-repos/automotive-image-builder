@@ -25,6 +25,14 @@ mpp-vars:
       mpp-eval: kernel_rpm
     else:
       mpp-eval: kernel_package if not kernel_version else kernel_package + "-" + kernel_version
+  # Sign the modules by default only for kernel-automotive in image mode.
+  # Honor sign_kernel_modules override in all other cases.
+  sign_kernel_modules:
+    mpp-if: kernel_package.startswith('kernel-automotive')
+    then:
+      mpp-eval: locals().get('sign_kernel_modules', image_mode == 'image')
+    else:
+      mpp-eval: locals().get('sign_kernel_modules', default_sign_kernel_modules)
   use_kernel_debug_package:
     mpp-if: "'debug' in locals().get('kernel_package')"
     then: true
