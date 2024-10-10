@@ -259,7 +259,7 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
         for ref in ostree.refs():
             rev = ostree.rev_parse(ref)
             revs[ref] = rev
-            defines["ostree_parent_refs"] = revs
+        defines["ostree_parent_refs"] = revs
 
     for d in args.define:
         k, v = parse_define(d, "--define")
