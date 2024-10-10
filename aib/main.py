@@ -252,7 +252,9 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
     }
 
     if args.ostree_repo:
-        ostree = OSTree(args.ostree_repo)
+        runner.add_volume_for(args.ostree_repo)
+
+        ostree = OSTree(args.ostree_repo, runner)
         revs = {}
         for ref in ostree.refs():
             rev = ostree.rev_parse(ref)
@@ -386,7 +388,8 @@ def _build(args, tmpdir, runner):
 
     if args.ostree_repo:
         repodir = os.path.join(outputdir, "ostree-commit/repo")
-        runner.run(["ostree", "pull-local",  "--repo=" + args.ostree_repo, repodir])
+        runner.run(["ostree", "pull-local",  "--repo=" + args.ostree_repo, repodir],
+                   use_container=True)
 
     if len(args.export) == 1:
         # Export directly to args.out
