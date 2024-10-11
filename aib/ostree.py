@@ -5,27 +5,25 @@ from . import log
 
 
 class OSTree:
-    def __init__(self, path):
+    def __init__(self, path, runner):
         self.path = path
+        self.runner = runner
         if not os.path.isdir(path):
             self.repo_init()
 
     def repo_init(self):
         log.debug("Initializing repo %s", self.path)
-        subprocess.run(["ostree", "init", "--repo", self.path, "--mode", "archive"],
-                    check=True)
+        cmdline = ["ostree", "init", "--repo", self.path, "--mode", "archive"]
+        self.runner.run(cmdline, use_container=True)
 
     def refs(self):
-        r = subprocess.run(["ostree", "refs", "--repo", self.path],
-                        capture_output=True,
-                        check=True)
-        out = r.stdout.decode("utf-8").rstrip()
+        cmdline = ["ostree", "refs", "--repo", self.path]
+        out = self.runner.run(cmdline, use_container=True, capture_output=True)
         if out:
             return out.split("\n")
         return []
 
     def rev_parse(self, ref):
-        r = subprocess.run(["ostree", "rev-parse", "--repo", self.path, ref],
-                        capture_output=True,
-                        check=True)
-        return r.stdout.decode("utf-8").rstrip()
+        cmdline = ["ostree", "rev-parse", "--repo", self.path, ref]
+        out = self.runner.run(cmdline, use_container=True, capture_output=True)
+        return out

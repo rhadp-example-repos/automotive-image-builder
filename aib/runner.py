@@ -63,7 +63,7 @@ class Runner:
                 use_non_root_user_in_container) + [self.container]
 
     def run(self, cmdline, use_sudo=False, use_container=False,
-            use_non_root_user_in_container=False):
+            use_non_root_user_in_container=False, capture_output=False):
         if use_container and self.container:
             cmdline = self._add_container_cmd(
                 use_non_root_user_in_container) + cmdline
@@ -82,6 +82,10 @@ class Runner:
         log.debug("Running: %s", shlex.join(cmdline))
 
         try:
-            subprocess.run(cmdline, check=True)
+            if capture_output:
+                r = subprocess.run(cmdline, capture_output=True, check=True)
+                return r.stdout.decode("utf-8").rstrip()
+            else:
+                subprocess.run(cmdline, check=True)
         except subprocess.CalledProcessError:
             sys.exit(1)  # cmd will have printed the error
