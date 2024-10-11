@@ -25,7 +25,9 @@ pipelines:
           module-platform-id: $distro_module_id
           baseurl: $distro_baseurl_repo
           repos:
-            mpp-eval: image_repos
+            mpp-join:
+            - mpp-eval: image_repos
+            - mpp-eval: extra_repos
           packages:
             mpp-join:
             - mpp-eval: image_rpms
