@@ -266,6 +266,10 @@ mpp-vars:
       # a kernel keyring for use within the container.
       #
       keyring = false
+  has_partition_table:
+    mpp-eval: any(ext in exports for ext in ['image', 'simg', 'qcow2'])
+  use_separate_var:
+    mpp-eval: has_partition_table and use_separate_var
   image_enabled_services:
     mpp-join:
       - mpp-eval: image_enabled_services

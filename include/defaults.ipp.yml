@@ -9,6 +9,7 @@ version: '2'
 mpp-vars:
   default_target: qemu
   default_image_mode: image
+  default_exports: []
   default_ostree_ref: $distro_name/$arch/$target-$name
   default_ostree_os_version: $distro_version
   default_osname: centos
@@ -271,6 +272,8 @@ mpp-vars:
     mpp-eval: locals().get('target', default_target)
   image_mode:
     mpp-eval: locals().get('image_mode', default_image_mode)
+  exports:
+    mpp-eval: locals().get('exports', default_exports)
   kernel_package:
     mpp-eval: locals().get('kernel_package', default_kernel_package)
   kernel_version:
