@@ -7,8 +7,6 @@ version: '2'
 # includes are loaded which can override these.
 
 mpp-vars:
-  default_target: qemu
-  default_image_mode: image
   default_exports: []
   default_ostree_ref: $distro_name/$arch/$target-$name
   default_ostree_os_version: $distro_version
@@ -268,10 +266,6 @@ mpp-vars:
     mpp-eval: (__import__('datetime').datetime.now().timestamp())
   build_timestamp:
     mpp-eval: (str(__import__('datetime').datetime.fromtimestamp(timestamp)))
-  target:
-    mpp-eval: locals().get('target', default_target)
-  image_mode:
-    mpp-eval: locals().get('image_mode', default_image_mode)
   exports:
     mpp-eval: locals().get('exports', default_exports)
   kernel_package:

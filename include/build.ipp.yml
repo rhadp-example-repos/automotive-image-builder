@@ -1,8 +1,5 @@
 version: '2'
 
-mpp-vars:
-  distro_name: cs9 # The default
-
 mpp-define-image:
   size: $image_size
   table:
