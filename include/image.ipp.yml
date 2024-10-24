@@ -39,7 +39,7 @@ pipelines:
                     - name:image-tree
               options:
                 from:
-                  mpp-format-string: "input://tree/boot/aboot-{rpms[kernel_osbuild_tree][kernel_core_package].evra}.img"
+                  mpp-format-string: "input://tree/boot/aboot-{rpms['rootfs'][kernel_core_package].evra}.img"
           - mpp-if: use_efipart
             then:
               type: org.osbuild.mkfs.fat
@@ -514,9 +514,9 @@ pipelines:
               - from:
                   mpp-if: use_kernel_debug_package
                   then:
-                    mpp-format-string: "input://tree/boot/aboot-{rpms[kernel_osbuild_tree][kernel_core_package].evra}+debug.img"
+                    mpp-format-string: "input://tree/boot/aboot-{rpms['rootfs'][kernel_core_package].evra}+debug.img"
                   else:
-                    mpp-format-string: "input://tree/boot/aboot-{rpms[kernel_osbuild_tree][kernel_core_package].evra}.img"
+                    mpp-format-string: "input://tree/boot/aboot-{rpms['rootfs'][kernel_core_package].evra}.img"
                 to: tree:///images/aboot.img
 
   # This is essentially rootfs with no image-specific stuff like boot, etc, but with

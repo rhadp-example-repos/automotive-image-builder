@@ -1,6 +1,4 @@
 version: '2'
-mpp-vars:
-  kernel_osbuild_tree: rootfs
 
 pipelines:
   - name: image-tree

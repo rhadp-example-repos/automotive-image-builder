@@ -1,6 +1,5 @@
 version: '2'
 mpp-vars:
-  kernel_osbuild_tree: rootfs
   extra_image_copy:
     mpp-join:
       - mpp-eval: extra_image_copy
