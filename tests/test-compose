@@ -98,6 +98,12 @@ for distro in distros:
                     if define["value"]:
                         args += ["--define", define["value"]]
 
+                    # Make json reproducible
+                    args += ["--define", "timestamp=1",
+                             "--define", "build_timestamp=1",
+                             "--define", "image_uuid=ffffffff-ffff-ffff-ffff-ffffffffffff"
+                             ]
+
                     manifests = collect_args(elms, "manifest")
                     if manifests:
                         for m in manifests:
