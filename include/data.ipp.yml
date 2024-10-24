@@ -3,7 +3,7 @@ version: '2'
 mpp-vars:
   newline: "\n"
 
-  test_partitions: # A bunch of android-style partitions to test partition count scalability
+  _test_partitions: # A bunch of android-style partitions to test partition count scalability
     - size: 26
       type: 6891A3B7-0CCC-4705-BB53-2673CAC193BD
       uuid: 82DFD22C-EE36-CF0C-0038-2C35C96DC60E

@@ -492,4 +492,7 @@ mpp-vars:
         - mpp-if: use_qm
           then: qm
 
+  _debug_output:
+    mpp-eval: "locals().get('print_variables') and print( __import__('json').dumps({k: v for k, v in locals().items() if not k.startswith('_')}, default=lambda o: '<not serializable>', sort_keys=True, indent=2))"
+
 pipelines: []
