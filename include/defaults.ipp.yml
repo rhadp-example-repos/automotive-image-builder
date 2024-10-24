@@ -14,11 +14,6 @@ mpp-vars:
   uefi_vendor: centos
   kernel_package: kernel-automotive
   load_modules: []
-  bootfstype: "ext4"
-  initoverlayfs_builder: "dracut -M -o \"initoverlayfs fcoe\""
-  initrd_builder: "dracut -M -o \"initoverlayfs fcoe\""
-  erofs_compression: ""
-  bootfs_hint: ""
   kernel_version: ""
   release_name: ""
   release_rpm: centos-release-automotive
@@ -87,8 +82,6 @@ mpp-vars:
   use_separate_var: false
   aboot_partlabel: system_a
   vbmeta_partlabel: vbmeta_a
-  image_uuid:
-    mpp-eval: (str(__import__('uuid').uuid4()))
   use_composefs: true
   use_composefs_signed: true
   use_transient_etc: true
@@ -225,6 +218,16 @@ mpp-vars:
   efipart_dos_type: 'ef'
   efipart_bootable: false
   distro_gpg_keys: ""
+
+  initoverlayfs_bootfstype: "ext4"
+  initoverlayfs_builder: "dracut -M -o \"initoverlayfs fcoe\""
+  initoverlayfs_initrd_builder: "dracut -M -o \"initoverlayfs fcoe\""
+  initoverlayfs_erofs_compression: ""
+  initoverlayfs_bootfs_hint: ""
+
+  # Timestamps, etc
+  image_uuid:
+    mpp-eval: (str(__import__('uuid').uuid4()))
   timestamp:
     mpp-eval: (__import__('datetime').datetime.now().timestamp())
   build_timestamp:

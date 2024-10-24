@@ -135,25 +135,25 @@ pipelines:
                   then:
                     mpp-format-string: "UUID={bootfs_uuid}"
                 bootfstype:
-                  mpp-if: "locals().get('bootfstype',) != None"
+                  mpp-if: "locals().get('initoverlayfs_bootfstype',) != None"
                   then:
-                    mpp-format-string: "{bootfstype}"
+                    mpp-format-string: "{initoverlayfs_bootfstype}"
                 bootfs_hint:
-                  mpp-if: "locals().get('bootfs_hint',) != None"
+                  mpp-if: "locals().get('initoverlayfs_bootfs_hint',) != None"
                   then:
-                    mpp-format-string: "{bootfs_hint}"
+                    mpp-format-string: "{initoverlayfs_bootfs_hint}"
                 initrd_builder:
-                  mpp-if: "locals().get('initrd_builder',) != None"
+                  mpp-if: "locals().get('initoverlayfs_initrd_builder',) != None"
                   then:
-                    mpp-format-string: "{initrd_builder}"
+                    mpp-format-string: "{initoverlayfs_initrd_builder}"
                 initoverlayfs_builder:
                   mpp-if: "locals().get('initoverlayfs_builder',) != None"
                   then:
                     mpp-format-string: "{initoverlayfs_builder}"
                 erofs_compression:
-                  mpp-if: "locals().get('erofs_compression',) != None"
+                  mpp-if: "locals().get('initoverlayfs_erofs_compression',) != None"
                   then:
-                    mpp-format-string: "{erofs_compression}"
+                    mpp-format-string: "{initoverlayfs_erofs_compression}"
         - mpp-if: use_aboot
           then:
             - type: org.osbuild-auto.aboot.conf
