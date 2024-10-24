@@ -15,7 +15,7 @@ mpp-vars:
   efipart_geometry:
     heads: 64
     sectors-per-track: 32
-  extra_image_rpms:
+  target_rpms:
     - ti-uboot-images-armv8
   image_extra_stages:
     mpp-join:

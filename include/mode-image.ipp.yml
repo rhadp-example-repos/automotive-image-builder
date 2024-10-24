@@ -1,24 +1,6 @@
 version: '2'
 mpp-vars:
   kernel_osbuild_tree: rootfs
-  use_ostree: true
-  image_rpms:
-    mpp-join:
-      - mpp-eval: base_rpms
-      - mpp-eval: locals().get('extra_image_rpms', [])
-      - mpp-eval: boot_rpms
-      - mpp-eval: locals().get('extra_boot_rpms', [])
-      - - nss-altfiles
-        - greenboot
-        - mpp-if: not use_aboot
-          then: greenboot-grub2
-        - greenboot-reboot
-        - greenboot-status
-        - mpp-if: not use_aboot
-          then: greenboot-rpm-ostree-grub2
-        - mpp-if: name == 'developer'
-          then: ostree-compliance-mode
-        - skopeo  # Needed for upgrading from an OCI remove image
   extra_image_copy:
     mpp-join:
       - mpp-eval: extra_image_copy

@@ -1,6 +1,6 @@
 version: '2'
 mpp-vars:
-  extra_image_rpms:
+  target_rpms:
     - openssh-server
     - openssh-clients
     - sudo
@@ -12,7 +12,7 @@ mpp-vars:
     - rsync
     - qemu-guest-agent
     - chrony
-  extra_build_rpms:
+  target_build_rpms:
     - python3-pyyaml
   image_extra_stages:
     mpp-join:

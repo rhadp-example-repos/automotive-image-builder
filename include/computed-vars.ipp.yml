@@ -78,56 +78,9 @@ mpp-vars:
       mpp-format-string: |
         $centos_gpg_key
         $redhat_gpg_key
-  # We need to define this ahead of image-ostree.ipp.yml for use below
   use_ostree:
     mpp-eval: use_ostree or image_mode == 'image'
   _dash_escape: "\\x2d"
-  build_rpms:
-    mpp-join:
-      - mpp-eval: build_rpms
-      - - mpp-if: use_luks
-          then: cryptsetup
-        - mpp-if: use_luks
-          then: lvm2
-        - mpp-if: use_aboot
-          then: aboot-update
-        - mpp-if: use_aboot
-          then: aboot-deploy
-        - mpp-if: use_composefs_signed
-          then: openssl
-      - - mpp-if: sign_kernel_modules
-          then: $kernel_devel_rpm
-  boot_rpms:
-    mpp-join:
-      - mpp-eval: boot_rpms
-      - mpp-if: is_autoinit_supported and use_autoinit
-        then:
-          - util-linux-automotive
-          - dracut-automotive
-      - - $kernel_rpm
-  base_rpms:
-    mpp-join:
-      - mpp-eval: base_rpms
-      - - $release_rpm
-        - $linux_firmware_rpm
-        - mpp-if: use_luks
-          then: lvm2
-        - mpp-if: use_aboot
-          then: aboot-deploy
-        - mpp-if: use_tuned_realtime
-          then: tuned
-        - mpp-if: use_tuned_realtime
-          then: tuned-profiles-realtime
-        - mpp-if: use_static_ip
-          then: nmstate
-        - mpp-if: not use_static_ip
-          then: NetworkManager
-        - mpp-if: use_bluechi_agent
-          then: bluechi-agent
-        - mpp-if: use_bluechi_controller
-          then: bluechi-controller
-        - mpp-if: use_qm
-          then: qm
   dracut_modules:
     - mpp-if: is_autoinit_supported and use_autoinit
       then:
@@ -157,17 +110,6 @@ mpp-vars:
     mpp-join:
       - mpp-eval: extra_image_copy
       - mpp-eval: locals().get('extra_image_copy_' + image_mode, [])
-  image_repos:
-    mpp-join:
-      - mpp-eval: distro_repos
-      - mpp-eval: target_repos
-  build_repos:
-    mpp-join:
-      - mpp-eval: distro_repos
-      - mpp-eval: target_build_repos
-  image_devel_repos:
-    mpp-join:
-      - mpp-eval: distro_devel_repos
   dracut_install:
     mpp-join:
       - mpp-eval: dracut_install
@@ -463,5 +405,87 @@ mpp-vars:
       then:
         from: input://extra-tree/qm-autosd.conf
         to: tree:////usr/share/containers/systemd/qm.container.d/10-autosd.conf
+
+  image_repos:
+    mpp-join:
+      - mpp-eval: distro_repos
+      - mpp-eval: target_repos
+  build_repos:
+    mpp-join:
+      - mpp-eval: distro_repos
+      - mpp-eval: target_build_repos
+  image_devel_repos:
+    mpp-join:
+      - mpp-eval: distro_devel_repos
+
+  build_rpms:
+    mpp-join:
+      - mpp-eval: build_rpms
+      - mpp-eval: arch_build_rpms
+      - mpp-eval: target_build_rpms
+      - - mpp-if: use_luks
+          then: cryptsetup
+        - mpp-if: use_luks
+          then: lvm2
+        - mpp-if: use_aboot
+          then: aboot-update
+        - mpp-if: use_aboot
+          then: aboot-deploy
+        - mpp-if: use_composefs_signed
+          then: openssl
+      - - mpp-if: sign_kernel_modules
+          then: $kernel_devel_rpm
+
+  ostree_mode_rpms:
+    - nss-altfiles
+    - greenboot
+    - mpp-if: not use_aboot
+      then: greenboot-grub2
+    - greenboot-reboot
+    - greenboot-status
+    - mpp-if: not use_aboot
+      then: greenboot-rpm-ostree-grub2
+    - mpp-if: name == 'developer'
+      then: ostree-compliance-mode
+    - skopeo  # Needed for upgrading from an OCI remove image
+
+  package_mode_rpms:
+    - shim
+
+  image_rpms:
+    mpp-join:
+      - mpp-eval: base_rpms
+      - mpp-eval: arch_rpms
+      - mpp-eval: target_rpms
+      - mpp-if: use_ostree
+        then:
+          mpp-eval: ostree_mode_rpms
+        else:
+          mpp-eval: package_mode_rpms
+      - mpp-if: is_autoinit_supported and use_autoinit
+        then:
+          - util-linux-automotive
+          - dracut-automotive
+      - - $release_rpm
+        - $kernel_rpm
+        - $linux_firmware_rpm
+        - mpp-if: use_luks
+          then: lvm2
+        - mpp-if: use_aboot
+          then: aboot-deploy
+        - mpp-if: use_tuned_realtime
+          then: tuned
+        - mpp-if: use_tuned_realtime
+          then: tuned-profiles-realtime
+        - mpp-if: use_static_ip
+          then: nmstate
+        - mpp-if: not use_static_ip
+          then: NetworkManager
+        - mpp-if: use_bluechi_agent
+          then: bluechi-agent
+        - mpp-if: use_bluechi_controller
+          then: bluechi-controller
+        - mpp-if: use_qm
+          then: qm
 
 pipelines: []

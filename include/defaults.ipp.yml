@@ -24,19 +24,12 @@ mpp-vars:
   release_rpm: centos-release-automotive
   linux_firmware_rpm: linux-firmware-automotive
   partition_label: gpt
-  extra_rpms: []
-  extra_build_rpms: []
-  extra_build_repos: []
-  extra_image_rpms: []
-  extra_image_copy: []
-  extra_kernel_opts: []
-  extra_repos: []
-  qm_extra_repos: []
-  qm_extra_rpms: []
   qm_memory_max: infinity
   qm_memory_high: infinity
-  target_repos: []
-  target_build_repos: []
+
+  extra_image_copy: []
+  extra_kernel_opts: []
+
   root_password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.
   guest_password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.
   guest_uid: 2000
@@ -238,6 +231,31 @@ mpp-vars:
   build_timestamp:
     mpp-eval: (str(__import__('datetime').datetime.fromtimestamp(timestamp)))
 
+  # These are available for end users, not used internally
+  extra_rpms: []
+  extra_repos: []
+  extra_build_rpms: []
+  extra_build_repos: []
+
+  # These are used to add rpms to the qm partition
+  qm_extra_repos: []
+  qm_extra_rpms: []
+
+  # These are overridden by the distro file
+  distro_repos: []
+  distro_devel_repos: []
+  distro_debug_repos: []
+
+  # These are overridden by the target file
+  target_repos: []
+  target_rpms: []
+  target_build_repos: []
+  target_build_rpms: []
+
+  # These are overridden by the arch file
+  arch_rpms: []
+  arch_build_rpms: []
+
   build_rpms:
     - dnf
     - dosfstools
@@ -258,10 +276,7 @@ mpp-vars:
     - tar
     - xz
     - zstd
-  boot_rpms:
-    - dracut-config-generic
-    - grub2-tools-minimal
-    - lz4
+
   base_rpms:
     - e2fsprogs
     - efibootmgr
@@ -271,3 +286,6 @@ mpp-vars:
     - rootfiles
     - selinux-policy-targeted
     - systemd-udev
+    - dracut-config-generic
+    - grub2-tools-minimal
+    - lz4

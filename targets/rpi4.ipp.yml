@@ -13,7 +13,7 @@ mpp-vars:
       - from: input://extra-tree/
         to: mount://root/boot/efi/
     else: []
-  extra_image_rpms:
+  target_rpms:
     - pi4-firmware-blob
     - pi_resize
   dracut_add_drivers:
