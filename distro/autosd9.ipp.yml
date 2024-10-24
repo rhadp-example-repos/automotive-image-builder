@@ -14,6 +14,7 @@ mpp-vars:
   distro_repos:
     - id: autosd
       baseurl: $distro_baseurl/AutoSD/$arch/os/
+      priority: 10
     - id: automotive
       baseurl: https://mirror.stream.centos.org/SIGs/9-stream/automotive/$arch/packages-main/
   distro_devel_repos: []
