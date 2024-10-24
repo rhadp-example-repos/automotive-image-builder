@@ -251,6 +251,9 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
         "image_type": "ostree" if args.mode == "image" else "regular",
     }
 
+    if args.export:
+        defines["exports"] = args.export
+
     if args.ostree_repo:
         runner.add_volume_for(args.ostree_repo)
 
