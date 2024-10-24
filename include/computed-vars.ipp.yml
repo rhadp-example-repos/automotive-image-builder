@@ -80,6 +80,10 @@ mpp-vars:
         $redhat_gpg_key
   use_ostree:
     mpp-eval: use_ostree or image_mode == 'image'
+  has_partition_table:
+    mpp-eval: any(ext in exports for ext in ['image', 'simg', 'qcow2'])
+  use_separate_var:
+    mpp-eval: has_partition_table and use_separate_var
   _dash_escape: "\\x2d"
   dracut_modules:
     - mpp-if: is_autoinit_supported and use_autoinit
@@ -110,6 +114,10 @@ mpp-vars:
     mpp-join:
       - mpp-eval: extra_image_copy
       - mpp-eval: locals().get('extra_image_copy_' + image_mode, [])
+      - - mpp-if: use_ostree and use_separate_var
+          then:
+            from: input://tree/ostree/deploy/$osname/var/
+            to: mount://root/var/
   dracut_install:
     mpp-join:
       - mpp-eval: dracut_install
@@ -210,10 +218,6 @@ mpp-vars:
     mpp-if: use_qm
     then: "qm"
     else: "empty"
-  has_partition_table:
-    mpp-eval: any(ext in exports for ext in ['image', 'simg', 'qcow2'])
-  use_separate_var:
-    mpp-eval: has_partition_table and use_separate_var
   image_enabled_services:
     mpp-join:
       - mpp-eval: image_enabled_services
