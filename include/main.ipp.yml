@@ -1,0 +1,37 @@
+version: '2'
+
+pipelines:
+  - mpp-import-pipelines:
+      path: defaults.ipp.yml
+  - mpp-import-pipelines:
+      path: data.ipp.yml
+  - mpp-import-pipelines:
+      path: distro/$distro_name.ipp.yml
+  - mpp-import-pipelines:
+      path: targets/$target.ipp.yml
+  - mpp-import-pipelines:
+      path: arch-$arch.ipp.yml
+  - mpp-import-pipelines:
+      path: defaults-computed.ipp.yml
+
+  # At this point, the per arch/target/distro defaults are computed and are available
+  # to the user supplied manifest to look at and override.
+
+  - mpp-import-pipelines:
+      path: $_workdir/manifest-variables.ipp.yml
+
+  # Compute various derived variables after the end user manifest variables are set
+  - mpp-import-pipelines:
+      path: computed-vars.ipp.yml
+  - mpp-import-pipelines:
+      path: build.ipp.yml
+  - mpp-import-pipelines:
+      path: include/$qm_importfile.ipp.yml
+  - mpp-import-pipelines:
+      path: $_workdir/manifest.ipp.yml
+  - mpp-import-pipelines:
+      path: content.ipp.yml
+  - mpp-import-pipelines:
+      path: mode-$image_mode.ipp.yml
+  - mpp-import-pipelines:
+      path: image.ipp.yml

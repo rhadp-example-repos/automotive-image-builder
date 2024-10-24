@@ -1,166 +1,143 @@
 version: '2'
 
-# This file is loaded early and sets all the default values for variables.
-# It will inherit variables set in the image manifest itself, so the
-# defaults only override variable if they are already unset.
-# After this loads, things like the per-arch, per-target and per image type
-# includes are loaded which can override these.
+# This file is loaded first and sets all the default values for
+# variables.  Before this is loaded only the basic variables passed
+# from a-i-b are guaranteed to exists: name, arch, distro_name,
+# image_mode, target After this loads the per-arch, and per-target
+# includes are loaded which can override these. Then the defaults-computed
+# file is included that can change the defaults based on thse, and
+# only then is the variables for the user supplied manifest evaluated.
 
 mpp-vars:
-  default_exports: []
-  default_ostree_ref: $distro_name/$arch/$target-$name
-  default_ostree_os_version: $distro_version
-  default_osname: centos
-  default_uefi_vendor: centos
-  default_kernel_package: kernel-automotive
-  default_load_modules: []
-  default_bootfstype: "ext4"
-  default_initoverlayfs_builder: "dracut -M -o \"initoverlayfs fcoe\""
-  default_initrd_builder: "dracut -M -o \"initoverlayfs fcoe\""
-  default_erofs_compression: ""
-  default_bootfs_hint: ""
-  default_kernel_version: ""
-  default_release_name: ""
-  default_release_package: centos-release-automotive
-  default_linux_firmware_rpm: linux-firmware-automotive
-  default_partition_label: gpt
-  default_extra_rpms: []
-  default_extra_build_rpms: []
-  default_extra_build_repos: []
-  default_extra_image_rpms: []
-  default_extra_image_copy: []
-  default_extra_kernel_opts: []
-  default_extra_repos: []
-  default_qm_extra_repos: []
-  default_qm_extra_rpms: []
-  default_qm_memory_max: infinity
-  default_qm_memory_high: infinity
-  default_target_repos: []
-  default_target_build_repos: []
-  default_root_password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.
-  default_guest_password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.
-  default_guest_uid: 2000
-  default_guest_gid: 2000
-  default_root_ssh_key: ""
-  default_ssh_permit_root_login: false
-  default_ssh_permit_password_auth: false
-  default_image_size: '8589934592'
-  default_sblpart_size: 8192 # 4M
-  default_efipart_size: 204800
-  default_bootpart_size: 614400
-  default_abootpart_size: 131072 # 64M
-  default_vbmetapart_size: 128 # 64K
-  default_aboot_compress_kernel: null
-  default_varpart_relative_size: 0.3 # 30% of image size
-  default_active_gpt_attrs: # Default active setup for Qualcomm
+  exports: []
+  osname: centos
+  uefi_vendor: centos
+  kernel_package: kernel-automotive
+  load_modules: []
+  bootfstype: "ext4"
+  initoverlayfs_builder: "dracut -M -o \"initoverlayfs fcoe\""
+  initrd_builder: "dracut -M -o \"initoverlayfs fcoe\""
+  erofs_compression: ""
+  bootfs_hint: ""
+  kernel_version: ""
+  release_name: ""
+  release_rpm: centos-release-automotive
+  linux_firmware_rpm: linux-firmware-automotive
+  partition_label: gpt
+  extra_rpms: []
+  extra_build_rpms: []
+  extra_build_repos: []
+  extra_image_rpms: []
+  extra_image_copy: []
+  extra_kernel_opts: []
+  extra_repos: []
+  qm_extra_repos: []
+  qm_extra_rpms: []
+  qm_memory_max: infinity
+  qm_memory_high: infinity
+  target_repos: []
+  target_build_repos: []
+  root_password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.
+  guest_password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.
+  guest_uid: 2000
+  guest_gid: 2000
+  root_ssh_key: ""
+  ssh_permit_root_login: false
+  ssh_permit_password_auth: false
+  image_size: '8589934592'
+  sblpart_size: 8192 # 4M
+  efipart_size: 204800
+  bootpart_size: 614400
+  abootpart_size: 131072 # 64M
+  vbmetapart_size: 128 # 64K
+  aboot_compress_kernel: null
+  varpart_relative_size: 0.3 # /var size as relative of image size (unless varpart_size is set)
+  active_gpt_attrs: # Default active setup for Qualcomm
     - 48
     - 49 # priority 0x3
     - 50 # active
     - 51
     - 52
     - 53 # remaining tries 0x7
-  default_inactive_gpt_attrs:  # Default inactive for Qualcomm
+  inactive_gpt_attrs:  # Default inactive for Qualcomm
     - 48 # priority 0x1
     - 50 # active
     - 51
     - 52
     - 53 # remaining tries 0x7
-  default_extra_parts: []
-  default_kernel_loglevel: 4
-  default_timezone: UTC
-  default_locale: en_US.UTF-8
-  default_hostname: localhost
-  default_use_grub2: true
-  default_use_abl: false
-  default_use_qm: false
-  default_qm_pipeline: qm_rootfs
-  default_use_bluechi_agent: false
-  default_use_bluechi_controller: false
-  default_use_aboot: false
-  default_use_abootpart: false
-  default_use_tuned_realtime: false
-  default_tuned_realtime_isolcpus: "2-N"
-  default_use_vbmetapart: false
-  default_use_sblpart: false
-  default_use_efipart: true
-  default_use_initoverlayfs: false
-  default_use_bootpart: true
-  default_use_testpart: false
-  default_use_ostree: false
-  default_is_autoinit_supported: true
-  default_use_autoinit: false
-  default_use_autoinit_root: false
-  default_autoinit_root: /dev/vda3
-  default_use_separate_var: false
-  default_aboot_partlabel: system_a
-  default_vbmeta_partlabel: vbmeta_a
-  default_image_uuid:
+  extra_parts: []
+  kernel_loglevel: 4
+  timezone: UTC
+  locale: en_US.UTF-8
+  hostname: localhost
+  use_grub2: true
+  use_abl: false
+  use_qm: false
+  qm_pipeline: qm_rootfs
+  use_bluechi_agent: false
+  use_bluechi_controller: false
+  use_aboot: false
+  use_abootpart: false
+  use_tuned_realtime: false
+  tuned_realtime_isolcpus: "2-N"
+  use_vbmetapart: false
+  use_sblpart: false
+  use_efipart: true
+  use_initoverlayfs: false
+  use_bootpart: true
+  use_testpart: false
+  use_ostree: false
+  is_autoinit_supported: true
+  use_autoinit: false
+  use_autoinit_root: false
+  autoinit_root: /dev/vda3
+  use_separate_var: false
+  aboot_partlabel: system_a
+  vbmeta_partlabel: vbmeta_a
+  image_uuid:
     mpp-eval: (str(__import__('uuid').uuid4()))
-  default_use_composefs: true
-  default_use_composefs_signed: true
-  default_use_transient_etc: true
-  default_coredump_storage: none
-  default_journal_storage: persistent
-  default_systemd_timeout: 30s
-  default_use_static_ip: false
-  default_static_ip: "10.0.2.15"
-  default_static_ip_prefixlen: "24"
-  default_static_gw: "10.0.2.2"
-  default_static_dns: "10.0.2.3"
-  default_static_ip_iface: eth0
-  default_static_ip_module: "virtio_net"
-  default_static_ip_uuid: 6fb8f75a-7fde-4906-a51e-a70e56c58742
-  static_uuids:
-    mpp-eval: locals().get('static_uuids', True)
-  default_rootfs_uuid:
-    mpp-eval: ('76a22bf4-f153-4541-b6c7-0332c0dfaeac' if static_uuids else str(__import__('uuid').uuid4()))
-  default_bootfs_uuid:
-    mpp-eval: ('156f0420-627b-4151-ae6f-fda298097515' if static_uuids else str(__import__('uuid').uuid4()))
-  default_parttab_uuid:
-    mpp-eval: ('d209c89e-ea5e-4fbd-b161-b461cce297e0' if static_uuids else str(__import__('uuid').uuid4()))
-  default_efipart_uuid:
-    mpp-eval: ('68b2905b-df3e-4fb3-80fa-49d1e773aa33' if static_uuids else str(__import__('uuid').uuid4()))
-  default_bootpart_uuid:
-    mpp-eval: ('61b2905b-df3e-4fb3-80fa-49d1e773aa32' if static_uuids else str(__import__('uuid').uuid4()))
-  default_varpart_uuid:
-    mpp-eval: ('10475e3e-9356-11ee-b5b9-305a3ae2477d' if static_uuids else str(__import__('uuid').uuid4()))
-  default_abootpart_uuid_a:
-    mpp-eval: ('1dd3a986-997c-0c48-1d1b-b0d0399f3153' if static_uuids else str(__import__('uuid').uuid4()))
-  default_abootpart_uuid_b:
-    mpp-eval: ('45105095-3847-4657-51f2-2a0144550453' if static_uuids else str(__import__('uuid').uuid4()))
-  default_vbmetapart_uuid_a:
-    mpp-eval: ('da91d469-09b3-ce43-795e-3b86f3735143' if static_uuids else str(__import__('uuid').uuid4()))
-  default_vbmetapart_uuid_b:
-    mpp-eval: ('305087ff-bf9a-910d-f3c4-606a8de7788a' if static_uuids else str(__import__('uuid').uuid4()))
-  default_rootpart_uuid:
-    mpp-eval: ('6264d520-3fb9-423f-8ab8-7a0a8e3d3562' if static_uuids else str(__import__('uuid').uuid4()))
-  default_luks_uuid:
-    mpp-eval: ('aedd1eef-f24e-425e-a9f3-bb5a1c996a95' if static_uuids else str(__import__('uuid').uuid4()))
-  default_use_luks: false
-  use_luks:
-    mpp-eval: locals().get('use_luks', default_use_luks)
-  default_use_compliance_mode: false
-  use_compliance_mode:
-    mpp-eval: locals().get('use_compliance_mode', default_use_compliance_mode)
-  default_use_debug: false
-  use_debug:
-    mpp-eval: locals().get('use_debug', default_use_debug)
-  default_use_module_sig_enforce: true
-  use_module_sig_enforce:
-    mpp-eval: locals().get('use_module_sig_enforce', default_use_module_sig_enforce)
-  default_sign_kernel_modules: false
-  default_luks_use_integrity: false
-  default_luks_auto_unlock: false
-  luks_auto_unlock:
-    mpp-eval: locals().get('luks_auto_unlock', default_luks_auto_unlock)
-  default_use_efi_runtime: true
-  default_consoles:
+  use_composefs: true
+  use_composefs_signed: true
+  use_transient_etc: true
+  use_ocibased: false
+  coredump_storage: none
+  journal_storage: persistent
+  systemd_timeout: 30s
+  use_static_ip: false
+  static_ip: "10.0.2.15"
+  static_ip_prefixlen: "24"
+  static_gw: "10.0.2.2"
+  static_dns: "10.0.2.3"
+  static_ip_iface: eth0
+  static_ip_module: "virtio_net"
+  static_ip_uuid: 6fb8f75a-7fde-4906-a51e-a70e56c58742
+  static_uuids: true
+  rootfs_uuid: 76a22bf4-f153-4541-b6c7-0332c0dfaeac
+  bootfs_uuid: 156f0420-627b-4151-ae6f-fda298097515
+  parttab_uuid: d209c89e-ea5e-4fbd-b161-b461cce297e0
+  efipart_uuid: 68b2905b-df3e-4fb3-80fa-49d1e773aa33
+  bootpart_uuid: 61b2905b-df3e-4fb3-80fa-49d1e773aa32
+  varpart_uuid: 10475e3e-9356-11ee-b5b9-305a3ae2477d
+  abootpart_uuid_a: 1dd3a986-997c-0c48-1d1b-b0d0399f3153
+  abootpart_uuid_b: 45105095-3847-4657-51f2-2a0144550453
+  vbmetapart_uuid_a: da91d469-09b3-ce43-795e-3b86f3735143
+  vbmetapart_uuid_b: 305087ff-bf9a-910d-f3c4-606a8de7788a
+  rootpart_uuid: 6264d520-3fb9-423f-8ab8-7a0a8e3d3562
+  luks_uuid: aedd1eef-f24e-425e-a9f3-bb5a1c996a95
+  use_luks: false
+  use_compliance_mode: false
+  use_debug: false
+  use_module_sig_enforce: true
+  luks_use_integrity: false
+  luks_auto_unlock: false
+  use_efi_runtime: true
+  consoles:
     mpp-if: arch == 'aarch64'
     then: ttyAMA0
     else: ttyS0
-  default_kernel_opts: []
-  default_dracut_modules: []
-  default_dracut_add_modules:
+  kernel_opts: []
+  dracut_modules: []
+  dracut_add_modules:
     - base
     - dracut-systemd
     - fs-lib
@@ -173,7 +150,7 @@ mpp-vars:
     - terminfo
     - udev-rules
     - usrmount
-  default_dracut_omit_modules:
+  dracut_omit_modules:
     - bash
     - i18n
     - lunmask
@@ -185,37 +162,37 @@ mpp-vars:
     - resume
     - terminfo
     - virtiofs
-  default_dracut_filesystems:
+  dracut_filesystems:
     - ext4
-  default_dracut_compression: "lz4"
+  dracut_compression: "lz4"
   # If set, this replaces the default driver set, we use it for targets to set the hw-specific drivers
-  default_dracut_drivers: []
+  dracut_drivers: []
   # Added on top of default or dracut_drivers, used for non-we specific drivers
-  default_dracut_add_drivers: []
+  dracut_add_drivers: []
   # Filter out these drivers from any of the above
-  default_dracut_omit_drivers: []
+  dracut_omit_drivers: []
   # Force load drivers
-  default_dracut_force_drivers: []
-  default_dracut_install: []
-  default_ostree_repo_url: http://10.0.2.100/
-  default_ostree_remote_name: auto-sig
-  default_luks_passphrase: password
-  default_container_cmd:
+  dracut_force_drivers: []
+  dracut_install: []
+  ostree_repo_url: http://10.0.2.100/
+  ostree_remote_name: auto-sig
+  luks_passphrase: password
+  container_cmd:
     - "/usr/bin/bash"
-  default_container_entrypoint: []
-  default_use_containers_extra_store: false
-  default_use_qm_containers_extra_store: false
-  default_containers_extra_store: /usr/share/containers/storage
-  default_qm_containers_extra_store: /usr/share/containers/storage
-  default_containers_transient_store: true
-  default_containers_read_only: true
-  default_tmp_is_tmpfs: true
-  default_image_extra_stages: []
-  default_image_enabled_services: []
-  default_image_masked_services:
+  container_entrypoint: []
+  use_containers_extra_store: false
+  use_qm_containers_extra_store: false
+  containers_extra_store: /usr/share/containers/storage
+  qm_containers_extra_store: /usr/share/containers/storage
+  containers_transient_store: true
+  containers_read_only: true
+  tmp_is_tmpfs: true
+  image_extra_stages: []
+  image_enabled_services: []
+  image_masked_services:
     - systemd-hwdb-update.service
     - ldconfig.service
-  default_image_masked_generators:
+  image_masked_generators:
     # legacy scripts not supported
     - systemd-rc-local-generator
     - systemd-sysv-generator
@@ -239,321 +216,28 @@ mpp-vars:
     - systemd-fstab-generator
     # We're re-doing ostree generators statically
     - ostree-system-generator
-  default_image_disabled_services:
+  image_disabled_services:
     # Not using remote filesystems
     - remote-fs.target
     # Not using systemd-boot
     - systemd-boot-update.service
-  default_bluechi_nodename: "host"
-  default_bluechi_controller_host_ip: "127.0.0.1"
-  default_bluechi_controller_allowed_node_names: []
-  default_qm_container_subuid: 1000000000:1500000000
-  default_qm_container_subgid: 1000000000:1500000000
-  default_container_subuid: 2500000000:1500000000
-  default_container_subgid: 2500000000:1500000000
-  default_extra_subuid: ""
-  default_extra_subgid: ""
-  default_efipart_dos_type: 'ef'
-  efipart_dos_type:
-    mpp-eval: locals().get('efipart_dos_type', default_efipart_dos_type)
-  default_efipart_bootable: false
-  efipart_bootable:
-    mpp-eval: locals().get('efipart_bootable', default_efipart_bootable)
-  default_distro_gpg_keys: ""
-  distro_gpg_keys:
-    mpp-eval: locals().get('distro_gpg_keys', default_distro_gpg_keys)
+  bluechi_nodename: "host"
+  bluechi_controller_host_ip: "127.0.0.1"
+  bluechi_controller_allowed_node_names: []
+  qm_container_subuid: 1000000000:1500000000
+  qm_container_subgid: 1000000000:1500000000
+  container_subuid: 2500000000:1500000000
+  container_subgid: 2500000000:1500000000
+  extra_subuid: ""
+  extra_subgid: ""
+  efipart_dos_type: 'ef'
+  efipart_bootable: false
+  distro_gpg_keys: ""
   timestamp:
     mpp-eval: (__import__('datetime').datetime.now().timestamp())
   build_timestamp:
     mpp-eval: (str(__import__('datetime').datetime.fromtimestamp(timestamp)))
-  exports:
-    mpp-eval: locals().get('exports', default_exports)
-  kernel_package:
-    mpp-eval: locals().get('kernel_package', default_kernel_package)
-  kernel_version:
-    mpp-eval: locals().get('kernel_version', default_kernel_version)
-  load_modules:
-    mpp-eval: locals().get('load_modules', default_load_modules)
-  linux_firmware_rpm:
-    mpp-eval: locals().get('linux_firmware_rpm', default_linux_firmware_rpm)
-  release_name:
-    mpp-eval: locals().get('release_name', default_release_name)
-  release_rpm:
-    mpp-eval: locals().get('release_rpm', default_release_package)
-  ostree_ref:
-    mpp-eval: locals().get('ostree_ref', default_ostree_ref)
-  ostree_os_version:
-    mpp-eval: locals().get('ostree_os_version', default_ostree_os_version)
-  osname:
-    mpp-eval: locals().get('osname', default_osname)
-  uefi_vendor:
-    mpp-eval: locals().get('uefi_vendor', default_uefi_vendor)
-  partition_label:
-    mpp-eval: locals().get('partition_label', default_partition_label)
-  extra_rpms:
-    mpp-eval: locals().get('extra_rpms', default_extra_rpms)
-  extra_image_rpms:
-    mpp-eval: locals().get('extra_image_rpms', default_extra_image_rpms)
-  extra_image_copy:
-    mpp-eval: locals().get('extra_image_copy', default_extra_image_copy)
-  extra_build_rpms:
-    mpp-eval: locals().get('extra_build_rpms', default_extra_build_rpms)
-  extra_build_repos:
-    mpp-eval: locals().get('extra_build_repos', default_extra_build_repos)
-  extra_kernel_opts:
-    mpp-eval: locals().get('extra_kernel_opts', default_extra_kernel_opts)
-  extra_repos:
-    mpp-eval: locals().get('extra_repos', default_extra_repos)
-  qm_extra_repos:
-    mpp-eval: locals().get('qm_extra_repos', default_qm_extra_repos)
-  qm_extra_rpms:
-    mpp-eval: locals().get('qm_extra_rpms', default_qm_extra_rpms)
-  qm_memory_max:
-    mpp-eval: locals().get('qm_memory_max', default_qm_memory_max)
-  qm_memory_high:
-    mpp-eval: locals().get('qm_memory_high', default_qm_memory_high)
-  target_repos:
-    mpp-eval: locals().get('target_repos', default_target_repos)
-  target_build_repos:
-    mpp-eval: locals().get('target_build_repos', default_target_build_repos)
-  image_size:
-    mpp-eval: locals().get('image_size', default_image_size)
-  aboot_partlabel:
-    mpp-eval: locals().get('aboot_partlabel', default_aboot_partlabel)
-  aboot_compress_kernel:
-    mpp-eval: locals().get('aboot_compress_kernel', default_aboot_compress_kernel)
-  varpart_relative_size:
-    mpp-eval: locals().get('varpart_relative_size', default_varpart_relative_size)
-  varpart_size:
-    mpp-eval: locals().get('varpart_size', int(int(image_size) * varpart_relative_size / 512))
-  rootfs_uuid:
-    mpp-eval: locals().get('rootfs_uuid', default_rootfs_uuid)
-  bootfs_uuid:
-    mpp-eval: locals().get('bootfs_uuid', default_bootfs_uuid)
-  parttab_uuid:
-    mpp-eval: locals().get('parttab_uuid', default_parttab_uuid)
-  bootfstype:
-    mpp-eval: locals().get('bootfstype', default_bootfstype)
-  initrd_builder:
-    mpp-eval: locals().get('initrd_builder', default_initrd_builder)
-  initoverlayfs_builder:
-    mpp-eval: locals().get('initoverlayfs_builder', default_initoverlayfs_builder)
-  bootfs_hint:
-    mpp-eval: locals().get('bootfs_hint', default_bootfs_hint)
-  erofs_compression:
-    mpp-eval: locals().get('erofs_compression', default_erofs_compression)
-  rootpart_uuid:
-    mpp-eval: locals().get('rootpart_uuid', default_rootpart_uuid)
-  bootpart_uuid:
-    mpp-eval: locals().get('bootpart_uuid', default_bootpart_uuid)
-  abootpart_uuid_a:
-    mpp-eval: locals().get('abootpart_a_uuid', default_abootpart_uuid_a)
-  abootpart_uuid_b:
-    mpp-eval: locals().get('abootpart_b_uuid', default_abootpart_uuid_b)
-  vbmetapart_uuid_a:
-    mpp-eval: locals().get('abootpart_a_uuid', default_vbmetapart_uuid_a)
-  vbmetapart_uuid_b:
-    mpp-eval: locals().get('abootpart_b_uuid', default_vbmetapart_uuid_b)
-  efipart_uuid:
-    mpp-eval: locals().get('efipart_uuid', default_efipart_uuid)
-  varpart_uuid:
-    mpp-eval: locals().get('varpart_uuid', default_varpart_uuid)
-  luks_uuid:
-    mpp-eval: locals().get('luks_uuid', default_luks_uuid)
-  kernel_opts:
-    mpp-eval: locals().get('kernel_opts', default_kernel_opts)
-  sblpart_size:
-    mpp-eval: locals().get('sblpart_size', default_sblpart_size)
-  efipart_size:
-    mpp-eval: locals().get('efipart_size', default_efipart_size)
-  bootpart_size:
-    mpp-eval: locals().get('bootpart_size', default_bootpart_size)
-  abootpart_size:
-    mpp-eval: locals().get('abootpart_size', default_abootpart_size)
-  vbmetapart_size:
-    mpp-eval: locals().get('vbmetapart_size', default_vbmetapart_size)
-  active_gpt_attrs:
-    mpp-eval: locals().get('active_gpt_attrs', default_active_gpt_attrs)
-  inactive_gpt_attrs:
-    mpp-eval: locals().get('inactive_gpt_attrs', default_inactive_gpt_attrs)
-  extra_parts:
-    mpp-eval: locals().get('extra_parts', default_extra_parts)
-  dracut_modules:
-    mpp-eval: locals().get('dracut_modules', default_dracut_modules)
-  dracut_add_modules:
-    mpp-eval: locals().get('dracut_add_modules', default_dracut_add_modules)
-  dracut_omit_modules:
-    mpp-eval: locals().get('dracut_omit_modules', default_dracut_omit_modules)
-  dracut_filesystems:
-    mpp-eval: locals().get('dracut_filesystems', default_dracut_filesystems)
-  dracut_compression:
-    mpp-eval: locals().get('dracut_compression', default_dracut_compression)
-  dracut_drivers:
-    mpp-eval: locals().get('dracut_drivers', default_dracut_drivers)
-  dracut_add_drivers:
-    mpp-eval: locals().get('dracut_add_drivers', default_dracut_add_drivers)
-  dracut_omit_drivers:
-    mpp-eval: locals().get('dracut_omit_drivers', default_dracut_omit_drivers)
-  dracut_force_drivers:
-    mpp-eval: locals().get('dracut_force_drivers', default_dracut_force_drivers)
-  dracut_install:
-    mpp-eval: locals().get('dracut_install', default_dracut_install)
-  root_password:
-    mpp-eval: locals().get('root_password', default_root_password)
-  root_ssh_key:
-    mpp-eval: locals().get('root_ssh_key', default_root_ssh_key)
-  ssh_permit_root_login:
-    mpp-eval: locals().get('ssh_permit_root_login', default_ssh_permit_root_login)
-  ssh_permit_password_auth:
-    mpp-eval: locals().get('ssh_permit_password_auth', default_ssh_permit_password_auth)
-  guest_password:
-    mpp-eval: locals().get('guest_password', default_guest_password)
-  guest_gid:
-    mpp-eval: locals().get('guest_gid', default_guest_gid)
-  guest_uid:
-    mpp-eval: locals().get('guest_uid', default_guest_uid)
-  ostree_repo_url:
-    mpp-eval: locals().get('ostree_repo_url', default_ostree_repo_url)
-  ostree_remote_name:
-    mpp-eval: locals().get('ostree_remote_name', default_ostree_remote_name)
-  luks_passphrase:
-    mpp-eval: locals().get('luks_passphrase', default_luks_passphrase)
-  luks_use_integrity:
-    mpp-eval: locals().get('luks_use_integrity', default_luks_use_integrity)
-  use_efi_runtime:
-    mpp-eval: locals().get('use_efi_runtime', default_use_efi_runtime)
-  consoles:
-    mpp-eval: locals().get('consoles', default_consoles)
-  kernel_loglevel:
-    mpp-eval: locals().get('kernel_loglevel', default_kernel_loglevel)
-  locale:
-    mpp-eval: locals().get('locale', default_locale)
-  hostname:
-    mpp-eval: locals().get('hostname', default_hostname)
-  use_grub2:
-    mpp-eval: locals().get('use_grub2', default_use_grub2)
-  timezone:
-    mpp-eval: locals().get('timezone', default_timezone)
-  use_abl:
-    mpp-eval: locals().get('use_abl', default_use_abl)
-  use_qm:
-    mpp-eval: locals().get('use_qm', default_use_qm)
-  qm_pipeline:
-    mpp-eval: locals().get('qm_pipeline', default_qm_pipeline)
-  use_bluechi_agent:
-    mpp-eval: locals().get('use_bluechi_agent', default_use_bluechi_agent)
-  use_bluechi_controller:
-    mpp-eval: locals().get('use_bluechi_controller', default_use_bluechi_controller)
-  use_aboot:
-    mpp-eval: locals().get('use_aboot', default_use_aboot)
-  use_abootpart:
-    mpp-eval: locals().get('use_abootpart', default_use_abootpart)
-  use_tuned_realtime:
-    mpp-eval: locals().get('use_tuned_realtime', default_use_tuned_realtime)
-  tuned_realtime_isolcpus:
-    mpp-eval: locals().get('tuned_realtime_isolcpus', default_tuned_realtime_isolcpus)
-  use_vbmetapart:
-    mpp-eval: locals().get('use_vbmetapart', default_use_vbmetapart)
-  use_sblpart:
-    mpp-eval: locals().get('use_sblpart', default_use_sblpart)
-  use_efipart:
-    mpp-eval: locals().get('use_efipart', default_use_efipart)
-  use_initoverlayfs:
-    mpp-eval: locals().get('use_initoverlayfs', default_use_initoverlayfs)
-  use_bootpart:
-    mpp-eval: locals().get('use_bootpart', default_use_bootpart)
-  use_testpart:
-    mpp-eval: locals().get('use_testpart', default_use_testpart)
-  use_separate_var:
-    mpp-eval: locals().get('use_separate_var', default_use_separate_var)
-  use_ostree:
-    mpp-eval: locals().get('use_ostree', default_use_ostree)
-  is_autoinit_supported:
-    mpp-eval: locals().get('is_autoinit_supported', default_is_autoinit_supported)
-  use_autoinit:
-    mpp-eval: locals().get('use_autoinit', default_use_autoinit)
-  use_autoinit_root:
-    mpp-eval: locals().get('use_autoinit_root', default_use_autoinit_root)
-  autoinit_root:
-    mpp-eval: locals().get('autoinit_root', default_autoinit_root)
-  image_uuid:
-    mpp-eval: locals().get('image_uuid', default_image_uuid)
-  use_composefs:
-    mpp-eval: locals().get('use_composefs', default_use_composefs)
-  use_composefs_signed:
-    mpp-eval: locals().get('use_composefs_signed', default_use_composefs_signed)
-  use_ocibased:
-    mpp-eval: locals().get('use_ocibased', False)
-  use_transient_etc:
-    mpp-eval: locals().get('use_transient_etc', default_use_transient_etc)
-  journal_storage:
-    mpp-eval: locals().get('journal_storage', default_journal_storage)
-  coredump_storage:
-    mpp-eval: locals().get('coredump_storage', default_coredump_storage)
-  systemd_timeout:
-    mpp-eval: locals().get('systemd_timeout', default_systemd_timeout)
-  use_static_ip:
-    mpp-eval: locals().get('use_static_ip', default_use_static_ip)
-  static_ip:
-    mpp-eval: locals().get('static_ip', default_static_ip)
-  static_ip_prefixlen:
-    mpp-eval: locals().get('static_ip_prefixlen', default_static_ip_prefixlen)
-  static_ip_module:
-    mpp-eval: locals().get('static_ip_module', default_static_ip_module)
-  static_ip_iface:
-    mpp-eval: locals().get('static_ip_iface', default_static_ip_iface)
-  static_gw:
-    mpp-eval: locals().get('static_gw', default_static_gw)
-  static_dns:
-    mpp-eval: locals().get('static_dns', default_static_dns)
-  static_ip_uuid:
-    mpp-eval: locals().get('static_ip_uuid', default_static_ip_uuid)
-  container_entrypoint:
-    mpp-eval: locals().get('container_entrypoint', default_container_entrypoint)
-  container_cmd:
-    mpp-eval: locals().get('container_cmd', default_container_cmd)
-  use_containers_extra_store:
-    mpp-eval: locals().get('use_containers_extra_store', default_use_containers_extra_store)
-  use_qm_containers_extra_store:
-    mpp-eval: locals().get('use_qm_containers_extra_store', default_use_qm_containers_extra_store)
-  containers_extra_store:
-    mpp-eval: locals().get('containers_extra_store', default_containers_extra_store)
-  qm_containers_extra_store:
-    mpp-eval: locals().get('qm_containers_extra_store', default_qm_containers_extra_store)
-  containers_transient_store:
-    mpp-eval: locals().get('containers_transient_store', default_containers_transient_store)
-  containers_read_only:
-    mpp-eval: locals().get('containers_read_only', default_containers_read_only)
-  tmp_is_tmpfs:
-    mpp-eval: locals().get('tmp_is_tmpfs', default_tmp_is_tmpfs)
-  image_extra_stages:
-    mpp-eval: locals().get('image_extra_stages',  default_image_extra_stages)
-  image_enabled_services:
-    mpp-eval: locals().get('image_enabled_services',  default_image_enabled_services)
-  image_masked_services:
-    mpp-eval: locals().get('image_masked_services',  default_image_masked_services)
-  image_masked_generators:
-    mpp-eval: locals().get('image_masked_generators',  default_image_masked_generators)
-  image_disabled_services:
-    mpp-eval: locals().get('image_disabled_services',  default_image_disabled_services)
-  bluechi_nodename:
-    mpp-eval: locals().get('bluechi_nodename',  default_bluechi_nodename)
-  bluechi_controller_host_ip:
-    mpp-eval: locals().get('bluechi_controller_host_ip',  default_bluechi_controller_host_ip)
-  bluechi_controller_allowed_node_names:
-    mpp-eval: locals().get('bluechi_controller_allowed_node_names',  default_bluechi_controller_allowed_node_names)
-  qm_container_subuid:
-    mpp-eval: locals().get('qm_container_subuid',  default_qm_container_subuid)
-  qm_container_subgid:
-    mpp-eval: locals().get('qm_container_subgid',  default_qm_container_subgid)
-  container_subuid:
-    mpp-eval: locals().get('container_subuid',  default_container_subuid)
-  container_subgid:
-    mpp-eval: locals().get('container_subgid',  default_container_subgid)
-  extra_subuid:
-    mpp-eval: locals().get('extra_subuid',  default_extra_subuid)
-  extra_subgid:
-    mpp-eval: locals().get('extra_subgid',  default_extra_subgid)
+
   build_rpms:
     - dnf
     - dosfstools
@@ -587,4 +271,3 @@ mpp-vars:
     - rootfiles
     - selinux-policy-targeted
     - systemd-udev
-    - mpp-eval: release_rpm

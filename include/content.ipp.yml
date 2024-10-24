@@ -1,0 +1,430 @@
+version: '2'
+
+mpp-vars:
+  boot_mount:
+    mpp-format-string: |
+      [Unit]
+      Before=local-fs.target
+      After=blockdev@dev-disk-by\\x2duuid-{bootfs_uuid.replace("-", _dash_escape)}.target
+
+      [Mount]
+      What=/dev/disk/by-uuid/$bootfs_uuid
+      Where=/boot
+      Type=ext4
+
+      [Install]
+      RequiredBy=local-fs.target
+  boot_efi_mount:
+    mpp-format-string: |
+      [Unit]
+      Before=local-fs.target
+      After=blockdev@dev-disk-by\\x2dlabel-ESP.target
+
+      [Mount]
+      What=/dev/disk/by-label/ESP
+      Where=/boot/efi
+      Type=vfat
+
+      [Install]
+      RequiredBy=local-fs.target
+  var_mount:
+    mpp-format-string: |
+      [Unit]
+      Before=local-fs.target
+      After=blockdev@dev-disk-by\\x2duuid-{varpart_uuid.replace("-", _dash_escape)}.target
+
+      [Mount]
+      What=/dev/disk/by-uuid/$varpart_uuid
+      Where=/var
+      Type=ext4
+
+      [Install]
+      RequiredBy=local-fs.target
+  containers_conf:
+    mpp-format-string: |
+      [containers]
+      { "read_only = true" if containers_read_only else "" }
+
+      default_capabilities = [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "FSETID",
+        "KILL",
+        "NET_BIND_SERVICE",
+        "SETFCAP",
+        "SETGID",
+        "SETPCAP",
+        "SETUID",
+        "SYS_CHROOT"
+      ]
+
+      # A list of sysctls to be set in containers by default,
+      # specified as "name=value",
+      # for example:"net.ipv4.ping_group_range=0 0".
+      #
+      default_sysctls = [
+        "net.ipv4.ping_group_range=0 0",
+      ]
+
+      # keyring tells the container engine whether to create
+      # a kernel keyring for use within the container.
+      #
+      keyring = false
+  ostree_prepare_root_conf:
+    mpp-format-string: |
+      [sysroot]
+      readonly=true
+      [etc]
+      { "transient=true" if use_transient_etc else "" }
+      [composefs]
+      enabled={"maybe" if not use_composefs else "signed" if use_composefs_signed else "yes" }
+  build_info:
+    mpp-format-string: |
+      RELEASE="{release_name}"
+      UUID="{image_uuid}"
+      TIMESTAMP="{build_timestamp}"
+      IMAGE_NAME="{name}"
+      IMAGE_MODE="{image_mode}"
+      IMAGE_TARGET="{target}"
+  bluechi_agent_conf:
+    mpp-format-string: |
+      [bluechi-agent]
+      NodeName={ bluechi_nodename }
+      ControllerHost= { bluechi_controller_host_ip }
+  qm_bluechi_agent_conf:
+    mpp-format-string: |
+      [bluechi-agent]
+      NodeName=qm.{ bluechi_nodename }
+      ControllerHost= { bluechi_controller_host_ip }
+  bluechi_conf:
+    mpp-format-string: |
+      [bluechi-controller]
+      AllowedNodeNames={ ','.join(bluechi_controller_allowed_node_names) }
+  qm_subuid_content:
+    mpp-format-string: |
+      containers:{ qm_container_subuid }
+  qm_subgid_content:
+    mpp-format-string: |
+      containers:{ qm_container_subgid }
+  qm_autosd_conf:
+    mpp-format-string: |
+       [Service]
+       MemoryMax={ qm_memory_max }
+       MemoryHigh={ qm_memory_high }
+  subuid_content_qm:
+    mpp-if: use_qm
+    then:
+      mpp-format-string: |-
+        qmcontainers:{qm_container_subuid}
+        containers:{container_subuid}
+    else: ""
+  subgid_content_qm:
+    mpp-if: use_qm
+    then:
+      mpp-format-string: |-
+        qmcontainers:{qm_container_subgid}
+        containers:{container_subgid}
+    else: ""
+  subuid_content: |-
+    $subuid_content_qm
+    $extra_subuid
+  subgid_content: |-
+    $subgid_content_qm
+    $extra_subgid
+  systemd_system_conf:
+    mpp-format-string: |
+      [Manager]
+      DefaultTimeoutStartSec={systemd_timeout}
+      DefaultTimeoutStopSec={systemd_timeout}
+      DefaultTimeoutAbortSec={systemd_timeout}
+      DefaultRestartSec={systemd_timeout}
+      DefaultDeviceTimeoutSec={systemd_timeout}
+  coredump_conf:
+    mpp-format-string: |
+      [Coredump]
+      Storage={coredump_storage}
+  main_nmstate:
+    mpp-format-string: |
+      ---
+      interfaces:
+        - name: {static_ip_iface}
+          type: ethernet
+          state: up
+          ipv4:
+            enabled: true
+            dhcp: false
+            address:
+              - ip: {static_ip}
+                prefix-length: {static_ip_prefixlen}
+          ipv6:
+            enabled: false
+      routes:
+        config:
+          - destination: 0.0.0.0/0
+            next-hop-interface: {static_ip_iface}
+            next-hop-address: {static_gw}
+      dns-resolver:
+        config:
+          server:
+            - {static_dns}
+  main_nmstate_service:
+    mpp-format-string: |
+      [Unit]
+      After=systemd-modules-load.service
+      Before=systemd-udevd.service
+      DefaultDependencies=no
+
+      [Service]
+      Type=oneshot
+      ExecStart=/usr/bin/nmstatectl apply --kernel --no-verify /etc/main.nmstate
+      RemainAfterExit=yes
+
+      [Install]
+      WantedBy=default.target
+
+pipelines:
+  # Some variables need to be written to files, do that here
+  - name: kernel-keys
+    build: name:build
+    stages:
+      - mpp-if: sign_kernel_modules
+        then:
+          type: org.osbuild-auto.kernel.genkey
+          options:
+            key: /kernel.key
+            x509: /kernel.x509
+
+  - name: extra-tree-content
+    build: name:build
+    stages:
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: boot.mount
+              text: $boot_mount
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['boot.mount']}
+              to: tree:///boot.mount
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: boot-efi.mount
+              text: $boot_efi_mount
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['boot-efi.mount']}
+              to: tree:///boot-efi.mount
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: var.mount
+              text: $var_mount
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['var.mount']}
+              to: tree:///var.mount
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: auto-modules.conf
+              text: $auto_modules_conf
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['auto-modules.conf']}
+              to: tree:///auto-modules.conf
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: luks-key
+              text: $luks_passphrase
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['luks-key']}
+              to: tree:///luks-key
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: systemd_system.conf
+              text: $systemd_system_conf
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['systemd_system.conf']}
+              to: tree:///systemd-system.conf
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: coredump.conf
+              text: $coredump_conf
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['coredump.conf']}
+              to: tree:///coredump.conf
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: containers.conf
+              text: $containers_conf
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['containers.conf']}
+              to: tree:///containers.conf
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: ostree_prepare_root.conf
+              text: $ostree_prepare_root_conf
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['ostree_prepare_root.conf']}
+              to: tree:///ostree_prepare_root.conf
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: main.nmstate
+              text: $main_nmstate
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['main.nmstate']}
+              to: tree:///main.nmstate
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: main-nmstate.service
+              text: $main_nmstate_service
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['main-nmstate.service']}
+              to: tree:///main-nmstate.service
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: build-info
+              text: $build_info
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['build-info']}
+              to: tree:///build-info
+
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile1:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: rcu-normal.service
+              path: $_basedir/files/rcu-normal.service
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile1/{embedded['rcu-normal.service']}
+              to: tree:///rcu-normal.service
+
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: subuid
+              text: $subuid_content
+          inlinefile2:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: subgid
+              text: $subgid_content
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['subuid']}
+              to: tree:///subuid
+            - from:
+                mpp-format-string: input://inlinefile2/{embedded['subgid']}
+              to: tree:///subgid
+
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: bluechi_agent_conf
+              text: $bluechi_agent_conf
+          inlinefile2:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: bluechi_conf
+              text: $bluechi_conf
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['bluechi_agent_conf']}
+              to: tree:///bluechi_agent.conf
+            - from:
+                mpp-format-string: input://inlinefile2/{embedded['bluechi_conf']}
+              to: tree:///bluechi.conf
+
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: qm_autosd_conf
+              text: $qm_autosd_conf
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['qm_autosd_conf']}
+              to: tree:///qm-autosd.conf

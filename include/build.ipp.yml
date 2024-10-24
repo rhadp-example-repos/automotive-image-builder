@@ -94,18 +94,6 @@ mpp-define-image:
                 mpp-eval: "'0FC63DAF-8483-4772-8E79-3D69D8477DE4' if partition_label == 'gpt' else '83'"
               uuid: $rootpart_uuid
 pipelines:
-  - mpp-import-pipelines:
-      path: distro/$distro_name.ipp.yml
-  - mpp-import-pipelines:
-      path: defaults.ipp.yml
-  - mpp-import-pipelines:
-      path: data.ipp.yml
-  - mpp-import-pipelines:
-      path: targets/$target.ipp.yml
-  - mpp-import-pipelines:
-      path: arch-$arch.ipp.yml
-  - mpp-import-pipelines:
-      path: computed-vars.ipp.yml # After including all snippets that may change the defaults, compute derived things
   - name: build
     runner: org.osbuild.centos9
     stages:
@@ -160,6 +148,3 @@ pipelines:
           labels:
             /usr/bin/cp: system_u:object_r:install_exec_t:s0
             /usr/bin/tar: system_u:object_r:install_exec_t:s0
-
-  - mpp-import-pipelines:
-      path: include/$qm_importfile.ipp.yml
