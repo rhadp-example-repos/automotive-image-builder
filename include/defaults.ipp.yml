@@ -180,7 +180,6 @@ mpp-vars:
   containers_transient_store: true
   containers_read_only: true
   tmp_is_tmpfs: true
-  image_extra_stages: []
   image_enabled_services: []
   image_masked_services:
     - systemd-hwdb-update.service
@@ -251,6 +250,7 @@ mpp-vars:
   target_rpms: []
   target_build_repos: []
   target_build_rpms: []
+  target_extra_image_stages: []
 
   # These are overridden by the arch file
   arch_rpms: []

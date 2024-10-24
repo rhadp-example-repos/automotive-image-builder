@@ -17,29 +17,27 @@ mpp-vars:
     sectors-per-track: 32
   target_rpms:
     - ti-uboot-images-armv8
-  image_extra_stages:
-    mpp-join:
-      - mpp-eval: image_extra_stages
-      - - type: org.osbuild.copy
-          inputs:
-            rootfs:
-              type: org.osbuild.tree
-              origin: org.osbuild.pipeline
-              references:
-                - name:rootfs
-          options:
-            paths:
-              - from:
-                  mpp-format-string: input://rootfs/usr/share/uboot/j721e_evm_r5/tiboot3-j721e-gp-evm.bin
-                to: tree:///boot/efi/tiboot3.bin
-              - from:
-                  mpp-format-string: input://rootfs/usr/share/uboot/j721e_evm_a72/tispl.bin_unsigned
-                to: tree:///boot/efi/tispl.bin
-              - from:
-                  mpp-format-string: input://rootfs/usr/share/uboot/j721e_evm_a72/u-boot.img_unsigned
-                to: tree:///boot/efi/u-boot.img
-              - from:
-                  mpp-format-string: input://rootfs/usr/share/uboot/j721e_evm_r5/sysfw-j721e-gp-evm.itb
-                to: tree:///boot/efi/sysfw.itb
+  target_extra_image_stages:
+    - type: org.osbuild.copy
+      inputs:
+        rootfs:
+          type: org.osbuild.tree
+          origin: org.osbuild.pipeline
+          references:
+            - name:rootfs
+      options:
+        paths:
+          - from:
+              mpp-format-string: input://rootfs/usr/share/uboot/j721e_evm_r5/tiboot3-j721e-gp-evm.bin
+            to: tree:///boot/efi/tiboot3.bin
+          - from:
+              mpp-format-string: input://rootfs/usr/share/uboot/j721e_evm_a72/tispl.bin_unsigned
+            to: tree:///boot/efi/tispl.bin
+          - from:
+              mpp-format-string: input://rootfs/usr/share/uboot/j721e_evm_a72/u-boot.img_unsigned
+            to: tree:///boot/efi/u-boot.img
+          - from:
+              mpp-format-string: input://rootfs/usr/share/uboot/j721e_evm_r5/sysfw-j721e-gp-evm.itb
+            to: tree:///boot/efi/sysfw.itb
 
 pipelines: []

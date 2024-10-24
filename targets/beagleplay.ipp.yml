@@ -14,26 +14,24 @@ mpp-vars:
     sectors-per-track: 32
   target_rpms:
     - ti-uboot-images-armv8
-  image_extra_stages:
-    mpp-join:
-      - mpp-eval: image_extra_stages
-      - - type: org.osbuild.copy
-          inputs:
-            rootfs:
-              type: org.osbuild.tree
-              origin: org.osbuild.pipeline
-              references:
-                - name:rootfs
-          options:
-            paths:
-              - from:
-                  mpp-format-string: input://rootfs//usr/share/uboot/am62x_beagleplay_r5/tiboot3-am62x-gp-evm.bin
-                to: tree:///boot/efi/tiboot3.bin
-              - from:
-                  mpp-format-string: input://rootfs/usr/share/uboot/am62x_beagleplay_a53/tispl.bin_unsigned
-                to: tree:///boot/efi/tispl.bin
-              - from:
-                  mpp-format-string: input://rootfs/usr/share/uboot/am62x_beagleplay_a53/u-boot.img_unsigned
-                to: tree:///boot/efi/u-boot.img
+  target_extra_image_stages:
+    - type: org.osbuild.copy
+      inputs:
+        rootfs:
+          type: org.osbuild.tree
+          origin: org.osbuild.pipeline
+          references:
+            - name:rootfs
+      options:
+        paths:
+          - from:
+              mpp-format-string: input://rootfs//usr/share/uboot/am62x_beagleplay_r5/tiboot3-am62x-gp-evm.bin
+            to: tree:///boot/efi/tiboot3.bin
+          - from:
+              mpp-format-string: input://rootfs/usr/share/uboot/am62x_beagleplay_a53/tispl.bin_unsigned
+            to: tree:///boot/efi/tispl.bin
+          - from:
+              mpp-format-string: input://rootfs/usr/share/uboot/am62x_beagleplay_a53/u-boot.img_unsigned
+            to: tree:///boot/efi/u-boot.img
 
 pipelines: []

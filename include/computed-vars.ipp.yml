@@ -236,7 +236,7 @@ mpp-vars:
           then: tuned.service
   image_extra_stages:
     mpp-join:
-      - mpp-eval: image_extra_stages
+      - mpp-eval: target_extra_image_stages
       - - type: org.osbuild.locale
           options:
             language:
