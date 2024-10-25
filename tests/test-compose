@@ -98,6 +98,12 @@ for distro in distros:
                     if define["value"]:
                         args += ["--define", define["value"]]
 
+                    # Make json reproducible
+                    args += ["--define", "timestamp=1",
+                             "--define", "build_timestamp=1",
+                             "--define", "image_uuid=ffffffff-ffff-ffff-ffff-ffffffffffff"
+                             ]
+
                     manifests = collect_args(elms, "manifest")
                     if manifests:
                         for m in manifests:
@@ -105,10 +111,13 @@ for distro in distros:
                     else:
                         to_run.append(args + [os.path.join(tests_dir, default_manifest)])
 
-for args in to_run:
+os.makedirs(".test", exist_ok=True)
+
+for i, args in enumerate(to_run):
+    file = f".test/test-{i}.json"
     cmdline = ["./automotive-image-builder", "compose"]
     cmdline += args
-    cmdline += ["test.json"]
+    cmdline += [file]
 
     print("Running: " + shlex.join(cmdline))
     try:
@@ -117,15 +126,15 @@ for args in to_run:
         print("*** Failed to compose, exiting ***")
         sys.exit(1) # cmd will have printed the error
 
-    with open("test.json") as f:
+    with open(file) as f:
         try:
             manifest_data = json.load(f)
         except json.decoder.JSONDecodeError as e:
-            print ("Invalid generated json manifest  'test.json': " + str(e))
+            print (f"Invalid generated json manifest  '{file}': " + str(e))
             print("*** Failed to validate, exiting ***")
             sys.exit(1)
 
-    cmdline = ["osbuild", "--inspect", "test.json"]
+    cmdline = ["osbuild", "--inspect", file]
     r = subprocess.run(cmdline, capture_output=True)
     if r.returncode != 0:
         stdout = r.stdout.decode("utf-8")

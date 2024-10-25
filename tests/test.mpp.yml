@@ -1,6 +1,9 @@
 version: '2'
 mpp-vars:
-  name: minimal
+  name: test
+  # In case use_qm is enabled
+  qm_pipeline: qm_rootfs_base
+
 pipelines:
 - name: rootfs
   build: name:build
