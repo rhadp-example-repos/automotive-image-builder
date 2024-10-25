@@ -1,6 +1,9 @@
 # Target for Renesas R-Car S4 with stock functionality
 version: '2'
 mpp-vars:
+  use_autoinit: true
+  use_autoinit_root: true
+  autoinit_root: /dev/mmcblk0p5
   consoles: "ttySC0,1843200"
   use_grub2: false
   use_aboot: true
