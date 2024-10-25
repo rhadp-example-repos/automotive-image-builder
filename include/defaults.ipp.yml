@@ -9,7 +9,6 @@ version: '2'
 # only then is the variables for the user supplied manifest evaluated.
 
 mpp-vars:
-  exports: []
   osname: centos
   uefi_vendor: centos
   kernel_package: kernel-automotive
