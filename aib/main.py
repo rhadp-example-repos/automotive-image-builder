@@ -185,14 +185,6 @@ def parse_args(args, base_dir):
 
     return res
 
-def is_import_pipeline(pipeline, path):
-    if not type(pipeline) == dict:
-        return False
-    if not "mpp-import-pipelines" in pipeline:
-        return False
-    import_op = pipeline["mpp-import-pipelines"]
-    return import_op.get("path") == path
-
 def make_embed_path_abs(stage, path):
     for k, v in stage.items():
         try:
@@ -217,17 +209,13 @@ def rewrite_manifest(manifest, path):
         for stage in p.get("stages", []):
             make_embed_path_abs(stage, path)
 
-    # We wrap the user specified pipelines with build.ipp.yml first and image.ipp.yml last
-    if not is_import_pipeline(pipelines[0], "include/build.ipp.yml"):
-        pipelines.insert(0, { "mpp-import-pipelines": { "path": "include/build.ipp.yml" } })
-
-    if not is_import_pipeline(pipelines[-1], "include/image.ipp.yml"):
-        pipelines.append({ "mpp-import-pipelines": { "path": "include/image.ipp.yml" } })
-
     # Also, we need to inject some workarounds in the rootfs stage
     if rootfs:
         # See comment in kernel_cmdline_stage variable
         rootfs.get("stages", []).insert(0, {"mpp-eval": "kernel_cmdline_stage"})
+
+def strip_ext(path):
+    return os.path.splitext(os.path.splitext(path)[0])[0]
 
 def create_osbuild_manifest(args, tmpdir, out, runner):
     with open(args.manifest) as f:
@@ -243,6 +231,8 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
 
     defines = {
         "_basedir": args.base_dir,
+        "_workdir": tmpdir,
+        "name": manifest.get("mpp-vars", {}).get("name", strip_ext(os.path.basename(args.manifest))),
         "arch": args.arch,
         "target": args.target,
         "distro_name": args.distro,
@@ -301,11 +291,23 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
     if args.cache:
         cmdline += [ "--cache", args.cache ]
 
-    rewritten_manifest_path = os.path.join(tmpdir, os.path.basename(args.manifest))
+
+    variables_manifest = {
+        "version": manifest["version"],
+        "mpp-vars": manifest.get("mpp-vars", {})
+    }
+
+    rewritten_manifest_path = os.path.join(tmpdir, "manifest-variables.ipp.yml")
+    with open(rewritten_manifest_path, "w") as f:
+        yaml.dump(variables_manifest, f, sort_keys=False)
+
+    del(manifest["mpp-vars"])
+
+    rewritten_manifest_path = os.path.join(tmpdir, "manifest.ipp.yml")
     with open(rewritten_manifest_path, "w") as f:
         yaml.dump(manifest, f, sort_keys=False)
 
-    cmdline += [ rewritten_manifest_path, out ]
+    cmdline += [ os.path.join(args.base_dir, "include/main.ipp.yml"), out ]
 
     runner.run(cmdline, use_sudo=True, use_container=True, use_non_root_user_in_container=True)
 

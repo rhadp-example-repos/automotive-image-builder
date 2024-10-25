@@ -23,7 +23,7 @@ mpp-vars:
   aboot_dtb_file: "qcom/sa8775p-ride.dtb"
   image_size: 17179824128
   #use_tuned_realtime: true
-  extra_image_rpms:
+  target_rpms:
     - aboot-deploy
     - stmmac-mac-generator
   image_enabled_services:

@@ -1,168 +1,129 @@
 version: '2'
 
-# This file is loaded early and sets all the default values for variables.
-# It will inherit variables set in the image manifest itself, so the
-# defaults only override variable if they are already unset.
-# After this loads, things like the per-arch, per-target and per image type
-# includes are loaded which can override these.
+# This file is loaded first and sets all the default values for
+# variables.  Before this is loaded only the basic variables passed
+# from a-i-b are guaranteed to exists: name, arch, distro_name,
+# image_mode, target After this loads the per-arch, and per-target
+# includes are loaded which can override these. Then the defaults-computed
+# file is included that can change the defaults based on thse, and
+# only then is the variables for the user supplied manifest evaluated.
 
 mpp-vars:
-  default_target: qemu
-  default_image_mode: image
-  default_exports: []
-  default_ostree_ref: $distro_name/$arch/$target-$name
-  default_ostree_os_version: $distro_version
-  default_osname: centos
-  default_uefi_vendor: centos
-  default_kernel_package: kernel-automotive
-  default_load_modules: []
-  default_bootfstype: "ext4"
-  default_initoverlayfs_builder: "dracut -M -o \"initoverlayfs fcoe\""
-  default_initrd_builder: "dracut -M -o \"initoverlayfs fcoe\""
-  default_erofs_compression: ""
-  default_bootfs_hint: ""
-  default_kernel_version: ""
-  default_release_name: ""
-  default_release_package: centos-release-automotive
-  default_linux_firmware_rpm: linux-firmware-automotive
-  default_partition_label: gpt
-  default_extra_rpms: []
-  default_extra_build_rpms: []
-  default_extra_build_repos: []
-  default_extra_image_rpms: []
-  default_extra_image_copy: []
-  default_extra_kernel_opts: []
-  default_extra_repos: []
-  default_qm_extra_repos: []
-  default_qm_extra_rpms: []
-  default_qm_memory_max: infinity
-  default_qm_memory_high: infinity
-  default_target_repos: []
-  default_target_build_repos: []
-  default_root_password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.
-  default_guest_password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.
-  default_guest_uid: 2000
-  default_guest_gid: 2000
-  default_root_ssh_key: ""
-  default_ssh_permit_root_login: false
-  default_ssh_permit_password_auth: false
-  default_image_size: '8589934592'
-  default_sblpart_size: 8192 # 4M
-  default_efipart_size: 204800
-  default_bootpart_size: 614400
-  default_abootpart_size: 131072 # 64M
-  default_vbmetapart_size: 128 # 64K
-  default_aboot_compress_kernel: null
-  default_varpart_relative_size: 0.3 # 30% of image size
-  default_active_gpt_attrs: # Default active setup for Qualcomm
+  exports: []
+  osname: centos
+  uefi_vendor: centos
+  kernel_package: kernel-automotive
+  load_modules: []
+  kernel_version: ""
+  release_name: ""
+  release_rpm: centos-release-automotive
+  linux_firmware_rpm: linux-firmware-automotive
+  partition_label: gpt
+  qm_memory_max: infinity
+  qm_memory_high: infinity
+
+  extra_image_copy: []
+  extra_kernel_opts: []
+
+  root_password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.
+  guest_password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.
+  guest_uid: 2000
+  guest_gid: 2000
+  root_ssh_key: ""
+  ssh_permit_root_login: false
+  ssh_permit_password_auth: false
+  image_size: '8589934592'
+  sblpart_size: 8192 # 4M
+  efipart_size: 204800
+  bootpart_size: 614400
+  abootpart_size: 131072 # 64M
+  vbmetapart_size: 128 # 64K
+  aboot_compress_kernel: null
+  varpart_relative_size: 0.3 # /var size as relative of image size (unless varpart_size is set)
+  active_gpt_attrs: # Default active setup for Qualcomm
     - 48
     - 49 # priority 0x3
     - 50 # active
     - 51
     - 52
     - 53 # remaining tries 0x7
-  default_inactive_gpt_attrs:  # Default inactive for Qualcomm
+  inactive_gpt_attrs:  # Default inactive for Qualcomm
     - 48 # priority 0x1
     - 50 # active
     - 51
     - 52
     - 53 # remaining tries 0x7
-  default_extra_parts: []
-  default_kernel_loglevel: 4
-  default_timezone: UTC
-  default_locale: en_US.UTF-8
-  default_hostname: localhost
-  default_use_grub2: true
-  default_use_abl: false
-  default_use_qm: false
-  default_qm_pipeline: qm_rootfs
-  default_use_bluechi_agent: false
-  default_use_bluechi_controller: false
-  default_use_aboot: false
-  default_use_abootpart: false
-  default_use_tuned_realtime: false
-  default_tuned_realtime_isolcpus: "2-N"
-  default_use_vbmetapart: false
-  default_use_sblpart: false
-  default_use_efipart: true
-  default_use_initoverlayfs: false
-  default_use_bootpart: true
-  default_use_testpart: false
-  default_use_ostree: false
-  default_is_autoinit_supported: true
-  default_use_autoinit: false
-  default_use_autoinit_root: false
-  default_autoinit_root: /dev/vda3
-  default_use_separate_var: false
-  default_aboot_partlabel: system_a
-  default_vbmeta_partlabel: vbmeta_a
-  default_image_uuid:
-    mpp-eval: (str(__import__('uuid').uuid4()))
-  default_use_composefs: true
-  default_use_composefs_signed: true
-  default_use_transient_etc: true
-  default_coredump_storage: none
-  default_journal_storage: persistent
-  default_systemd_timeout: 30s
-  default_use_static_ip: false
-  default_static_ip: "10.0.2.15"
-  default_static_ip_prefixlen: "24"
-  default_static_gw: "10.0.2.2"
-  default_static_dns: "10.0.2.3"
-  default_static_ip_iface: eth0
-  default_static_ip_module: "virtio_net"
-  default_static_ip_uuid: 6fb8f75a-7fde-4906-a51e-a70e56c58742
-  static_uuids:
-    mpp-eval: locals().get('static_uuids', True)
-  default_rootfs_uuid:
-    mpp-eval: ('76a22bf4-f153-4541-b6c7-0332c0dfaeac' if static_uuids else str(__import__('uuid').uuid4()))
-  default_bootfs_uuid:
-    mpp-eval: ('156f0420-627b-4151-ae6f-fda298097515' if static_uuids else str(__import__('uuid').uuid4()))
-  default_parttab_uuid:
-    mpp-eval: ('d209c89e-ea5e-4fbd-b161-b461cce297e0' if static_uuids else str(__import__('uuid').uuid4()))
-  default_efipart_uuid:
-    mpp-eval: ('68b2905b-df3e-4fb3-80fa-49d1e773aa33' if static_uuids else str(__import__('uuid').uuid4()))
-  default_bootpart_uuid:
-    mpp-eval: ('61b2905b-df3e-4fb3-80fa-49d1e773aa32' if static_uuids else str(__import__('uuid').uuid4()))
-  default_varpart_uuid:
-    mpp-eval: ('10475e3e-9356-11ee-b5b9-305a3ae2477d' if static_uuids else str(__import__('uuid').uuid4()))
-  default_abootpart_uuid_a:
-    mpp-eval: ('1dd3a986-997c-0c48-1d1b-b0d0399f3153' if static_uuids else str(__import__('uuid').uuid4()))
-  default_abootpart_uuid_b:
-    mpp-eval: ('45105095-3847-4657-51f2-2a0144550453' if static_uuids else str(__import__('uuid').uuid4()))
-  default_vbmetapart_uuid_a:
-    mpp-eval: ('da91d469-09b3-ce43-795e-3b86f3735143' if static_uuids else str(__import__('uuid').uuid4()))
-  default_vbmetapart_uuid_b:
-    mpp-eval: ('305087ff-bf9a-910d-f3c4-606a8de7788a' if static_uuids else str(__import__('uuid').uuid4()))
-  default_rootpart_uuid:
-    mpp-eval: ('6264d520-3fb9-423f-8ab8-7a0a8e3d3562' if static_uuids else str(__import__('uuid').uuid4()))
-  default_luks_uuid:
-    mpp-eval: ('aedd1eef-f24e-425e-a9f3-bb5a1c996a95' if static_uuids else str(__import__('uuid').uuid4()))
-  default_use_luks: false
-  use_luks:
-    mpp-eval: locals().get('use_luks', default_use_luks)
-  default_use_compliance_mode: false
-  use_compliance_mode:
-    mpp-eval: locals().get('use_compliance_mode', default_use_compliance_mode)
-  default_use_debug: false
-  use_debug:
-    mpp-eval: locals().get('use_debug', default_use_debug)
-  default_use_module_sig_enforce: true
-  use_module_sig_enforce:
-    mpp-eval: locals().get('use_module_sig_enforce', default_use_module_sig_enforce)
-  default_sign_kernel_modules: false
-  default_luks_use_integrity: false
-  default_luks_auto_unlock: false
-  luks_auto_unlock:
-    mpp-eval: locals().get('luks_auto_unlock', default_luks_auto_unlock)
-  default_use_efi_runtime: true
-  default_consoles:
+  extra_parts: []
+  kernel_loglevel: 4
+  timezone: UTC
+  locale: en_US.UTF-8
+  hostname: localhost
+  use_grub2: true
+  use_abl: false
+  use_qm: false
+  qm_pipeline: qm_rootfs
+  use_bluechi_agent: false
+  use_bluechi_controller: false
+  use_aboot: false
+  use_abootpart: false
+  use_tuned_realtime: false
+  tuned_realtime_isolcpus: "2-N"
+  use_vbmetapart: false
+  use_sblpart: false
+  use_efipart: true
+  use_initoverlayfs: false
+  use_bootpart: true
+  use_testpart: false
+  use_ostree: false
+  is_autoinit_supported: true
+  use_autoinit: false
+  use_autoinit_root: false
+  autoinit_root: /dev/vda3
+  use_separate_var: false
+  aboot_partlabel: system_a
+  vbmeta_partlabel: vbmeta_a
+  use_composefs: true
+  use_composefs_signed: true
+  use_transient_etc: true
+  use_ocibased: false
+  coredump_storage: none
+  journal_storage: persistent
+  systemd_timeout: 30s
+  use_static_ip: false
+  static_ip: "10.0.2.15"
+  static_ip_prefixlen: "24"
+  static_gw: "10.0.2.2"
+  static_dns: "10.0.2.3"
+  static_ip_iface: eth0
+  static_ip_module: "virtio_net"
+  static_ip_uuid: 6fb8f75a-7fde-4906-a51e-a70e56c58742
+  static_uuids: true
+  rootfs_uuid: 76a22bf4-f153-4541-b6c7-0332c0dfaeac
+  bootfs_uuid: 156f0420-627b-4151-ae6f-fda298097515
+  parttab_uuid: d209c89e-ea5e-4fbd-b161-b461cce297e0
+  efipart_uuid: 68b2905b-df3e-4fb3-80fa-49d1e773aa33
+  bootpart_uuid: 61b2905b-df3e-4fb3-80fa-49d1e773aa32
+  varpart_uuid: 10475e3e-9356-11ee-b5b9-305a3ae2477d
+  abootpart_uuid_a: 1dd3a986-997c-0c48-1d1b-b0d0399f3153
+  abootpart_uuid_b: 45105095-3847-4657-51f2-2a0144550453
+  vbmetapart_uuid_a: da91d469-09b3-ce43-795e-3b86f3735143
+  vbmetapart_uuid_b: 305087ff-bf9a-910d-f3c4-606a8de7788a
+  rootpart_uuid: 6264d520-3fb9-423f-8ab8-7a0a8e3d3562
+  luks_uuid: aedd1eef-f24e-425e-a9f3-bb5a1c996a95
+  use_luks: false
+  use_compliance_mode: false
+  use_debug: false
+  use_module_sig_enforce: true
+  luks_use_integrity: false
+  luks_auto_unlock: false
+  use_efi_runtime: true
+  consoles:
     mpp-if: arch == 'aarch64'
     then: ttyAMA0
     else: ttyS0
-  default_kernel_opts: []
-  default_dracut_modules: []
-  default_dracut_add_modules:
+  kernel_opts: []
+  dracut_modules: []
+  dracut_add_modules:
     - base
     - dracut-systemd
     - fs-lib
@@ -175,7 +136,7 @@ mpp-vars:
     - terminfo
     - udev-rules
     - usrmount
-  default_dracut_omit_modules:
+  dracut_omit_modules:
     - bash
     - i18n
     - lunmask
@@ -187,37 +148,36 @@ mpp-vars:
     - resume
     - terminfo
     - virtiofs
-  default_dracut_filesystems:
+  dracut_filesystems:
     - ext4
-  default_dracut_compression: "lz4"
+  dracut_compression: "lz4"
   # If set, this replaces the default driver set, we use it for targets to set the hw-specific drivers
-  default_dracut_drivers: []
+  dracut_drivers: []
   # Added on top of default or dracut_drivers, used for non-we specific drivers
-  default_dracut_add_drivers: []
+  dracut_add_drivers: []
   # Filter out these drivers from any of the above
-  default_dracut_omit_drivers: []
+  dracut_omit_drivers: []
   # Force load drivers
-  default_dracut_force_drivers: []
-  default_dracut_install: []
-  default_ostree_repo_url: http://10.0.2.100/
-  default_ostree_remote_name: auto-sig
-  default_luks_passphrase: password
-  default_container_cmd:
+  dracut_force_drivers: []
+  dracut_install: []
+  ostree_repo_url: http://10.0.2.100/
+  ostree_remote_name: auto-sig
+  luks_passphrase: password
+  container_cmd:
     - "/usr/bin/bash"
-  default_container_entrypoint: []
-  default_use_containers_extra_store: false
-  default_use_qm_containers_extra_store: false
-  default_containers_extra_store: /usr/share/containers/storage
-  default_qm_containers_extra_store: /usr/share/containers/storage
-  default_containers_transient_store: true
-  default_containers_read_only: true
-  default_tmp_is_tmpfs: true
-  default_image_extra_stages: []
-  default_image_enabled_services: []
-  default_image_masked_services:
+  container_entrypoint: []
+  use_containers_extra_store: false
+  use_qm_containers_extra_store: false
+  containers_extra_store: /usr/share/containers/storage
+  qm_containers_extra_store: /usr/share/containers/storage
+  containers_transient_store: true
+  containers_read_only: true
+  tmp_is_tmpfs: true
+  image_enabled_services: []
+  image_masked_services:
     - systemd-hwdb-update.service
     - ldconfig.service
-  default_image_masked_generators:
+  image_masked_generators:
     # legacy scripts not supported
     - systemd-rc-local-generator
     - systemd-sysv-generator
@@ -241,961 +201,64 @@ mpp-vars:
     - systemd-fstab-generator
     # We're re-doing ostree generators statically
     - ostree-system-generator
-  default_image_disabled_services:
+  image_disabled_services:
     # Not using remote filesystems
     - remote-fs.target
     # Not using systemd-boot
     - systemd-boot-update.service
-  default_bluechi_nodename: "host"
-  default_bluechi_controller_host_ip: "127.0.0.1"
-  default_bluechi_controller_allowed_node_names: []
-  default_qm_container_subuid: 1000000000:1500000000
-  default_qm_container_subgid: 1000000000:1500000000
-  default_container_subuid: 2500000000:1500000000
-  default_container_subgid: 2500000000:1500000000
-  default_extra_subuid: ""
-  default_extra_subgid: ""
-  default_efipart_dos_type: 'ef'
-  efipart_dos_type:
-    mpp-eval: locals().get('efipart_dos_type', default_efipart_dos_type)
-  default_efipart_bootable: false
-  efipart_bootable:
-    mpp-eval: locals().get('efipart_bootable', default_efipart_bootable)
-  default_distro_gpg_keys: ""
-  distro_gpg_keys:
-    mpp-eval: locals().get('distro_gpg_keys', default_distro_gpg_keys)
+  bluechi_nodename: "host"
+  bluechi_controller_host_ip: "127.0.0.1"
+  bluechi_controller_allowed_node_names: []
+  qm_container_subuid: 1000000000:1500000000
+  qm_container_subgid: 1000000000:1500000000
+  container_subuid: 2500000000:1500000000
+  container_subgid: 2500000000:1500000000
+  extra_subuid: ""
+  extra_subgid: ""
+  efipart_dos_type: 'ef'
+  efipart_bootable: false
+  distro_gpg_keys: ""
+
+  initoverlayfs_bootfstype: "ext4"
+  initoverlayfs_builder: "dracut -M -o \"initoverlayfs fcoe\""
+  initoverlayfs_initrd_builder: "dracut -M -o \"initoverlayfs fcoe\""
+  initoverlayfs_erofs_compression: ""
+  initoverlayfs_bootfs_hint: ""
+
+  # Timestamps, etc
+  image_uuid:
+    mpp-eval: (str(__import__('uuid').uuid4()))
   timestamp:
     mpp-eval: (__import__('datetime').datetime.now().timestamp())
   build_timestamp:
     mpp-eval: (str(__import__('datetime').datetime.fromtimestamp(timestamp)))
-  target:
-    mpp-eval: locals().get('target', default_target)
-  image_mode:
-    mpp-eval: locals().get('image_mode', default_image_mode)
-  exports:
-    mpp-eval: locals().get('exports', default_exports)
-  kernel_package:
-    mpp-eval: locals().get('kernel_package', default_kernel_package)
-  kernel_version:
-    mpp-eval: locals().get('kernel_version', default_kernel_version)
-  load_modules:
-    mpp-eval: locals().get('load_modules', default_load_modules)
-  linux_firmware_rpm:
-    mpp-eval: locals().get('linux_firmware_rpm', default_linux_firmware_rpm)
-  release_name:
-    mpp-eval: locals().get('release_name', default_release_name)
-  release_rpm:
-    mpp-eval: locals().get('release_rpm', default_release_package)
-  ostree_ref:
-    mpp-eval: locals().get('ostree_ref', default_ostree_ref)
-  ostree_os_version:
-    mpp-eval: locals().get('ostree_os_version', default_ostree_os_version)
-  osname:
-    mpp-eval: locals().get('osname', default_osname)
-  uefi_vendor:
-    mpp-eval: locals().get('uefi_vendor', default_uefi_vendor)
-  partition_label:
-    mpp-eval: locals().get('partition_label', default_partition_label)
-  extra_rpms:
-    mpp-eval: locals().get('extra_rpms', default_extra_rpms)
-  extra_image_rpms:
-    mpp-eval: locals().get('extra_image_rpms', default_extra_image_rpms)
-  extra_image_copy:
-    mpp-eval: locals().get('extra_image_copy', default_extra_image_copy)
-  extra_build_rpms:
-    mpp-eval: locals().get('extra_build_rpms', default_extra_build_rpms)
-  extra_build_repos:
-    mpp-eval: locals().get('extra_build_repos', default_extra_build_repos)
-  extra_kernel_opts:
-    mpp-eval: locals().get('extra_kernel_opts', default_extra_kernel_opts)
-  extra_repos:
-    mpp-eval: locals().get('extra_repos', default_extra_repos)
-  qm_extra_repos:
-    mpp-eval: locals().get('qm_extra_repos', default_qm_extra_repos)
-  qm_extra_rpms:
-    mpp-eval: locals().get('qm_extra_rpms', default_qm_extra_rpms)
-  qm_memory_max:
-    mpp-eval: locals().get('qm_memory_max', default_qm_memory_max)
-  qm_memory_high:
-    mpp-eval: locals().get('qm_memory_high', default_qm_memory_high)
-  target_repos:
-    mpp-eval: locals().get('target_repos', default_target_repos)
-  target_build_repos:
-    mpp-eval: locals().get('target_build_repos', default_target_build_repos)
-  image_size:
-    mpp-eval: locals().get('image_size', default_image_size)
-  aboot_partlabel:
-    mpp-eval: locals().get('aboot_partlabel', default_aboot_partlabel)
-  aboot_compress_kernel:
-    mpp-eval: locals().get('aboot_compress_kernel', default_aboot_compress_kernel)
-  varpart_relative_size:
-    mpp-eval: locals().get('varpart_relative_size', default_varpart_relative_size)
-  varpart_size:
-    mpp-eval: locals().get('varpart_size', int(int(image_size) * varpart_relative_size / 512))
-  rootfs_uuid:
-    mpp-eval: locals().get('rootfs_uuid', default_rootfs_uuid)
-  bootfs_uuid:
-    mpp-eval: locals().get('bootfs_uuid', default_bootfs_uuid)
-  parttab_uuid:
-    mpp-eval: locals().get('parttab_uuid', default_parttab_uuid)
-  bootfstype:
-    mpp-eval: locals().get('bootfstype', default_bootfstype)
-  initrd_builder:
-    mpp-eval: locals().get('initrd_builder', default_initrd_builder)
-  initoverlayfs_builder:
-    mpp-eval: locals().get('initoverlayfs_builder', default_initoverlayfs_builder)
-  bootfs_hint:
-    mpp-eval: locals().get('bootfs_hint', default_bootfs_hint)
-  erofs_compression:
-    mpp-eval: locals().get('erofs_compression', default_erofs_compression)
-  rootpart_uuid:
-    mpp-eval: locals().get('rootpart_uuid', default_rootpart_uuid)
-  bootpart_uuid:
-    mpp-eval: locals().get('bootpart_uuid', default_bootpart_uuid)
-  abootpart_uuid_a:
-    mpp-eval: locals().get('abootpart_a_uuid', default_abootpart_uuid_a)
-  abootpart_uuid_b:
-    mpp-eval: locals().get('abootpart_b_uuid', default_abootpart_uuid_b)
-  vbmetapart_uuid_a:
-    mpp-eval: locals().get('abootpart_a_uuid', default_vbmetapart_uuid_a)
-  vbmetapart_uuid_b:
-    mpp-eval: locals().get('abootpart_b_uuid', default_vbmetapart_uuid_b)
-  efipart_uuid:
-    mpp-eval: locals().get('efipart_uuid', default_efipart_uuid)
-  varpart_uuid:
-    mpp-eval: locals().get('varpart_uuid', default_varpart_uuid)
-  luks_uuid:
-    mpp-eval: locals().get('luks_uuid', default_luks_uuid)
-  kernel_opts:
-    mpp-eval: locals().get('kernel_opts', default_kernel_opts)
-  sblpart_size:
-    mpp-eval: locals().get('sblpart_size', default_sblpart_size)
-  efipart_size:
-    mpp-eval: locals().get('efipart_size', default_efipart_size)
-  bootpart_size:
-    mpp-eval: locals().get('bootpart_size', default_bootpart_size)
-  abootpart_size:
-    mpp-eval: locals().get('abootpart_size', default_abootpart_size)
-  vbmetapart_size:
-    mpp-eval: locals().get('vbmetapart_size', default_vbmetapart_size)
-  active_gpt_attrs:
-    mpp-eval: locals().get('active_gpt_attrs', default_active_gpt_attrs)
-  inactive_gpt_attrs:
-    mpp-eval: locals().get('inactive_gpt_attrs', default_inactive_gpt_attrs)
-  extra_parts:
-    mpp-eval: locals().get('extra_parts', default_extra_parts)
-  dracut_modules:
-    mpp-eval: locals().get('dracut_modules', default_dracut_modules)
-  dracut_add_modules:
-    mpp-eval: locals().get('dracut_add_modules', default_dracut_add_modules)
-  dracut_omit_modules:
-    mpp-eval: locals().get('dracut_omit_modules', default_dracut_omit_modules)
-  dracut_filesystems:
-    mpp-eval: locals().get('dracut_filesystems', default_dracut_filesystems)
-  dracut_compression:
-    mpp-eval: locals().get('dracut_compression', default_dracut_compression)
-  dracut_drivers:
-    mpp-eval: locals().get('dracut_drivers', default_dracut_drivers)
-  dracut_add_drivers:
-    mpp-eval: locals().get('dracut_add_drivers', default_dracut_add_drivers)
-  dracut_omit_drivers:
-    mpp-eval: locals().get('dracut_omit_drivers', default_dracut_omit_drivers)
-  dracut_force_drivers:
-    mpp-eval: locals().get('dracut_force_drivers', default_dracut_force_drivers)
-  dracut_install:
-    mpp-eval: locals().get('dracut_install', default_dracut_install)
-  root_password:
-    mpp-eval: locals().get('root_password', default_root_password)
-  root_ssh_key:
-    mpp-eval: locals().get('root_ssh_key', default_root_ssh_key)
-  ssh_permit_root_login:
-    mpp-eval: locals().get('ssh_permit_root_login', default_ssh_permit_root_login)
-  ssh_permit_password_auth:
-    mpp-eval: locals().get('ssh_permit_password_auth', default_ssh_permit_password_auth)
-  guest_password:
-    mpp-eval: locals().get('guest_password', default_guest_password)
-  guest_gid:
-    mpp-eval: locals().get('guest_gid', default_guest_gid)
-  guest_uid:
-    mpp-eval: locals().get('guest_uid', default_guest_uid)
-  ostree_repo_url:
-    mpp-eval: locals().get('ostree_repo_url', default_ostree_repo_url)
-  ostree_remote_name:
-    mpp-eval: locals().get('ostree_remote_name', default_ostree_remote_name)
-  luks_passphrase:
-    mpp-eval: locals().get('luks_passphrase', default_luks_passphrase)
-  luks_use_integrity:
-    mpp-eval: locals().get('luks_use_integrity', default_luks_use_integrity)
-  use_efi_runtime:
-    mpp-eval: locals().get('use_efi_runtime', default_use_efi_runtime)
-  consoles:
-    mpp-eval: locals().get('consoles', default_consoles)
-  kernel_loglevel:
-    mpp-eval: locals().get('kernel_loglevel', default_kernel_loglevel)
-  locale:
-    mpp-eval: locals().get('locale', default_locale)
-  hostname:
-    mpp-eval: locals().get('hostname', default_hostname)
-  use_grub2:
-    mpp-eval: locals().get('use_grub2', default_use_grub2)
-  timezone:
-    mpp-eval: locals().get('timezone', default_timezone)
-  use_abl:
-    mpp-eval: locals().get('use_abl', default_use_abl)
-  use_qm:
-    mpp-eval: locals().get('use_qm', default_use_qm)
-  qm_pipeline:
-    mpp-eval: locals().get('qm_pipeline', default_qm_pipeline)
-  use_bluechi_agent:
-    mpp-eval: locals().get('use_bluechi_agent', default_use_bluechi_agent)
-  use_bluechi_controller:
-    mpp-eval: locals().get('use_bluechi_controller', default_use_bluechi_controller)
-  use_aboot:
-    mpp-eval: locals().get('use_aboot', default_use_aboot)
-  use_abootpart:
-    mpp-eval: locals().get('use_abootpart', default_use_abootpart)
-  use_tuned_realtime:
-    mpp-eval: locals().get('use_tuned_realtime', default_use_tuned_realtime)
-  tuned_realtime_isolcpus:
-    mpp-eval: locals().get('tuned_realtime_isolcpus', default_tuned_realtime_isolcpus)
-  use_vbmetapart:
-    mpp-eval: locals().get('use_vbmetapart', default_use_vbmetapart)
-  use_sblpart:
-    mpp-eval: locals().get('use_sblpart', default_use_sblpart)
-  use_efipart:
-    mpp-eval: locals().get('use_efipart', default_use_efipart)
-  use_initoverlayfs:
-    mpp-eval: locals().get('use_initoverlayfs', default_use_initoverlayfs)
-  use_bootpart:
-    mpp-eval: locals().get('use_bootpart', default_use_bootpart)
-  use_testpart:
-    mpp-eval: locals().get('use_testpart', default_use_testpart)
-  use_separate_var:
-    mpp-eval: locals().get('use_separate_var', default_use_separate_var)
-  use_ostree:
-    mpp-eval: locals().get('use_ostree', default_use_ostree)
-  is_autoinit_supported:
-    mpp-eval: locals().get('is_autoinit_supported', default_is_autoinit_supported)
-  use_autoinit:
-    mpp-eval: locals().get('use_autoinit', default_use_autoinit)
-  use_autoinit_root:
-    mpp-eval: locals().get('use_autoinit_root', default_use_autoinit_root)
-  autoinit_root:
-    mpp-eval: locals().get('autoinit_root', default_autoinit_root)
-  image_uuid:
-    mpp-eval: locals().get('image_uuid', default_image_uuid)
-  use_composefs:
-    mpp-eval: locals().get('use_composefs', default_use_composefs)
-  use_composefs_signed:
-    mpp-eval: locals().get('use_composefs_signed', default_use_composefs_signed)
-  use_ocibased:
-    mpp-eval: locals().get('use_ocibased', False)
-  use_transient_etc:
-    mpp-eval: locals().get('use_transient_etc', default_use_transient_etc)
-  journal_storage:
-    mpp-eval: locals().get('journal_storage', default_journal_storage)
-  coredump_storage:
-    mpp-eval: locals().get('coredump_storage', default_coredump_storage)
-  systemd_timeout:
-    mpp-eval: locals().get('systemd_timeout', default_systemd_timeout)
-  use_static_ip:
-    mpp-eval: locals().get('use_static_ip', default_use_static_ip)
-  static_ip:
-    mpp-eval: locals().get('static_ip', default_static_ip)
-  static_ip_prefixlen:
-    mpp-eval: locals().get('static_ip_prefixlen', default_static_ip_prefixlen)
-  static_ip_module:
-    mpp-eval: locals().get('static_ip_module', default_static_ip_module)
-  static_ip_iface:
-    mpp-eval: locals().get('static_ip_iface', default_static_ip_iface)
-  static_gw:
-    mpp-eval: locals().get('static_gw', default_static_gw)
-  static_dns:
-    mpp-eval: locals().get('static_dns', default_static_dns)
-  static_ip_uuid:
-    mpp-eval: locals().get('static_ip_uuid', default_static_ip_uuid)
-  container_entrypoint:
-    mpp-eval: locals().get('container_entrypoint', default_container_entrypoint)
-  container_cmd:
-    mpp-eval: locals().get('container_cmd', default_container_cmd)
-  use_containers_extra_store:
-    mpp-eval: locals().get('use_containers_extra_store', default_use_containers_extra_store)
-  use_qm_containers_extra_store:
-    mpp-eval: locals().get('use_qm_containers_extra_store', default_use_qm_containers_extra_store)
-  containers_extra_store:
-    mpp-eval: locals().get('containers_extra_store', default_containers_extra_store)
-  qm_containers_extra_store:
-    mpp-eval: locals().get('qm_containers_extra_store', default_qm_containers_extra_store)
-  containers_transient_store:
-    mpp-eval: locals().get('containers_transient_store', default_containers_transient_store)
-  containers_read_only:
-    mpp-eval: locals().get('containers_read_only', default_containers_read_only)
-  tmp_is_tmpfs:
-    mpp-eval: locals().get('tmp_is_tmpfs', default_tmp_is_tmpfs)
-  image_extra_stages:
-    mpp-eval: locals().get('image_extra_stages',  default_image_extra_stages)
-  image_enabled_services:
-    mpp-eval: locals().get('image_enabled_services',  default_image_enabled_services)
-  image_masked_services:
-    mpp-eval: locals().get('image_masked_services',  default_image_masked_services)
-  image_masked_generators:
-    mpp-eval: locals().get('image_masked_generators',  default_image_masked_generators)
-  image_disabled_services:
-    mpp-eval: locals().get('image_disabled_services',  default_image_disabled_services)
-  bluechi_nodename:
-    mpp-eval: locals().get('bluechi_nodename',  default_bluechi_nodename)
-  bluechi_controller_host_ip:
-    mpp-eval: locals().get('bluechi_controller_host_ip',  default_bluechi_controller_host_ip)
-  bluechi_controller_allowed_node_names:
-    mpp-eval: locals().get('bluechi_controller_allowed_node_names',  default_bluechi_controller_allowed_node_names)
-  qm_container_subuid:
-    mpp-eval: locals().get('qm_container_subuid',  default_qm_container_subuid)
-  qm_container_subgid:
-    mpp-eval: locals().get('qm_container_subgid',  default_qm_container_subgid)
-  container_subuid:
-    mpp-eval: locals().get('container_subuid',  default_container_subuid)
-  container_subgid:
-    mpp-eval: locals().get('container_subgid',  default_container_subgid)
-  extra_subuid:
-    mpp-eval: locals().get('extra_subuid',  default_extra_subuid)
-  extra_subgid:
-    mpp-eval: locals().get('extra_subgid',  default_extra_subgid)
-  test_partitions: # A bunch of android-style partitions to test partition count scalability
-    - size: 26
-      type: 6891A3B7-0CCC-4705-BB53-2673CAC193BD
-      uuid: 82DFD22C-EE36-CF0C-0038-2C35C96DC60E
-      name: ALIGN_TO_128K_2
-      attrs: [60]
-    - size: 16384
-      type: 4EF7C492-D028-41C6-B47A-BBD33850CB31
-      uuid: 3AF03249-A080-FA96-E1E5-8AD411AB7001
-      name: reserved1_a
-      attrs: [50, 60]
-    - size: 16384
-      type: 4E351956-AA2A-479E-B5F7-163DA39F14F6
-      uuid: 767BEED8-EC0C-9F70-3508-888D56898ADA
-      name: reserved2_a
-      attrs: [50, 60]
-    - size: 24576
-      type: D7F253DB-4DF4-4137-BA8D-8F8DA874F9F5
-      uuid: A5D5920D-7C5D-1866-A79B-70EAEA56B9A5
-      name: la_boot_a
-      attrs: [50]
-    - size: 2048
-      type: 0BD16681-CA7D-4EFE-A2CC-BD03F792C486
-      uuid: D5E09B64-24E9-BCEF-7535-CF2F9B074E41
-      name: la_init_boot_a
-      attrs: [50]
-    - size: 2048
-      type: CD9EEF69-E9A5-457F-BDFB-7BFBCD1FD4FD
-      uuid: 68FEE254-F280-E41B-3EC0-46345AC8B35A
-      name: la_dtbo_a
-      attrs: [50]
-    - size: 16
-      type: EB1AD2EE-8C54-41C2-8361-7271635A1AB5
-      uuid: 81608641-534F-7818-6CF3-EB0B2B334FC7
-      name: la_vbmeta_a
-      attrs: [50, 60]
-    - size: 1000
-      type: E80D40F1-F0FE-486C-B7D6-B7225AC36C0E
-      uuid: DC2409FD-02E0-8B9B-3ED5-AACBE4FCF2A9
-      name: la_vb_sys_a
-      attrs: [50, 60]
-    - size: 1000
-      type: A6DE3586-5EBD-46AA-99E3-044A53B22104
-      uuid: 80291E4A-1DBF-5A4E-8C87-8F1A02830926
-      name: la_v_boot_a
-      attrs: [50, 60]
-    - size: 1000
-      type: CE93EC25-EE18-49A4-9C9B-3E08F8E0BE70
-      uuid: 6D496290-18D8-63A7-2915-25ABBC85C8F8
-      name: la_misc
-    - size: 1000
-      type: 70D16D78-91CD-42F3-A944-CBD375BB2D65
-      uuid: 28BCBE01-1DD0-0166-F9E1-2EE1021EB86F
-      name: la_super
-    - size: 4096
-      type: 79F700DA-5C45-46C7-A49C-02B2C342533B
-      uuid: 88DF6EB9-006E-E75F-8F6D-9BDBA744FAFD
-      name: la_metadata
-    - size: 1000
-      type: 62BF89C0-4702-4B69-BD36-8047CA9E2DE7
-      uuid: CBEBC1CA-C368-CC62-2893-8CC945938D5C
-      name: la_userdata
-    - size: 1000
-      type: 56D55103-5BC7-49BF-84A0-A1A6C9DE43FA
-      uuid: DCF3B0B7-8E7D-6319-1B14-12AE4F271C0A
-      name: la_persist
-    - size: 1000
-      type: 00000000-0000-0000-0000-000000000000
-      uuid: 27BB4299-A406-C9A5-F611-73FBCF47D50E
-      name: last_parti
-      attrs: [60]
-    - size: 1280
-      type: DEA0BA2C-CBDD-4805-B4F9-F428251C3E98
-      uuid: E2423ECC-1F06-B1F9-C2D1-748F4D86117A
-      name: foo_a
-      attrs: [0, 50]
-    - size: 1280
-      type: 7A3DF1A3-A31A-454D-BD78-DF259ED486BE
-      uuid: E7FED1EB-392F-6D04-EDC9-DF831BC6B0F9
-      name: foo_bkup_a
-      attrs: [0, 50]
-    - size: 129
-      type: 5A325AE4-4276-B66D-0ADD-3494DF27706A
-      uuid: 983F9994-A42A-3644-117C-AF82C2496A44
-      name: foo_config_a
-      attrs: [0, 50]
-    - size: 20
-      type: CB74CA22-2F0D-4B82-A1D6-C4213F348D73
-      uuid: 8F6F68D1-28A4-C850-06AA-8A543A8FF46E
-      name: shrm_a
-      attrs: [50, 60]
-    - size: 2400
-      type: 00000000-0000-0000-0000-000000000000
-      uuid: 113B1BCE-4131-7714-97F7-CB718B6D8CFB
-      name: last_parti
-      attrs: [0, 60]
-    - size: 1280
-      type: DEA0BA2C-CBDD-4805-B4F9-F428251C3E98
-      uuid: B6A4E91B-E7C3-D694-1AC1-343970FFA226
-      name: foo_b
-      attrs: [0]
-    - size: 1280
-      type: 7A3DF1A3-A31A-454D-BD78-DF259ED486BE
-      uuid: 2A78E1B3-D2EC-0BB7-1310-DE8C03D4AD48
-      name: foo_bkup_b
-      attrs: [0]
-    - size: 129
-      type: A4CDBB5A-5A73-436E-B129-689EC01DBFE3
-      uuid: 80FBF7FF-AFB3-F124-6C6F-8FE1781898BB
-      name: foo_config_b
-      attrs: [0]
-    - size: 20
-      type: 39FD6C00-49EB-6BD1-6899-2FB849DD4F75
-      uuid: D6B196D4-FD7B-7E8C-12B5-0043DD057D4F
-      name: shrm_b
-      attrs: [60]
-    - size: 2400
-      type: 00000000-0000-0000-0000-000000000000
-      uuid: F794506C-EF79-3D92-58C5-32937DD975C3
-      name: last_parti
-      attrs: [0, 60]
-    - size: 26
-      type: 50D0ABE4-F594-4641-981B-DF602E400F34
-      uuid: A5ECA3D7-C6E3-C985-EF49-57DFF300D51B
-      name: ALIGN_TO_128K_1
-      attrs: [0, 60]
-    - size: 1
-      type: A19F205F-CCD8-4B6D-8F1E-2D9BC24CFFB1
-      uuid: 5E789AC8-58AE-F83B-93AE-7885332467CE
-      name: cdt
-      attrs: [0]
-    - size: 400
-      type: 20A0C19C-286A-42FA-9CE7-F64C3226A794
-      uuid: 1B30CA22-BB4F-8E4B-3414-430A895BD2FE
-      name: ddr
-      attrs: [0]
-    - size: 1000
-      type: 00000000-0000-0000-0000-000000000000
-      uuid: EF471D32-36A1-3328-F15F-48FB8CEE5162
-      name: last_parti
-      attrs: [0, 60]
-    - size: 64
-      type: D69E90A5-4CAB-0071-F6DF-AB977F141A7F
-      uuid: F397ECB3-67D3-DF67-F3B8-694A850B2448
-      name: aop_a
-      attrs: [50, 60]
-    - size: 1000
-      type: A053AA7F-40B8-4B1C-BA08-2F68AC71A4F4
-      uuid: 559599A7-FD71-18E5-6B97-4840B05EF2ED
-      name: tz_a
-      attrs: [50, 60]
-    - size: 1000
-      type: E1A6A689-0C8D-4CC6-B4E8-55A4320FBD8A
-      uuid: 9289B634-92B5-F9CB-C4ED-85DF654F210B
-      name: hyp_a
-      attrs: [50]
-    - size: 80
-      type: 14D11C40-2A3D-4F97-882D-103A1EC09333
-      uuid: 87D0BF13-0FA8-58B1-D64A-E0CC87EF3B55
-      name: APPS
-      attrs: [0]
-    - size: 1000
-      type: EBD0A0A2-B9E5-4433-87C0-68B6B72699C7
-      uuid: 3FABD9D1-ABA4-0079-3C70-5FCE50F967AD
-      name: modem_a
-      attrs: [50, 60]
-    - size: 1000
-      type: 6690B4CE-70E9-4817-B9F1-25D64D888357
-      uuid: DCC3CD25-22AB-1CCC-2697-D561D3D0AEC3
-      name: core_nhlos_a
-      attrs: [0, 50]
-    - size: 1024
-      type: EA02D680-8712-4552-A3BE-E6087829C1E6
-      uuid: F1B79BEA-AD3F-AD36-3C7C-1F4E0EA9AD3A
-      name: mdtpsecapp_a
-      attrs: [50, 60]
-    - size: 1000
-      type: 3878408A-E263-4B67-B878-6340B35B11E3
-      uuid: A37D094A-8AFE-DBF5-DEB6-B1D9E5204898
-      name: mdtp_a
-      attrs: [50, 60]
-    - size: 128
-      type: A11D2A7C-D82A-4C2F-8A01-1805240E6626
-      uuid: 1ECFCE1D-C164-A7C9-0505-2156D88088ED
-      name: keymaster_a
-      attrs: [50, 60]
-    - size: 256
-      type: BD6928A1-4CE0-A038-4F3A-1495E3EDDFFB
-      uuid: B35108BB-6890-225F-38B4-0BC27C35E9BB
-      name: bar_a
-      attrs: [50, 60]
-    - size: 1000
-      type: 7EFE5010-2A1A-4A1A-B8BC-990257813512
-      uuid: FE2AB686-0D0E-E807-FF5C-2D43D993B65C
-      name: dsp_a
-      attrs: [50, 60]
-    - size: 1000
-      type: 20117F86-E985-4357-B9EE-374BC1D8487D
-      uuid: 930EA65F-D07E-ADD1-B26A-CB4F9DEF7AC9
-      name: boot_a
-      attrs: [48, 49, 50, 51, 52, 53]
-    - size: 128
-      type: 73471795-AB54-43F9-A847-4F72EA5CBEF5
-      uuid: 9959174A-EAFF-296C-33C6-5CB526CABF34
-      name: clib_a
-      attrs: [50, 60]
-    - size: 256
-      type: 8EA64893-1267-4A1B-947C-7C362ACAAD2C
-      uuid: CCF53529-6117-1942-4CE2-B8F4851D2BE3
-      name: clib64_a
-      attrs: [50, 60]
-    - size: 32
-      type: F65D4B16-343D-4E25-AAFC-BE99B6556A6D
-      uuid: 91A4247C-5AAC-9EF3-034C-BC99E5F5BF4B
-      name: devcfg_a
-      attrs: [50]
-    - size: 32
-      type: 21D1219F-2ED1-4AB4-930A-41A16AE75F7F
-      uuid: EF799BBB-BC68-7D27-655B-6B93E782C76A
-      name: loofw_a
-      attrs: [50]
-    - size: 1000
-      type: 24D0D418-D31D-4D8D-AC2C-4D4305188450
-      uuid: E01874D9-7C80-DEE2-AB9E-76D9D7A03039
-      name: dtbo_a
-      attrs: [50]
-    - size: 256
-      type: 1E8615BD-6D8C-41AD-B3EA-50E8BF40E43F
-      uuid: 94266A79-9D43-CCAF-06DF-9DA0DDD238C3
-      name: cpucp_a
-      attrs: [50]
-    - size: 16
-      type: E6E98DA2-E22A-4D12-AB33-169E7DEAA507
-      uuid: 8FCC0D7C-0214-35E5-2390-C26472B70E2F
-      name: ggdp_a
-      attrs: [0, 50]
-    - size: 8
-      type: E126A436-757E-42D0-8D19-0F362F7A62B8
-      uuid: 6A4FD3E9-D920-B9E0-839D-D7F1D6DC235A
-      name: multiimgoem_a
-      attrs: [50, 60]
-    - size: 8
-      type: 846C6F05-EB46-4C0A-A1A3-3648EF3F9D0E
-      uuid: 9DA1EDD3-E9A8-76E9-5113-7FCD4DC648DE
-      name: multiimgqti_a
-      attrs: [50, 60]
-    - size: 256
-      type: 17911177-C9E6-4372-933C-804B678E666F
-      uuid: A1C29E74-4233-477D-8B16-533A6A522E90
-      name: imagefv_a
-      attrs: [50, 60]
-    - size: 16
-      type: 3FA03C7A-9FDC-498B-A2A8-DE11EE339790
-      uuid: E6C560B8-AB93-7876-7F56-2895424152BE
-      name: usb4fw_a
-      attrs: [50, 60]
-    - size: 1
-      type: 65ADDCF4-0C5C-4D9A-AC2D-D90B5CBFCD03
-      uuid: E9F165F4-66AD-9811-6724-D78F078B31EC
-      name: devinfo
-      attrs: [60]
-    - size: 256
-      type: 4114B077-005D-4E12-AC8C-B493BDA684FB
-      uuid: 69DEEF29-E3B1-2CE3-2478-813F5B1161B8
-      name: dip
-      attrs: [60]
-    - size: 2048
-      type: E42E2B4C-33B0-429B-B1EF-D341C547022C
-      uuid: 189EBF69-2510-E63B-3EE6-1BAEDA782209
-      name: spunvm
-    - size: 1000
-      type: AD99F201-DC71-4E30-9630-E19EEF553D1B
-      uuid: 9B3A7225-AC0E-AA70-A50E-AFA01AF0B120
-      name: splash
-    - size: 1
-      type: 10A0C19C-516A-5444-5CE3-664C3226A794
-      uuid: 0464AE6F-7B00-B0E8-8033-234BE65DB535
-      name: limits
-      attrs: [60]
-    - size: 2048
-      type: BC0330EB-3410-4951-A617-03898DBE3372
-      uuid: 448F7EED-37B4-4D86-AC7B-99211EFFA3BA
-      name: logfs
-    - size: 128
-      type: E7E5EFF9-D224-4EB3-8F0B-1D2A4BE18665
-      uuid: 806005C9-B875-5B23-356D-32DD48A33A28
-      name: emac
-    - size: 128
-      type: 165BD6BC-9250-4AC8-95A7-A93F4A440066
-      uuid: 0C7E94AC-6B78-7286-8AE2-4C24074E3D83
-      name: uefivarstore
-      attrs: [60]
-    - size: 32
-      type: 76CFC7EF-039D-4E2C-B81E-4DD8C2CB2A93
-      uuid: AA034D02-03C8-17DB-C556-BC38D5975478
-      name: secdata
-      attrs: [0]
-    - size: 256
-      type: 97745ABA-135A-44C3-9ADC-05616173C24C
-      uuid: 16A80400-3EF0-7F46-EE89-D1E0F8CF105F
-      name: toolsfv
-      attrs: [60]
-    - size: 16
-      type: 4B7A15D6-322C-42AC-8110-88B7DA0C5D77
-      uuid: DA91D469-09B3-CE43-795E-3B86F3735143
-      name: vbmeta_a
-      attrs: [50, 60]
-    - size: 2
-      type: 69CFD37F-3D6B-48ED-9739-23015606BE65
-      uuid: E60E3E4B-BE22-24DC-C8DB-5E1027F909B3
-      name: softsku
-    - size: 512
-      type: 6CB747F1-C2EF-4092-ADD0-CA39F79C7AF4
-      uuid: AAF48D41-BCB0-5604-366F-319B2502F14D
-      name: bluetooth_a
-      attrs: [50, 60]
-    - size: 1000
-      type: 06EF844E-08FC-494E-89EB-396D4D6C5B27
-      uuid: B84361CE-FBED-E370-3F80-B2BCAE88DACA
-      name: vm_a
-      attrs: [50, 60]
-    - size: 1000
-      type: 68ED1658-2B71-4DAA-8E46-1510560045C9
-      uuid: BACF40FD-5D9F-C390-FCC4-03468864B0E9
-      name: system_a
-      attrs: [50]
-    - size: 1000
-      type: AF9B7EAA-6D4F-4F00-B0C1-3B210ADE2A2C
-      uuid: BD6C054B-8836-C0F7-02EF-84FC5C4D5667
-      name: vendor_a
-      attrs: [50]
-    - size: 1000
-      type: 0DB10824-7E30-4531-9D5A-0FC49470B4CE
-      uuid: 7652B79D-4DF1-817B-5B91-C43AAF37E81D
-      name: vendor_boot_a
-      attrs: [50]
-    - size: 1000
-      type: 9D23FA91-9EF1-4867-9E18-26B7153DA21B
-      uuid: 2BBBAA36-1E84-33A0-B515-FD598AD5873D
-      name: userdata
-    - size: 1000
-      type: A0705B0D-4F9F-4801-91CD-F62740C0F13B
-      uuid: 3E6610C0-A03A-3A03-20E2-4B3C2D8338C1
-      name: persist
-    - size: 1000
-      type: 3989AF30-5C02-4154-AD00-1D34C816CAC1
-      uuid: F0BA1C88-6482-9F93-03D2-13B10A67AD69
-      name: diag_log
-    - size: 1000
-      type: 2889C942-FF80-4DA8-A5B8-3F32F285C0D8
-      uuid: 4061C1DE-7E03-0331-EE1C-E5425F00AF25
-      name: pvm_log
-    - size: 1000
-      type: 78EBFD49-E8B1-4E75-ABC0-3F2DBC7428DD
-      uuid: 20D9E848-2001-47DB-563F-B61EDB2587A9
-      name: gvm_log
-    - size: 1000
-      type: 00000000-0000-0000-0000-000000000000
-      uuid: B2A39A0F-FB21-012A-FCDD-7F7970A7A189
-      name: last_parti
-      attrs: [60]
-    - size: 26
-      type: 6891A3B7-0CCC-4705-BB53-2673CAC193BD
-      uuid: 0A3AA231-DCF0-5FE9-EA09-979CBC206CC3
-      name: ALIGN_TO_128K_2
-      attrs: [60]
-    - size: 64
-      type: B8B27C4C-4B5B-8AB2-502F-A792B590A896
-      uuid: 0F5052BF-2BE2-DB5D-C60A-26A48429B5F7
-      name: aop_b
-      attrs: [60]
-    - size: 1000
-      type: C832EA16-8B0D-4398-A67B-EBB30EF98E7E
-      uuid: E06ADBFE-1B6B-20AD-DEE1-5B3426973EE1
-      name: tz_b
-      attrs: [60]
-    - size: 1000
-      type: 3D3E3AD2-8FF3-4975-A7E7-0E8A10B69F0D
-      uuid: A54735E8-B776-F907-48A1-2A83A5ECC366
-      name: hyp_b
-    - size: 1000
-      type: 77036CD4-03D5-42BB-8ED1-37E5A88BAA34
-      uuid: 6FDF730E-C13C-2F0A-0C4C-3DA5C55207E8
-      name: modem_b
-      attrs: [60]
-    - size: 1000
-      type: 77036CD4-03D5-42BB-8ED1-37E5A88BAA34
-      uuid: 0E19A0E4-7CBD-16B1-735B-A25A7345F829
-      name: core_nhlos_b
-      attrs: [0]
-    - size: 128
-      type: 77036CD4-03D5-42BB-8ED1-37E5A88BAA34
-      uuid: 4F2C5C4E-CC25-3016-F9D6-7815C11188A1
-      name: keymaster_b
-      attrs: [60]
-    - size: 256
-      type: 0FFB67A4-7A7F-4D08-BBF5-E20A8A68560B
-      uuid: CAA1BF64-247C-7793-77F5-F7DC156CCC60
-      name: bar_b
-      attrs: [60]
-    - size: 1000
-      type: 77036CD4-03D5-42BB-8ED1-37E5A88BAA34
-      uuid: CAABA071-2882-ECEB-FFB6-0DE25BD4FAB8
-      name: dsp_b
-      attrs: [60]
-    - size: 32
-      type: 4E820A31-17E3-447D-B32D-FB339F7EA1A2
-      uuid: 2D21B1E5-1F6E-E31C-0634-E680C4397C98
-      name: devcfg_b
-    - size: 1000
-      type: 77036CD4-03D5-42BB-8ED1-37E5A88BAA34
-      uuid: DAC0B8A9-0DEB-3087-BED0-7AAB27A59E7F
-      name: dtbo_b
-    - size: 256
-      type: 6C1111FB-5354-41DE-AC17-5B6E542BE836
-      uuid: DCD298F5-149C-3AC7-EF48-17DE044EB8EA
-      name: cpucp_b
-    - size: 16
-      type: 110F198D-8174-4193-9AF1-5DA94CDC59C9
-      uuid: 8837E718-127C-1BD9-44E0-A129187DFC67
-      name: apdp_b
-      attrs: [0]
-    - size: 8
-      type: 3E3E3ECD-C512-4F95-9144-6063826A8970
-      uuid: 340833C4-A161-1E34-A578-084A389B036C
-      name: multiimgoem_b
-      attrs: [60]
-    - size: 8
-      type: 749E5DEF-7B57-4BC6-AB51-AAEE077C2D56
-      uuid: 65CD06B5-C18C-1D1C-38D5-CE4B446BC8D9
-      name: multiimgqti_b
-      attrs: [60]
-    - size: 256
-      type: 77036CD4-03D5-42BB-8ED1-37E5A88BAA34
-      uuid: 811CC8B0-C99E-D016-E008-32964A19F733
-      name: imagefv_b
-      attrs: [60]
-    - size: 512
-      type: 6CB747F1-C2EF-4092-ADD0-CA39F79C7AF4
-      uuid: CF667529-C35A-ADC9-ECED-C7112992A8F5
-      name: bluetooth_b
-      attrs: [60]
-    - size: 4000
-      type: 06EF844E-08FC-494E-89EB-396D4D6C5B27
-      uuid: A3E26FC6-CA48-B5C4-4DFF-BA37E39C641C
-      name: vm_b
-      attrs: [60]
-    - size: 1000
-      type: 20117F86-E985-4357-B9EE-374BC1D8487D
-      uuid: EDBDAC67-E215-23BB-263F-672C831B481C
-      name: boot_b
-      attrs: [48, 49, 51, 52, 53]
-    - size: 1000
-      type: 68ED1658-2B71-4DAA-8E46-1510560045C9
-      uuid: 283DD53C-D749-68AC-261D-104D9CD22F76
-      name: system_b
-    - size: 1000
-      type: AF9B7EAA-6D4F-4F00-B0C1-3B210ADE2A2C
-      uuid: EB00E4FA-E9C5-6D0A-3902-B788B0334443
-      name: vendor_b
-      attrs: [60]
-    - size: 1000
-      type: 0DB10824-7E30-4531-9D5A-0FC49470B4CE
-      uuid: 904C0C3B-08A2-9962-E64D-F0C74E2F90BC
-      name: vendor_boot_b
-      attrs: [60]
-    - size: 16
-      type: 4B7A15D6-322C-42AC-8110-88B7DA0C5D77
-      uuid: 305087FF-BF9A-910D-F3C4-606A8DE7788A
-      name: vbmeta_b
-      attrs: [60]
-    - size: 1000
-      type: 00000000-0000-0000-0000-000000000000
-      uuid: E90D1AAC-C4C9-B85F-0811-187211DD67BE
-      name: last_parti
-      attrs: [60]
-    - size: 26
-      type: 6891A3B7-0CCC-4705-BB53-2673CAC193BD
-      uuid: 9ECC7A74-ABD8-381B-CFC0-5335622D6675
-      name: ALIGN_TO_128K_2
-      attrs: [60]
-    - size: 1000
-      type: 4EF7C492-D028-41C6-B47A-BBD33850CB31
-      uuid: 3C8D4305-FB5A-03FE-98A8-13D60D179811
-      name: reserved1_b
-      attrs: [60]
-    - size: 1000
-      type: 4E351956-AA2A-479E-B5F7-163DA39F14F6
-      uuid: D9B986CB-AAC9-2186-63C0-363D37BC62B9
-      name: reserved2_b
-      attrs: [60]
-    - size: 1000
-      type: D7F253DB-4DF4-4137-BA8D-8F8DA874F9F5
-      uuid: 288A4590-9CC7-C33F-9129-79962A7D8142
-      name: la_boot_b
-      attrs: [60]
-    - size: 1000
-      type: 0BD16681-CA7D-4EFE-A2CC-BD03F792C486
-      uuid: F1ECB84D-DABF-2CC0-4ABC-18A187F80AE1
-      name: la_init_boot_b
-      attrs: [60]
-    - size: 1000
-      type: CD9EEF69-E9A5-457F-BDFB-7BFBCD1FD4FD
-      uuid: EB7FD864-FF43-599C-49BB-8EFAE60422AE
-      name: la_dtbo_b
-      attrs: [60]
-    - size: 1000
-      type: EB1AD2EE-8C54-41C2-8361-7271635A1AB5
-      uuid: 26E93AD3-C1C7-FF8A-B43F-CE397DB3C541
-      name: la_vbmeta_b
-      attrs: [60]
-    - size: 1000
-      type: E80D40F1-F0FE-486C-B7D6-B7225AC36C0E
-      uuid: 789E04D2-C883-509D-4DED-573BB37E3DA0
-      name: la_vb_sys_b
-      attrs: [60]
-    - size: 1000
-      type: A6DE3586-5EBD-46AA-99E3-044A53B22104
-      uuid: 5C7ECE08-43AC-ABE4-7215-08F01834B5BD
-      name: la_v_boot_b
-      attrs: [60]
-    - size: 7203
-      type: 00000000-0000-0000-0000-000000000000
-      uuid: 1C2CEE5A-E137-5103-255F-7494FE86C28B
-      name: last_parti
-      attrs: [60]
-    - size: 1000
-      type: 5AF80809-AABB-4943-9168-CDFC38742598
-      uuid: 5D2F61CC-5D8F-0D48-E373-865009F1134D
-      name: logdump
-      attrs: [0]
-    - size: 26
-      type: 6891A3B7-0CCC-4705-BB53-2673CAC193BD
-      uuid: 3749E65F-633B-F3A1-D4CC-6871A8451B7D
-      name: ALIGN_TO_128K_4
-      attrs: [60]
-    - size: 1
-      type: 7374B391-291C-49FA-ABC2-0463AB5F713F
-      uuid: EDC0B69D-306B-BDDF-F123-256EDCAEA90A
-      name: recoveryinfo
-      attrs: [0]
-    - size: 1000
-      type: F7EECB66-781A-439A-8955-70E12ED4A7A0
-      uuid: E4C508F0-40AF-9870-45B3-0F0404032F02
-      name: foo_logs
-      attrs: [0]
-  centos_gpg_key: |
-    -----BEGIN PGP PUBLIC KEY BLOCK-----
-    Version: GnuPG v2.0.22 (GNU/Linux)
 
-    mQINBFzMWxkBEADHrskpBgN9OphmhRkc7P/YrsAGSvvl7kfu+e9KAaU6f5MeAVyn
-    rIoM43syyGkgFyWgjZM8/rur7EMPY2yt+2q/1ZfLVCRn9856JqTIq0XRpDUe4nKQ
-    8BlA7wDVZoSDxUZkSuTIyExbDf0cpw89Tcf62Mxmi8jh74vRlPy1PgjWL5494b3X
-    5fxDidH4bqPZyxTBqPrUFuo+EfUVEqiGF94Ppq6ZUvrBGOVo1V1+Ifm9CGEK597c
-    aevcGc1RFlgxIgN84UpuDjPR9/zSndwJ7XsXYvZ6HXcKGagRKsfYDWGPkA5cOL/e
-    f+yObOnC43yPUvpggQ4KaNJ6+SMTZOKikM8yciyBwLqwrjo8FlJgkv8Vfag/2UR7
-    JINbyqHHoLUhQ2m6HXSwK4YjtwidF9EUkaBZWrrskYR3IRZLXlWqeOi/+ezYOW0m
-    vufrkcvsh+TKlVVnuwmEPjJ8mwUSpsLdfPJo1DHsd8FS03SCKPaXFdD7ePfEjiYk
-    nHpQaKE01aWVSLUiygn7F7rYemGqV9Vt7tBw5pz0vqSC72a5E3zFzIIuHx6aANry
-    Gat3aqU3qtBXOrA/dPkX9cWE+UR5wo/A2UdKJZLlGhM2WRJ3ltmGT48V9CeS6N9Y
-    m4CKdzvg7EWjlTlFrd/8WJ2KoqOE9leDPeXRPncubJfJ6LLIHyG09h9kKQARAQAB
-    tDpDZW50T1MgKENlbnRPUyBPZmZpY2lhbCBTaWduaW5nIEtleSkgPHNlY3VyaXR5
-    QGNlbnRvcy5vcmc+iQI3BBMBAgAhBQJczFsZAhsDBgsJCAcDAgYVCAIJCgsDFgIB
-    Ah4BAheAAAoJEAW1VbOEg8ZdjOsP/2ygSxH9jqffOU9SKyJDlraL2gIutqZ3B8pl
-    Gy/Qnb9QD1EJVb4ZxOEhcY2W9VJfIpnf3yBuAto7zvKe/G1nxH4Bt6WTJQCkUjcs
-    N3qPWsx1VslsAEz7bXGiHym6Ay4xF28bQ9XYIokIQXd0T2rD3/lNGxNtORZ2bKjD
-    vOzYzvh2idUIY1DgGWJ11gtHFIA9CvHcW+SMPEhkcKZJAO51ayFBqTSSpiorVwTq
-    a0cB+cgmCQOI4/MY+kIvzoexfG7xhkUqe0wxmph9RQQxlTbNQDCdaxSgwbF2T+gw
-    byaDvkS4xtR6Soj7BKjKAmcnf5fn4C5Or0KLUqMzBtDMbfQQihn62iZJN6ZZ/4dg
-    q4HTqyVpyuzMXsFpJ9L/FqH2DJ4exGGpBv00ba/Zauy7GsqOc5PnNBsYaHCply0X
-    407DRx51t9YwYI/ttValuehq9+gRJpOTTKp6AjZn/a5Yt3h6jDgpNfM/EyLFIY9z
-    V6CXqQQ/8JRvaik/JsGCf+eeLZOw4koIjZGEAg04iuyNTjhx0e/QHEVcYAqNLhXG
-    rCTTbCn3NSUO9qxEXC+K/1m1kaXoCGA0UWlVGZ1JSifbbMx0yxq/brpEZPUYm+32
-    o8XfbocBWljFUJ+6aljTvZ3LQLKTSPW7TFO+GXycAOmCGhlXh2tlc6iTc41PACqy
-    yy+mHmSv
-    =kkH7
-    -----END PGP PUBLIC KEY BLOCK-----
-  redhat_gpg_key: |
-    -----BEGIN PGP PUBLIC KEY BLOCK-----
+  # These are available for end users, not used internally
+  extra_rpms: []
+  extra_repos: []
+  extra_build_rpms: []
+  extra_build_repos: []
 
-    mQINBErgSTsBEACh2A4b0O9t+vzC9VrVtL1AKvUWi9OPCjkvR7Xd8DtJxeeMZ5eF
-    0HtzIG58qDRybwUe89FZprB1ffuUKzdE+HcL3FbNWSSOXVjZIersdXyH3NvnLLLF
-    0DNRB2ix3bXG9Rh/RXpFsNxDp2CEMdUvbYCzE79K1EnUTVh1L0Of023FtPSZXX0c
-    u7Pb5DI5lX5YeoXO6RoodrIGYJsVBQWnrWw4xNTconUfNPk0EGZtEnzvH2zyPoJh
-    XGF+Ncu9XwbalnYde10OCvSWAZ5zTCpoLMTvQjWpbCdWXJzCm6G+/hx9upke546H
-    5IjtYm4dTIVTnc3wvDiODgBKRzOl9rEOCIgOuGtDxRxcQkjrC+xvg5Vkqn7vBUyW
-    9pHedOU+PoF3DGOM+dqv+eNKBvh9YF9ugFAQBkcG7viZgvGEMGGUpzNgN7XnS1gj
-    /DPo9mZESOYnKceve2tIC87p2hqjrxOHuI7fkZYeNIcAoa83rBltFXaBDYhWAKS1
-    PcXS1/7JzP0ky7d0L6Xbu/If5kqWQpKwUInXtySRkuraVfuK3Bpa+X1XecWi24JY
-    HVtlNX025xx1ewVzGNCTlWn1skQN2OOoQTV4C8/qFpTW6DTWYurd4+fE0OJFJZQF
-    buhfXYwmRlVOgN5i77NTIJZJQfYFj38c/Iv5vZBPokO6mffrOTv3MHWVgQARAQAB
-    tDNSZWQgSGF0LCBJbmMuIChyZWxlYXNlIGtleSAyKSA8c2VjdXJpdHlAcmVkaGF0
-    LmNvbT6JAjYEEwECACAFAkrgSTsCGwMGCwkIBwMCBBUCCAMEFgIDAQIeAQIXgAAK
-    CRAZni+R/UMdUWzpD/9s5SFR/ZF3yjY5VLUFLMXIKUztNN3oc45fyLdTI3+UClKC
-    2tEruzYjqNHhqAEXa2sN1fMrsuKec61Ll2NfvJjkLKDvgVIh7kM7aslNYVOP6BTf
-    C/JJ7/ufz3UZmyViH/WDl+AYdgk3JqCIO5w5ryrC9IyBzYv2m0HqYbWfphY3uHw5
-    un3ndLJcu8+BGP5F+ONQEGl+DRH58Il9Jp3HwbRa7dvkPgEhfFR+1hI+Btta2C7E
-    0/2NKzCxZw7Lx3PBRcU92YKyaEihfy/aQKZCAuyfKiMvsmzs+4poIX7I9NQCJpyE
-    IGfINoZ7VxqHwRn/d5mw2MZTJjbzSf+Um9YJyA0iEEyD6qjriWQRbuxpQXmlAJbh
-    8okZ4gbVFv1F8MzK+4R8VvWJ0XxgtikSo72fHjwha7MAjqFnOq6eo6fEC/75g3NL
-    Ght5VdpGuHk0vbdENHMC8wS99e5qXGNDued3hlTavDMlEAHl34q2H9nakTGRF5Ki
-    JUfNh3DVRGhg8cMIti21njiRh7gyFI2OccATY7bBSr79JhuNwelHuxLrCFpY7V25
-    OFktl15jZJaMxuQBqYdBgSay2G0U6D1+7VsWufpzd/Abx1/c3oi9ZaJvW22kAggq
-    dzdA27UUYjWvx42w9menJwh/0jeQcTecIUd0d0rFcw/c1pvgMMl/Q73yzKgKYw==
-    =zbHE
-    -----END PGP PUBLIC KEY BLOCK-----
+  # These are used to add rpms to the qm partition
+  qm_extra_repos: []
+  qm_extra_rpms: []
 
-    -----BEGIN PGP PUBLIC KEY BLOCK-----
+  # These are overridden by the distro file
+  distro_repos: []
+  distro_devel_repos: []
+  distro_debug_repos: []
 
-    mQINBFsy23UBEACUKSphFEIEvNpy68VeW4Dt6qv+mU6am9a2AAl10JANLj1oqWX+
-    oYk3en1S6cVe2qehSL5DGVa3HMUZkP3dtbD4SgzXzxPodebPcr4+0QNWigkUisri
-    XGL5SCEcOP30zDhZvg+4mpO2jMi7Kc1DLPzBBkgppcX91wa0L1pQzBcvYMPyV/Dh
-    KbQHR75WdkP6OA2JXdfC94nxYq+2e0iPqC1hCP3Elh+YnSkOkrawDPmoB1g4+ft/
-    xsiVGVy/W0ekXmgvYEHt6si6Y8NwXgnTMqxeSXQ9YUgVIbTpsxHQKGy76T5lMlWX
-    4LCOmEVomBJg1SqF6yi9Vu8TeNThaDqT4/DddYInd0OO69s0kGIXalVgGYiW2HOD
-    x2q5R1VGCoJxXomz+EbOXY+HpKPOHAjU0DB9MxbU3S248LQ69nIB5uxysy0PSco1
-    sdZ8sxRNQ9Dw6on0Nowx5m6Thefzs5iK3dnPGBqHTT43DHbnWc2scjQFG+eZhe98
-    Ell/kb6vpBoY4bG9/wCG9qu7jj9Z+BceCNKeHllbezVLCU/Hswivr7h2dnaEFvPD
-    O4GqiWiwOF06XaBMVgxA8p2HRw0KtXqOpZk+o+sUvdPjsBw42BB96A1yFX4jgFNA
-    PyZYnEUdP6OOv9HSjnl7k/iEkvHq/jGYMMojixlvXpGXhnt5jNyc4GSUJQARAQAB
-    tDNSZWQgSGF0LCBJbmMuIChhdXhpbGlhcnkga2V5KSA8c2VjdXJpdHlAcmVkaGF0
-    LmNvbT6JAjkEEwECACMFAlsy23UCGwMHCwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIX
-    gAAKCRD3b2bD1AgnknqOD/9fB2ASuG2aJIiap4kK58R+RmOVM4qgclAnaG57+vjI
-    nKvyfV3NH/keplGNRxwqHekfPCqvkpABwhdGEXIE8ILqnPewIMr6PZNZWNJynZ9i
-    eSMzVuCG7jDoGyQ5/6B0f6xeBtTeBDiRl7+Alehet1twuGL1BJUYG0QuLgcEzkaE
-    /gkuumeVcazLzz7L12D22nMk66GxmgXfqS5zcbqOAuZwaA6VgSEgFdV2X2JU79zS
-    BQJXv7NKc+nDXFG7M7EHjY3Rma3HXkDbkT8bzh9tJV7Z7TlpT829pStWQyoxKCVq
-    sEX8WsSapTKA3P9YkYCwLShgZu4HKRFvHMaIasSIZWzLu+RZH/4yyHOhj0QB7XMY
-    eHQ6fGSbtJ+K6SrpHOOsKQNAJ0hVbSrnA1cr5+2SDfel1RfYt0W9FA6DoH/S5gAR
-    dzT1u44QVwwp3U+eFpHphFy//uzxNMtCjjdkpzhYYhOCLNkDrlRPb+bcoL/6ePSr
-    016PA7eEnuC305YU1Ml2WcCn7wQV8x90o33klJmEkWtXh3X39vYtI4nCPIvZn1eP
-    Vy+F+wWt4vN2b8oOdlzc2paOembbCo2B+Wapv5Y9peBvlbsDSgqtJABfK8KQq/jK
-    Yl3h5elIa1I3uNfczeHOnf1enLOUOlq630yeM/yHizz99G1g+z/guMh5+x/OHraW
-    iA==
-    =+Gxh
-    -----END PGP PUBLIC KEY BLOCK-----
+  # These are overridden by the target file
+  target_repos: []
+  target_rpms: []
+  target_build_repos: []
+  target_build_rpms: []
+  target_extra_image_stages: []
+
+  # These are overridden by the arch file
+  arch_rpms: []
+  arch_build_rpms: []
+
   build_rpms:
     - dnf
     - dosfstools
@@ -1216,10 +279,7 @@ mpp-vars:
     - tar
     - xz
     - zstd
-  boot_rpms:
-    - dracut-config-generic
-    - grub2-tools-minimal
-    - lz4
+
   base_rpms:
     - e2fsprogs
     - efibootmgr
@@ -1229,4 +289,6 @@ mpp-vars:
     - rootfiles
     - selinux-policy-targeted
     - systemd-udev
-    - mpp-eval: release_rpm
+    - dracut-config-generic
+    - grub2-tools-minimal
+    - lz4

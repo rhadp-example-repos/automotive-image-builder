@@ -12,34 +12,32 @@ mpp-vars:
   efipart_geometry:
     heads: 64
     sectors-per-track: 32
-  extra_image_rpms:
+  target_rpms:
     - ti-uboot-images-armv8
-  image_extra_stages:
-    mpp-join:
-      - mpp-eval: image_extra_stages
-      - - type: org.osbuild.copy
-          inputs:
-            rootfs:
-              type: org.osbuild.tree
-              origin: org.osbuild.pipeline
-              references:
-                - name:rootfs
-          options:
-            # Install u-boot and other bootloaders to the boot partition
-            # so users get a convenient experience booting directly from the
-            # uSD card they dd to. If the bootloaders are stored on the eMMC
-            # boot partition or SPI and the DIP switches are set to to initially
-            # boot from those this can be avoided (and essentially all the TI
-            # images unified)
-            paths:
-              - from:
-                  mpp-format-string: input://rootfs/usr/share/uboot/j784s4_evm_r5/tiboot3-j784s4-gp-evm.bin
-                to: tree:///boot/efi/tiboot3.bin
-              - from:
-                  mpp-format-string: input://rootfs/usr/share/uboot/j784s4_evm_a72/tispl.bin
-                to: tree:///boot/efi/tispl.bin
-              - from:
-                  mpp-format-string: input://rootfs/usr/share/uboot/j784s4_evm_a72/u-boot.img
-                to: tree:///boot/efi/u-boot.img
+  target_extra_image_stages:
+    - type: org.osbuild.copy
+      inputs:
+        rootfs:
+          type: org.osbuild.tree
+          origin: org.osbuild.pipeline
+          references:
+            - name:rootfs
+      options:
+        # Install u-boot and other bootloaders to the boot partition
+        # so users get a convenient experience booting directly from the
+        # uSD card they dd to. If the bootloaders are stored on the eMMC
+        # boot partition or SPI and the DIP switches are set to to initially
+        # boot from those this can be avoided (and essentially all the TI
+        # images unified)
+        paths:
+          - from:
+              mpp-format-string: input://rootfs/usr/share/uboot/j784s4_evm_r5/tiboot3-j784s4-gp-evm.bin
+            to: tree:///boot/efi/tiboot3.bin
+          - from:
+              mpp-format-string: input://rootfs/usr/share/uboot/j784s4_evm_a72/tispl.bin
+            to: tree:///boot/efi/tispl.bin
+          - from:
+              mpp-format-string: input://rootfs/usr/share/uboot/j784s4_evm_a72/u-boot.img
+            to: tree:///boot/efi/u-boot.img
 
 pipelines: []

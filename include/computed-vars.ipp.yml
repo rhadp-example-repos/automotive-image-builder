@@ -5,7 +5,36 @@ version: '2'
 # things that depend on what was set in that.
 
 mpp-vars:
-  newline: "\n"
+  # If no absolute size is set, compute the relative size
+  varpart_size:
+    mpp-eval: locals().get('varpart_size', int(int(image_size) * varpart_relative_size / 512))
+
+  # Compute dynamic uuids if requested
+  rootfs_uuid:
+    mpp-eval: (rootfs_uuid if static_uuids else str(__import__('uuid').uuid4()))
+  bootfs_uuid:
+    mpp-eval: (bootfs_uuid if static_uuids else str(__import__('uuid').uuid4()))
+  parttab_uuid:
+    mpp-eval: (parttab_uuid if static_uuids else str(__import__('uuid').uuid4()))
+  efipart_uuid:
+    mpp-eval: (efipart_uuid if static_uuids else str(__import__('uuid').uuid4()))
+  bootpart_uuid:
+    mpp-eval: (bootpart_uuid if static_uuids else str(__import__('uuid').uuid4()))
+  varpart_uuid:
+    mpp-eval: (varpart_uuid if static_uuids else str(__import__('uuid').uuid4()))
+  abootpart_uuid_a:
+    mpp-eval: (abootpart_uuid_a if static_uuids else str(__import__('uuid').uuid4()))
+  abootpart_uuid_b:
+    mpp-eval: (abootpart_uuid_b if static_uuids else str(__import__('uuid').uuid4()))
+  vbmetapart_uuid_a:
+    mpp-eval: (vbmetapart_uuid_a if static_uuids else str(__import__('uuid').uuid4()))
+  vbmetapart_uuid_b:
+    mpp-eval: (vbmetapart_uuid_b if static_uuids else str(__import__('uuid').uuid4()))
+  rootpart_uuid:
+    mpp-eval: (rootpart_uuid if static_uuids else str(__import__('uuid').uuid4()))
+  luks_uuid:
+    mpp-eval: (luks_uuid if static_uuids else str(__import__('uuid').uuid4()))
+
   # Backwards compatibility by checking if the deprecated kernel_rpm variable is set
   kernel_core_package:
     mpp-if: locals().get('kernel_rpm')
@@ -32,7 +61,7 @@ mpp-vars:
     then:
       mpp-eval: locals().get('sign_kernel_modules', image_mode == 'image')
     else:
-      mpp-eval: locals().get('sign_kernel_modules', default_sign_kernel_modules)
+      mpp-eval: locals().get('sign_kernel_modules', False)
   use_kernel_debug_package:
     mpp-if: "'debug' in locals().get('kernel_package')"
     then: true
@@ -49,94 +78,13 @@ mpp-vars:
       mpp-format-string: |
         $centos_gpg_key
         $redhat_gpg_key
-  # We need to define this ahead of image-ostree.ipp.yml for use below
   use_ostree:
     mpp-eval: use_ostree or image_mode == 'image'
+  has_partition_table:
+    mpp-eval: any(ext in exports for ext in ['image', 'simg', 'qcow2'])
+  use_separate_var:
+    mpp-eval: has_partition_table and use_separate_var
   _dash_escape: "\\x2d"
-  boot_mount:
-    mpp-format-string: |
-      [Unit]
-      Before=local-fs.target
-      After=blockdev@dev-disk-by\\x2duuid-{bootfs_uuid.replace("-", _dash_escape)}.target
-
-      [Mount]
-      What=/dev/disk/by-uuid/$bootfs_uuid
-      Where=/boot
-      Type=ext4
-
-      [Install]
-      RequiredBy=local-fs.target
-  boot_efi_mount:
-    mpp-format-string: |
-      [Unit]
-      Before=local-fs.target
-      After=blockdev@dev-disk-by\\x2dlabel-ESP.target
-
-      [Mount]
-      What=/dev/disk/by-label/ESP
-      Where=/boot/efi
-      Type=vfat
-
-      [Install]
-      RequiredBy=local-fs.target
-  var_mount:
-    mpp-format-string: |
-      [Unit]
-      Before=local-fs.target
-      After=blockdev@dev-disk-by\\x2duuid-{varpart_uuid.replace("-", _dash_escape)}.target
-
-      [Mount]
-      What=/dev/disk/by-uuid/$varpart_uuid
-      Where=/var
-      Type=ext4
-
-      [Install]
-      RequiredBy=local-fs.target
-  build_rpms:
-    mpp-join:
-      - mpp-eval: build_rpms
-      - - mpp-if: use_luks
-          then: cryptsetup
-        - mpp-if: use_luks
-          then: lvm2
-        - mpp-if: use_aboot
-          then: aboot-update
-        - mpp-if: use_aboot
-          then: aboot-deploy
-        - mpp-if: use_composefs_signed
-          then: openssl
-      - - mpp-if: sign_kernel_modules
-          then: $kernel_devel_rpm
-  boot_rpms:
-    mpp-join:
-      - mpp-eval: boot_rpms
-      - mpp-if: is_autoinit_supported and use_autoinit
-        then:
-          - util-linux-automotive
-          - dracut-automotive
-      - - $kernel_rpm
-  base_rpms:
-    mpp-join:
-      - mpp-eval: base_rpms
-      - - $linux_firmware_rpm
-        - mpp-if: use_luks
-          then: lvm2
-        - mpp-if: use_aboot
-          then: aboot-deploy
-        - mpp-if: use_tuned_realtime
-          then: tuned
-        - mpp-if: use_tuned_realtime
-          then: tuned-profiles-realtime
-        - mpp-if: use_static_ip
-          then: nmstate
-        - mpp-if: not use_static_ip
-          then: NetworkManager
-        - mpp-if: use_bluechi_agent
-          then: bluechi-agent
-        - mpp-if: use_bluechi_controller
-          then: bluechi-controller
-        - mpp-if: use_qm
-          then: qm
   dracut_modules:
     - mpp-if: is_autoinit_supported and use_autoinit
       then:
@@ -154,10 +102,44 @@ mpp-vars:
       - mpp-eval: dracut_omit_modules
       - - mpp-if: not use_luks
           then: dm
+  load_modules:
+    mpp-join:
+      - mpp-eval: load_modules
+      - - mpp-if: use_static_ip and static_ip_module
+          then: $static_ip_module
+  auto_modules_conf:
+    mpp-format-string: |
+      {newline.join(load_modules)}
+  extra_image_copy:
+    mpp-join:
+      - mpp-eval: extra_image_copy
+      - mpp-eval: locals().get('extra_image_copy_' + image_mode, [])
+      - - mpp-if: use_ostree and use_separate_var
+          then:
+            from: input://tree/ostree/deploy/$osname/var/
+            to: mount://root/var/
+  dracut_install:
+    mpp-join:
+      - mpp-eval: dracut_install
+      - mpp-if: use_luks and luks_auto_unlock
+        then:
+          - /usr/.auto-unlock-key
   kernel_opts:
     mpp-join:
+      - - rw
+        - mpp-if: use_ostree and use_aboot
+          then: ostree=true
+        - loglevel=$kernel_loglevel
+        - mpp-if: use_efi_runtime
+          then: efi=runtime
       - mpp-eval: kernel_opts
       - mpp-eval: extra_kernel_opts
+      - mpp-if: use_luks
+        then:
+          - rd.luks.uuid=$luks_uuid
+          - rd.luks.options=discard
+          - mpp-if: luks_auto_unlock
+            then: rd.luks.key=$luks_uuid=/usr/.auto-unlock-key
       - mpp-if: consoles
         then:
           mpp-eval: "list(map(lambda c: 'console=' + c, consoles.split()))"
@@ -212,64 +194,30 @@ mpp-vars:
         - rcupdate.rcu_expedited=1
         # Disable all cgroups v1 interfaces
         - cgroup_no_v1=named,all
-  load_modules:
-    mpp-join:
-      - mpp-eval: load_modules
-      - - mpp-if: use_static_ip and static_ip_module
-          then: $static_ip_module
-  auto_modules_conf:
-    mpp-format-string: |
-      {newline.join(load_modules)}
-  extra_image_copy:
-    mpp-join:
-      - mpp-eval: extra_image_copy
-      - mpp-eval: locals().get('extra_image_copy_' + image_mode, [])
-  image_repos:
-    mpp-join:
-      - mpp-eval: distro_repos
-      - mpp-eval: target_repos
-  build_repos:
-    mpp-join:
-      - mpp-eval: distro_repos
-      - mpp-eval: target_build_repos
-  image_devel_repos:
-    mpp-join:
-      - mpp-eval: distro_devel_repos
-  containers_conf:
-    mpp-format-string: |
-      [containers]
-      { "read_only = true" if containers_read_only else "" }
-
-      default_capabilities = [
-        "CHOWN",
-        "DAC_OVERRIDE",
-        "FOWNER",
-        "FSETID",
-        "KILL",
-        "NET_BIND_SERVICE",
-        "SETFCAP",
-        "SETGID",
-        "SETPCAP",
-        "SETUID",
-        "SYS_CHROOT"
-      ]
-
-      # A list of sysctls to be set in containers by default,
-      # specified as "name=value",
-      # for example:"net.ipv4.ping_group_range=0 0".
-      #
-      default_sysctls = [
-        "net.ipv4.ping_group_range=0 0",
-      ]
-
-      # keyring tells the container engine whether to create
-      # a kernel keyring for use within the container.
-      #
-      keyring = false
-  has_partition_table:
-    mpp-eval: any(ext in exports for ext in ['image', 'simg', 'qcow2'])
-  use_separate_var:
-    mpp-eval: has_partition_table and use_separate_var
+  # For some reasons we need to create the /etc/kernel/cmdline before installing
+  # packages or the dracut image doesn't pick it up. We insert this automatically
+  # first in rootfs to avoid users having to care about this weirdness.
+  kernel_cmdline_stage:
+    type: org.osbuild.kernel-cmdline
+    options:
+      root_fs_uuid:
+        mpp-if: not use_abl
+        then:
+          mpp-eval: rootfs_uuid
+      kernel_opts:
+        mpp-eval: ''' '' .join(kernel_opts)'
+  bluechi_controller_allowed_node_names:
+    mpp-if: not bluechi_controller_allowed_node_names
+    then:
+      - $bluechi_nodename
+      - mpp-if: use_qm
+        then: qm.$bluechi_nodename
+  rootpart_label:
+    mpp-eval: aboot_partlabel if use_aboot else "root"
+  qm_importfile:
+    mpp-if: use_qm
+    then: "qm"
+    else: "empty"
   image_enabled_services:
     mpp-join:
       - mpp-eval: image_enabled_services
@@ -290,127 +238,261 @@ mpp-vars:
           then: main-nmstate.service
         - mpp-if: use_tuned_realtime
           then: tuned.service
-  ostree_prepare_root_conf:
-    mpp-format-string: |
-      [sysroot]
-      readonly=true
-      [etc]
-      { "transient=true" if use_transient_etc else "" }
-      [composefs]
-      enabled={"maybe" if not use_composefs else "signed" if use_composefs_signed else "yes" }
-  build_info:
-    mpp-format-string: |
-      RELEASE="{release_name}"
-      UUID="{image_uuid}"
-      TIMESTAMP="{build_timestamp}"
-      IMAGE_NAME="{name}"
-      IMAGE_MODE="{image_mode}"
-      IMAGE_TARGET="{target}"
-  qm_importfile:
-    mpp-if: use_qm
-    then: "qm"
-    else: "empty"
-  bluechi_agent_conf:
-    mpp-format-string: |
-      [bluechi-agent]
-      NodeName={ bluechi_nodename }
-      ControllerHost= { bluechi_controller_host_ip }
-  qm_bluechi_agent_conf:
-    mpp-format-string: |
-      [bluechi-agent]
-      NodeName=qm.{ bluechi_nodename }
-      ControllerHost= { bluechi_controller_host_ip }
-  bluechi_controller_allowed_node_names:
-    mpp-if: not bluechi_controller_allowed_node_names
-    then:
-      - $bluechi_nodename
-      - mpp-if: use_qm
-        then: qm.$bluechi_nodename
-  bluechi_conf:
-    mpp-format-string: |
-      [bluechi-controller]
-      AllowedNodeNames={ ','.join(bluechi_controller_allowed_node_names) }
-  qm_subuid_content:
-    mpp-format-string: |
-      containers:{ qm_container_subuid }
-  qm_subgid_content:
-    mpp-format-string: |
-      containers:{ qm_container_subgid }
-  qm_autosd_conf:
-    mpp-format-string: |
-       [Service]
-       MemoryMax={ qm_memory_max }
-       MemoryHigh={ qm_memory_high }
-  subuid_content_qm:
-    mpp-if: use_qm
-    then:
-      mpp-format-string: |-
-        qmcontainers:{qm_container_subuid}
-        containers:{container_subuid}
-    else: ""
-  subgid_content_qm:
-    mpp-if: use_qm
-    then:
-      mpp-format-string: |-
-        qmcontainers:{qm_container_subgid}
-        containers:{container_subgid}
-    else: ""
-  subuid_content: |-
-    $subuid_content_qm
-    $extra_subuid
-  subgid_content: |-
-    $subgid_content_qm
-    $extra_subgid
-  systemd_system_conf:
-    mpp-format-string: |
-      [Manager]
-      DefaultTimeoutStartSec={systemd_timeout}
-      DefaultTimeoutStopSec={systemd_timeout}
-      DefaultTimeoutAbortSec={systemd_timeout}
-      DefaultRestartSec={systemd_timeout}
-      DefaultDeviceTimeoutSec={systemd_timeout}
-  coredump_conf:
-    mpp-format-string: |
-      [Coredump]
-      Storage={coredump_storage}
-  rootpart_label:
-    mpp-eval: aboot_partlabel if use_aboot else "root"
-  main_nmstate:
-    mpp-format-string: |
-      ---
-      interfaces:
-        - name: {static_ip_iface}
-          type: ethernet
-          state: up
-          ipv4:
-            enabled: true
-            dhcp: false
-            address:
-              - ip: {static_ip}
-                prefix-length: {static_ip_prefixlen}
-          ipv6:
-            enabled: false
-      routes:
-        config:
-          - destination: 0.0.0.0/0
-            next-hop-interface: {static_ip_iface}
-            next-hop-address: {static_gw}
-      dns-resolver:
-        config:
-          server:
-            - {static_dns}
-  main_nmstate_service:
-    mpp-format-string: |
-      [Unit]
-      After=systemd-modules-load.service
-      Before=systemd-udevd.service
-      DefaultDependencies=no
+  image_extra_stages:
+    mpp-join:
+      - mpp-eval: target_extra_image_stages
+      - - type: org.osbuild.locale
+          options:
+            language:
+              mpp-eval: locale
+        - type: org.osbuild.hostname
+          options:
+            hostname:
+              mpp-eval: hostname
+        - type: org.osbuild.timezone
+          options:
+            zone:
+              mpp-eval: timezone
+        - type: org.osbuild.systemd
+          options:
+            disabled_services:
+              mpp-eval: image_disabled_services
+            enabled_services:
+              mpp-eval: image_enabled_services
+            masked_services:
+              mpp-eval: image_masked_services
+            masked_generators:
+              mpp-eval: image_masked_generators
+        - type: org.osbuild.systemd-journald
+          options:
+            filename:
+              10-automotive.conf
+            config:
+              Journal:
+                Storage:
+                  mpp-eval: journal_storage
+        - type: org.osbuild.containers.storage.conf
+          options:
+            filename: /etc/containers/storage.conf
+            config:
+              storage:
+                transient_store:
+                  mpp-eval: containers_transient_store
+                options:
+                  additionalimagestores:
+                    - mpp-if: use_containers_extra_store
+                      then:
+                        mpp-eval: containers_extra_store
+        - mpp-if: use_qm
+          then:
+            type: org.osbuild.mkdir
+            options:
+              paths:
+                - path: /usr/lib/qm/rootfs
+                  parents: true
+                - path: /etc/qm/
+                  parents: true
+                - path: /var/qm/
+                  parents: true
+        - mpp-if: use_qm
+          then:
+            type: org.osbuild.copy
+            inputs:
+              tree:
+                type: org.osbuild.tree
+                origin: org.osbuild.pipeline
+                references:
+                  - mpp-format-string: name:{qm_pipeline}
+            options:
+              paths:
+                - from: input://tree/
+                  to: tree:///usr/lib/qm/rootfs/
+                - from: input://tree/etc/
+                  to: tree:///etc/qm/
+        - mpp-if: sign_kernel_modules
+          then:
+            type: org.osbuild-auto.kernel.sign-modules
+            inputs:
+              tree:
+                type: org.osbuild.tree
+                origin: org.osbuild.pipeline
+                references:
+                  - name:kernel-keys
+            options:
+              key: input://tree/kernel.key
+              x509: input://tree/kernel.x509
+        - mpp-if: sign_kernel_modules
+          then:
+            type: org.osbuild-auto.kernel.add-cert
+            inputs:
+              tree:
+                type: org.osbuild.tree
+                origin: org.osbuild.pipeline
+                references:
+                  - name:kernel-keys
+            options:
+              x509: input://tree/kernel.x509
 
-      [Service]
-      Type=oneshot
-      ExecStart=/usr/bin/nmstatectl apply --kernel --no-verify /etc/main.nmstate
-      RemainAfterExit=yes
+  # Extra directories that will be created in the image, list amended by moode-*.ipp
+  extra_tree_dirs:
+    - path: /etc/containers
+      parents: true
+      exist_ok: true
+    - path: /usr/lib/systemd/system.conf.d
+      parents: true
+      exist_ok: true
+    - path: /usr/lib/systemd/coredump.conf.d
+      parents: true
+      exist_ok: true
+    - mpp-if: use_qm
+      then:
+        path: /usr/share/containers/systemd/qm.container.d
+        parents: true
+        exist_ok: true
+  # Extra content that will be copied from from extra-tree to the image, list amended by moode-*.ipp
+  extra_tree_content:
+    - from: input://extra-tree/systemd-system.conf
+      to: tree:///usr/lib/systemd/system.conf.d/10-automotive.conf
+    - from: input://extra-tree/coredump.conf
+      to: tree:///usr/lib/systemd/coredump.conf.d/10-automotive.conf
+    - from: input://extra-tree/rcu-normal.service
+      to: tree:///usr/lib/systemd/system/rcu-normal.service
+    - mpp-if: use_luks and luks_auto_unlock
+      then:
+        from: input://extra-tree/luks-key
+        to: tree:///usr/.auto-unlock-key
+    - from: input://extra-tree/containers.conf
+      to: tree:///etc/containers/containers.conf
+    - mpp-if: use_ostree
+      then:
+        from: input://extra-tree/ostree_prepare_root.conf
+        to: tree:///usr/lib/ostree/prepare-root.conf
+    - from: input://extra-tree/build-info
+      to: tree:///etc/build-info
+    - mpp-if: load_modules
+      then:
+        from: input://extra-tree/auto-modules.conf
+        to: tree:///usr/lib/modules-load.d/auto-modules.conf
+    - from: input://extra-tree/subuid
+      to: tree:///etc/subuid
+    - from: input://extra-tree/subgid
+      to: tree:///etc/subgid
+    - mpp-if: use_bluechi_controller
+      then:
+        from: input://extra-tree/bluechi.conf
+        to: tree:///etc/bluechi/controller.conf
+    - mpp-if: use_bluechi_agent
+      then:
+        from: input://extra-tree/bluechi_agent.conf
+        to: tree:///etc/bluechi/agent.conf
+    - mpp-if: use_static_ip
+      then:
+        from: input://extra-tree/main.nmstate
+        to: tree:///etc/main.nmstate
+    - mpp-if: use_static_ip
+      then:
+        from: input://extra-tree/main-nmstate.service
+        to: tree:///usr/lib/systemd/system/main-nmstate.service
+    - mpp-if: use_bootpart
+      then:
+        from: input://extra-tree/boot.mount
+        to: tree:////usr/lib/systemd/system/boot.mount
+    - mpp-if: use_efipart
+      then:
+        from: input://extra-tree/boot-efi.mount
+        to: tree:////usr/lib/systemd/system/boot-efi.mount
+    - mpp-if: use_separate_var
+      then:
+        from: input://extra-tree/var.mount
+        to: tree:////usr/lib/systemd/system/var.mount
+    - mpp-if: use_qm
+      then:
+        from: input://extra-tree/qm-autosd.conf
+        to: tree:////usr/share/containers/systemd/qm.container.d/10-autosd.conf
 
-      [Install]
-      WantedBy=default.target
+  image_repos:
+    mpp-join:
+      - mpp-eval: distro_repos
+      - mpp-eval: target_repos
+  build_repos:
+    mpp-join:
+      - mpp-eval: distro_repos
+      - mpp-eval: target_build_repos
+  image_devel_repos:
+    mpp-join:
+      - mpp-eval: distro_devel_repos
+
+  build_rpms:
+    mpp-join:
+      - mpp-eval: build_rpms
+      - mpp-eval: arch_build_rpms
+      - mpp-eval: target_build_rpms
+      - - mpp-if: use_luks
+          then: cryptsetup
+        - mpp-if: use_luks
+          then: lvm2
+        - mpp-if: use_aboot
+          then: aboot-update
+        - mpp-if: use_aboot
+          then: aboot-deploy
+        - mpp-if: use_composefs_signed
+          then: openssl
+      - - mpp-if: sign_kernel_modules
+          then: $kernel_devel_rpm
+
+  ostree_mode_rpms:
+    - nss-altfiles
+    - greenboot
+    - mpp-if: not use_aboot
+      then: greenboot-grub2
+    - greenboot-reboot
+    - greenboot-status
+    - mpp-if: not use_aboot
+      then: greenboot-rpm-ostree-grub2
+    - mpp-if: name == 'developer'
+      then: ostree-compliance-mode
+    - skopeo  # Needed for upgrading from an OCI remove image
+
+  package_mode_rpms:
+    - shim
+
+  image_rpms:
+    mpp-join:
+      - mpp-eval: base_rpms
+      - mpp-eval: arch_rpms
+      - mpp-eval: target_rpms
+      - mpp-if: use_ostree
+        then:
+          mpp-eval: ostree_mode_rpms
+        else:
+          mpp-eval: package_mode_rpms
+      - mpp-if: is_autoinit_supported and use_autoinit
+        then:
+          - util-linux-automotive
+          - dracut-automotive
+      - - $release_rpm
+        - $kernel_rpm
+        - $linux_firmware_rpm
+        - mpp-if: use_luks
+          then: lvm2
+        - mpp-if: use_aboot
+          then: aboot-deploy
+        - mpp-if: use_tuned_realtime
+          then: tuned
+        - mpp-if: use_tuned_realtime
+          then: tuned-profiles-realtime
+        - mpp-if: use_static_ip
+          then: nmstate
+        - mpp-if: not use_static_ip
+          then: NetworkManager
+        - mpp-if: use_bluechi_agent
+          then: bluechi-agent
+        - mpp-if: use_bluechi_controller
+          then: bluechi-controller
+        - mpp-if: use_qm
+          then: qm
+
+  _debug_output:
+    mpp-eval: "locals().get('print_variables') and print( __import__('json').dumps({k: v for k, v in locals().items() if not k.startswith('_')}, default=lambda o: '<not serializable>', sort_keys=True, indent=2))"
+
 pipelines: []

@@ -1,0 +1,11 @@
+version: '2'
+
+# This file is loaded early and sets all the default values for variables.
+# It will inherit variables set in the image manifest itself, so the
+# defaults only override variable if they are already unset.
+# After this loads, things like the per-arch, per-target and per image type
+# includes are loaded which can override these.
+
+mpp-vars:
+  ostree_ref: $distro_name/$arch/$target-$name
+  ostree_os_version: $distro_version

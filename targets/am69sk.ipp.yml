@@ -12,28 +12,26 @@ mpp-vars:
   efipart_geometry:
     heads: 64
     sectors-per-track: 32
-  extra_image_rpms:
+  target_rpms:
     - ti-uboot-images-armv8
-  image_extra_stages:
-    mpp-join:
-      - mpp-eval: image_extra_stages
-      - - type: org.osbuild.copy
-          inputs:
-            rootfs:
-              type: org.osbuild.tree
-              origin: org.osbuild.pipeline
-              references:
-                - name:rootfs
-          options:
-            paths:
-              - from:
-                  mpp-format-string: input://rootfs/usr/share/uboot/am69_sk_r5/tiboot3-j784s4-hs-fs-evm.bin
-                to: tree:///boot/efi/tiboot3.bin
-              - from:
-                  mpp-format-string: input://rootfs/usr/share/uboot/am69_sk_a72/tispl.bin
-                to: tree:///boot/efi/tispl.bin
-              - from:
-                  mpp-format-string: input://rootfs/usr/share/uboot/am69_sk_a72/u-boot.img
-                to: tree:///boot/efi/u-boot.img
+  target_extra_image_stages:
+    - type: org.osbuild.copy
+      inputs:
+        rootfs:
+          type: org.osbuild.tree
+          origin: org.osbuild.pipeline
+          references:
+            - name:rootfs
+      options:
+        paths:
+          - from:
+              mpp-format-string: input://rootfs/usr/share/uboot/am69_sk_r5/tiboot3-j784s4-hs-fs-evm.bin
+            to: tree:///boot/efi/tiboot3.bin
+          - from:
+              mpp-format-string: input://rootfs/usr/share/uboot/am69_sk_a72/tispl.bin
+            to: tree:///boot/efi/tispl.bin
+          - from:
+              mpp-format-string: input://rootfs/usr/share/uboot/am69_sk_a72/u-boot.img
+            to: tree:///boot/efi/u-boot.img
 
 pipelines: []
