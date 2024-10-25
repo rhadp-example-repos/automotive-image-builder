@@ -8,16 +8,23 @@
                     "value": "ridesx4",
                     "arch-is": "aarch64",
                     "distro-is-not": "eln"
+                },
+                {
+                    "value": "rcar_s4",
+                    "arch-is": "aarch64"
+                },
+                {
+                    "value": "rpi4",
+                    "arch-is": "aarch64"
+                },
+                {
+                    "value": "abootqemu",
+                    "arch-is": "aarch64"
                 }
               ],
     "defines": [
         "",
         { "value": "use_qm=true",
-          "manifest": "test_qm.mpp.yml",
-          "distro-is-not": "eln"},
-        { "value": "use_aboot=true",
-          "arch-is": "aarch64",
-          "distro-is-not": "eln"
-        }
+          "distro-is-not": "eln"}
     ]
 }
