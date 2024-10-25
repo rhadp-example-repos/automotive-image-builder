@@ -9,37 +9,111 @@ version: '2'
 # only then is the variables for the user supplied manifest evaluated.
 
 mpp-vars:
-  exports: []
-  osname: centos
-  uefi_vendor: centos
-  kernel_package: kernel-automotive
-  load_modules: []
-  kernel_version: ""
+  # Value of RELEASE in /etc/build-info
   release_name: ""
-  release_rpm: centos-release-automotive
-  linux_firmware_rpm: linux-firmware-automotive
-  partition_label: gpt
-  qm_memory_max: infinity
-  qm_memory_high: infinity
 
-  extra_image_copy: []
+  # the osname as used by OSTree
+  osname: centos
+  ostree_repo_url: http://10.0.2.100/
+  ostree_remote_name: auto-sig
+  use_composefs_signed: true
+  use_transient_etc: true
+
+  # Kernel options
+  use_debug: false
+  # Name of kernel rpm to use
+  kernel_package: kernel-automotive
+  # Optional specific kernel rpm version to use
+  kernel_version: ""
   extra_kernel_opts: []
+  kernel_loglevel: 4
+  # Extra kernel modules loaded at boot
+  load_modules: []
 
+  timezone: UTC
+  locale: en_US.UTF-8
+  hostname: localhost
+
+  use_containers_extra_store: false
+  container_subuid: 2500000000:1500000000
+  container_subgid: 2500000000:1500000000
+
+  use_qm: false   # Set to true to add QM container
+  use_qm_containers_extra_store: false
+  qm_container_subuid: 1000000000:1500000000
+  qm_container_subgid: 1000000000:1500000000
+  # These are used to add rpms to the qm partition
+  qm_extra_repos: []
+  qm_extra_rpms: []
+
+  use_bluechi_agent: false
+  use_bluechi_controller: false
+  bluechi_nodename: "host"
+  bluechi_controller_host_ip: "127.0.0.1"
+  bluechi_controller_allowed_node_names: []
+
+  use_luks: false
+  luks_passphrase: password
+  luks_use_integrity: false
+  luks_auto_unlock: false
+
+  coredump_storage: none
+  journal_storage: persistent
+
+  # Root authentication info, please change password
   root_password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.
+  root_ssh_key: ""
+  ssh_permit_root_login: false                  # Only used by aws target
+  ssh_permit_password_auth: false               # Not used by a-i-b
+
+  # Default data for an example guest user. This is not used by a-i-b but can be used by the end user manifest
   guest_password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.
   guest_uid: 2000
   guest_gid: 2000
-  root_ssh_key: ""
-  ssh_permit_root_login: false
-  ssh_permit_password_auth: false
-  image_size: '8589934592'
+
+  # Memory limits for the QM container (if used)
+  qm_memory_max: infinity
+  qm_memory_high: infinity
+
+  # Image size and layout
+  image_size: '8589934592'    # Total size of image, in bytes (as string)
   sblpart_size: 8192 # 4M
   efipart_size: 204800
   bootpart_size: 614400
   abootpart_size: 131072 # 64M
   vbmetapart_size: 128 # 64K
-  aboot_compress_kernel: null
+  use_separate_var: false
   varpart_relative_size: 0.3 # /var size as relative of image size (unless varpart_size is set)
+  extra_parts: []            # Extra partitions to add to image
+
+  # Network setup
+  use_static_ip: false
+  static_ip: "10.0.2.15"
+  static_ip_prefixlen: "24"
+  static_gw: "10.0.2.2"
+  static_dns: "10.0.2.3"
+  static_ip_iface: eth0
+  static_ip_module: "virtio_net"
+  static_ip_uuid: 6fb8f75a-7fde-4906-a51e-a70e56c58742
+
+  # These are available for end users, not used internally
+  extra_rpms: []
+  extra_repos: []
+  extra_build_rpms: []
+  extra_build_repos: []
+
+  ########################################
+  ### Internal stuff, here be dragons ####
+  ########################################
+
+  uefi_vendor: centos
+  release_rpm: centos-release-automotive
+  linux_firmware_rpm: linux-firmware-automotive
+  partition_label: gpt
+
+  extra_image_copy: []
+
+  aboot_compress_kernel: null
   active_gpt_attrs: # Default active setup for Qualcomm
     - 48
     - 49 # priority 0x3
@@ -53,17 +127,9 @@ mpp-vars:
     - 51
     - 52
     - 53 # remaining tries 0x7
-  extra_parts: []
-  kernel_loglevel: 4
-  timezone: UTC
-  locale: en_US.UTF-8
-  hostname: localhost
   use_grub2: true
   use_abl: false
-  use_qm: false
   qm_pipeline: qm_rootfs
-  use_bluechi_agent: false
-  use_bluechi_controller: false
   use_aboot: false
   use_abootpart: false
   use_tuned_realtime: false
@@ -79,24 +145,11 @@ mpp-vars:
   use_autoinit: false
   use_autoinit_root: false
   autoinit_root: /dev/vda3
-  use_separate_var: false
   aboot_partlabel: system_a
   vbmeta_partlabel: vbmeta_a
   use_composefs: true
-  use_composefs_signed: true
-  use_transient_etc: true
   use_ocibased: false
-  coredump_storage: none
-  journal_storage: persistent
   systemd_timeout: 30s
-  use_static_ip: false
-  static_ip: "10.0.2.15"
-  static_ip_prefixlen: "24"
-  static_gw: "10.0.2.2"
-  static_dns: "10.0.2.3"
-  static_ip_iface: eth0
-  static_ip_module: "virtio_net"
-  static_ip_uuid: 6fb8f75a-7fde-4906-a51e-a70e56c58742
   static_uuids: true
   rootfs_uuid: 76a22bf4-f153-4541-b6c7-0332c0dfaeac
   bootfs_uuid: 156f0420-627b-4151-ae6f-fda298097515
@@ -110,12 +163,8 @@ mpp-vars:
   vbmetapart_uuid_b: 305087ff-bf9a-910d-f3c4-606a8de7788a
   rootpart_uuid: 6264d520-3fb9-423f-8ab8-7a0a8e3d3562
   luks_uuid: aedd1eef-f24e-425e-a9f3-bb5a1c996a95
-  use_luks: false
   use_compliance_mode: false
-  use_debug: false
   use_module_sig_enforce: true
-  luks_use_integrity: false
-  luks_auto_unlock: false
   use_efi_runtime: true
   consoles:
     mpp-if: arch == 'aarch64'
@@ -160,14 +209,9 @@ mpp-vars:
   # Force load drivers
   dracut_force_drivers: []
   dracut_install: []
-  ostree_repo_url: http://10.0.2.100/
-  ostree_remote_name: auto-sig
-  luks_passphrase: password
   container_cmd:
     - "/usr/bin/bash"
   container_entrypoint: []
-  use_containers_extra_store: false
-  use_qm_containers_extra_store: false
   containers_extra_store: /usr/share/containers/storage
   qm_containers_extra_store: /usr/share/containers/storage
   containers_transient_store: true
@@ -206,13 +250,6 @@ mpp-vars:
     - remote-fs.target
     # Not using systemd-boot
     - systemd-boot-update.service
-  bluechi_nodename: "host"
-  bluechi_controller_host_ip: "127.0.0.1"
-  bluechi_controller_allowed_node_names: []
-  qm_container_subuid: 1000000000:1500000000
-  qm_container_subgid: 1000000000:1500000000
-  container_subuid: 2500000000:1500000000
-  container_subgid: 2500000000:1500000000
   extra_subuid: ""
   extra_subgid: ""
   efipart_dos_type: 'ef'
@@ -232,16 +269,6 @@ mpp-vars:
     mpp-eval: (__import__('datetime').datetime.now().timestamp())
   build_timestamp:
     mpp-eval: (str(__import__('datetime').datetime.fromtimestamp(timestamp)))
-
-  # These are available for end users, not used internally
-  extra_rpms: []
-  extra_repos: []
-  extra_build_rpms: []
-  extra_build_repos: []
-
-  # These are used to add rpms to the qm partition
-  qm_extra_repos: []
-  qm_extra_rpms: []
 
   # These are overridden by the distro file
   distro_repos: []
