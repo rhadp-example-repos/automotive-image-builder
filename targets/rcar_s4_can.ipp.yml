@@ -4,6 +4,7 @@ mpp-vars:
   # this overrides grub2 with a hack to include devicetree entry with 8a779f0-spider-can DTB that's needed for CAN bus support
   # it also overrides kernel-automotive with corresponding driver
   # requires CAN unlock program running on G4MH cores, otherwise it won't boot
+  abootpart_size: 262144 # 128M
   target_repos:
     - id: renesas-board-support
       baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/renesas-board-support/centos-stream-9-$arch/
