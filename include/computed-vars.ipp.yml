@@ -341,6 +341,12 @@ mpp-vars:
                   - name:kernel-keys
             options:
               x509: input://tree/kernel.x509
+        - mpp-if: use_tuned_realtime
+          then:
+            type: org.osbuild.tuned
+            options:
+              profiles:
+                - realtime
 
   # Extra directories that will be created in the image, list amended by moode-*.ipp
   extra_tree_dirs:

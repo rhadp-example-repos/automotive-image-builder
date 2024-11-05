@@ -120,12 +120,6 @@ pipelines:
                 legacy: false
                 write_defaults: false
                 greenboot: true
-        - mpp-if: use_tuned_realtime
-          then:
-            - type: org.osbuild.tuned
-              options:
-                profiles:
-                  - realtime
         - mpp-if: use_initoverlayfs
           then:
             - type: org.osbuild-auto.initoverlayfs.conf
