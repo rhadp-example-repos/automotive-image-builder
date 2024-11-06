@@ -428,3 +428,17 @@ pipelines:
             - from:
                 mpp-format-string: input://inlinefile/{embedded['qm_autosd_conf']}
               to: tree:///qm-autosd.conf
+
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: realtime-variables.conf
+              text: $realtime_variables_conf
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['realtime-variables.conf']}
+              to: tree:///realtime-variables.conf

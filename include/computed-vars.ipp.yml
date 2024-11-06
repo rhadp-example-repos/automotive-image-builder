@@ -110,6 +110,15 @@ mpp-vars:
   auto_modules_conf:
     mpp-format-string: |
       {newline.join(load_modules)}
+
+  # This file only exists to satisfy the upstream tuned realtime profile,
+  # which fails to apply if these values are undefined.
+  # Changing this will not reflect in boot-time cmdline options for tuned,
+  # the tuned cmdline options have been separately ported (see kernel_opts).
+  realtime_variables_conf:
+    mpp-format-string: |
+      isolated_cores=2-N
+      isolate_managed_irq=Y
   extra_image_copy:
     mpp-join:
       - mpp-eval: extra_image_copy
@@ -332,6 +341,12 @@ mpp-vars:
                   - name:kernel-keys
             options:
               x509: input://tree/kernel.x509
+        - mpp-if: use_tuned_realtime
+          then:
+            type: org.osbuild.tuned
+            options:
+              profiles:
+                - realtime
 
   # Extra directories that will be created in the image, list amended by moode-*.ipp
   extra_tree_dirs:
@@ -393,6 +408,10 @@ mpp-vars:
       then:
         from: input://extra-tree/main-nmstate.service
         to: tree:///usr/lib/systemd/system/main-nmstate.service
+    - mpp-if: use_tuned_realtime
+      then:
+        from: input://extra-tree/realtime-variables.conf
+        to: tree:///etc/tuned/realtime-variables.conf
     - mpp-if: use_bootpart
       then:
         from: input://extra-tree/boot.mount
