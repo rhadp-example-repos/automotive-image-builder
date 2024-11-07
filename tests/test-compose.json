@@ -26,6 +26,6 @@
     "defines": [
         "",
         { "value": "use_qm=true",
-          "distro-is-not": "eln"}
+          "distro-is-not": ["eln", "autosd10-latest-sig"]}
     ]
 }
