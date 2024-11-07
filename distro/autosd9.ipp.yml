@@ -22,3 +22,9 @@ mpp-vars:
     - id: autosd-debug
       baseurl: $distro_baseurl/AutoSD/$arch/debug/tree/
   distro_module_id: platform:el9
+  distro_build_rpms:
+    - python-toml
+  distro_gpg_keys:
+    mpp-format-string: |
+      $centos9_gpg_key
+      $redhat_gpg_key
