@@ -6,6 +6,8 @@ mpp-vars:
   distro_baseurl: http://download.fedoraproject.org/pub/fedora/linux/
   distro_baseurl_repo: $distro_baseurl/updates/$distro_version/Everything/$arch/
   distro_chroot: fedora-41-$arch
+  distro_build_rpms:
+    - python3-tomli-w
   is_autoinit_supported: false
   osname: fedora
   uefi_vendor: fedora

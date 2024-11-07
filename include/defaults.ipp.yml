@@ -274,6 +274,7 @@ mpp-vars:
   distro_repos: []
   distro_devel_repos: []
   distro_debug_repos: []
+  distro_build_rpms: []
 
   # These are overridden by the target file
   target_repos: []
@@ -285,6 +286,8 @@ mpp-vars:
   # These are overridden by the arch file
   arch_rpms: []
   arch_build_rpms: []
+
+  osbuild_toml_rpm:
 
   build_rpms:
     - dnf
@@ -298,7 +301,6 @@ mpp-vars:
     - python3
     - python3-pyyaml
     - python3-mako
-    - python3-toml
     - rpm-ostree
     - selinux-policy-targeted
     - skopeo
