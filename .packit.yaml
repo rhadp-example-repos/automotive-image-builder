@@ -1,0 +1,53 @@
+upstream_project_url: https://gitlab.com/CentOS/automotive/src/automotive-image-builder
+upstream_package_name: automotive-image-builder
+downstream_package_name: automotive-image-builder
+specfile_path: automotive-image-builder.spec
+
+update_release: false
+
+srpm_build_deps:
+  - git
+  - jq
+  - python3-devel
+  - rpm-build
+
+actions:
+    post-upstream-clone:
+      - bash -c 'git config --global --add safe.directory $(pwd)'
+      - bash -c '.copr/build-rpm.sh --generate-spec .copr/dev.spec'
+
+    get-current-version:
+      - bash -c 'grep "^VERSION" Makefile | sed -e "s:^VERSION=::g"'
+
+    create-archive:
+      - bash -c '.copr/build-rpm.sh --build-source .copr/dev.spec --print-source-path'
+
+jobs:
+  - job: copr_build
+    trigger: pull_request
+    targets:
+      - centos-stream-9-aarch64
+      - centos-stream-9-x86_64
+      - fedora-rawhide-aarch64
+      - fedora-rawhide-x86_64
+
+  - job: copr_build
+    trigger: commit
+    branch: main
+    owner: "@centos-automotive-sig"
+    project: automotive-image-builder-dev
+    notifications:
+      failure_comment:
+        message: "automotive-image-builder build failed for merged commit {commit_sha}. Please check logs {logs_url}, packit dashboard {packit_dashboard_url} and external service dashboard {external_dashboard_url}"
+    targets:
+      - centos-stream+epel-next-9-aarch64
+      - centos-stream+epel-next-9-x86_64
+      - centos-stream-9-aarch64
+      - centos-stream-9-x86_64
+      - epel-9-aarch64
+      - epel-9-x86_64
+      - epel-9-aarch64
+      - epel-9-x86_64
+      - fedora-all-aarch64
+      - fedora-all-x86_64
+      - rhel-9-x86_64
