@@ -103,6 +103,11 @@ mpp-vars:
     mpp-format-string: |
       {newline.join(load_modules)}
 
+  selinux_booleans:
+    mpp-join:
+      - mpp-eval: selinux_booleans
+      - - mpp-if: selinux_secure_mode
+          then: secure_mode_policyload=true
   # This file only exists to satisfy the upstream tuned realtime profile,
   # which fails to apply if these values are undefined.
   # Changing this will not reflect in boot-time cmdline options for tuned,
@@ -239,6 +244,8 @@ mpp-vars:
           then: main-nmstate.service
         - mpp-if: use_tuned_realtime
           then: tuned.service
+        - mpp-if: selinux_booleans
+          then: selinux-bools.service
   image_extra_stages:
     mpp-join:
       - mpp-eval: target_extra_image_stages
@@ -254,6 +261,29 @@ mpp-vars:
           options:
             zone:
               mpp-eval: timezone
+        - mpp-if: selinux_booleans
+          then:
+            type: org.osbuild.systemd.unit.create
+            options:
+              filename: selinux-bools.service
+              unit-type: system
+              unit-path: usr
+              config:
+                Unit:
+                  Description: Enable selinux booleans
+                  DefaultDependencies: false
+                  Before:
+                    - basic.target
+                  After:
+                    - sysinit.target
+                Service:
+                  Type: "oneshot"
+                  RemainAfterExit: true
+                  ExecStart:
+                    - mpp-format-string: setsebool {' '.join(selinux_booleans)}
+                Install:
+                  WantedBy:
+                    - multi-user.target
         - type: org.osbuild.systemd
           options:
             disabled_services:

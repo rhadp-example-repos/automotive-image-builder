@@ -170,6 +170,9 @@ mpp-vars:
     mpp-if: arch == 'aarch64'
     then: ttyAMA0
     else: ttyS0
+  selinux_secure_mode:
+    mpp-eval: image_mode == 'image'
+  selinux_booleans: []
   kernel_opts: []
   dracut_modules: []
   dracut_add_modules:
