@@ -215,4 +215,5 @@ pipelines:
               prefix: /
           - type: org.osbuild.selinux
             options:
-              file_contexts: etc/selinux/targeted/contexts/files/file_contexts
+              file_contexts:
+                mpp-format-string: etc/selinux/{selinux_policy}/contexts/files/file_contexts

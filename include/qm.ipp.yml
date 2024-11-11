@@ -28,7 +28,7 @@ pipelines:
                   - mpp-eval: qm_extra_rpms
                   - - systemd
                     - podman
-                    - selinux-policy-targeted
+                    - selinux-policy-$selinux_policy
                     - procps-ng
                     - mpp-if: use_bluechi_agent
                       then: bluechi-agent
@@ -84,7 +84,7 @@ pipelines:
         options:
           path: auto/remove
           product:
-            name: /etc/selinux/targeted/contexts/files/*
+            name: /etc/selinux/{selinux_policy}/contexts/files/*
 
       - type: org.osbuild.copy
         inputs:
@@ -98,7 +98,8 @@ pipelines:
             - from: input://tree/usr/share/qm/contexts
               to: tree:///usr/share/containers/selinux/
             - from: input://tree/usr/share/qm/file_contexts
-              to: tree:///etc/selinux/targeted/contexts/files/
+              to:
+                mpp-format-string: tree:///etc/selinux/{selinux_policy}/contexts/files/
             - from: input://tree/usr/share/qm/containers.conf
               to: tree:///etc/containers/containers.conf
 
