@@ -170,6 +170,7 @@ mpp-vars:
     mpp-if: arch == 'aarch64'
     then: ttyAMA0
     else: ttyS0
+  selinux_policy: targeted
   selinux_secure_mode:
     mpp-eval: image_mode == 'image'
   selinux_booleans: []
@@ -305,7 +306,7 @@ mpp-vars:
     - python3-pyyaml
     - python3-mako
     - rpm-ostree
-    - selinux-policy-targeted
+    - selinux-policy-$selinux_policy
     - skopeo
     - systemd
     - tar
@@ -319,7 +320,7 @@ mpp-vars:
     - hostname
     - passwd
     - rootfiles
-    - selinux-policy-targeted
+    - selinux-policy-$selinux_policy
     - systemd-udev
     - dracut-config-generic
     - grub2-tools-minimal

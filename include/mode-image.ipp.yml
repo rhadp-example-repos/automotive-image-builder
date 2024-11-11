@@ -91,7 +91,8 @@ pipelines:
         - mpp-eval: image_extra_stages
         - - type: org.osbuild.selinux
             options:
-              file_contexts: etc/selinux/targeted/contexts/files/file_contexts
+              file_contexts:
+                mpp-format-string: etc/selinux/{selinux_policy}/contexts/files/file_contexts
           - type: org.osbuild.dracut.conf
             options:
               filename: 90-image.conf

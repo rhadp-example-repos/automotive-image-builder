@@ -388,6 +388,8 @@ mpp-vars:
         exist_ok: true
   # Extra content that will be copied from from extra-tree to the image, list amended by moode-*.ipp
   extra_tree_content:
+    - from: input://extra-tree/selinux.conf
+      to: tree:///etc/selinux/config
     - from: input://extra-tree/systemd-system.conf
       to: tree:///usr/lib/systemd/system.conf.d/10-automotive.conf
     - from: input://extra-tree/coredump.conf

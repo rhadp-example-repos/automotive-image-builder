@@ -40,6 +40,11 @@ mpp-vars:
 
       [Install]
       RequiredBy=local-fs.target
+  # We use this instead of org.osbuild.selinux.config so we can chose custom values for the policy (like automotive)
+  selinux_conf:
+    mpp-format-string: |
+      SELINUX=enforcing
+      SELINUXTYPE={selinux_policy}
   containers_conf:
     mpp-format-string: |
       [containers]
@@ -289,6 +294,19 @@ pipelines:
             - from:
                 mpp-format-string: input://inlinefile/{embedded['coredump.conf']}
               to: tree:///coredump.conf
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: selinux.conf
+              text: $selinux_conf
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['selinux.conf']}
+              to: tree:///selinux.conf
       - type: org.osbuild.copy
         inputs:
           inlinefile:
