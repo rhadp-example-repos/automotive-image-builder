@@ -1,7 +1,29 @@
 version: '2'
 
-pipelines:
+mpp-vars:
+  image_loopdev:
+    mpp-eval: "{p.id: { 'type': 'org.osbuild.loopback', 'options': {'filename': 'disk.img', 'start': p.start, 'size': p.size}}  for p in image.layout.partitions}"
+  image_loopdev_locked:
+    mpp-eval: "{p.id: { 'type': 'org.osbuild.loopback', 'options': {'filename': 'disk.img', 'start': p.start, 'size': p.size, 'lock': True}}  for p in image.layout.partitions}"
+  # Either the raw root partition, or the root logical volume
+  root_dev:
+    mpp-if: use_luks
+    then:
+      type: org.osbuild.lvm2.lv
+      parent: root-luks
+      options:
+        volume: root
+    else:
+      mpp-eval: image_loopdev[rootpart_label]
+  # The luks2 physical device, should be named root-luks and references root-raw for the raw partition
+  root_luksdev:
+    type: org.osbuild.luks2
+    parent: root-raw
+    options:
+      passphrase:
+        mpp-eval: luks_passphrase
 
+pipelines:
   - name: image
     build: name:build
     stages:
@@ -24,13 +46,7 @@ pipelines:
               type: org.osbuild-auto.write-device
               devices:
                 device:
-                  type: org.osbuild.loopback
-                  options:
-                    filename: disk.img
-                    start:
-                      mpp-eval: image.layout['boot_a'].start
-                    size:
-                      mpp-eval: image.layout['boot_a'].size
+                  mpp-eval: image_loopdev['boot_a']
               inputs:
                 tree:
                   type: org.osbuild.tree
@@ -49,13 +65,7 @@ pipelines:
               type: org.osbuild.mkfs.fat
               devices:
                 device:
-                  type: org.osbuild.loopback
-                  options:
-                    filename: disk.img
-                    start:
-                      mpp-eval: image.layout['efi'].start
-                    size:
-                      mpp-eval: image.layout['efi'].size
+                  mpp-eval: image_loopdev['efi']
               options:
                 label: ESP
                 volid: 7B7795E7
@@ -71,13 +81,7 @@ pipelines:
               type: org.osbuild.mkfs.ext4
               devices:
                 device:
-                  type: org.osbuild.loopback
-                  options:
-                    filename: disk.img
-                    start:
-                      mpp-eval: image.layout['boot'].start
-                    size:
-                      mpp-eval: image.layout['boot'].size
+                  mpp-eval: image_loopdev['boot']
               options:
                 uuid:
                   mpp-eval: bootfs_uuid
@@ -87,13 +91,7 @@ pipelines:
               type: org.osbuild.mkfs.ext4
               devices:
                 device:
-                  type: org.osbuild.loopback
-                  options:
-                    filename: disk.img
-                    start:
-                      mpp-eval: image.layout['var'].start
-                    size:
-                      mpp-eval: image.layout['var'].size
+                  mpp-eval: image_loopdev['var']
               options:
                 uuid:
                   mpp-eval: varpart_uuid
@@ -103,14 +101,7 @@ pipelines:
             - type: org.osbuild.luks2.format
               devices:
                 device:
-                  type: org.osbuild.loopback
-                  options:
-                    filename: disk.img
-                    start:
-                      mpp-eval: image.layout[rootpart_label].start
-                    size:
-                      mpp-eval: image.layout[rootpart_label].size
-                    lock: true
+                  mpp-eval: image_loopdev_locked[rootpart_label]
               options:
                 passphrase:
                   mpp-eval: luks_passphrase
@@ -127,59 +118,26 @@ pipelines:
                   then: hmac-sha256
             - type: org.osbuild.lvm2.create
               devices:
-                luks:
-                  type: org.osbuild.loopback
-                  options:
-                    filename: disk.img
-                    start:
-                      mpp-eval: image.layout[rootpart_label].start
-                    size:
-                      mpp-eval: image.layout[rootpart_label].size
+                root-raw:
+                  mpp-eval: image_loopdev[rootpart_label]
                 device:
-                  type: org.osbuild.luks2
-                  parent: luks
-                  options:
-                    passphrase:
-                      mpp-eval: luks_passphrase
+                  mpp-eval: root_luksdev
               options:
                 volumes:
                   - name: root
                     extents: 100%FREE
         - - type: org.osbuild.mkfs.ext4
             devices:
-              luks:
+              root-raw:
                 mpp-if: use_luks
                 then:
-                  type: org.osbuild.loopback
-                  options:
-                    filename: disk.img
-                    start:
-                      mpp-eval: image.layout[rootpart_label].start
-                    size:
-                      mpp-eval: image.layout[rootpart_label].size
-              lvm:
+                  mpp-eval: image_loopdev[rootpart_label]
+              root-luks:
                 mpp-if: use_luks
                 then:
-                  type: org.osbuild.luks2
-                  parent: luks
-                  options:
-                    passphrase:
-                      mpp-eval: luks_passphrase
+                  mpp-eval: root_luksdev
               device:
-                mpp-if: use_luks
-                then:
-                  type: org.osbuild.lvm2.lv
-                  parent: lvm
-                  options:
-                    volume: root
-                else:
-                  type: org.osbuild.loopback
-                  options:
-                    filename: disk.img
-                    start:
-                      mpp-eval: image.layout[rootpart_label].start
-                    size:
-                      mpp-eval: image.layout[rootpart_label].size
+                mpp-eval: root_dev
             options:
               uuid:
                 mpp-eval: rootfs_uuid
@@ -217,106 +175,41 @@ pipelines:
               efi:
                 mpp-if: use_efipart
                 then:
-                  type: org.osbuild.loopback
-                  options:
-                    filename: disk.img
-                    start:
-                      mpp-eval: image.layout['efi'].start
-                    size:
-                      mpp-eval: image.layout['efi'].size
+                  mpp-eval: image_loopdev['efi']
               boot:
                 mpp-if: use_bootpart
                 then:
-                  type: org.osbuild.loopback
-                  options:
-                    filename: disk.img
-                    start:
-                      mpp-eval: image.layout['boot'].start
-                    size:
-                      mpp-eval: image.layout['boot'].size
+                  mpp-eval: image_loopdev['boot']
               boot_a:
                 mpp-if: use_abootpart
                 then:
-                  type: org.osbuild.loopback
-                  options:
-                    filename: disk.img
-                    start:
-                      mpp-eval: image.layout['boot_a'].start
-                    size:
-                      mpp-eval: image.layout['boot_a'].size
+                  mpp-eval: image_loopdev['boot_a']
               boot_b:
                 mpp-if: use_abootpart
                 then:
-                  type: org.osbuild.loopback
-                  options:
-                    filename: disk.img
-                    start:
-                      mpp-eval: image.layout['boot_b'].start
-                    size:
-                      mpp-eval: image.layout['boot_b'].size
+                  mpp-eval: image_loopdev['boot_b']
               vbmeta_a:
                 mpp-if: use_vbmetapart
                 then:
-                  type: org.osbuild.loopback
-                  options:
-                    filename: disk.img
-                    start:
-                      mpp-eval: image.layout['vbmeta_a'].start
-                    size:
-                      mpp-eval: image.layout['vbmeta_a'].size
+                  mpp-eval: image_loopdev['vbmeta_a']
               vbmeta_b:
                 mpp-if: use_vbmetapart
                 then:
-                  type: org.osbuild.loopback
-                  options:
-                    filename: disk.img
-                    start:
-                      mpp-eval: image.layout['vbmeta_b'].start
-                    size:
-                      mpp-eval: image.layout['vbmeta_b'].size
+                  mpp-eval: image_loopdev['vbmeta_b']
               var:
                 mpp-if: use_separate_var
                 then:
-                  type: org.osbuild.loopback
-                  options:
-                    filename: disk.img
-                    start:
-                      mpp-eval: image.layout['var'].start
-                    size:
-                      mpp-eval: image.layout['var'].size
+                  mpp-eval: image_loopdev['var']
               root:
-                mpp-if: use_luks
-                then:
-                  type: org.osbuild.lvm2.lv
-                  parent: root-luks
-                  options:
-                    volume: root
-                else:
-                  type: org.osbuild.loopback
-                  options:
-                    filename: disk.img
-                    start:
-                      mpp-eval: image.layout[rootpart_label].start
-                    size:
-                      mpp-eval: image.layout[rootpart_label].size
+                mpp-eval: root_dev
               root-raw:
                 mpp-if: use_luks
                 then:
-                  type: org.osbuild.loopback
-                  options:
-                    filename: disk.img
-                    start:
-                      mpp-eval: image.layout[rootpart_label].start
-                    size:
-                      mpp-eval: image.layout[rootpart_label].size
+                  mpp-eval: image_loopdev[rootpart_label]
               root-luks:
                 mpp-if: use_luks
                 then:
-                  type: org.osbuild.luks2
-                  parent: root-raw
-                  options:
-                    passphrase:
-                      mpp-eval: luks_passphrase
+                  mpp-eval: root_luksdev
             mounts:
               - name: root
                 type: org.osbuild.ext4
@@ -346,38 +239,15 @@ pipelines:
               type: org.osbuild.ostree.post-copy
               devices:
                 root:
-                  mpp-if: use_luks
-                  then:
-                    type: org.osbuild.lvm2.lv
-                    parent: root-luks
-                    options:
-                      volume: root
-                  else:
-                    type: org.osbuild.loopback
-                    options:
-                      filename: disk.img
-                      start:
-                        mpp-eval: image.layout[rootpart_label].start
-                      size:
-                        mpp-eval: image.layout[rootpart_label].size
+                  mpp-eval: root_dev
                 root-raw:
                   mpp-if: use_luks
                   then:
-                    type: org.osbuild.loopback
-                    options:
-                      filename: disk.img
-                      start:
-                        mpp-eval: image.layout[rootpart_label].start
-                      size:
-                        mpp-eval: image.layout[rootpart_label].size
+                    mpp-eval: image_loopdev[rootpart_label]
                 root-luks:
                   mpp-if: use_luks
                   then:
-                    type: org.osbuild.luks2
-                    parent: root-raw
-                    options:
-                      passphrase:
-                        mpp-eval: luks_passphrase
+                    mpp-eval: root_luksdev
               mounts:
                 - name: root
                   type: org.osbuild.ext4
@@ -388,20 +258,10 @@ pipelines:
             then:
               type: org.osbuild.lvm2.metadata
               devices:
-                luks:
-                  type: org.osbuild.loopback
-                  options:
-                    filename: disk.img
-                    start:
-                      mpp-eval: image.layout[rootpart_label].start
-                    size:
-                      mpp-eval: image.layout[rootpart_label].size
+                root-raw:
+                  mpp-eval: image_loopdev[rootpart_label]
                 device:
-                  type: org.osbuild.luks2
-                  parent: luks
-                  options:
-                    passphrase:
-                      mpp-eval: luks_passphrase
+                  mpp-eval: root_luksdev
               options:
                 vg_name: osbuild
                 creation_host: osbuild
