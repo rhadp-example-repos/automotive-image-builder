@@ -1,0 +1,27 @@
+# This is an example showing how to install and use a container
+
+name: container
+
+content:
+  # The container service depends on vsomeip3-routingmanager from this repo
+  repos:
+    - id: copr-sample-apps
+      baseurl: https://download.copr.fedorainfracloud.org/results/alexl/cs9-sample-images/centos-stream-9-$arch/
+  rpms:
+    - podman
+    - auto-apps
+    - vsomeip3-routingmanager
+  container_images:
+    - source: registry.gitlab.com/centos/automotive/sample-images/demo/auto-apps
+      tag: latest
+      name: localhost/auto-apps
+  add_files:
+    - path: /etc/containers/systemd/radio.container
+      source_path: radio.container
+  systemd:
+    enabled_services:
+      - radio.service
+
+auth:
+  # "password"
+  root_password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.

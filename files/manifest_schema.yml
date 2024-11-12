@@ -1,0 +1,465 @@
+$schema: https://json-schema.org/draft-07/schema
+$id: manifest.yaml
+definitions:
+  abs_path:
+    type: string
+    pattern: "^\\/?(?!\\.\\.)((?!\\/\\.\\.\\/).)+$"
+
+  path: # Relative or absolute
+    type: string
+
+  user:
+    description: User name or id
+    oneOf:
+      - type: string
+        pattern: "^[A-Za-z0-9_.][A-Za-z0-9_.-]{0,31}$"
+      - type: number
+        minimum: 0
+
+  group:
+    description: Group name or id
+    oneOf:
+      - type: string
+        pattern: "^[A-Za-z0-9_.][A-Za-z0-9_.-]{0,31}$"
+      - type: number
+        minimum: 0
+
+  repo:
+    description: A dnf repository to install rpms from
+    type: object
+    additionalProperties: false
+    required:
+      - id
+      - baseurl
+    properties:
+      id:
+        description: The id to use for this repo in the configuration
+        type: string
+      baseurl:
+        description: The url to the repo
+        type: string
+
+  container_image:
+    description: A container image reference to install
+    type: object
+    additionalProperties: false
+    required:
+      - source
+    properties:
+      source:
+        description: The container image name, for example quay.io/fedora/fedora
+        type: string
+      tag:
+        description: The tag to use in the repositoyr (typically defaults to latest)
+        type: string
+      digest:
+        description: Use a specific version of the image specified by digest
+        type: string
+      name:
+        description: The name to use for the container image when embedded (if not set, same as source)
+        type: string
+      container-transport:
+        type: string
+      index:
+        type: string
+
+  add_file:
+    dscription: A file to add to the partition
+    type: object
+    oneOf:
+      - additionalProperties: false
+        required:
+          - path
+        properties:
+          path:
+            description: The absolute pathname of the file to add to the image partition
+            $ref: "#/definitions/abs_path"
+          source_path:
+            description: The local (absolute or relative to manifest) path of the file to add
+            $ref: "#/definitions/path"
+      - additionalProperties: false
+        required:
+          - path
+        properties:
+          path:
+            description: The absolute pathname of the file to add to the image partition
+            $ref: "#/definitions/abs_path"
+          url:
+            description: The url of the file to add
+            type: string
+      - additionalProperties: false
+        required:
+          - path
+        properties:
+          path:
+            description: The absolute pathname of the file to add to the image partition
+            $ref: "#/definitions/abs_path"
+          text:
+            description: Embedded text content to use for the added file
+            type: string
+
+  remove_file:
+    dscription: Remove a file from the partition
+    type: object
+    additionalProperties: false
+    required:
+      - path
+    properties:
+      path:
+        description: The absolute pathname of the file to remove
+        $ref: "#/definitions/abs_path"
+
+  chown_file:
+    dscription: Change file owner
+    type: object
+    additionalProperties: false
+    anyOf:
+      - required:
+          - path
+          - user
+      - required:
+          - path
+          - group
+    properties:
+      path:
+        description: The absolute pathname of the file to change
+        $ref: "#/definitions/abs_path"
+      user:
+        $ref: "#/definitions/user"
+      group:
+        $ref: "#/definitions/group"
+      recursive:
+        description: Change ownership recursively
+        type: boolean
+        default: false
+
+  chmod_file:
+    dscription: Change file permissions
+    type: object
+    additionalProperties: false
+    required:
+      - mode
+      - path
+    properties:
+      path:
+        description: The absolute pathname of the file to change
+        $ref: "#/definitions/abs_path"
+      mode:
+        description: Symbolic or numeric octal mode
+        type: string
+      recursive:
+        descrition: Change modes recursively
+        type: boolean
+
+  make_dir:
+    dscription: Create a directory in the partition
+    type: object
+    additionalProperties: false
+    required:
+      - path
+    properties:
+      path:
+        description: The absolute pathname of the directory to create
+        $ref: "#/definitions/abs_path"
+      mode:
+        type: number
+      parents:
+        description: If true, parent directories are created if needed
+        type: boolean
+      exist_ok:
+        description: If true, don't fail if directory exists
+        type: boolean
+
+  partition:
+    type object:
+    additionalProperties: false
+    properties:
+      rpms:
+        description: A list of rpms to add to the partition
+        type: array
+        items:
+          type: string
+      repos:
+        description: A list of additional dnf repositories to use when installing packages
+        type: array
+        items:
+          $ref: "#/definitions/repo"
+      container_images:
+        description: A list of container images to embedd into the image
+        type: array
+        items:
+          $ref: "#/definitions/container_image"
+      add_files:
+        type: array
+        items:
+          $ref: "#/definitions/add_file"
+      chmod_files:
+        type: array
+        items:
+          $ref: "#/definitions/chmod_file"
+      chown_files:
+        type: array
+        items:
+          $ref: "#/definitions/chown_file"
+      remove_files:
+        type: array
+        items:
+          $ref: "#/definitions/remove_file"
+      make_dirs:
+        type: array
+        items:
+          $ref: "#/definitions/make_dir"
+      systemd:
+        type: object
+        additionalProperties: false
+        properties:
+          enabled_services:
+            description: Systemd services to enable
+            type: array
+            items:
+              type: string
+          disabled_services:
+            description: Systemd services to disable
+            type: array
+            items:
+              type: string
+
+  static_network:
+    type: object
+    additionalProperties: false
+    description: Use static network setup
+    properties:
+      ip:
+        type: string
+      ip_prefixlen:
+        type: number
+      gateway:
+        type: string
+      dns:
+        type: string
+      iface:
+        type: string
+      load_module:
+        type: string
+
+  dynamic_network:
+    type: object
+    description: Use network manager for dynamic network setup
+
+  network:
+    description: What type of network setup to use, default is dynamic
+    oneOf:
+      - type: object
+        additionalProperties: false
+        properties:
+          dynamic:
+            $ref: "#/definitions/dynamic_network"
+      - type: object
+        additionalProperties: false
+        properties:
+          static:
+            $ref: "#/definitions/static_network"
+
+  image:
+    description: Image and disk options
+    type: object
+    additionalProperties: false
+    properties:
+      image_size:
+        description: The size of the total image, allows suffixes like "GB" (powers of 1000) or "GiB" (powers of 1024)
+        type: string
+        pattern: "^[0-9]+ +(kB|KiB|MB|MiB|GB|GiB|TB|TiB)$"
+      partitions:
+        type: object
+        additionalProperties: false
+        patternProperties:
+          "(aboot|boot|efi|vbmeta|sbl)":
+            type: object
+            additionalProperties: false
+            properties:
+              size:
+                description: size of partition (if used)
+                type: string
+                pattern: "^[0-9]+ +(kB|KiB|MB|MiB|GB|GiB|TB|TiB)$"
+          var:
+            type: object
+            oneOf:
+              - additionalProperties: false
+                properties:
+                  relative_size:
+                    description: Size of /var partition relative to total image size
+                    type: number
+              - additionalProperties: false
+                properties:
+                  size:
+                    description: Size of /var partition in bytest (with suffix)
+                    type: string
+      hostname:
+        type: string
+      osname:
+        description: The name of the os used, as used by OSTree
+        type: string
+
+  qm:
+    description: QM partition options
+    type: object
+    additionalProperties: false
+    properties:
+      content:
+        description: The content to add to the qm partition
+        $ref: "#/definitions/partition"
+      memory_limit:
+        type: object
+        additionalProperties: false
+        properties:
+          max:
+            description: MemoryMax for QM partition (see systemd.resource-control manpage)
+            type: string
+          high:
+            description: MemoryHigh for QM partition (see systemd.resource-control manpage)
+            type: string
+  auth:
+    description: Authentication options
+    type: object
+    additionalProperties: false
+    properties:
+      root_password:
+        description: Roots's encrypted password, as returned by crypt(3), or nothing to disable
+        oneOf:
+          - type: string
+          - type: "null"
+      root_ssh_key:
+        description: Roots's ssh key, or nothing to disable
+        oneOf:
+          - type: string
+          - type: "null"
+      sshd_config:
+        description: Configuration of ssh daemon
+        type: object
+        additionalProperties: false
+        properties:
+          PasswordAuthentication:
+            description: Enable or disable password authentication
+            type: boolean
+          PermitRootLogin:
+            description: Specifies whether root can log in using ssh.
+            oneOf:
+              - type: string
+                enum:
+                  - prohibit-password
+                  - forced-commands-only
+              - type: boolean
+      users:
+        additionalProperties: false
+        type: object
+        description: Keys are usernames, values are objects giving user info.
+        patternProperties:
+          "^[A-Za-z0-9_.][A-Za-z0-9_.-]{0,31}$":
+            $ref: "#/definitions/add_user"
+      groups:
+        additionalProperties: false
+        type: object
+        description: Keys are group, values are objects giving group info.
+        patternProperties:
+          "^[A-Za-z0-9_.][A-Za-z0-9_.-]{0,31}$":
+            $ref: "#/definitions/add_group"
+
+  kernel:
+    description: Kernel options
+    type: object
+    additionalProperties: false
+    properties:
+      debug_logging:
+        description: Add more debug logging
+        type: boolean
+      cmdline:
+        description: Extra kernel commandline options
+        type: array
+        item:
+          type: string
+      kernel_package:
+        description: Use a custom kernel package name (instead of kernel-automotive)
+        type: string
+      kernel_version:
+        description: Use a custom kernel package version
+        type: string
+      loglevel:
+        description: Use a kernel log level
+        type: integer
+
+  add_group:
+    type: object
+    additionalProperties: false
+    properties:
+      gid:
+        description: GID for this group
+        type: number
+
+  add_user:
+    type: object
+    additionalProperties: false
+    properties:
+      gid:
+        description: User UID
+        type: number
+      uid:
+        description: User GID
+        type: number
+      groups:
+        description: Array of group names for this user
+        type: array
+        items:
+          type: string
+      description:
+        description: User account description (or full name)
+        type: string
+      home:
+        description: Path to user's home directory
+        type: string
+      shell:
+        description: User's login shell
+        type: string
+      password:
+        description: User's encrypted password, as returned by crypt(3)
+        type: string
+      key:
+        description: SSH Public Key to add to ~/.ssh/authorized_keys
+        type: string
+      keys:
+        description: Array of SSH Public Keys to add to ~/.ssh/authorized_keys
+        type: array
+        items:
+          type: string
+      expiredate:
+        description: The date on which the user account will be disabled. This date is represented as a number of days since January 1st, 1970.
+        type: integer
+      force_password_reset:
+        description: Force this user to change their password on first login
+        type: boolean
+
+type: object
+additionalProperties: false
+title: Manifest
+description: File format specifing how to build an image
+properties:
+  name:
+    description: The name of the manifest
+    type: string
+  content:
+    description: The content to add to the rootfs partition
+    $ref: "#/definitions/partition"
+  qm:
+    description: Define the qm partitions
+    $ref: "#/definitions/qm"
+  network:
+    description: Network setup, can be 'dynamic' or 'static'
+    $ref: "#/definitions/network"
+  image:
+    description: Image and Disk setup
+    $ref: "#/definitions/image"
+  auth:
+    description: Authentication setup
+    $ref: "#/definitions/auth"
+  kernel:
+    description: Kernel options
+    $ref: "#/definitions/kernel"

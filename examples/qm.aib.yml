@@ -1,0 +1,15 @@
+# This is an example showing how to use a QM partition
+
+name: container
+
+qm:
+  content:
+    rpms:
+      - httpd
+    systemd:
+      enabled_services:
+        - httpd.service
+
+auth:
+  # "password"
+  root_password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.

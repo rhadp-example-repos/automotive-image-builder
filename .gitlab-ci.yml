@@ -10,6 +10,7 @@ default:
 
 stages:
   - test
+  - deploy
 
 compose-test-job:
   stage: test
@@ -37,7 +38,7 @@ unit-test-job:
   before_script:
     - python3 --version; pip --version
     - python3 -m pip install --upgrade pip
-    - python3 -m pip install pytest pyyaml
+    - python3 -m pip install pytest pyyaml jsonschema
   stage: test
   script:
     - pytest aib/tests
@@ -62,7 +63,7 @@ build-package-x86-job:
   image: quay.io/centos-sig-automotive/automotive-osbuild
   stage: test
   script:
-    - ./automotive-image-builder build --mode=package --export image example.mpp.yml example.qcow2
+    - ./automotive-image-builder build --mode=package --export image example.mpp.yml example.img
 
 packit-srpm-build:
   image: quay.io/packit/packit
@@ -73,3 +74,29 @@ packit-srpm-build:
     paths:
       - "*.src.rpm"
     expire_in: 1 week
+
+build-simple-image-x86-job:
+  image: quay.io/centos-sig-automotive/automotive-osbuild
+  stage: test
+  script:
+    - ./automotive-image-builder build --mode=image --export image examples/complex.aib.yml example.img
+
+build-simple-package-x86-job:
+  image: quay.io/centos-sig-automotive/automotive-osbuild
+  stage: test
+  script:
+    - ./automotive-image-builder build --mode=package --export image examples/complex.aib.yml example.img
+
+pages:
+  stage: deploy
+  image: python:3.11
+  before_script:
+    - python3 --version; pip --version
+    - python3 -m pip install --upgrade pip
+    - python3 -m pip install pyyaml jsonschema json-schema-for-humans
+  artifacts:
+    paths:
+      - public
+  script:
+    - mkdir -p public
+    - generate-schema-doc files/manifest_schema.yml public/simple_manifest.html
