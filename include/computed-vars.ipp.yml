@@ -78,9 +78,12 @@ mpp-vars:
     mpp-eval: has_partition_table and use_separate_var
   _dash_escape: "\\x2d"
   dracut_modules:
-    - mpp-if: is_autoinit_supported and use_autoinit
-      then:
-        systemd-initrd-automotive
+    mpp-join:
+      - mpp-if: is_autoinit_supported and use_autoinit
+        then:
+          - systemd-initrd-automotive
+          - mpp-if: use_debug or use_kernel_debug_package
+            then: systemd-journald
   dracut_add_drivers:
     mpp-join:
       - mpp-eval: dracut_add_drivers
