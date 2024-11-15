@@ -3,14 +3,21 @@ set -e
 
 PACKAGE_NAME="automotive-image-builder"
 POSITIONAL_ARGS=()
+GENERATE_SPEC=false
 BUILD_SOURCE=false
 BUILD_BINARY=false
 DEV_RELEASE=false
+PRINT_SOURCE_PATH=false
 DEV_RELEASE_SUFFIX=""
+SOURCE_FILENAME=""
 OUTPUT_DIR=$(pwd)
 
 while [[ $# -gt 0 ]]; do
   case $1 in
+    -gs|--generate-spec)
+      GENERATE_SPEC=true
+      shift
+      ;;
     -bs|--build-source)
       BUILD_SOURCE=true
       shift
@@ -18,6 +25,10 @@ while [[ $# -gt 0 ]]; do
     -bb|--build-binary)
       BUILD_SOURCE=true
       BUILD_BINARY=true
+      shift
+      ;;
+    -psp|--print-source-path)
+      PRINT_SOURCE_PATH=true
       shift
       ;;
     -h|--help)
@@ -30,37 +41,37 @@ while [[ $# -gt 0 ]]; do
       ;;
     *)
       POSITIONAL_ARGS+=("$1") # save positional arg
-
-      # Store SPEC variable from positional arg
-      if [ ${#POSITIONAL_ARGS[@]} -eq 1 ]
-      then
-        if [ -d "$1" ]
-        then
-          SPEC=$(realpath "$1"/$PACKAGE_NAME.spec.in)
-        elif [ -f "$1" ]; then
-          SPEC=$(realpath -s "$1")
-          if [[ "$SPEC" == */.copr/dev.spec ]]
-          then
-            DEV_RELEASE=true
-            COMMITS_NUM_SINCE_LAST_TAG=$(git log $(git describe --tags --abbrev=0)..HEAD --oneline | wc -l)
-            COMMIT_HASH=$(git log -1 --pretty=format:%h)
-            DEV_RELEASE_SUFFIX=".dev$COMMITS_NUM_SINCE_LAST_TAG+$COMMIT_HASH"
-          fi
-        else
-          fatal "Spec file doesn't exists: $1"
-        fi
-      fi
-
-      # Store OUTPUT_DIR variable from positional arg
-      if [ ${#POSITIONAL_ARGS[@]} -eq 2 ]
-      then
-        OUTPUT_DIR="$1"
-      fi
-
       shift # past argument
       ;;
   esac
 done
+
+# Store SPEC variable from positional arg
+if [ ${#POSITIONAL_ARGS[@]} -ge 1 ]
+then
+  ARG=${POSITIONAL_ARGS[0]}
+  if [ -d "$ARG" ]
+  then
+    SPEC=$(realpath "$ARG"/$PACKAGE_NAME.spec.in)
+  elif [ -f "$ARG" ]; then
+    SPEC=$(realpath -s "$ARG")
+    if [[ "$SPEC" == */.copr/dev.spec ]]
+    then
+      DEV_RELEASE=true
+      COMMITS_NUM_SINCE_LAST_TAG=$(git log $(git describe --tags --abbrev=0)..HEAD --oneline | wc -l)
+      COMMIT_HASH=$(git log -1 --pretty=format:%h)
+      DEV_RELEASE_SUFFIX=".dev$COMMITS_NUM_SINCE_LAST_TAG+$COMMIT_HASH"
+    fi
+  else
+    fatal "Spec file doesn't exists: $ARG"
+  fi
+fi
+
+# Store OUTPUT_DIR variable from positional arg
+if [ ${#POSITIONAL_ARGS[@]} -ge 2 ]
+then
+  OUTPUT_DIR=${POSITIONAL_ARGS[1]}
+fi
 
 [ "${#POSITIONAL_ARGS[@]}" -gt 0 ] || fatal "missing parameters"
 
@@ -69,7 +80,7 @@ then
   PACKAGE_VERSION=$(grep "^VERSION" Makefile | sed -e "s:^VERSION=::g")
 fi
 
-if [ $BUILD_SOURCE = true ]
+if [ $GENERATE_SPEC = true ] || [ $BUILD_SOURCE = true ]
 then
   rm -rf .rpmbuild
   mkdir -p .rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
@@ -88,10 +99,14 @@ then
     sed -e "s/^Release:.*$/$NEW_SPEC_RELEASE/g" -i .rpmbuild/SPECS/$PACKAGE_NAME.spec
     sed -e "s/.tar.gz/$DEV_RELEASE_SUFFIX.tar.gz/g" -i .rpmbuild/SPECS/$PACKAGE_NAME.spec
   fi
+fi
 
+if [ $BUILD_SOURCE = true ]
+then
+  SOURCE_FILENAME="$PACKAGE_NAME-$PACKAGE_VERSION$DEV_RELEASE_SUFFIX.tar.gz"
   cp -f .rpmbuild/SPECS/$PACKAGE_NAME.spec .
   git archive \
-    -o ".rpmbuild/SOURCES/$PACKAGE_NAME-$PACKAGE_VERSION$DEV_RELEASE_SUFFIX.tar.gz" \
+    -o ".rpmbuild/SOURCES/$SOURCE_FILENAME" \
     --prefix="$PACKAGE_NAME-$PACKAGE_VERSION/" \
     --add-file $PACKAGE_NAME.spec \
     HEAD
@@ -105,11 +120,18 @@ elif [ $BUILD_SOURCE = true ] && [ $BUILD_BINARY = false ]; then
   rpmbuild --define "_topdir $(pwd)/.rpmbuild" -bs .rpmbuild/SPECS/$PACKAGE_NAME.spec
 fi
 
+#Copy spec file to the output_dir 
+cp -f .rpmbuild/SPECS/$PACKAGE_NAME.spec "$OUTPUT_DIR"
+
 #Copy rpm packages to the output_dir
 find .rpmbuild -name "*.rpm" -exec cp {} "$OUTPUT_DIR" \;
 
 #Copy tar file to the output_dir
 find .rpmbuild -name "*.tar.gz" -exec cp {} "$OUTPUT_DIR" \;
+if [ $PRINT_SOURCE_PATH = true ]
+then
+  echo "$OUTPUT_DIR/$SOURCE_FILENAME"
+fi
 
 # Clean .rpmbuild directory
 rm -fr .rpmbuild
