@@ -324,8 +324,10 @@ mpp-vars:
               paths:
                 - path: /usr/lib/qm/rootfs
                   parents: true
+                  exist_ok: true
                 - path: /etc/qm/
                   parents: true
+                  exist_ok: true
                 - path: /var/qm/
                   parents: true
         - mpp-if: use_qm
