@@ -1,0 +1,6 @@
+# Implementation of abootqemukvm.ipp.yml but loaded after derived target
+version: '2'
+mpp-vars:
+  aboot_dtb_file:
+    mpp-if: arch == 'aarch64'
+    then: "/usr/share/qemu/qemu-kvm.dtb"

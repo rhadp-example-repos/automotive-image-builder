@@ -1,0 +1,27 @@
+# Implementation of abootqemu.ipp.yml but loaded after derived target
+version: '2'
+mpp-vars:
+  use_grub2: false
+  use_aboot: true
+  use_abootpart: true
+  use_vbmetapart: true
+  use_bootpart: false
+  use_efipart: false
+  use_efi_runtime: false
+  aboot_pagesize: 4096
+  aboot_kernel_offset: "0x40000000"
+  aboot_partition_a: "/dev/disk/by-partlabel/boot_a"
+  aboot_partition_b: "/dev/disk/by-partlabel/boot_b"
+  aboot_dtb_file:
+    mpp-if: arch == 'aarch64'
+    then: "/usr/share/qemu/qemu-tcg.dtb"
+  target_rpms:
+    mpp-join:
+      - mpp-eval: target_rpms
+      - - aboot-deploy
+        - mpp-if: arch == 'aarch64'
+          then: autosig-qemu-dtb
+  kernel_opts:
+    mpp-join:
+      - mpp-eval: kernel_opts
+      - - acpi=off
