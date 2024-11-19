@@ -11,7 +11,7 @@ srpm_build_deps:
   - python3-devel
   - rpm-build
 
-actions:
+actions: &common_actions
     post-upstream-clone:
       - bash -c 'git config --global --add safe.directory $(pwd)'
       - bash -c '.copr/build-rpm.sh --generate-spec .copr/dev.spec'
@@ -31,7 +31,8 @@ jobs:
       - fedora-rawhide-aarch64
       - fedora-rawhide-x86_64
 
-  - job: copr_build
+  - &copr
+    job: copr_build
     trigger: commit
     branch: main
     owner: "@centos-automotive-sig"
@@ -51,3 +52,15 @@ jobs:
       - fedora-all-aarch64
       - fedora-all-x86_64
       - rhel-9-x86_64
+
+  - <<: *copr
+    trigger: release
+    project: automotive-image-builder
+    actions:
+      <<: *common_actions
+      post-upstream-clone:
+        - bash -c 'git config --global --add safe.directory $(pwd)'
+        - bash -c '.copr/build-rpm.sh --generate-spec automotive-image-builder.spec.in'
+
+      create-archive:
+        - bash -c '.copr/build-rpm.sh --build-source automotive-image-builder.spec.in --print-source-path'
