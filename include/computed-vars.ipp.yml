@@ -35,6 +35,36 @@ mpp-vars:
   luks_uuid:
     mpp-eval: (luks_uuid if static_uuids else str(__import__('uuid').uuid4()))
 
+  # Derive these from use_boot
+  use_aboot:
+    mpp-eval: use_boot == "aboot"
+  use_grub2:
+    mpp-eval: use_boot == "grub2" or use_boot == "grub2-sbl"
+  use_sbl:
+    mpp-eval: use_boot == "grub2-sbl"
+
+  # Enable as needed
+  use_abootpart:
+    mpp-if: not "use_abootpart" in locals()
+    then:
+      mpp-eval: use_aboot
+  use_vbmetapart:
+    mpp-if: not "use_vbmetapart" in locals()
+    then:
+      mpp-eval: use_aboot
+  use_efipart:
+    mpp-if: not "use_efipart" in locals()
+    then:
+      mpp-eval: use_grub2
+  use_bootpart:
+    mpp-if: not "use_bootpart" in locals()
+    then:
+      mpp-eval: use_grub2
+  use_sblpart:
+    mpp-if: not "use_sblpart" in locals()
+    then:
+      mpp-eval: use_sbl
+
   # Backwards compatibility by checking if the deprecated kernel_rpm variable is set
   kernel_core_package:
     mpp-if: locals().get('kernel_rpm')

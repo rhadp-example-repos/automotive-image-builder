@@ -1,12 +1,7 @@
 # Implementation of abootqemu.ipp.yml but loaded after derived target
 version: '2'
 mpp-vars:
-  use_grub2: false
-  use_aboot: true
-  use_abootpart: true
-  use_vbmetapart: true
-  use_bootpart: false
-  use_efipart: false
+  use_boot: aboot
   use_efi_runtime: false
   aboot_pagesize: 4096
   aboot_kernel_offset: "0x40000000"

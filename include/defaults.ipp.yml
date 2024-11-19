@@ -127,18 +127,15 @@ mpp-vars:
     - 51
     - 52
     - 53 # remaining tries 0x7
-  use_grub2: true
+
+  # Possible values:
+  # aboot, grub2, grub2-sbl, none
+  use_boot: grub2
   use_abl: false
   qm_pipeline: qm_rootfs
-  use_aboot: false
-  use_abootpart: false
   use_tuned_realtime: false
   tuned_realtime_isolcpus: "2-N"
-  use_vbmetapart: false
-  use_sblpart: false
-  use_efipart: true
   use_initoverlayfs: false
-  use_bootpart: true
   use_testpart: false
   use_ostree: false
   is_autoinit_supported: true

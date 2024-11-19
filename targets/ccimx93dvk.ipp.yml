@@ -1,7 +1,7 @@
 version: '2'
 mpp-vars:
-  use_grub2: false
-  use_efipart: false
+  use_boot: none
+  use_bootpart: true
   use_efi_runtime: false
   consoles: "ttyLP5,115200"
   image_size: 3221225472

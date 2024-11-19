@@ -1,12 +1,7 @@
 version: '2'
 mpp-vars:
-  use_grub2: false
+  use_boot: aboot
   use_abl: true
-  use_aboot: true
-  use_abootpart: true
-  use_vbmetapart: true
-  use_bootpart: false
-  use_efipart: false
   use_efi_runtime: false
   use_autoinit: true
   consoles: "ttyMSM0,115200,n8"
