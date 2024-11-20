@@ -253,6 +253,8 @@ mpp-vars:
         then: qm.$bluechi_nodename
   rootpart_label:
     mpp-eval: aboot_partlabel if use_aboot else "root"
+  autoinit_root:
+    mpp-eval: locals().get("autoinit_root", f"PARTLABEL={rootpart_label}")
   qm_importfile:
     mpp-if: use_qm
     then: "qm"

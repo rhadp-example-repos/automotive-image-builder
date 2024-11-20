@@ -141,7 +141,6 @@ mpp-vars:
   is_autoinit_supported: true
   use_autoinit: false
   use_autoinit_root: false
-  autoinit_root: /dev/vda3
   aboot_partlabel: system_a
   vbmeta_partlabel: vbmeta_a
   use_composefs: true
