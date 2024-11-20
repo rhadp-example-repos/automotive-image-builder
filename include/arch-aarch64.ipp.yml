@@ -3,11 +3,11 @@ mpp-vars:
   efiarch: aa64
   goarch: arm64
   arch_rpms:
-    - mpp-if: use_grub2
+    - mpp-if: "'grub2' in use_boot"
       then: grub2-efi-aa64
   arch_build_rpms:
     mpp-join:
-      - mpp-if: use_grub2
+      - mpp-if: "'grub2' in use_boot"
         then:
           - grub2-efi-aa64
           - grub2-efi-aa64-cdboot

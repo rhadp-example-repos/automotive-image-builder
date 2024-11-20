@@ -13,7 +13,7 @@ mpp-vars:
       priority: 1
   kernel_package: 'kernel'
   consoles: 'ttyLF0,115200'
-  use_sblpart: true
+  use_boot: grub2-sbl
   partition_label: dos
   use_efi_runtime: false
   kernel_opts:

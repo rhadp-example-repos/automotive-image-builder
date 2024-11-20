@@ -32,7 +32,7 @@ mpp-define-image:
               type:
                 mpp-eval: "'0FC63DAF-8483-4772-8E79-3D69D8477DE4' if partition_label == 'gpt' else '83'"
               uuid: $bootpart_uuid
-          - mpp-if: use_aboot and use_abootpart
+          - mpp-if: use_abootpart
             then:
               id: boot_a
               name: boot_a
@@ -41,7 +41,7 @@ mpp-define-image:
               uuid: $abootpart_uuid_a
               attrs:
                 mpp-eval: active_gpt_attrs
-          - mpp-if: use_aboot and use_abootpart
+          - mpp-if: use_abootpart
             then:
               id: boot_b
               name: boot_b

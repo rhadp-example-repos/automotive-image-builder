@@ -1,35 +1,17 @@
 # This is a qemu target similar to the regular "qemu" target, but using
 # an android boot partition instead of grub.
 #
+# It is rather slow as it doesn't use KVM, if you want that use the
+# abootqemukvm target instead
+#
 # It currently works only on aarch64, and you need to use a u-boot
 # firmware that supports aboot to boot it, which can be
 # done by passing --aboot to runvm.
 #
 version: '2'
-mpp-vars:
-  use_grub2: false
-  use_aboot: true
-  use_abootpart: true
-  use_vbmetapart: true
-  use_bootpart: false
-  use_efipart: false
-  use_efi_runtime: false
-  use_autoinit: true
-  aboot_pagesize: 4096
-  aboot_kernel_offset: "0x40000000"
-  aboot_partition_a: "/dev/disk/by-partlabel/boot_a"
-  aboot_partition_b: "/dev/disk/by-partlabel/boot_b"
-  aboot_dtb_file:
-    mpp-if: arch == 'aarch64'
-    then: "/usr/share/qemu/qemu-tcg.dtb"
-  target_build_rpms:
-    - qemu-img
-  target_rpms:
-    - aboot-deploy
-    - mpp-if: arch == 'aarch64'
-      then: autosig-qemu-dtb
-  kernel_opts:
-    mpp-join:
-      - mpp-eval: kernel_opts
-      - - acpi=off
-pipelines: []
+# To derive and override mpp vars we move the overrides to an include file
+pipelines:
+  - mpp-import-pipelines:
+      path: qemu.ipp.yml
+  - mpp-import-pipelines:
+      path: _abootqemu.ipp.yml
