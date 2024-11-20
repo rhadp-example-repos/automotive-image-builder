@@ -3,7 +3,6 @@ version: '2'
 mpp-vars:
   use_autoinit: true
   use_autoinit_root: true
-  autoinit_root: /dev/mmcblk0p5
   consoles: "ttySC0,1843200"
   use_boot: aboot
   use_abl: false
