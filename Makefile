@@ -54,4 +54,12 @@ import-mpp:
 	./import-osbuild-mpp.sh $(OSBUILD_MPP_TAG)
 
 yamllint:
-	yamllint -c .yamllint distro/ include/ targets/
+	yamllint -c .yamllint distro/ include/ targets/ examples files/
+
+.venv:
+	python3 -m venv .venv
+	. .venv/bin/activate; pip install json-schema-for-humans
+
+generate-manifest-doc: .venv
+	mkdir -p docs
+	. .venv/bin/activate; generate-schema-doc files/manifest_schema.yml docs/simple_manifest.html

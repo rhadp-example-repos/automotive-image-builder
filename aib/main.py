@@ -14,6 +14,7 @@ from .utils import yaml_load_ordered
 from .exports import export, EXPORT_DATAS, get_export_data
 from .runner import Runner
 from .ostree import OSTree
+from .simple import ManifestLoader
 from . import exceptions
 from . import AIBParameters
 from . import log
@@ -155,7 +156,7 @@ def parse_args(args, base_dir):
     parser_compose.set_defaults(func=compose)
 
     parser_listrpms = subparsers.add_parser('list-rpms', help='List rpms', parents=[format_parser])
-    parser_listrpms.add_argument("manifest", type=str, help="Source manifest file, or - for empty")
+    parser_listrpms.add_argument("manifest", type=str, help="Source manifest file")
     parser_listrpms.set_defaults(func=listrpms)
 
     parser_build = subparsers.add_parser('build', help='Compose osbuild manifest', parents=[format_parser])
@@ -180,8 +181,9 @@ def parse_args(args, base_dir):
 
     res = parser.parse_args(args)
     if "manifest" in res:
-        if res.manifest == "-":
-            res.manifest = os.path.join(base_dir, "files/empty.mpp.yml")
+        if res.manifest.endswith(".aib") or res.manifest.endswith(".aib.yml") or res.manifest.endswith(".aib.yaml"):
+            res.simple_manifest = res.manifest
+            res.manifest = os.path.join(base_dir, "files/simple.mpp.yml")
 
     return res
 
@@ -242,6 +244,12 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
     }
 
     defines["exports"] = args.export if args.export else []
+
+    if args.simple_manifest:
+        loader = ManifestLoader(defines)
+
+        loader.load(args.simple_manifest, os.path.dirname(args.simple_manifest))
+
 
     if args.ostree_repo:
         runner.add_volume_for(args.ostree_repo)

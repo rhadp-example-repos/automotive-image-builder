@@ -1,0 +1,210 @@
+version: '2'
+mpp-vars:
+  name: empty
+  extra_containers: []
+  qm_extra_containers: []
+  extra_import: include/empty.ipp.yml
+  extra_copy: []
+  qm_extra_copy: []
+  extra_mkdir: []
+  qm_extra_mkdir: []
+  extra_remove: []
+  qm_extra_remove: []
+  extra_chmod: {}
+  qm_extra_chmod: {}
+  extra_chown: {}
+  qm_extra_chown: {}
+  extra_systemd: {}
+  qm_extra_systemd: {}
+  extra_sshd_config: {}
+  extra_users: {}
+  extra_groups: {}
+
+pipelines:
+  - mpp-import-pipelines:
+      path: $extra_import
+
+  - mpp-if: not use_qm
+    then:
+      name: qm_rootfs_base
+      build: name:build
+      stages:
+        - type: org.osbuild.noop
+
+  # In case use_qm is enabled
+  - name: qm_rootfs
+    build: name:build
+    stages:
+      - type: org.osbuild.copy
+        inputs:
+          tree:
+            type: org.osbuild.tree
+            origin: org.osbuild.pipeline
+            references:
+              - name:qm_rootfs_base
+        options:
+          paths:
+            - from: input://tree/
+              to: tree:///
+      - mpp-if: qm_extra_containers
+        then:
+          type: org.osbuild.skopeo
+          inputs:
+            images:
+              type: org.osbuild.containers
+              origin: org.osbuild.source
+              mpp-resolve-images:
+                images:
+                  mpp-eval: qm_extra_containers
+          options:
+            destination:
+              type: containers-storage
+              storage-path:
+                mpp-eval: containers_extra_store
+      - mpp-if: qm_extra_mkdir
+        then:
+          type: org.osbuild.mkdir
+          options:
+            paths:
+              mpp-eval: qm_extra_mkdir
+      - mpp-if: qm_extra_remove
+        then:
+          type: org.osbuild.lorax-script
+          options:
+            path: auto/remove
+            product:
+              name:
+                mpp-eval: "' '.join(qm_extra_remove)"
+      - mpp-if: qm_extra_copy
+        then:
+          type: org.osbuild.copy
+          inputs:
+            extra:
+              type: org.osbuild.tree
+              origin: org.osbuild.pipeline
+              references:
+                - name:extra-image-content
+          options:
+            paths:
+              mpp-eval: qm_extra_copy
+      - mpp-if: qm_extra_chown
+        then:
+          type: org.osbuild.chown
+          options:
+            items:
+              mpp-eval: qm_extra_chown
+      - mpp-if: qm_extra_chmod
+        then:
+          type: org.osbuild.chmod
+          options:
+            items:
+              mpp-eval: qm_extra_chmod
+      - mpp-if: qm_extra_systemd
+        then:
+          type: org.osbuild.systemd
+          options:
+            mpp-eval: qm_extra_systemd
+
+  - name: rootfs
+    build: name:build
+    stages:
+      - type: org.osbuild.rpm
+        options:
+          gpgkeys:
+            - mpp-eval: distro_gpg_keys
+          disable_dracut: true
+          exclude:
+            docs: true
+        inputs:
+          packages:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-depsolve:
+              architecture: $arch
+              ignore-weak-deps: true
+              module-platform-id: $distro_module_id
+              baseurl: $distro_baseurl_repo
+              repos:
+                mpp-join:
+                  - mpp-eval: image_repos
+                  - mpp-eval: extra_repos
+              packages:
+                mpp-join:
+                  - mpp-eval: image_rpms
+                  - mpp-eval: extra_rpms
+      - mpp-if: extra_containers
+        then:
+          type: org.osbuild.skopeo
+          inputs:
+            images:
+              type: org.osbuild.containers
+              origin: org.osbuild.source
+              mpp-resolve-images:
+                images:
+                  mpp-eval: extra_containers
+          options:
+            destination:
+              type: containers-storage
+              storage-path:
+                mpp-eval: containers_extra_store
+      - mpp-if: extra_mkdir
+        then:
+          type: org.osbuild.mkdir
+          options:
+            paths:
+              mpp-eval: extra_mkdir
+      - mpp-if: extra_remove
+        then:
+          type: org.osbuild.lorax-script
+          options:
+            path: auto/remove
+            product:
+              name:
+                mpp-eval: "' '.join(extra_remove)"
+      - mpp-if: extra_copy
+        then:
+          type: org.osbuild.copy
+          inputs:
+            extra:
+              type: org.osbuild.tree
+              origin: org.osbuild.pipeline
+              references:
+                - name:extra-image-content
+          options:
+            paths:
+              mpp-eval: extra_copy
+      - mpp-if: extra_chown
+        then:
+          type: org.osbuild.chown
+          options:
+            items:
+              mpp-eval: extra_chown
+      - mpp-if: extra_chmod
+        then:
+          type: org.osbuild.chmod
+          options:
+            items:
+              mpp-eval: extra_chmod
+      - mpp-if: extra_systemd
+        then:
+          type: org.osbuild.systemd
+          options:
+            mpp-eval: extra_systemd
+      - mpp-if: extra_sshd_config
+        then:
+          type: org.osbuild.sshd.config
+          options:
+            config:
+              mpp-eval: extra_sshd_config
+      - mpp-if: extra_groups
+        then:
+          type: org.osbuild.groups
+          options:
+            groups:
+              mpp-eval: extra_groups
+      - mpp-if: extra_users
+        then:
+          type: org.osbuild.users
+          options:
+            users:
+              mpp-eval: extra_users
