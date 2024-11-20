@@ -213,6 +213,10 @@ pipelines:
                   mpp-if: "aboot_compress_kernel != None"
                   then:
                     mpp-eval: aboot_compress_kernel
+                ramdisk_offset:
+                  mpp-if: "locals().get('aboot_ramdisk_offset') != None"
+                  then:
+                    mpp-format-string: "{aboot_ramdisk_offset}"
           - mpp-if: use_aboot
             then:
               type: org.osbuild-auto.aboot.update
