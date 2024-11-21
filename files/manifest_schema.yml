@@ -450,6 +450,8 @@ type: object
 additionalProperties: false
 title: Manifest
 description: File format specifing how to build an image
+required:
+  - name
 properties:
   name:
     description: The name of the manifest
