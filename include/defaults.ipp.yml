@@ -11,6 +11,8 @@ version: '2'
 mpp-vars:
   # Value of RELEASE in /etc/build-info
   release_name: ""
+  # Value of IMAGE_VERSION in /etc/build-info and ostree version
+  version: "unversioned"
 
   # the osname as used by OSTree
   osname: centos
