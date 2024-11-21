@@ -301,8 +301,8 @@ class ManifestLoader():
         # Extra include snippet for content, shared between contents
         extra_include = ExtraInclude(manifest_basedir)
 
-        name = manifest["name"]
-        self.set("name", name)
+        self.set_from("name", manifest, "name")
+        self.set_from("version", manifest, "version")
 
         content = Contents(self, manifest.get("content", {}), extra_include)
         content.set_defines()

@@ -456,6 +456,9 @@ properties:
   name:
     description: The name of the manifest
     type: string
+  version:
+    description: The version of the manifest
+    type: string
   content:
     description: The content to add to the rootfs partition
     $ref: "#/definitions/partition"
