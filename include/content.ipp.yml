@@ -43,7 +43,7 @@ mpp-vars:
   # We use this instead of org.osbuild.selinux.config so we can chose custom values for the policy (like automotive)
   selinux_conf:
     mpp-format-string: |
-      SELINUX=enforcing
+      SELINUX={selinux_mode}
       SELINUXTYPE={selinux_policy}
   containers_conf:
     mpp-format-string: |

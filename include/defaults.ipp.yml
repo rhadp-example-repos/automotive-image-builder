@@ -166,6 +166,7 @@ mpp-vars:
     mpp-if: arch == 'aarch64'
     then: ttyAMA0
     else: ttyS0
+  selinux_mode: enforcing
   selinux_policy: targeted
   selinux_secure_mode:
     mpp-eval: image_mode == 'image'
