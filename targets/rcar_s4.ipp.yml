@@ -3,7 +3,6 @@ version: '2'
 mpp-vars:
   use_autoinit: true
   use_autoinit_root: true
-  autoinit_root: /dev/mmcblk0p5
   consoles: "ttySC0,1843200"
   use_boot: aboot
   use_abl: false
@@ -11,10 +10,11 @@ mpp-vars:
   abootpart_size: 262144 # 128M
   aboot_pagesize: 4096
   aboot_base: "0x48000000"
-  aboot_kernel_offset: "0x00008000"
-  aboot_ramdisk_offset: "0x01000000"
-  aboot_second_offset: "0x00f00000"
-  aboot_tags_offset: "0x00000100"
+  # u-boot loads the rest to "correct" places on its own
+  aboot_kernel_offset: "0x0"
+  aboot_ramdisk_offset: "0x0"
+  aboot_second_offset: "0x0"
+  aboot_tags_offset: "0x0"
   aboot_partition_a: "/dev/disk/by-partlabel/boot_a"
   aboot_partition_b: "/dev/disk/by-partlabel/boot_b"
   aboot_dtb_file: "renesas/r8a779f0-spider.dtb"
