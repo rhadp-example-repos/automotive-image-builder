@@ -269,6 +269,15 @@ definitions:
         description: The size of the total image, allows suffixes like "GB" (powers of 1000) or "GiB" (powers of 1024)
         type: string
         pattern: "^[0-9]+ +(kB|KiB|MB|MiB|GB|GiB|TB|TiB)$"
+      selinux_mode:
+        description: The selinux mode (enforcing or permissive), default is enforcing
+        type: string
+        enum:
+          - enforcing
+          - permissive
+      selinux_policy:
+        description: The name of the selinux policy to use
+        type: string
       partitions:
         type: object
         additionalProperties: false
@@ -298,6 +307,9 @@ definitions:
         type: string
       osname:
         description: The name of the os used, as used by OSTree
+        type: string
+      ostree_ref:
+        description: The name of the ostree ref (defaults to $distro_name/$arch/$target-$naem)
         type: string
 
   qm:
@@ -441,9 +453,14 @@ type: object
 additionalProperties: false
 title: Manifest
 description: File format specifing how to build an image
+required:
+  - name
 properties:
   name:
     description: The name of the manifest
+    type: string
+  version:
+    description: The version of the manifest
     type: string
   content:
     description: The content to add to the rootfs partition

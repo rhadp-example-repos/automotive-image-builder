@@ -284,6 +284,9 @@ class ManifestLoader():
                     self.set(k + "part_size", int(part_size / 512))
         self.set_from("hostname", image, "hostname")
         self.set_from("osname", image, "osname")
+        self.set_from("ostree_ref", image, "ostree_ref")
+        self.set_from("selinux_mode", image, "selinux_mode")
+        self.set_from("selinux_policy", image, "selinux_policy")
 
     def load(self, path, manifest_basedir):
         with open(path, mode="r") as f:
@@ -299,8 +302,8 @@ class ManifestLoader():
         # Extra include snippet for content, shared between contents
         extra_include = ExtraInclude(manifest_basedir)
 
-        name = manifest["name"]
-        self.set("name", name)
+        self.set_from("name", manifest, "name")
+        self.set_from("version", manifest, "version")
 
         content = Contents(self, manifest.get("content", {}), extra_include)
         content.set_defines()

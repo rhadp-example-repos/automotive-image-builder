@@ -11,6 +11,8 @@ version: '2'
 mpp-vars:
   # Value of RELEASE in /etc/build-info
   release_name: ""
+  # Value of IMAGE_VERSION in /etc/build-info and ostree version
+  version: "unversioned"
 
   # the osname as used by OSTree
   osname: centos
@@ -166,6 +168,7 @@ mpp-vars:
     mpp-if: arch == 'aarch64'
     then: ttyAMA0
     else: ttyS0
+  selinux_mode: enforcing
   selinux_policy: targeted
   selinux_secure_mode:
     mpp-eval: image_mode == 'image'

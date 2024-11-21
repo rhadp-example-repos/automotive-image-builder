@@ -8,4 +8,4 @@ version: '2'
 
 mpp-vars:
   ostree_ref: $distro_name/$arch/$target-$name
-  ostree_os_version: $distro_version
+  ostree_os_version: $version
