@@ -576,4 +576,9 @@ mpp-vars:
   _debug_output:
     mpp-eval: "locals().get('print_variables') and print( __import__('json').dumps({k: v for k, v in locals().items() if not k.startswith('_')}, default=lambda o: '<not serializable>', sort_keys=True, indent=2))"
 
+  _debug_check_arch:
+    mpp-if: "target_supported_arches and arch not in target_supported_arches"
+    then:
+      mpp-eval: "print(f'target {target} not supported on arch {arch}') or  __import__('sys').exit(1)"
+
 pipelines: []

@@ -285,6 +285,7 @@ mpp-vars:
   target_build_repos: []
   target_build_rpms: []
   target_extra_image_stages: []
+  target_supported_arches: []
 
   # These are overridden by the arch file
   arch_rpms: []
