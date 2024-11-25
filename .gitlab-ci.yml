@@ -8,9 +8,16 @@ workflow:
 default:
   image: quay.io/centos-sig-automotive/automotive-osbuild
 
+include:
+  - project: 'redhat/edge/ci-cd/pipe-x/pipelines-as-code'
+    ref: gitlab-ci
+    file:
+      - '/.gitlab/trigger.yml'
+
 stages:
   - test
   - deploy
+  - trigger
 
 compose-test-job:
   stage: test
@@ -103,3 +110,17 @@ pages:
     - generate-schema-doc files/manifest_schema.yml public/simple_manifest.html
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
+
+trigger-pipeline:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "**/*.py"
+        - "**/*.yml"
+        - automotive-image-builder
+        - mpp/aib-osbuild-mpp
+        - files/*
+        - tests/*
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: never
+    - !reference [.trigger-template, rules]
