@@ -15,10 +15,11 @@ mpp-vars:
         - "nvme_common"
         - "nvme_core"
         - "virtio_blk"
+        - "virtio_mmio"
         - "sd_mod"
         - "ahci"
   kernel_opts:
     mpp-join:
       - mpp-eval: kernel_opts
       - - mpp-if: is_autoinit_supported and use_autoinit # With autoinit, udev will not load block drivers
-          then: rd.modules-load=nvme
+          then: rd.modules-load=nvme,virtio_mmio
