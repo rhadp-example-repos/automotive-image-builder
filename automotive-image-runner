@@ -56,6 +56,19 @@ def find_qemu(arch):
 
     exit_error(f"Can't find {binary_name}")
 
+def download_aboot_u_boot(arch, dest_path):
+    with tempfile.TemporaryDirectory(prefix=f"runvm-uboot") as tmpdir:
+        autosigrepo="https://mirror.stream.centos.org/SIGs/9-stream/automotive"
+        subprocess.run(["dnf", "download", "-q",
+                        "--downloaddir", tmpdir,
+                        "--disablerepo", "*",
+                        "--repofrompath", f"autosig,{autosigrepo}/{arch}/packages-main/",
+                        "autosig-u-boot"], check=True)
+        rpm_file = os.listdir(tmpdir)[0]
+        p1 = subprocess.Popen(["rpm2cpio", os.path.join(tmpdir, rpm_file)], stdout=subprocess.PIPE)
+        subprocess.run(["cpio", "-id", "--quiet", "-D", tmpdir], stdin=p1.stdout, check=True)
+        subprocess.run(["cp", os.path.join(tmpdir, "boot/u-boot.bin"), dest_path], check=True)
+
 def qemu_available_accels(qemu):
     cmd = qemu + ' -accel help'
     info = subprocess.check_output(cmd.split(" ")).decode('utf-8')
@@ -336,7 +349,8 @@ def main():
             exit_error("--aboot only supported with --arch=aarch64")
         aboot_bios = f"qemu-u-boot-{args.arch}.bin"
         if not os.path.exists(aboot_bios):
-            exit_error(f"Missing file '{aboot_bios}'. Download using: 'make {aboot_bios}'")
+            print(f"Missing file '{aboot_bios}'. Downloading")
+            download_aboot_u_boot(args.arch, aboot_bios)
 
     qemu = find_qemu(args.arch)
     accel_list = qemu_available_accels(qemu)
