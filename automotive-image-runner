@@ -449,8 +449,11 @@ def main():
     macstr = generate_mac_address()
     print_verbose(f"MAC: {macstr}")
 
+    net_dev = "virtio-net-pci"
+    if args.aboot:
+        net_dev = "virtio-net-device"
     qemu_args += [
-        "-device", f"virtio-net-pci,netdev=n0,mac={macstr}",
+        "-device", f"{net_dev},netdev=n0,mac={macstr}",
         "-netdev", "user,id=n0,net=10.0.2.0/24," + guestfwds + ",".join(fwds),
     ]
 
@@ -500,10 +503,16 @@ def main():
 
     print_verbose(f"Image: {args.image}")
 
-    disk_if = "virtio"
+    # Chose disk device
+    disk_if = "none"
     if args.nvme:
-        disk_if = "none"
         qemu_args += [ "-device", "nvme,serial=deadbeef,drive=rootdisk"  ]
+    elif args.aboot:
+        # virtio-blk-pci doesn't work with aboot, so use virtio-blk-device
+        qemu_args += [ "-device", "virtio-blk-device,scsi=off,drive=rootdisk"  ]
+    else:
+        # Default "if=virtio", typically a pci based virtio device
+        disk_if = "virtio"
 
     disk_format = "qcow2"
     if args.image.endswith(".raw") or args.image.endswith(".img"):
