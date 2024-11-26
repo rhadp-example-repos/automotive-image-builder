@@ -209,6 +209,8 @@ class ManifestLoader():
         self.validator = jsonschema.Draft7Validator(self.aib_schema)
 
     def set(self, key, value):
+        if (isinstance(value, list) or isinstance(value, dict)) and len(value)==0:
+            return
         self.defines[key] = value
 
     def set_from(self, key, src_dict, src_key, default = None):
