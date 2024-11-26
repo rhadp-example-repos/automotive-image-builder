@@ -11,6 +11,7 @@ BuildArch:	noarch
 BuildRequires:  make
 Requires:       ostree
 Requires:       python3-pyyaml
+Requires:       python3-jsonschema
 
 %description
 Tool to build (and run) automotive images
