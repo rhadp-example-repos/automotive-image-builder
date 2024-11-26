@@ -172,6 +172,10 @@ class Contents:
             url = r["baseurl"]
             r["baseurl"] = url.replace("$arch", self.loader.defines["arch"])
 
+        # If we have containers, always add podman rpm
+        if self.containers:
+            self.rpms.append("podman")
+
         self.set_define("simple_repos", self.repos)
         self.set_define("simple_rpms", self.rpms)
 
