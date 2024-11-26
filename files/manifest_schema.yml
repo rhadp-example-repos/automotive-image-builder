@@ -179,6 +179,14 @@ definitions:
         type: array
         items:
           type: string
+      enable_repos:
+        description: Enable predefined repos (debug, devel)
+        type: array
+        items:
+          type: string
+          enum:
+            - debug
+            - devel
       repos:
         description: A list of additional dnf repositories to use when installing packages
         type: array

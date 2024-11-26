@@ -504,6 +504,9 @@ mpp-vars:
   image_devel_repos:
     mpp-join:
       - mpp-eval: distro_devel_repos
+  image_debug_repos:
+    mpp-join:
+      - mpp-eval: distro_debug_repos
 
   build_rpms:
     mpp-join:

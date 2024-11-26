@@ -130,6 +130,7 @@ class Contents:
         self.loader = loader
         self.extra_include = extra_include
 
+        self.enable_repos = data.get("enable_repos", [])
         self.repos = data.get("repos", [])
         self.rpms = data.get("rpms", [])
         self.containers = data.get("container_images", [])
@@ -171,6 +172,11 @@ class Contents:
         for r in self.repos:
             url = r["baseurl"]
             r["baseurl"] = url.replace("$arch", self.loader.defines["arch"])
+
+        if "debug" in self.enable_repos:
+            self.set_define("simple_add_debug_repos", True)
+        if "devel" in self.enable_repos:
+            self.set_define("simple_add_devel_repos", True)
 
         # If we have containers, always add podman rpm
         if self.containers:
