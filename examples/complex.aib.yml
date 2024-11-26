@@ -4,6 +4,8 @@
 name: complex
 
 content:
+  enable_repos:
+    - devel
   repos: []
   rpms:
     - openssh-server
@@ -44,6 +46,8 @@ qm:
     max: infinity
     high: infinity
   content:
+    enable_repos:
+      - debug
     repos: []
     rpms:
       - git

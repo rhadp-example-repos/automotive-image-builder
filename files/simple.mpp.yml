@@ -20,6 +20,8 @@ mpp-vars:
   simple_sshd_config: {}
   simple_users: {}
   simple_groups: {}
+  simple_add_devel_repos: false
+  simple_add_debug_repos: false
 
 pipelines:
   - mpp-import-pipelines:
@@ -130,6 +132,12 @@ pipelines:
                   - mpp-eval: image_repos
                   - mpp-eval: extra_repos
                   - mpp-eval: simple_repos
+                  - mpp-if: simple_add_devel_repos
+                    then:
+                      mpp-eval: image_devel_repos
+                  - mpp-if: simple_add_debug_repos
+                    then:
+                      mpp-eval: image_debug_repos
               packages:
                 mpp-join:
                   - mpp-eval: image_rpms

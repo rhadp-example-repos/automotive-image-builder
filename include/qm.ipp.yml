@@ -23,6 +23,12 @@ pipelines:
                   - mpp-eval: image_repos
                   - mpp-eval: extra_repos
                   - mpp-eval: qm_simple_repos
+                  - mpp-if: qm_simple_add_devel_repos
+                    then:
+                      mpp-eval: image_devel_repos
+                  - mpp-if: qm_simple_add_debug_repos
+                    then:
+                      mpp-eval: image_debug_repos
                   - mpp-eval: qm_extra_repos
               packages:
                 mpp-join:
