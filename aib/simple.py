@@ -153,34 +153,34 @@ class Contents:
     def set_defines(self):
         for file in self.add_files:
             self.extra_include.add_file_copy(self, file)
-        self.set_define("extra_copy", self.file_content_copy)
+        self.set_define("simple_copy", self.file_content_copy)
 
-        self.set_define("extra_mkdir", self.make_dirs)
+        self.set_define("simple_mkdir", self.make_dirs)
 
         chmod_files = {f["path"]: without(f, "path") for f in self.chmod_files}
-        self.set_define("extra_chmod", chmod_files)
+        self.set_define("simple_chmod", chmod_files)
 
         chown_files = {f["path"]: without(f, "path") for f in self.chown_files}
-        self.set_define("extra_chown", chown_files)
+        self.set_define("simple_chown", chown_files)
 
-        extra_remove = []
+        simple_remove = []
         for remove in self.remove_files:
-            extra_remove.append(remove["path"])
-        self.set_define("extra_remove", extra_remove)
+            simple_remove.append(remove["path"])
+        self.set_define("simple_remove", simple_remove)
 
         for r in self.repos:
             url = r["baseurl"]
             r["baseurl"] = url.replace("$arch", self.loader.defines["arch"])
 
-        self.set_define("extra_repos", self.repos)
-        self.set_define("extra_rpms", self.rpms)
+        self.set_define("simple_repos", self.repos)
+        self.set_define("simple_rpms", self.rpms)
 
-        self.set_define("extra_containers", self.containers)
+        self.set_define("simple_containers", self.containers)
         if self.containers:
             self.set_define("use_containers_extra_store", True)
 
         if self.systemd:
-            self.set_define("extra_systemd", self.systemd)
+            self.set_define("simple_systemd", self.systemd)
 
 class QMContents(Contents):
     def __init__(self, loader, data, extra_include):
@@ -244,16 +244,16 @@ class ManifestLoader():
         # Always override to disable by default
         self.set_from("root_password", auth, "root_password", "")
         self.set_from("root_ssh_key", auth, "root_ssh_key")
-        self.set_from("extra_sshd_config", auth, "sshd_config")
-        self.set_from("extra_groups", auth, "groups")
-        self.set_from("extra_users", auth, "users")
+        self.set_from("simple_sshd_config", auth, "sshd_config")
+        self.set_from("simple_groups", auth, "groups")
+        self.set_from("simple_users", auth, "users")
 
     def handle_kernel(self, kernel):
         self.set_from("kernel_package", kernel, "kernel_package")
         self.set_from("kernel_version", kernel, "kernel_version")
         self.set_from("kernel_loglevel", kernel, "loglevel")
         self.set_from("use_debug", kernel, "debug_logging")
-        self.set_from("extra_kernel_opts", kernel, "cmdline")
+        self.set_from("simple_kernel_opts", kernel, "cmdline")
 
     def handle_image(self, image):
         image_size = image.get("image_size")
@@ -320,4 +320,4 @@ class ManifestLoader():
         extra_include_path = os.path.join(self.workdir, "extra-include.ipp.yml")
         with open(extra_include_path, "w") as f:
             yaml.dump(extra_include.generate(), f, sort_keys=False)
-        self.set("extra_import", extra_include_path)
+        self.set("simple_import", extra_include_path)

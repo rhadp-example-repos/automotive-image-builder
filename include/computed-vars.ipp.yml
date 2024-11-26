@@ -174,6 +174,7 @@ mpp-vars:
         - mpp-if: use_efi_runtime
           then: efi=runtime
       - mpp-eval: kernel_opts
+      - mpp-eval: simple_kernel_opts
       - mpp-eval: extra_kernel_opts
       - mpp-if: use_luks
         then:

@@ -28,6 +28,7 @@ mpp-vars:
   # Optional specific kernel rpm version to use
   kernel_version: ""
   extra_kernel_opts: []
+  simple_kernel_opts: []
   kernel_loglevel: 4
   # Extra kernel modules loaded at boot
   load_modules: []
@@ -47,6 +48,8 @@ mpp-vars:
   # These are used to add rpms to the qm partition
   qm_extra_repos: []
   qm_extra_rpms: []
+  qm_simple_repos: []
+  qm_simple_rpms: []
 
   use_bluechi_agent: false
   use_bluechi_controller: false
