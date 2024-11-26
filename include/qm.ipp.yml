@@ -22,9 +22,11 @@ pipelines:
                 mpp-join:
                   - mpp-eval: image_repos
                   - mpp-eval: extra_repos
+                  - mpp-eval: qm_simple_repos
                   - mpp-eval: qm_extra_repos
               packages:
                 mpp-join:
+                  - mpp-eval: qm_simple_rpms
                   - mpp-eval: qm_extra_rpms
                   - - systemd
                     - podman
