@@ -109,7 +109,7 @@ def parse_args(args, base_dir):
                         help=f"Container image name, {container_image_name_default} is default if this option remains unused")
     parser.add_argument("--container-autoupdate", default=False, action="store_true",
                         help="Automatically pull new container image if available")
-    parser.add_argument("--include", action="append",type=str,default=[],
+    parser.add_argument("--include", action="append", type=str, default=[],
                         help="Add include directory")
     parser.set_defaults(func=no_subcommand)
     subparsers = parser.add_subparsers(help='sub-command help')
@@ -129,25 +129,25 @@ def parse_args(args, base_dir):
     format_parser = argparse.ArgumentParser(add_help=False)
     format_parser.add_argument("--arch", default=platform.machine(), action="store",
                                help=f"Arch to run for (default {platform.machine()})")
-    format_parser.add_argument("--osbuild-mpp", action="store",type=str,default=os.path.join(base_dir, "mpp/aib-osbuild-mpp"),
+    format_parser.add_argument("--osbuild-mpp", action="store", type=str, default=os.path.join(base_dir, "mpp/aib-osbuild-mpp"),
                                help="Use this osbuild-mpp binary")
-    format_parser.add_argument("--target", action="store",type=str,default="qemu",
+    format_parser.add_argument("--target", action="store", type=str, default="qemu",
                                help="Build for this target")
-    format_parser.add_argument("--mode", action="store",type=str,default="image",
+    format_parser.add_argument("--mode", action="store", type=str, default="image",
                                help="Build this image mode (package, image)")
-    format_parser.add_argument("--distro", action="store",type=str,default="cs9",
+    format_parser.add_argument("--distro", action="store", type=str, default="cs9",
                                help="Build for this distro specification")
-    format_parser.add_argument("--mpp-arg", action="append",type=str,default=[],
+    format_parser.add_argument("--mpp-arg", action="append", type=str, default=[],
                                help="Add custom mpp arg")
-    format_parser.add_argument("--cache", action="store",type=str,
+    format_parser.add_argument("--cache", action="store", type=str,
                                help="Add mpp cache-directory to use")
-    format_parser.add_argument("--define", action="append",type=str,default=[],
+    format_parser.add_argument("--define", action="append", type=str, default=[],
                                help="Define key=yaml-value")
-    format_parser.add_argument("--define-file", action="append",type=str,default=[],
+    format_parser.add_argument("--define-file", action="append", type=str, default=[],
                                help="Add yaml file of defines")
-    format_parser.add_argument("--extend-define", action="append",type=str,default=[],
+    format_parser.add_argument("--extend-define", action="append", type=str, default=[],
                                help="Extend array by item or list key=yaml-value")
-    format_parser.add_argument("--ostree-repo", action="store",type=str,
+    format_parser.add_argument("--ostree-repo", action="store", type=str,
                                help="Path to ostree repo")
 
     parser_compose = subparsers.add_parser('compose', help='Compose osbuild manifest', parents=[format_parser])
@@ -160,15 +160,15 @@ def parse_args(args, base_dir):
     parser_listrpms.set_defaults(func=listrpms)
 
     parser_build = subparsers.add_parser('build', help='Compose osbuild manifest', parents=[format_parser])
-    parser_build.add_argument("--osbuild-manifest", action="store",type=str,
+    parser_build.add_argument("--osbuild-manifest", action="store", type=str,
                               help="Path to store osbuild manifest")
-    parser_build.add_argument("--cache-max-size", action="store",type=str,
+    parser_build.add_argument("--cache-max-size", action="store", type=str,
                               help="Max cache size")
-    parser_build.add_argument("--osbuild-arg", action="append",type=str,default=[],
+    parser_build.add_argument("--osbuild-arg", action="append", type=str, default=[],
                               help="Add custom osbuild arg")
-    parser_build.add_argument("--export", action="append",type=str,default=[],
+    parser_build.add_argument("--export", action="append", type=str, default=[],
                               help="Export this image type", required=True)
-    parser_build.add_argument("--build-dir", action="store",type=str,default=os.getenv("OSBUILD_BUILDDIR"),
+    parser_build.add_argument("--build-dir", action="store", type=str, default=os.getenv("OSBUILD_BUILDDIR"),
                               help="Directory where intermediary files are stored)")
     parser_build.add_argument("--sudo", default=not isRoot, action="store_true",
                               help="Use sudo to start programs that need privileges (default if not run as root)")
@@ -271,7 +271,7 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
                 file_defines = yaml_load_ordered(f)
             if not isinstance(file_defines, dict):
                 raise DefineFileError("Define file must be yaml dict")
-            for k,v in file_defines.items():
+            for k, v in file_defines.items():
                 defines[k] = v
         except yaml.parser.ParserError as e:
             raise DefineFileError(f"Invalid yaml define file '{df}': {e}") from e
@@ -370,7 +370,7 @@ def _build(args, tmpdir, runner):
 
     outputdir = os.path.join(builddir, "image_output")
     cmdline += ["--store", os.path.join(builddir, "osbuild_store"),
-                "--output-directory",  outputdir]
+                "--output-directory", outputdir]
 
     for arg in args.osbuild_arg:
         cmdline += [arg]
@@ -400,7 +400,7 @@ def _build(args, tmpdir, runner):
 
     if args.ostree_repo:
         repodir = os.path.join(outputdir, "ostree-commit/repo")
-        runner.run(["ostree", "pull-local",  "--repo=" + args.ostree_repo, repodir],
+        runner.run(["ostree", "pull-local", "--repo=" + args.ostree_repo, repodir],
                    use_container=True)
 
     if len(args.export) == 1:
