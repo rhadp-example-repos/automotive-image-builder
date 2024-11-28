@@ -235,7 +235,7 @@ class ManifestLoader():
     def set_from(self, key, src_dict, src_key, default=None):
         if src_key in src_dict:
             self.set(key, src_dict[src_key])
-        elif default != None:
+        elif default is not None:
             self.set(key, default)
 
     def handle_qm(self, qm, extra_include):

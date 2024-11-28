@@ -61,7 +61,7 @@ def list_ipp_items(args, item_type):
         for f in os.listdir(subdir):
             if f.endswith(".ipp.yml"):
                 item = f[:-8]
-                if not item in items:
+                if item not in items:
                     items[item] = os.path.join(subdir, f)
     for d in sorted(items.keys()):
         if args.quiet:
@@ -325,7 +325,7 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
         k, v = parse_define(d, "--extend-define")
         if not isinstance(v, list):
             v = [v]
-        if not k in defines:
+        if k not in defines:
             defines[k] = []
         defines[k].extend(v)
 
