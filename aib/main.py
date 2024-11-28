@@ -272,7 +272,7 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
             if not isinstance(file_defines, dict):
                 raise DefineFileError("Define file must be yaml dict")
             for k,v in file_defines.items():
-                defines[k]=v
+                defines[k] = v
         except yaml.parser.ParserError as e:
             raise DefineFileError(f"Invalid yaml define file '{df}': {e}") from e
 
@@ -349,7 +349,7 @@ def listrpms(args, tmpdir, runner):
 
 def _build(args, tmpdir, runner):
     if args.nosudo:
-        args.sudo=False
+        args.sudo = False
 
     runner.add_volume_for(args.out)
 
@@ -382,12 +382,12 @@ def _build(args, tmpdir, runner):
     if args.cache_max_size:
         cmdline += ["--cache-max-size=" + args.cache_max_size]
 
-    has_repo=False
+    has_repo = False
     for exp in args.export:
         data = get_export_data(exp)
         exp = data.get("export_arg", exp)
         if exp == "ostree-commit":
-            has_repo=True
+            has_repo = True
         cmdline += ["--export", exp]
 
     # If ostree repo was specified, also export it if needed

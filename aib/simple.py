@@ -79,7 +79,7 @@ class ExtraInclude:
     def gen_file_copy(self, content_id):
         return {
             "from": {
-                "mpp-format-string": "input://inlinefile"+ str(content_id) + "/{embedded['image_content_id_" + str(content_id) +"']}"
+                "mpp-format-string": "input://inlinefile" + str(content_id) + "/{embedded['image_content_id_" + str(content_id) + "']}"
             },
             "to": "tree:///image_content_" + str(content_id)
         }
@@ -219,7 +219,7 @@ class ManifestLoader():
         self.validator = jsonschema.Draft7Validator(self.aib_schema)
 
     def set(self, key, value):
-        if (isinstance(value, list) or isinstance(value, dict)) and len(value)==0:
+        if (isinstance(value, list) or isinstance(value, dict)) and len(value) == 0:
             return
         self.defines[key] = value
 
