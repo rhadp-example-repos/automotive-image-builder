@@ -128,27 +128,27 @@ def parse_args(args, base_dir):
 
     format_parser = argparse.ArgumentParser(add_help=False)
     format_parser.add_argument("--arch", default=platform.machine(), action="store",
-                        help=f"Arch to run for (default {platform.machine()})")
+                               help=f"Arch to run for (default {platform.machine()})")
     format_parser.add_argument("--osbuild-mpp", action="store",type=str,default=os.path.join(base_dir, "mpp/aib-osbuild-mpp"),
-                        help="Use this osbuild-mpp binary")
+                               help="Use this osbuild-mpp binary")
     format_parser.add_argument("--target", action="store",type=str,default="qemu",
-                        help="Build for this target")
+                               help="Build for this target")
     format_parser.add_argument("--mode", action="store",type=str,default="image",
-                        help="Build this image mode (package, image)")
+                               help="Build this image mode (package, image)")
     format_parser.add_argument("--distro", action="store",type=str,default="cs9",
-                        help="Build for this distro specification")
+                               help="Build for this distro specification")
     format_parser.add_argument("--mpp-arg", action="append",type=str,default=[],
-                        help="Add custom mpp arg")
+                               help="Add custom mpp arg")
     format_parser.add_argument("--cache", action="store",type=str,
-                        help="Add mpp cache-directory to use")
+                               help="Add mpp cache-directory to use")
     format_parser.add_argument("--define", action="append",type=str,default=[],
-                        help="Define key=yaml-value")
+                               help="Define key=yaml-value")
     format_parser.add_argument("--define-file", action="append",type=str,default=[],
-                        help="Add yaml file of defines")
+                               help="Add yaml file of defines")
     format_parser.add_argument("--extend-define", action="append",type=str,default=[],
-                        help="Extend array by item or list key=yaml-value")
+                               help="Extend array by item or list key=yaml-value")
     format_parser.add_argument("--ostree-repo", action="store",type=str,
-                        help="Path to ostree repo")
+                               help="Path to ostree repo")
 
     parser_compose = subparsers.add_parser('compose', help='Compose osbuild manifest', parents=[format_parser])
     parser_compose.add_argument("manifest", type=str, help="Source manifest file")
@@ -161,15 +161,15 @@ def parse_args(args, base_dir):
 
     parser_build = subparsers.add_parser('build', help='Compose osbuild manifest', parents=[format_parser])
     parser_build.add_argument("--osbuild-manifest", action="store",type=str,
-                        help="Path to store osbuild manifest")
+                              help="Path to store osbuild manifest")
     parser_build.add_argument("--cache-max-size", action="store",type=str,
-                        help="Max cache size")
+                              help="Max cache size")
     parser_build.add_argument("--osbuild-arg", action="append",type=str,default=[],
-                        help="Add custom osbuild arg")
+                              help="Add custom osbuild arg")
     parser_build.add_argument("--export", action="append",type=str,default=[],
-                        help="Export this image type", required=True)
+                              help="Export this image type", required=True)
     parser_build.add_argument("--build-dir", action="store",type=str,default=os.getenv("OSBUILD_BUILDDIR"),
-                        help="Directory where intermediary files are stored)")
+                              help="Directory where intermediary files are stored)")
     parser_build.add_argument("--sudo", default=not isRoot, action="store_true",
                               help="Use sudo to start programs that need privileges (default if not run as root)")
     parser_build.add_argument("--nosudo", default=False, action="store_true",
