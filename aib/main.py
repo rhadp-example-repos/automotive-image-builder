@@ -314,11 +314,12 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
             with open(df) as f:
                 file_defines = yaml_load_ordered(f)
             if not isinstance(file_defines, dict):
-                raise DefineFileError("Define file must be yaml dict")
+                raise exceptions.DefineFileError(
+                    "Define file must be yaml dict")
             for k, v in file_defines.items():
                 defines[k] = v
         except yaml.parser.ParserError as e:
-            raise DefineFileError(
+            raise exceptions.DefineFileError(
                 f"Invalid yaml define file '{df}': {e}") from e
 
     for d in args.extend_define:

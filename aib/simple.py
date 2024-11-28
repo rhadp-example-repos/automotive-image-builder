@@ -3,7 +3,6 @@
 import os
 import sys
 import yaml
-import json
 import re
 
 import jsonschema
@@ -315,7 +314,7 @@ class ManifestLoader():
             try:
                 manifest = yaml.safe_load(f)
             except yaml.YAMLError as exc:
-                raise exceptions.ManifestParseError(args.manifest) from exc
+                raise exceptions.ManifestParseError(manifest_basedir) from exc
 
         errors = sorted(self.validator.iter_errors(manifest),
                         key=lambda e: e.path)
