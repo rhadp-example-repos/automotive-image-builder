@@ -342,7 +342,7 @@ mpp-vars:
                   mpp-eval: journal_storage
         - type: org.osbuild.containers.storage.conf
           options:
-            filename: /etc/containers/storage.conf
+            filename: $containers_configdir/storage.conf
             config:
               storage:
                 transient_store:
@@ -415,6 +415,9 @@ mpp-vars:
     - path: /etc/containers
       parents: true
       exist_ok: true
+    - path: /usr/share/containers
+      parents: true
+      exist_ok: true
     - path: /usr/lib/systemd/system.conf.d
       parents: true
       exist_ok: true
@@ -441,7 +444,7 @@ mpp-vars:
         from: input://extra-tree/luks-key
         to: tree:///usr/.auto-unlock-key
     - from: input://extra-tree/containers.conf
-      to: tree:///etc/containers/containers.conf
+      to: tree://$containers_configdir/containers.conf
     - mpp-if: use_ostree
       then:
         from: input://extra-tree/ostree_prepare_root.conf

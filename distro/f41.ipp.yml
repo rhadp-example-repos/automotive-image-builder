@@ -14,6 +14,7 @@ mpp-vars:
   kernel_package: kernel
   release_rpm: fedora-release
   linux_firmware_rpm: linux-firmware
+  containers_configdir: /usr/share/containers
   distro_repos:
     - id: fedora
       baseurl: $distro_baseurl/releases/$distro_version/Everything/$arch/os/
