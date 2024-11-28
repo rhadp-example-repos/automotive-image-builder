@@ -18,10 +18,12 @@ qm_rootfs:
 def test_create_manifest(tmp_path):
     manifest_file = tmp_path / "manifest.yml"
     manifest_file.write_text(INVALID_YAML)
-    args = AIBParameters(args=parse_args(
-                            ["compose", manifest_file.as_posix(), "output"],
-                            base_dir=BASE_DIR),
-                         base_dir=BASE_DIR)
+    args = AIBParameters(
+        args=parse_args(
+            ["compose", manifest_file.as_posix(), "output"], base_dir=BASE_DIR
+        ),
+        base_dir=BASE_DIR,
+    )
     with pytest.raises(exceptions.ManifestParseError) as manifest_err:
         create_osbuild_manifest(args, tmpdir="/tmp", out="output", runner=None)
     assert manifest_file.as_posix() in str(manifest_err)
@@ -35,8 +37,9 @@ def test_rewrite_manifest():
 
 def test_missing_export():
     with pytest.raises(SystemExit) as argparse_err:
-        AIBParameters(args=parse_args(["build", "out"], BASE_DIR),
-                      base_dir=BASE_DIR)
+        AIBParameters(
+            args=parse_args(["build", "out"], BASE_DIR), base_dir=BASE_DIR
+        )
     assert argparse_err.value.code == 2
 
 

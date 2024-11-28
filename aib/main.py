@@ -19,12 +19,13 @@ from . import exceptions
 from . import AIBParameters
 from . import log
 
+
 def extract_comment_header(path):
     lines = []
     with open(path, mode="r") as file:
         for line in file:
             line = line.strip()
-            if line[0] != '#':
+            if line[0] != "#":
                 break
             lines.append(line[1:])
 
@@ -33,7 +34,7 @@ def extract_comment_header(path):
     for line in lines:
         indent = 0
         for c in line:
-            if c == ' ':
+            if c == " ":
                 indent = indent + 1
             else:
                 if min_indent < 0:
@@ -52,6 +53,7 @@ def extract_comment_header(path):
 
     return "\n".join(lines)
 
+
 def list_ipp_items(args, item_type):
     items = {}
     for inc in args.include_dirs:
@@ -59,7 +61,7 @@ def list_ipp_items(args, item_type):
         for f in os.listdir(subdir):
             if f.endswith(".ipp.yml"):
                 item = f[:-8]
-                if not item in items:
+                if item not in items:
                     items[item] = os.path.join(subdir, f)
     for d in sorted(items.keys()):
         if args.quiet:
@@ -71,11 +73,14 @@ def list_ipp_items(args, item_type):
             first_para = paras[0].replace("\n", " ")
             print(f"{d} - {first_para}")
 
+
 def list_dist(args, _tmpdir, _runner):
     list_ipp_items(args, "distro")
 
+
 def list_targets(args, _tmpdir, _runner):
     list_ipp_items(args, "targets")
+
 
 def list_exports(args, _tmpdir, _runner):
     exports = EXPORT_DATAS.keys()
@@ -84,6 +89,7 @@ def list_exports(args, _tmpdir, _runner):
             print(d)
         else:
             print(f"{d} - {EXPORT_DATAS[d].get('desc', '')}")
+
 
 def parse_define(d, option):
     parts = d.split("=", 1)
@@ -97,95 +103,226 @@ def parse_define(d, option):
         raise exceptions.InvalidOption(option, yaml_v) from e
     return k, v
 
+
 def parse_args(args, base_dir):
     isRoot = os.getuid() == 0
-    parser = argparse.ArgumentParser(prog="automotive-image-builder",
-                                     description="Build automotive images")
+    parser = argparse.ArgumentParser(
+        prog="automotive-image-builder", description="Build automotive images"
+    )
     parser.add_argument("--verbose", default=False, action="store_true")
-    parser.add_argument("--container", default=False, action="store_true",
-                        help="Use containerized build")
-    container_image_name_default = "quay.io/centos-sig-automotive/automotive-osbuild"
-    parser.add_argument("--container-image-name", action="store", type=str, default=container_image_name_default,
-                        help=f"Container image name, {container_image_name_default} is default if this option remains unused")
-    parser.add_argument("--container-autoupdate", default=False, action="store_true",
-                        help="Automatically pull new container image if available")
-    parser.add_argument("--include", action="append",type=str,default=[],
-                        help="Add include directory")
+    parser.add_argument(
+        "--container",
+        default=False,
+        action="store_true",
+        help="Use containerized build",
+    )
+    container_image_name_default = (
+        "quay.io/centos-sig-automotive/automotive-osbuild"
+    )
+    parser.add_argument(
+        "--container-image-name",
+        action="store",
+        type=str,
+        default=container_image_name_default,
+        help=f"Container image name, {container_image_name_default} is "
+        "default if this option remains unused",
+    )
+    parser.add_argument(
+        "--container-autoupdate",
+        default=False,
+        action="store_true",
+        help="Automatically pull new container image if available",
+    )
+    parser.add_argument(
+        "--include",
+        action="append",
+        type=str,
+        default=[],
+        help="Add include directory",
+    )
     parser.set_defaults(func=no_subcommand)
-    subparsers = parser.add_subparsers(help='sub-command help')
+    subparsers = parser.add_subparsers(help="sub-command help")
 
-    parser_list_dist = subparsers.add_parser('list-dist', help='list available distributions')
+    parser_list_dist = subparsers.add_parser(
+        "list-dist", help="list available distributions"
+    )
     parser_list_dist.set_defaults(func=list_dist)
-    parser_list_dist.add_argument("--quiet", default=False, action="store_true")
+    parser_list_dist.add_argument(
+        "--quiet", default=False, action="store_true"
+    )
 
-    parser_list_target = subparsers.add_parser('list-targets', help='list available targets')
+    parser_list_target = subparsers.add_parser(
+        "list-targets", help="list available targets"
+    )
     parser_list_target.set_defaults(func=list_targets)
-    parser_list_target.add_argument("--quiet", default=False, action="store_true")
+    parser_list_target.add_argument(
+        "--quiet", default=False, action="store_true"
+    )
 
-    parser_list_export = subparsers.add_parser('list-exports', help='list available exports')
+    parser_list_export = subparsers.add_parser(
+        "list-exports", help="list available exports"
+    )
     parser_list_export.set_defaults(func=list_exports)
-    parser_list_export.add_argument("--quiet", default=False, action="store_true")
+    parser_list_export.add_argument(
+        "--quiet", default=False, action="store_true"
+    )
 
     format_parser = argparse.ArgumentParser(add_help=False)
-    format_parser.add_argument("--arch", default=platform.machine(), action="store",
-                        help=f"Arch to run for (default {platform.machine()})")
-    format_parser.add_argument("--osbuild-mpp", action="store",type=str,default=os.path.join(base_dir, "mpp/aib-osbuild-mpp"),
-                        help="Use this osbuild-mpp binary")
-    format_parser.add_argument("--target", action="store",type=str,default="qemu",
-                        help="Build for this target")
-    format_parser.add_argument("--mode", action="store",type=str,default="image",
-                        help="Build this image mode (package, image)")
-    format_parser.add_argument("--distro", action="store",type=str,default="cs9",
-                        help="Build for this distro specification")
-    format_parser.add_argument("--mpp-arg", action="append",type=str,default=[],
-                        help="Add custom mpp arg")
-    format_parser.add_argument("--cache", action="store",type=str,
-                        help="Add mpp cache-directory to use")
-    format_parser.add_argument("--define", action="append",type=str,default=[],
-                        help="Define key=yaml-value")
-    format_parser.add_argument("--define-file", action="append",type=str,default=[],
-                        help="Add yaml file of defines")
-    format_parser.add_argument("--extend-define", action="append",type=str,default=[],
-                        help="Extend array by item or list key=yaml-value")
-    format_parser.add_argument("--ostree-repo", action="store",type=str,
-                        help="Path to ostree repo")
+    format_parser.add_argument(
+        "--arch",
+        default=platform.machine(),
+        action="store",
+        help=f"Arch to run for (default {platform.machine()})",
+    )
+    format_parser.add_argument(
+        "--osbuild-mpp",
+        action="store",
+        type=str,
+        default=os.path.join(base_dir, "mpp/aib-osbuild-mpp"),
+        help="Use this osbuild-mpp binary",
+    )
+    format_parser.add_argument(
+        "--target",
+        action="store",
+        type=str,
+        default="qemu",
+        help="Build for this target",
+    )
+    format_parser.add_argument(
+        "--mode",
+        action="store",
+        type=str,
+        default="image",
+        help="Build this image mode (package, image)",
+    )
+    format_parser.add_argument(
+        "--distro",
+        action="store",
+        type=str,
+        default="cs9",
+        help="Build for this distro specification",
+    )
+    format_parser.add_argument(
+        "--mpp-arg",
+        action="append",
+        type=str,
+        default=[],
+        help="Add custom mpp arg",
+    )
+    format_parser.add_argument(
+        "--cache",
+        action="store",
+        type=str,
+        help="Add mpp cache-directory to use",
+    )
+    format_parser.add_argument(
+        "--define",
+        action="append",
+        type=str,
+        default=[],
+        help="Define key=yaml-value",
+    )
+    format_parser.add_argument(
+        "--define-file",
+        action="append",
+        type=str,
+        default=[],
+        help="Add yaml file of defines",
+    )
+    format_parser.add_argument(
+        "--extend-define",
+        action="append",
+        type=str,
+        default=[],
+        help="Extend array by item or list key=yaml-value",
+    )
+    format_parser.add_argument(
+        "--ostree-repo", action="store", type=str, help="Path to ostree repo"
+    )
 
-    parser_compose = subparsers.add_parser('compose', help='Compose osbuild manifest', parents=[format_parser])
-    parser_compose.add_argument("manifest", type=str, help="Source manifest file")
+    parser_compose = subparsers.add_parser(
+        "compose", help="Compose osbuild manifest", parents=[format_parser]
+    )
+    parser_compose.add_argument(
+        "manifest", type=str, help="Source manifest file"
+    )
     parser_compose.add_argument("out", type=str, help="Output osbuild json")
     parser_compose.set_defaults(func=compose)
 
-    parser_listrpms = subparsers.add_parser('list-rpms', help='List rpms', parents=[format_parser])
-    parser_listrpms.add_argument("manifest", type=str, help="Source manifest file")
+    parser_listrpms = subparsers.add_parser(
+        "list-rpms", help="List rpms", parents=[format_parser]
+    )
+    parser_listrpms.add_argument(
+        "manifest", type=str, help="Source manifest file"
+    )
     parser_listrpms.set_defaults(func=listrpms)
 
-    parser_build = subparsers.add_parser('build', help='Compose osbuild manifest', parents=[format_parser])
-    parser_build.add_argument("--osbuild-manifest", action="store",type=str,
-                        help="Path to store osbuild manifest")
-    parser_build.add_argument("--cache-max-size", action="store",type=str,
-                        help="Max cache size")
-    parser_build.add_argument("--osbuild-arg", action="append",type=str,default=[],
-                        help="Add custom osbuild arg")
-    parser_build.add_argument("--export", action="append",type=str,default=[],
-                        help="Export this image type", required=True)
-    parser_build.add_argument("--build-dir", action="store",type=str,default=os.getenv("OSBUILD_BUILDDIR"),
-                        help="Directory where intermediary files are stored)")
-    parser_build.add_argument("--sudo", default=not isRoot, action="store_true",
-                              help="Use sudo to start programs that need privileges (default if not run as root)")
-    parser_build.add_argument("--nosudo", default=False, action="store_true",
-                              help="Don't use sudo to start programs")
+    parser_build = subparsers.add_parser(
+        "build", help="Compose osbuild manifest", parents=[format_parser]
+    )
+    parser_build.add_argument(
+        "--osbuild-manifest",
+        action="store",
+        type=str,
+        help="Path to store osbuild manifest",
+    )
+    parser_build.add_argument(
+        "--cache-max-size", action="store", type=str, help="Max cache size"
+    )
+    parser_build.add_argument(
+        "--osbuild-arg",
+        action="append",
+        type=str,
+        default=[],
+        help="Add custom osbuild arg",
+    )
+    parser_build.add_argument(
+        "--export",
+        action="append",
+        type=str,
+        default=[],
+        help="Export this image type",
+        required=True,
+    )
+    parser_build.add_argument(
+        "--build-dir",
+        action="store",
+        type=str,
+        default=os.getenv("OSBUILD_BUILDDIR"),
+        help="Directory where intermediary files are stored)",
+    )
+    parser_build.add_argument(
+        "--sudo",
+        default=not isRoot,
+        action="store_true",
+        help="Use sudo to start programs that need privileges "
+        "(default if not run as root)",
+    )
+    parser_build.add_argument(
+        "--nosudo",
+        default=False,
+        action="store_true",
+        help="Don't use sudo to start programs",
+    )
 
-    parser_build.add_argument("manifest", type=str, help="Source manifest file")
+    parser_build.add_argument(
+        "manifest", type=str, help="Source manifest file"
+    )
     parser_build.add_argument("out", type=str, help="Output path")
     parser_build.set_defaults(func=build)
 
     res = parser.parse_args(args)
     if "manifest" in res:
-        if res.manifest.endswith(".aib") or res.manifest.endswith(".aib.yml") or res.manifest.endswith(".aib.yaml"):
+        if (
+            res.manifest.endswith(".aib")
+            or res.manifest.endswith(".aib.yml")
+            or res.manifest.endswith(".aib.yaml")
+        ):
             res.simple_manifest = res.manifest
             res.manifest = os.path.join(base_dir, "files/simple.mpp.yml")
 
     return res
+
 
 def make_embed_path_abs(stage, path):
     for k, v in stage.items():
@@ -197,7 +334,10 @@ def make_embed_path_abs(stage, path):
             continue
 
         if k == "mpp-embed" and not os.path.isabs(embed_path):
-            v["path"] = os.path.normpath(os.path.join(os.path.abspath(path), embed_path))
+            v["path"] = os.path.normpath(
+                os.path.join(os.path.abspath(path), embed_path)
+            )
+
 
 def rewrite_manifest(manifest, path):
     pipelines = manifest.get("pipelines")
@@ -214,10 +354,14 @@ def rewrite_manifest(manifest, path):
     # Also, we need to inject some workarounds in the rootfs stage
     if rootfs:
         # See comment in kernel_cmdline_stage variable
-        rootfs.get("stages", []).insert(0, {"mpp-eval": "kernel_cmdline_stage"})
+        rootfs.get("stages", []).insert(
+            0, {"mpp-eval": "kernel_cmdline_stage"}
+        )
+
 
 def strip_ext(path):
     return os.path.splitext(os.path.splitext(path)[0])[0]
+
 
 def create_osbuild_manifest(args, tmpdir, out, runner):
     with open(args.manifest) as f:
@@ -234,7 +378,9 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
     defines = {
         "_basedir": args.base_dir,
         "_workdir": tmpdir,
-        "name": manifest.get("mpp-vars", {}).get("name", strip_ext(os.path.basename(args.manifest))),
+        "name": manifest.get("mpp-vars", {}).get(
+            "name", strip_ext(os.path.basename(args.manifest))
+        ),
         "arch": args.arch,
         "target": args.target,
         "distro_name": args.distro,
@@ -248,8 +394,9 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
     if args.simple_manifest:
         loader = ManifestLoader(defines)
 
-        loader.load(args.simple_manifest, os.path.dirname(args.simple_manifest))
-
+        loader.load(
+            args.simple_manifest, os.path.dirname(args.simple_manifest)
+        )
 
     if args.ostree_repo:
         runner.add_volume_for(args.ostree_repo)
@@ -270,56 +417,68 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
             with open(df) as f:
                 file_defines = yaml_load_ordered(f)
             if not isinstance(file_defines, dict):
-                raise DefineFileError("Define file must be yaml dict")
-            for k,v in file_defines.items():
-                defines[k]=v
+                raise exceptions.DefineFileError(
+                    "Define file must be yaml dict"
+                )
+            for k, v in file_defines.items():
+                defines[k] = v
         except yaml.parser.ParserError as e:
-            raise DefineFileError(f"Invalid yaml define file '{df}': {e}") from e
+            raise exceptions.DefineFileError(
+                f"Invalid yaml define file '{df}': {e}"
+            ) from e
 
     for d in args.extend_define:
         k, v = parse_define(d, "--extend-define")
         if not isinstance(v, list):
             v = [v]
-        if not k in defines:
+        if k not in defines:
             defines[k] = []
         defines[k].extend(v)
 
-    cmdline = [ args.osbuild_mpp ]
+    cmdline = [args.osbuild_mpp]
     for inc in args.include_dirs:
-        cmdline += [ "-I", inc ]
+        cmdline += ["-I", inc]
 
     for k in sorted(defines.keys()):
         v = defines[k]
-        cmdline += [ "-D", f'{k}={json.dumps(v)}' ]
+        cmdline += ["-D", f"{k}={json.dumps(v)}"]
 
     for arg in args.mpp_arg:
-        cmdline += [ arg ]
+        cmdline += [arg]
 
     if args.cache:
-        cmdline += [ "--cache", args.cache ]
-
+        cmdline += ["--cache", args.cache]
 
     variables_manifest = {
         "version": manifest["version"],
-        "mpp-vars": manifest.get("mpp-vars", {})
+        "mpp-vars": manifest.get("mpp-vars", {}),
     }
 
-    rewritten_manifest_path = os.path.join(tmpdir, "manifest-variables.ipp.yml")
+    rewritten_manifest_path = os.path.join(
+        tmpdir, "manifest-variables.ipp.yml"
+    )
     with open(rewritten_manifest_path, "w") as f:
         yaml.dump(variables_manifest, f, sort_keys=False)
 
-    del(manifest["mpp-vars"])
+    del manifest["mpp-vars"]
 
     rewritten_manifest_path = os.path.join(tmpdir, "manifest.ipp.yml")
     with open(rewritten_manifest_path, "w") as f:
         yaml.dump(manifest, f, sort_keys=False)
 
-    cmdline += [ os.path.join(args.base_dir, "include/main.ipp.yml"), out ]
+    cmdline += [os.path.join(args.base_dir, "include/main.ipp.yml"), out]
 
-    runner.run(cmdline, use_sudo=True, use_container=True, use_non_root_user_in_container=True)
+    runner.run(
+        cmdline,
+        use_sudo=True,
+        use_container=True,
+        use_non_root_user_in_container=True,
+    )
+
 
 def compose(args, tmpdir, runner):
     return create_osbuild_manifest(args, tmpdir, args.out, runner)
+
 
 def extract_rpmlist_json(osbuild_manifest):
     with open(osbuild_manifest) as f:
@@ -331,7 +490,9 @@ def extract_rpmlist_json(osbuild_manifest):
         if p.get("name") == "rpmlist":
             rpmlist = p
             break
-    inline_digest = list(rpmlist["stages"][0]["inputs"]["inlinefile"]["references"])[0]
+    inline_digest = list(
+        rpmlist["stages"][0]["inputs"]["inlinefile"]["references"]
+    )[0]
 
     inline_items = d["sources"]["org.osbuild.inline"]["items"]
     data_b64 = inline_items[inline_digest]["data"]
@@ -347,9 +508,10 @@ def listrpms(args, tmpdir, runner):
 
     print(data)
 
+
 def _build(args, tmpdir, runner):
     if args.nosudo:
-        args.sudo=False
+        args.sudo = False
 
     runner.add_volume_for(args.out)
 
@@ -366,42 +528,48 @@ def _build(args, tmpdir, runner):
     runner.add_volume(builddir)
     runner.add_volume("/dev")
 
-    cmdline = [ "osbuild" ]
+    cmdline = ["osbuild"]
 
     outputdir = os.path.join(builddir, "image_output")
-    cmdline += [ "--store", os.path.join(builddir, "osbuild_store"),
-                 "--output-directory",  outputdir]
+    cmdline += [
+        "--store",
+        os.path.join(builddir, "osbuild_store"),
+        "--output-directory",
+        outputdir,
+    ]
 
     for arg in args.osbuild_arg:
-        cmdline += [ arg ]
+        cmdline += [arg]
 
     if args.build_dir:
         # Cache stuff between builds
-        cmdline += [ "--checkpoint", "build"]
+        cmdline += ["--checkpoint", "build"]
 
     if args.cache_max_size:
-        cmdline += [ "--cache-max-size=" + args.cache_max_size]
+        cmdline += ["--cache-max-size=" + args.cache_max_size]
 
-    has_repo=False
+    has_repo = False
     for exp in args.export:
         data = get_export_data(exp)
         exp = data.get("export_arg", exp)
         if exp == "ostree-commit":
-            has_repo=True
+            has_repo = True
         cmdline += ["--export", exp]
 
     # If ostree repo was specified, also export it if needed
     if not has_repo and args.ostree_repo:
         cmdline += ["--export", "ostree-commit"]
 
-    cmdline += [ osbuild_manifest ]
+    cmdline += [osbuild_manifest]
 
     runner.run(cmdline, use_sudo=True, use_container=True)
 
     if args.ostree_repo:
         repodir = os.path.join(outputdir, "ostree-commit/repo")
-        runner.run(["ostree", "pull-local",  "--repo=" + args.ostree_repo, repodir],
-                   use_container=True)
+        runner.run(
+            ["ostree", "pull-local", "--repo=" + args.ostree_repo, repodir],
+            use_container=True,
+        )
 
     if len(args.export) == 1:
         # Export directly to args.out
@@ -415,23 +583,30 @@ def _build(args, tmpdir, runner):
 
     runner.run(["rm", "-rf", outputdir], use_sudo=True)
 
+
 def build(args, tmpdir, runner):
     try:
         _build(args, tmpdir, runner)
     finally:
 
-        # Ensure we can clean up these directories, that can have weird permissions
-        if args.sudo and (os.path.isdir(os.path.join(tmpdir, "osbuild_store")) or
-                          os.path.isdir(os.path.join(tmpdir, "image_output"))):
+        # Ensure we can clean up these directories, that can have
+        # weird permissions
+        if args.sudo and (
+            os.path.isdir(os.path.join(tmpdir, "osbuild_store"))
+            or os.path.isdir(os.path.join(tmpdir, "image_output"))
+        ):
             runner.run(["rm", "-rf", tmpdir], use_sudo=True)
+
 
 def no_subcommand(_args, _tmpdir, _runner):
     log.info("No subcommand specified, see --help for usage")
 
+
 def main():
     base_dir = os.path.realpath(sys.argv[1])
-    args = AIBParameters(args=parse_args(sys.argv[2:], base_dir),
-                         base_dir=base_dir)
+    args = AIBParameters(
+        args=parse_args(sys.argv[2:], base_dir), base_dir=base_dir
+    )
 
     if args.verbose:
         log.setLevel("DEBUG")
@@ -439,7 +614,9 @@ def main():
     runner = Runner(args)
     runner.add_volume(os.getcwd())
 
-    with tempfile.TemporaryDirectory(prefix="automotive-image-builder-", dir="/var/tmp") as tmpdir:
+    with tempfile.TemporaryDirectory(
+        prefix="automotive-image-builder-", dir="/var/tmp"
+    ) as tmpdir:
         runner.add_volume(tmpdir)
         try:
             return args.func(tmpdir, runner)
@@ -449,6 +626,7 @@ def main():
         except Exception:
             log.error("Unexpected exception occurred!")
             raise
+
 
 if __name__ == "__main__":
     sys.exit(main())

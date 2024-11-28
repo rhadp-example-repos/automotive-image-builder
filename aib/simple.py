@@ -3,12 +3,12 @@
 import os
 import sys
 import yaml
-import json
 import re
 
 import jsonschema
 
 from . import exceptions
+
 
 # Duplicate a dict and drop one key
 def without(d, key):
@@ -16,30 +16,32 @@ def without(d, key):
     new_d.pop(key)
     return new_d
 
+
 def parse_size(s: str):
     """Parse a size string into a number.
 
     Supported suffixes: kB, kiB, MB, MiB, GB, GiB, TB, TiB
     """
     units = [
-        (r'^\s*(\d+)\s*kB$', 1000, 1),
-        (r'^\s*(\d+)\s*KiB$', 1024, 1),
-        (r'^\s*(\d+)\s*MB$', 1000, 2),
-        (r'^\s*(\d+)\s*MiB$', 1024, 2),
-        (r'^\s*(\d+)\s*GB$', 1000, 3),
-        (r'^\s*(\d+)\s*GiB$', 1024, 3),
-        (r'^\s*(\d+)\s*TB$', 1000, 4),
-        (r'^\s*(\d+)\s*TiB$', 1024, 4),
-        (r'^\s*(\d+)$', 1, 1),
+        (r"^\s*(\d+)\s*kB$", 1000, 1),
+        (r"^\s*(\d+)\s*KiB$", 1024, 1),
+        (r"^\s*(\d+)\s*MB$", 1000, 2),
+        (r"^\s*(\d+)\s*MiB$", 1024, 2),
+        (r"^\s*(\d+)\s*GB$", 1000, 3),
+        (r"^\s*(\d+)\s*GiB$", 1024, 3),
+        (r"^\s*(\d+)\s*TB$", 1000, 4),
+        (r"^\s*(\d+)\s*TiB$", 1024, 4),
+        (r"^\s*(\d+)$", 1, 1),
     ]
 
     for pat, base, power in units:
         m = re.fullmatch(pat, s)
         if m:
             if isinstance(base, int):
-                return int(m.group(1)) * base ** power
+                return int(m.group(1)) * base**power
 
     raise TypeError(f"invalid size value: '{s}'")
+
 
 # The manifest we use is always empty.mpp.yml, but due to who the
 # osbuil-mpp syntax and evaluation works we need to also generate an
@@ -73,53 +75,57 @@ class ExtraInclude:
         return {
             "type": "org.osbuild.files",
             "origin": "org.osbuild.source",
-            "mpp-embed": mpp_embed
+            "mpp-embed": mpp_embed,
         }
 
     def gen_file_copy(self, content_id):
         return {
             "from": {
-                "mpp-format-string": "input://inlinefile"+ str(content_id) + "/{embedded['image_content_id_" + str(content_id) +"']}"
+                "mpp-format-string": "input://inlinefile"
+                + str(content_id)
+                + "/{embedded['image_content_id_"
+                + str(content_id)
+                + "']}"
             },
-            "to": "tree:///image_content_" + str(content_id)
+            "to": "tree:///image_content_" + str(content_id),
         }
 
     def gen_file_copy_out(self, content_id, data):
         return {
             "from": "input://extra/image_content_" + str(content_id),
-            "to": "tree://" + data["path"]
+            "to": "tree://" + data["path"],
         }
 
     def add_file_copy(self, contents, data):
         content_id = self.gen_id()
-        self.file_content_inputs["inlinefile" + str(content_id)] = self.gen_file_input(content_id, data)
+        self.file_content_inputs["inlinefile" + str(content_id)] = (
+            self.gen_file_input(content_id, data)
+        )
         self.file_content_paths.append(self.gen_file_copy(content_id))
-        contents.file_content_copy.append(self.gen_file_copy_out(content_id, data))
-
+        contents.file_content_copy.append(
+            self.gen_file_copy_out(content_id, data)
+        )
 
     def generate(self):
         extra_include_pipelines = []
         file_content_stages = []
 
         if self.file_content_inputs:
-            file_content_stages.append({
-                "type": "org.osbuild.copy",
-                "inputs": self.file_content_inputs,
-                "options": {
-                    "paths": self.file_content_paths
+            file_content_stages.append(
+                {
+                    "type": "org.osbuild.copy",
+                    "inputs": self.file_content_inputs,
+                    "options": {"paths": self.file_content_paths},
                 }
-            })
+            )
 
         if file_content_stages:
-            extra_include_pipelines.append({
-                "name": "extra-image-content",
-                "stages": file_content_stages
-        })
+            extra_include_pipelines.append(
+                {"name": "extra-image-content", "stages": file_content_stages}
+            )
 
-        return {
-            "version": "2",
-            "pipelines": extra_include_pipelines
-        }
+        return {"version": "2", "pipelines": extra_include_pipelines}
+
 
 # Both the rootfs and qm partition contents are specified with the same
 # syntax, but use slightly different mpp variables, to share this code
@@ -192,6 +198,7 @@ class Contents:
         if self.systemd:
             self.set_define("simple_systemd", self.systemd)
 
+
 class QMContents(Contents):
     def __init__(self, loader, data, extra_include):
         Contents.__init__(self, loader, data, extra_include)
@@ -205,28 +212,33 @@ class QMContents(Contents):
         Contents.set_defines(self)
 
 
-class ManifestLoader():
+class ManifestLoader:
     def __init__(self, defines):
         self.aib_basedir = defines["_basedir"]
         self.workdir = defines["_workdir"]
         self.defines = defines
 
         # Note: Draft7 is what osbuild uses, and is available in rhel9
-        with open(os.path.join(self.aib_basedir, "files/manifest_schema.yml"), mode="r") as file:
+        with open(
+            os.path.join(self.aib_basedir, "files/manifest_schema.yml"),
+            mode="r",
+        ) as file:
             self.aib_schema = yaml.load(file, yaml.SafeLoader)
             jsonschema.Draft7Validator.check_schema(self.aib_schema)
 
         self.validator = jsonschema.Draft7Validator(self.aib_schema)
 
     def set(self, key, value):
-        if (isinstance(value, list) or isinstance(value, dict)) and len(value)==0:
+        if (isinstance(value, list) or isinstance(value, dict)) and len(
+            value
+        ) == 0:
             return
         self.defines[key] = value
 
-    def set_from(self, key, src_dict, src_key, default = None):
+    def set_from(self, key, src_dict, src_key, default=None):
         if src_key in src_dict:
             self.set(key, src_dict[src_key])
-        elif default != None:
+        elif default is not None:
             self.set(key, default)
 
     def handle_qm(self, qm, extra_include):
@@ -275,7 +287,7 @@ class ManifestLoader():
         partitions = image.get("partitions", {})
         for k in partitions:
             part = partitions[k]
-            if k == "var": # Separate /var partition
+            if k == "var":  # Separate /var partition
                 self.set("use_separate_var", True)
                 if "size" in part:
                     var_size = part.get("size")
@@ -287,10 +299,13 @@ class ManifestLoader():
                 else:
                     rel_var_size = part.get("relative_size")
                     if rel_var_size < 0 or rel_var_size >= 1:
-                        print("Error: Invalida relative var size, must be between 0 and 1")
+                        print(
+                            "Error: Invalida relative var size, "
+                            "must be between 0 and 1"
+                        )
                         sys.exit(1)
                     self.set("varpart_relative_size", rel_var_size)
-            else: # Non /var
+            else:  # Non /var
                 if "size" in part:
                     part_size = parse_size(part["size"])
                     self.set(k + "part_size", int(part_size / 512))
@@ -305,9 +320,11 @@ class ManifestLoader():
             try:
                 manifest = yaml.safe_load(f)
             except yaml.YAMLError as exc:
-                raise exceptions.ManifestParseError(args.manifest) from exc
+                raise exceptions.ManifestParseError(manifest_basedir) from exc
 
-        errors = sorted(self.validator.iter_errors(manifest), key=lambda e: e.path)
+        errors = sorted(
+            self.validator.iter_errors(manifest), key=lambda e: e.path
+        )
         if errors:
             raise exceptions.SimpleManifestParseError(path, errors)
 
@@ -329,7 +346,9 @@ class ManifestLoader():
         self.handle_image(manifest.get("image", {}))
 
         # Write out extra_include mpp file for file content
-        extra_include_path = os.path.join(self.workdir, "extra-include.ipp.yml")
+        extra_include_path = os.path.join(
+            self.workdir, "extra-include.ipp.yml"
+        )
         with open(extra_include_path, "w") as f:
             yaml.dump(extra_include.generate(), f, sort_keys=False)
         self.set("simple_import", extra_include_path)

@@ -1,5 +1,6 @@
 """AIB Exceptions module"""
 
+
 class AIBException(Exception):
     pass
 
@@ -10,7 +11,10 @@ class InvalidOption(AIBException):
         self.value = value
 
     def __str__(self):
-        return f"Invalid value passed to {self.option}: '{self.value}': should be key=value"
+        return (
+            f"Invalid value passed to {self.option}: '{self.value}': "
+            "should be key=value"
+        )
 
 
 class MissingSection(AIBException):
@@ -32,13 +36,17 @@ class ManifestParseError(AIBException):
     def __str__(self):
         return f"Error parsing {self.manifest}"
 
+
 class SimpleManifestParseError(AIBException):
     def __init__(self, manifest_path, errors):
         self.manifest = manifest_path
         self.errors = errors
 
     def __str__(self):
-        return f"Error parsing {self.manifest}" + "\n".join(e.message for e in self.errors)
+        return f"Error parsing {self.manifest}" + "\n".join(
+            e.message for e in self.errors
+        )
+
 
 class UnsupportedExport(AIBException):
     def __init__(self, export):
