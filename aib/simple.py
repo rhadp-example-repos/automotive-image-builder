@@ -114,7 +114,7 @@ class ExtraInclude:
             extra_include_pipelines.append({
                 "name": "extra-image-content",
                 "stages": file_content_stages
-        })
+            })
 
         return {
             "version": "2",
