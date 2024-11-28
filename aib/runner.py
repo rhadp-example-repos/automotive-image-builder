@@ -28,8 +28,12 @@ class Runner:
             self.add_volume(d)
 
     def _collect_podman_args(self, use_non_root_user_in_container):
-        podman_args = ["--rm", "--privileged",
-                       "--workdir", os.path.realpath(os.getcwd())]
+        podman_args = [
+            "--rm",
+            "--privileged",
+            "--workdir",
+            os.path.realpath(os.getcwd()),
+        ]
         for v in sorted(self.volumes):
             podman_args.append("-v")
             podman_args.append(f"{v}:{v}")
@@ -47,8 +51,10 @@ class Runner:
 
     @property
     def conman(self):
-        if (shutil.which("podman") is None
-                and shutil.which("docker") is not None):
+        if (
+            shutil.which("podman") is None
+            and shutil.which("docker") is not None
+        ):
             return "docker"
         return "podman"
 
@@ -59,25 +65,40 @@ class Runner:
         self.volumes.add_volume_for(file)
 
     def _add_container_cmd(self, use_non_root_user_in_container):
-        return [self.conman, "run", ] + \
-            self._collect_podman_args(
-                use_non_root_user_in_container) + [self.container]
+        return (
+            [
+                self.conman,
+                "run",
+            ]
+            + self._collect_podman_args(use_non_root_user_in_container)
+            + [self.container]
+        )
 
-    def run(self, cmdline, use_sudo=False, use_container=False,
-            use_non_root_user_in_container=False, capture_output=False):
+    def run(
+        self,
+        cmdline,
+        use_sudo=False,
+        use_container=False,
+        use_non_root_user_in_container=False,
+        capture_output=False,
+    ):
         if use_container and self.container:
-            cmdline = self._add_container_cmd(
-                use_non_root_user_in_container) + cmdline
+            cmdline = (
+                self._add_container_cmd(use_non_root_user_in_container)
+                + cmdline
+            )
 
         if use_sudo and self.sudo:
             allowed_env_vars = [
                 "REGISTRY_AUTH_FILE",
                 "CONTAINERS_CONF",
                 "CONTAINERS_REGISTRIES_CONF",
-                "CONTAINERS_STORAGE_CONF"
+                "CONTAINERS_STORAGE_CONF",
             ]
-            sudo_cmd = ["sudo",
-                        "--preserve-env={}".format(",".join(allowed_env_vars))]
+            sudo_cmd = [
+                "sudo",
+                "--preserve-env={}".format(",".join(allowed_env_vars)),
+            ]
             cmdline = sudo_cmd + cmdline
 
         log.debug("Running: %s", shlex.join(cmdline))

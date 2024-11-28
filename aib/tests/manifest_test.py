@@ -3,6 +3,7 @@ import pytest
 from aib.main import rewrite_manifest
 
 
+# fmt: off
 @pytest.mark.parametrize("manifest,expected", [
     # Single input in rootfs with relative path.
     pytest.param({"pipelines": [
@@ -193,3 +194,5 @@ def test_rewrite_manifest(manifest, expected):
     path = "/new/absolute/path"
     rewrite_manifest(manifest, path)
     assert manifest["pipelines"] == expected
+
+# fmt: on

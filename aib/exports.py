@@ -3,40 +3,31 @@ import os
 from .exceptions import UnsupportedExport
 
 EXPORT_DATAS = {
-    "qcow2": {
-        "desc": "Disk image in qcow2 format",
-        "filename": "disk.qcow2"
-    },
-    "image": {
-        "desc": "Raw disk image",
-        "filename": "disk.img"
-    },
+    "qcow2": {"desc": "Disk image in qcow2 format", "filename": "disk.qcow2"},
+    "image": {"desc": "Raw disk image", "filename": "disk.img"},
     "ostree-commit": {
         "desc": "OSTree repo containing a commit",
         "filename": "repo",
         "is_dir": True,
     },
-    "container": {
-        "desc": "Container image",
-        "filename": "container.tar"
-    },
+    "container": {"desc": "Container image", "filename": "container.tar"},
     "ostree-oci-image": {
         "desc": "Container OCI image archive",
-        "filename": "image.oci-archive"
+        "filename": "image.oci-archive",
     },
     "rootfs": {
         "desc": "Directory with image rootfs files",
         "filename": None,
         "is_dir": True,
-        "no_chown": True
+        "no_chown": True,
     },
     "ext4": {
         "desc": "Ext4 filesystem image without partitions",
-        "filename": "rootfs.ext4"
+        "filename": "rootfs.ext4",
     },
     "tar": {
         "desc": "Tar archive with files from rootfs",
-        "filename": "rootfs.tar"
+        "filename": "rootfs.tar",
     },
     "aboot": {
         "desc": "Aboot image",
@@ -45,7 +36,7 @@ EXPORT_DATAS = {
     },
     "rpmlist": {
         "desc": "List of rpms that are in the image",
-        "filename": "rpmlist"
+        "filename": "rpmlist",
     },
     "ext4.simg": {
         "desc": "Ext4 filesystem partition in simg format",
@@ -65,8 +56,8 @@ EXPORT_DATAS = {
         "filename": "images",
         "is_dir": True,
         "convert": "simg",
-        "convert_filename": "images/rootfs.img"
-    }
+        "convert_filename": "images/rootfs.img",
+    },
 }
 
 
@@ -96,8 +87,11 @@ def export(outputdir, dest, dest_is_directory, export, runner):
             convert_file = export_file
         converted_file = convert_file.removesuffix(".img") + ".simg"
 
-        runner.run(["img2simg", convert_file, converted_file],
-                   use_sudo=True, use_container=True)
+        runner.run(
+            ["img2simg", convert_file, converted_file],
+            use_sudo=True,
+            use_container=True,
+        )
         if export_is_dir:
             runner.run(["rm", "-rf", convert_file], use_sudo=True)
         else:
@@ -112,7 +106,9 @@ def export(outputdir, dest, dest_is_directory, export, runner):
             runner.run(["rm", "-rf", dest], use_sudo=True)
 
     if not data.get("no_chown", False):
-        runner.run(["chown", f"{os.getuid()}:{os.getgid()}", export_file],
-                   use_sudo=True)
+        runner.run(
+            ["chown", f"{os.getuid()}:{os.getgid()}", export_file],
+            use_sudo=True,
+        )
 
     runner.run(["mv", export_file, dest], use_sudo=True)
