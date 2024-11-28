@@ -41,8 +41,8 @@ class SimpleManifestParseError(AIBException):
         self.errors = errors
 
     def __str__(self):
-        return (f"Error parsing {self.manifest}" +
-                "\n".join(e.message for e in self.errors))
+        return (f"Error parsing {self.manifest}"
+                + "\n".join(e.message for e in self.errors))
 
 
 class UnsupportedExport(AIBException):

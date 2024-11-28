@@ -47,8 +47,8 @@ class Runner:
 
     @property
     def conman(self):
-        if (shutil.which("podman") is None and
-                shutil.which("docker") is not None):
+        if (shutil.which("podman") is None
+                and shutil.which("docker") is not None):
             return "docker"
         return "podman"
 

@@ -216,9 +216,9 @@ def parse_args(args, base_dir):
 
     res = parser.parse_args(args)
     if "manifest" in res:
-        if (res.manifest.endswith(".aib") or
-                res.manifest.endswith(".aib.yml") or
-                res.manifest.endswith(".aib.yaml")):
+        if (res.manifest.endswith(".aib")
+                or res.manifest.endswith(".aib.yml")
+                or res.manifest.endswith(".aib.yaml")):
             res.simple_manifest = res.manifest
             res.manifest = os.path.join(base_dir, "files/simple.mpp.yml")
 
@@ -475,8 +475,8 @@ def build(args, tmpdir, runner):
         # Ensure we can clean up these directories, that can have
         # weird permissions
         if args.sudo and (
-                os.path.isdir(os.path.join(tmpdir, "osbuild_store")) or
-                os.path.isdir(os.path.join(tmpdir, "image_output"))):
+                os.path.isdir(os.path.join(tmpdir, "osbuild_store"))
+                or os.path.isdir(os.path.join(tmpdir, "image_output"))):
             runner.run(["rm", "-rf", tmpdir], use_sudo=True)
 
 
