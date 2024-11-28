@@ -30,6 +30,16 @@ linter:
   script:
     - tox -e lint
 
+yamllint-job:
+  image: python:latest
+  before_script:
+    - python3 --version; pip --version
+    - python3 -m pip install --upgrade pip
+    - python3 -m pip install tox
+  stage: pre
+  script:
+    - tox -e yamllint
+
 compose-test-job:
   stage: test
   script:
@@ -59,23 +69,13 @@ unit-test-job:
     - python3 -m pip install tox
   stage: test
   script:
-    - tox
+    - tox -e test,coverage
   artifacts:
     reports:
       coverage_report:
         coverage_format: cobertura
         path: coverage/report.xml
   coverage: '/TOTAL\s+\d+\s+\d+\s+(\d+%)/'
-
-yamllint-job:
-  image: python:latest
-  before_script:
-    - python3 --version; pip --version
-    - python3 -m pip install --upgrade pip
-    - python3 -m pip install yamllint
-  stage: test
-  script:
-    - make yamllint
 
 build-image-x86-job:
   image: quay.io/centos-sig-automotive/automotive-osbuild
