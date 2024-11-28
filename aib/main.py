@@ -284,19 +284,19 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
             defines[k] = []
         defines[k].extend(v)
 
-    cmdline = [ args.osbuild_mpp ]
+    cmdline = [args.osbuild_mpp]
     for inc in args.include_dirs:
-        cmdline += [ "-I", inc ]
+        cmdline += ["-I", inc]
 
     for k in sorted(defines.keys()):
         v = defines[k]
-        cmdline += [ "-D", f'{k}={json.dumps(v)}' ]
+        cmdline += ["-D", f'{k}={json.dumps(v)}']
 
     for arg in args.mpp_arg:
-        cmdline += [ arg ]
+        cmdline += [arg]
 
     if args.cache:
-        cmdline += [ "--cache", args.cache ]
+        cmdline += ["--cache", args.cache]
 
 
     variables_manifest = {
@@ -314,7 +314,7 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
     with open(rewritten_manifest_path, "w") as f:
         yaml.dump(manifest, f, sort_keys=False)
 
-    cmdline += [ os.path.join(args.base_dir, "include/main.ipp.yml"), out ]
+    cmdline += [os.path.join(args.base_dir, "include/main.ipp.yml"), out]
 
     runner.run(cmdline, use_sudo=True, use_container=True, use_non_root_user_in_container=True)
 
@@ -366,21 +366,21 @@ def _build(args, tmpdir, runner):
     runner.add_volume(builddir)
     runner.add_volume("/dev")
 
-    cmdline = [ "osbuild" ]
+    cmdline = ["osbuild"]
 
     outputdir = os.path.join(builddir, "image_output")
-    cmdline += [ "--store", os.path.join(builddir, "osbuild_store"),
-                 "--output-directory",  outputdir]
+    cmdline += ["--store", os.path.join(builddir, "osbuild_store"),
+                "--output-directory",  outputdir]
 
     for arg in args.osbuild_arg:
-        cmdline += [ arg ]
+        cmdline += [arg]
 
     if args.build_dir:
         # Cache stuff between builds
-        cmdline += [ "--checkpoint", "build"]
+        cmdline += ["--checkpoint", "build"]
 
     if args.cache_max_size:
-        cmdline += [ "--cache-max-size=" + args.cache_max_size]
+        cmdline += ["--cache-max-size=" + args.cache_max_size]
 
     has_repo=False
     for exp in args.export:
@@ -394,7 +394,7 @@ def _build(args, tmpdir, runner):
     if not has_repo and args.ostree_repo:
         cmdline += ["--export", "ostree-commit"]
 
-    cmdline += [ osbuild_manifest ]
+    cmdline += [osbuild_manifest]
 
     runner.run(cmdline, use_sudo=True, use_container=True)
 
