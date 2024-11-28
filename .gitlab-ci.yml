@@ -15,9 +15,20 @@ include:
       - '/.gitlab/trigger.yml'
 
 stages:
+  - pre
   - test
   - deploy
   - trigger
+
+linter:
+  image: python:latest
+  before_script:
+    - python3 --version; pip --version
+    - python3 -m pip install --upgrade pip
+    - python3 -m pip install tox
+  stage: pre
+  script:
+    - tox -e lint
 
 compose-test-job:
   stage: test
@@ -45,10 +56,16 @@ unit-test-job:
   before_script:
     - python3 --version; pip --version
     - python3 -m pip install --upgrade pip
-    - python3 -m pip install pytest pyyaml jsonschema
+    - python3 -m pip install tox
   stage: test
   script:
-    - pytest aib/tests
+    - tox
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/report.xml
+  coverage: '/TOTAL\s+\d+\s+\d+\s+(\d+%)/'
 
 yamllint-job:
   image: python:latest
