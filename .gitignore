@@ -5,3 +5,5 @@ automotive-image-builder*.tar.gz
 automotive-image-builder*.rpm
 __pycache__
 .venv
+.tox
+.coverage
