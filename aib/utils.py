@@ -1,6 +1,7 @@
 import yaml
 import collections
 
+
 # pylint: disable=too-many-ancestors
 class YamlOrderedLoader(yaml.Loader):
     def construct_mapping(self, node, deep=False):
@@ -24,7 +25,9 @@ class YamlOrderedLoader(yaml.Loader):
         value = self.construct_mapping(node)
         data.update(value)
 
+
 yaml.add_constructor('tag:yaml.org,2002:map', YamlOrderedLoader.construct_yaml_map)
+
 
 def yaml_load_ordered(source):
     return yaml.load(source, YamlOrderedLoader)

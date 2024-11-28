@@ -1,5 +1,6 @@
 """AIB Exceptions module"""
 
+
 class AIBException(Exception):
     pass
 
@@ -32,6 +33,7 @@ class ManifestParseError(AIBException):
     def __str__(self):
         return f"Error parsing {self.manifest}"
 
+
 class SimpleManifestParseError(AIBException):
     def __init__(self, manifest_path, errors):
         self.manifest = manifest_path
@@ -39,6 +41,7 @@ class SimpleManifestParseError(AIBException):
 
     def __str__(self):
         return f"Error parsing {self.manifest}" + "\n".join(e.message for e in self.errors)
+
 
 class UnsupportedExport(AIBException):
     def __init__(self, export):

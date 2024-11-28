@@ -19,6 +19,7 @@ from . import exceptions
 from . import AIBParameters
 from . import log
 
+
 def extract_comment_header(path):
     lines = []
     with open(path, mode="r") as file:
@@ -52,6 +53,7 @@ def extract_comment_header(path):
 
     return "\n".join(lines)
 
+
 def list_ipp_items(args, item_type):
     items = {}
     for inc in args.include_dirs:
@@ -71,11 +73,14 @@ def list_ipp_items(args, item_type):
             first_para = paras[0].replace("\n", " ")
             print(f"{d} - {first_para}")
 
+
 def list_dist(args, _tmpdir, _runner):
     list_ipp_items(args, "distro")
 
+
 def list_targets(args, _tmpdir, _runner):
     list_ipp_items(args, "targets")
+
 
 def list_exports(args, _tmpdir, _runner):
     exports = EXPORT_DATAS.keys()
@@ -84,6 +89,7 @@ def list_exports(args, _tmpdir, _runner):
             print(d)
         else:
             print(f"{d} - {EXPORT_DATAS[d].get('desc', '')}")
+
 
 def parse_define(d, option):
     parts = d.split("=", 1)
@@ -96,6 +102,7 @@ def parse_define(d, option):
     except yaml.parser.ParserError as e:
         raise exceptions.InvalidOption(option, yaml_v) from e
     return k, v
+
 
 def parse_args(args, base_dir):
     isRoot = os.getuid() == 0
@@ -187,6 +194,7 @@ def parse_args(args, base_dir):
 
     return res
 
+
 def make_embed_path_abs(stage, path):
     for k, v in stage.items():
         try:
@@ -198,6 +206,7 @@ def make_embed_path_abs(stage, path):
 
         if k == "mpp-embed" and not os.path.isabs(embed_path):
             v["path"] = os.path.normpath(os.path.join(os.path.abspath(path), embed_path))
+
 
 def rewrite_manifest(manifest, path):
     pipelines = manifest.get("pipelines")
@@ -216,8 +225,10 @@ def rewrite_manifest(manifest, path):
         # See comment in kernel_cmdline_stage variable
         rootfs.get("stages", []).insert(0, {"mpp-eval": "kernel_cmdline_stage"})
 
+
 def strip_ext(path):
     return os.path.splitext(os.path.splitext(path)[0])[0]
+
 
 def create_osbuild_manifest(args, tmpdir, out, runner):
     with open(args.manifest) as f:
@@ -249,7 +260,6 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
         loader = ManifestLoader(defines)
 
         loader.load(args.simple_manifest, os.path.dirname(args.simple_manifest))
-
 
     if args.ostree_repo:
         runner.add_volume_for(args.ostree_repo)
@@ -298,7 +308,6 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
     if args.cache:
         cmdline += ["--cache", args.cache]
 
-
     variables_manifest = {
         "version": manifest["version"],
         "mpp-vars": manifest.get("mpp-vars", {})
@@ -318,8 +327,10 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
 
     runner.run(cmdline, use_sudo=True, use_container=True, use_non_root_user_in_container=True)
 
+
 def compose(args, tmpdir, runner):
     return create_osbuild_manifest(args, tmpdir, args.out, runner)
+
 
 def extract_rpmlist_json(osbuild_manifest):
     with open(osbuild_manifest) as f:
@@ -346,6 +357,7 @@ def listrpms(args, tmpdir, runner):
     data = extract_rpmlist_json(osbuild_manifest)
 
     print(data)
+
 
 def _build(args, tmpdir, runner):
     if args.nosudo:
@@ -415,6 +427,7 @@ def _build(args, tmpdir, runner):
 
     runner.run(["rm", "-rf", outputdir], use_sudo=True)
 
+
 def build(args, tmpdir, runner):
     try:
         _build(args, tmpdir, runner)
@@ -425,8 +438,10 @@ def build(args, tmpdir, runner):
                           os.path.isdir(os.path.join(tmpdir, "image_output"))):
             runner.run(["rm", "-rf", tmpdir], use_sudo=True)
 
+
 def no_subcommand(_args, _tmpdir, _runner):
     log.info("No subcommand specified, see --help for usage")
+
 
 def main():
     base_dir = os.path.realpath(sys.argv[1])
@@ -449,6 +464,7 @@ def main():
         except Exception:
             log.error("Unexpected exception occurred!")
             raise
+
 
 if __name__ == "__main__":
     sys.exit(main())

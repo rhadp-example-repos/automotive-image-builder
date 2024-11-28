@@ -10,11 +10,13 @@ import jsonschema
 
 from . import exceptions
 
+
 # Duplicate a dict and drop one key
 def without(d, key):
     new_d = d.copy()
     new_d.pop(key)
     return new_d
+
 
 def parse_size(s: str):
     """Parse a size string into a number.
@@ -40,6 +42,7 @@ def parse_size(s: str):
                 return int(m.group(1)) * base ** power
 
     raise TypeError(f"invalid size value: '{s}'")
+
 
 # The manifest we use is always empty.mpp.yml, but due to who the
 # osbuil-mpp syntax and evaluation works we need to also generate an
@@ -96,7 +99,6 @@ class ExtraInclude:
         self.file_content_paths.append(self.gen_file_copy(content_id))
         contents.file_content_copy.append(self.gen_file_copy_out(content_id, data))
 
-
     def generate(self):
         extra_include_pipelines = []
         file_content_stages = []
@@ -120,6 +122,7 @@ class ExtraInclude:
             "version": "2",
             "pipelines": extra_include_pipelines
         }
+
 
 # Both the rootfs and qm partition contents are specified with the same
 # syntax, but use slightly different mpp variables, to share this code
@@ -191,6 +194,7 @@ class Contents:
 
         if self.systemd:
             self.set_define("simple_systemd", self.systemd)
+
 
 class QMContents(Contents):
     def __init__(self, loader, data, extra_include):
