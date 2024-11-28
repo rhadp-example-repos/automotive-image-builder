@@ -96,7 +96,8 @@ def export(outputdir, dest, dest_is_directory, export, runner):
             convert_file = export_file
         converted_file = convert_file.removesuffix(".img") + ".simg"
 
-        runner.run(["img2simg", convert_file, converted_file], use_sudo=True, use_container=True)
+        runner.run(["img2simg", convert_file, converted_file],
+                   use_sudo=True, use_container=True)
         if export_is_dir:
             runner.run(["rm", "-rf", convert_file], use_sudo=True)
         else:

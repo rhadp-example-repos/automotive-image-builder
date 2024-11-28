@@ -82,7 +82,8 @@ class ExtraInclude:
     def gen_file_copy(self, content_id):
         return {
             "from": {
-                "mpp-format-string": "input://inlinefile" + str(content_id) + "/{embedded['image_content_id_" + str(content_id) + "']}"
+                "mpp-format-string": "input://inlinefile" + str(content_id) +
+                "/{embedded['image_content_id_" + str(content_id) + "']}"
             },
             "to": "tree:///image_content_" + str(content_id)
         }
@@ -95,9 +96,11 @@ class ExtraInclude:
 
     def add_file_copy(self, contents, data):
         content_id = self.gen_id()
-        self.file_content_inputs["inlinefile" + str(content_id)] = self.gen_file_input(content_id, data)
+        self.file_content_inputs["inlinefile" + str(content_id)] = \
+            self.gen_file_input(content_id, data)
         self.file_content_paths.append(self.gen_file_copy(content_id))
-        contents.file_content_copy.append(self.gen_file_copy_out(content_id, data))
+        contents.file_content_copy.append(
+            self.gen_file_copy_out(content_id, data))
 
     def generate(self):
         extra_include_pipelines = []
@@ -216,14 +219,16 @@ class ManifestLoader():
         self.defines = defines
 
         # Note: Draft7 is what osbuild uses, and is available in rhel9
-        with open(os.path.join(self.aib_basedir, "files/manifest_schema.yml"), mode="r") as file:
+        with open(os.path.join(self.aib_basedir,
+                               "files/manifest_schema.yml"), mode="r") as file:
             self.aib_schema = yaml.load(file, yaml.SafeLoader)
             jsonschema.Draft7Validator.check_schema(self.aib_schema)
 
         self.validator = jsonschema.Draft7Validator(self.aib_schema)
 
     def set(self, key, value):
-        if (isinstance(value, list) or isinstance(value, dict)) and len(value) == 0:
+        if (isinstance(value, list) or
+                isinstance(value, dict)) and len(value) == 0:
             return
         self.defines[key] = value
 
@@ -291,7 +296,8 @@ class ManifestLoader():
                 else:
                     rel_var_size = part.get("relative_size")
                     if rel_var_size < 0 or rel_var_size >= 1:
-                        print("Error: Invalida relative var size, must be between 0 and 1")
+                        print("Error: Invalida relative var size, "
+                              "must be between 0 and 1")
                         sys.exit(1)
                     self.set("varpart_relative_size", rel_var_size)
             else:  # Non /var
@@ -311,7 +317,8 @@ class ManifestLoader():
             except yaml.YAMLError as exc:
                 raise exceptions.ManifestParseError(args.manifest) from exc
 
-        errors = sorted(self.validator.iter_errors(manifest), key=lambda e: e.path)
+        errors = sorted(self.validator.iter_errors(manifest),
+                        key=lambda e: e.path)
         if errors:
             raise exceptions.SimpleManifestParseError(path, errors)
 
@@ -333,7 +340,8 @@ class ManifestLoader():
         self.handle_image(manifest.get("image", {}))
 
         # Write out extra_include mpp file for file content
-        extra_include_path = os.path.join(self.workdir, "extra-include.ipp.yml")
+        extra_include_path = os.path.join(self.workdir,
+                                          "extra-include.ipp.yml")
         with open(extra_include_path, "w") as f:
             yaml.dump(extra_include.generate(), f, sort_keys=False)
         self.set("simple_import", extra_include_path)
