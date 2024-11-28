@@ -308,7 +308,7 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
     with open(rewritten_manifest_path, "w") as f:
         yaml.dump(variables_manifest, f, sort_keys=False)
 
-    del(manifest["mpp-vars"])
+    del manifest["mpp-vars"]
 
     rewritten_manifest_path = os.path.join(tmpdir, "manifest.ipp.yml")
     with open(rewritten_manifest_path, "w") as f:

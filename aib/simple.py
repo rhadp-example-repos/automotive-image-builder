@@ -223,7 +223,7 @@ class ManifestLoader():
             return
         self.defines[key] = value
 
-    def set_from(self, key, src_dict, src_key, default = None):
+    def set_from(self, key, src_dict, src_key, default=None):
         if src_key in src_dict:
             self.set(key, src_dict[src_key])
         elif default != None:
@@ -275,7 +275,7 @@ class ManifestLoader():
         partitions = image.get("partitions", {})
         for k in partitions:
             part = partitions[k]
-            if k == "var": # Separate /var partition
+            if k == "var":  # Separate /var partition
                 self.set("use_separate_var", True)
                 if "size" in part:
                     var_size = part.get("size")
@@ -290,7 +290,7 @@ class ManifestLoader():
                         print("Error: Invalida relative var size, must be between 0 and 1")
                         sys.exit(1)
                     self.set("varpart_relative_size", rel_var_size)
-            else: # Non /var
+            else:  # Non /var
                 if "size" in part:
                     part_size = parse_size(part["size"])
                     self.set(k + "part_size", int(part_size / 512))
