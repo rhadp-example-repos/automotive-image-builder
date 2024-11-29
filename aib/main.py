@@ -216,6 +216,12 @@ def parse_args(args, base_dir):
         help="Add mpp cache-directory to use",
     )
     format_parser.add_argument(
+        "--fusa",
+        action="store_true",
+        default=False,
+        help="Enable required options for functional safety",
+    )
+    format_parser.add_argument(
         "--define",
         action="append",
         type=str,
@@ -385,6 +391,7 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
         "target": args.target,
         "distro_name": args.distro,
         "image_mode": args.mode,
+        "use_fusa": args.fusa,
         # This is a leftover for backwards compatibilty:
         "image_type": "ostree" if args.mode == "image" else "regular",
     }
