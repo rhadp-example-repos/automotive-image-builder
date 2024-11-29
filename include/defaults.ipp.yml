@@ -32,6 +32,8 @@ mpp-vars:
   kernel_loglevel: 4
   # Extra kernel modules loaded at boot
   load_modules: []
+  # Denylist => omit from initrd, configure modprobe to denylist
+  denylist_modules: []
 
   timezone: UTC
   locale: en_US.UTF-8

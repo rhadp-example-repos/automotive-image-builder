@@ -124,6 +124,10 @@ mpp-vars:
           - erofs
           - overlay
           - loop
+  dracut_omit_drivers:
+    mpp-join:
+      - mpp-eval: dracut_omit_drivers
+      - mpp-eval: denylist_modules
   dracut_omit_modules:
     mpp-join:
       - mpp-eval: dracut_omit_modules
@@ -380,6 +384,13 @@ mpp-vars:
                   to: tree:///usr/lib/qm/rootfs/
                 - from: input://tree/etc/
                   to: tree:///etc/qm/
+        - mpp-if: denylist_modules
+          then:
+            type: org.osbuild.modprobe
+            options:
+              filename: automotive.conf
+              commands:
+                mpp-eval: "[{'command': 'blacklist', 'modulename': m} for m in denylist_modules]"
         - mpp-if: sign_kernel_modules
           then:
             type: org.osbuild-auto.kernel.sign-modules
