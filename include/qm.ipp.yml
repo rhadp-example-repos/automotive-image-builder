@@ -77,7 +77,8 @@ pipelines:
 
       - type: org.osbuild.containers.storage.conf
         options:
-          filename: /etc/containers/storage.conf
+          filename:
+            mpp-format-string: "{containers_configdir}/storage.conf"
           config:
             storage:
               transient_store:
@@ -109,7 +110,8 @@ pipelines:
               to:
                 mpp-format-string: tree:///etc/selinux/{selinux_policy}/contexts/files/
             - from: input://tree/usr/share/qm/containers.conf
-              to: tree:///etc/containers/containers.conf
+              to:
+                mpp-format-string: "tree://{containers_configdir}/containers.conf"
 
       - type: org.osbuild.locale
         options:

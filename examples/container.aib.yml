@@ -18,9 +18,6 @@ content:
   add_files:
     - path: /etc/containers/systemd/radio.container
       source_path: radio.container
-  systemd:
-    enabled_services:
-      - radio.service
 
 auth:
   # "password"
