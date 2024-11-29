@@ -109,6 +109,12 @@ mpp-vars:
   use_separate_var:
     mpp-eval: has_partition_table and use_separate_var
   _dash_escape: "\\x2d"
+  denylist_modules:
+    mpp-join:
+      - mpp-eval: denylist_modules
+      - mpp-if: use_fusa
+        then:
+          mpp-eval: target_fusa_denylist_modules
   dracut_modules:
     mpp-join:
       - mpp-if: is_autoinit_supported and use_autoinit
