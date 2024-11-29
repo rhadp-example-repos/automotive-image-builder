@@ -7,6 +7,10 @@ mpp-vars:
   use_boot: aboot
   use_abl: false
   use_efi_runtime: false
+  target_fusa_denylist_modules:
+    - ufs_renesas
+    - at24
+    - pcie_rcar_gen4
   abootpart_size: 262144 # 128M
   aboot_pagesize: 4096
   aboot_base: "0x48000000"
