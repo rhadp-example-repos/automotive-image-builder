@@ -390,6 +390,8 @@ mpp-vars:
                   to: tree:///usr/lib/qm/rootfs/
                 - from: input://tree/etc/
                   to: tree:///etc/qm/
+                - from: input://tree/var/
+                  to: tree:///var/qm/
         - mpp-if: denylist_modules
           then:
             type: org.osbuild.modprobe

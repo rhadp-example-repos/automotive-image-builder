@@ -142,6 +142,34 @@ pipelines:
             - from:
                 mpp-format-string: input://inlinefile/{embedded['remove']}
               to: tree:///usr/share/lorax/templates.d/auto/remove
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: move
+              text:
+                move ${product.name}
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['move']}
+              to: tree:///usr/share/lorax/templates.d/auto/move
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: symlink
+              text:
+                symlink ${product.name}
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['symlink']}
+              to: tree:///usr/share/lorax/templates.d/auto/symlink
       - type: org.osbuild.selinux
         options:
           file_contexts:
