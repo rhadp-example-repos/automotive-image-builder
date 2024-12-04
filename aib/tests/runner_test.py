@@ -157,6 +157,8 @@ def test_collect_podman_args(container_autoupdate, use_non_root, volumes):
 
     index = 4
     assert podman_args[:3] == ["--rm", "--privileged", "--workdir"]
+    assert podman_args[index] == "--read-only=false"
+    index += 1
     # Check volumes are added
     if podman_args[index : index + 2] == ["-v", f"{BASE_DIR}:{BASE_DIR}"]:
         index += 2  # Due to volume sorted by path this can appear before or after the other volumes
