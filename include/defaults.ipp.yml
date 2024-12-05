@@ -61,7 +61,8 @@ mpp-vars:
   use_bluechi_agent: false
   use_bluechi_controller: false
   bluechi_nodename: "host"
-  bluechi_controller_host_ip: "127.0.0.1"
+  bluechi_controller_host_ip: ""
+  bluechi_controller_socket: "/run/bluechi/bluechi.sock"
   bluechi_controller_allowed_node_names: []
 
   use_luks: false

@@ -97,12 +97,18 @@ mpp-vars:
     mpp-format-string: |
       [bluechi-agent]
       NodeName={ bluechi_nodename }
-      ControllerHost= { bluechi_controller_host_ip }
+      { f"ControllerHost={ bluechi_controller_host_ip }"
+          if bluechi_controller_host_ip != "" and bluechi_controller_socket == "" else "" }
+      { f"ControllerAddress=unix:path={bluechi_controller_socket}"
+          if bluechi_controller_socket != "" else "" }
   qm_bluechi_agent_conf:
     mpp-format-string: |
       [bluechi-agent]
       NodeName=qm.{ bluechi_nodename }
-      ControllerHost= { bluechi_controller_host_ip }
+      { f"ControllerHost={ bluechi_controller_host_ip }"
+          if bluechi_controller_host_ip != "" and bluechi_controller_socket == "" else "" }
+      { f"ControllerAddress=unix:path={bluechi_controller_socket}"
+          if bluechi_controller_socket != "" else "" }
   bluechi_conf:
     mpp-format-string: |
       [bluechi-controller]
@@ -113,11 +119,15 @@ mpp-vars:
   qm_subgid_content:
     mpp-format-string: |
       containers:{ qm_container_subgid }
-  qm_autosd_conf:
+  qm_automotive_conf:
     mpp-format-string: |
-       [Service]
-       MemoryMax={ qm_memory_max }
-       MemoryHigh={ qm_memory_high }
+      [Service]
+      MemoryMax={ qm_memory_max }
+      MemoryHigh={ qm_memory_high }
+
+      [Container]
+      { f"Volume={bluechi_controller_socket}:{bluechi_controller_socket}"
+          if use_qm and use_bluechi_agent and use_bluechi_controller else "" }
   subuid_content_qm:
     mpp-if: use_qm
     then:
@@ -458,13 +468,13 @@ pipelines:
             type: org.osbuild.files
             origin: org.osbuild.source
             mpp-embed:
-              id: qm_autosd_conf
-              text: $qm_autosd_conf
+              id: qm_automotive_conf
+              text: $qm_automotive_conf
         options:
           paths:
             - from:
-                mpp-format-string: input://inlinefile/{embedded['qm_autosd_conf']}
-              to: tree:///qm-autosd.conf
+                mpp-format-string: input://inlinefile/{embedded['qm_automotive_conf']}
+              to: tree:///qm-automotive.conf
 
       - type: org.osbuild.copy
         inputs:

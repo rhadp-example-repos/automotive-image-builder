@@ -330,6 +330,8 @@ mpp-vars:
         - mpp-if: use_bluechi_agent
           then: bluechi-agent.service
         - mpp-if: use_bluechi_controller
+          then: bluechi-controller.socket
+        - mpp-if: use_bluechi_controller
           then: bluechi-controller.service
         - rcu-normal.service
         - mpp-if: use_efipart
@@ -568,8 +570,8 @@ mpp-vars:
         to: tree:////usr/lib/systemd/system/var.mount
     - mpp-if: use_qm
       then:
-        from: input://extra-tree/qm-autosd.conf
-        to: tree:////usr/share/containers/systemd/qm.container.d/10-autosd.conf
+        from: input://extra-tree/qm-automotive.conf
+        to: tree:////usr/share/containers/systemd/qm.container.d/10-automotive.conf
 
   build_rpms:
     mpp-join:
@@ -640,6 +642,8 @@ mpp-vars:
           then: bluechi-agent
         - mpp-if: use_bluechi_controller
           then: bluechi-controller
+        - mpp-if: use_bluechi_agent or use_bluechi_controller
+          then: bluechi-selinux
         - mpp-if: use_qm
           then: qm
 
