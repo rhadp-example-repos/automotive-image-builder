@@ -177,3 +177,33 @@ pipelines:
           labels:
             /usr/bin/cp: system_u:object_r:install_exec_t:s0
             /usr/bin/tar: system_u:object_r:install_exec_t:s0
+
+  - name: data
+    build: name:build
+    stages:
+      - type: org.osbuild.mkdir
+        options:
+          paths:
+            - path: /etc
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: passwd
+              text: $base_passwd
+          inlinefile2:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: group
+              text: $base_group
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['passwd']}
+              to: tree:///etc/passwd
+            - from:
+                mpp-format-string: input://inlinefile2/{embedded['group']}
+              to: tree:///etc/group

@@ -3,6 +3,68 @@ version: '2'
 mpp-vars:
   newline: "\n"
 
+  # We use a static base /etc/passwd to avoid dynamic uid allocations
+  # resulting in different uids in different builds.
+  # For more details, see https://containers.github.io/bootc/building/users-and-groups.html#adding-users-and-credentials-statically-in-the-container-build
+
+  base_passwd: |
+    adm:x:3:4:adm:/var/adm:/sbin/nologin
+    bin:x:1:1:bin:/bin:/sbin/nologin
+    chrony:x:998:995:chrony system user:/var/lib/chrony:/sbin/nologin
+    daemon:x:2:2:daemon:/sbin:/sbin/nologin
+    dbus:x:81:81:System message bus:/:/sbin/nologin
+    ftp:x:14:50:FTP User:/var/ftp:/sbin/nologin
+    games:x:12:100:games:/usr/games:/sbin/nologin
+    halt:x:7:0:halt:/sbin:/sbin/halt
+    lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+    mail:x:8:12:mail:/var/spool/mail:/sbin/nologin
+    nobody:x:65534:65534:Kernel Overflow User:/:/sbin/nologin
+    operator:x:11:0:operator:/root:/sbin/nologin
+    root:x:0:0:root:/root:/bin/bash
+    shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
+    sshd:x:74:74:Privilege-separated SSH:/usr/share/empty.sshd:/usr/sbin/nologin
+    sync:x:5:0:sync:/sbin:/bin/sync
+    systemd-coredump:x:999:997:systemd Core Dumper:/:/sbin/nologin
+    tss:x:59:59:Account used for TPM access:/:/sbin/nologin
+  base_group: |
+    adm:x:4:
+    audio:x:63:
+    bin:x:1:
+    cdrom:x:11:
+    chrony:x:995:
+    daemon:x:2:
+    dbus:x:81:
+    dialout:x:18:
+    disk:x:6:
+    floppy:x:19:
+    ftp:x:50:
+    games:x:20:
+    input:x:999:
+    kmem:x:9:
+    kvm:x:36:
+    lock:x:54:
+    lp:x:7:
+    mail:x:12:
+    man:x:15:
+    mem:x:8:
+    nobody:x:65534:
+    render:x:998:
+    root:x:0:
+    sgx:x:996:
+    ssh_keys:x:101:
+    sshd:x:74:74:Privilege-separated SSH:/var/empty/sshd:/usr/sbin/nologin
+    sys:x:3:
+    systemd-coredump:x:997:
+    systemd-journal:x:190:
+    tape:x:33:
+    tss:x:59:
+    tty:x:5:
+    users:x:100:
+    utempter:x:35:
+    utmp:x:22:
+    video:x:39:
+    wheel:x:10:
+
   _test_partitions: # A bunch of android-style partitions to test partition count scalability
     - size: 26
       type: 6891A3B7-0CCC-4705-BB53-2673CAC193BD
