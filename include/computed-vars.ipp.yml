@@ -582,7 +582,8 @@ mpp-vars:
           - dracut-automotive
       - - $release_rpm
         - $kernel_rpm
-        - $linux_firmware_rpm
+        - mpp-if: linux_firmware_rpm
+          then: $linux_firmware_rpm
         - mpp-if: use_luks
           then: lvm2
         - mpp-if: use_aboot
