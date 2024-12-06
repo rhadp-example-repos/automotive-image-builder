@@ -6,6 +6,7 @@ mpp-vars:
   distro_baseurl: http://mirror.stream.centos.org/9-stream
   distro_baseurl_repo: $distro_baseurl/BaseOS/$arch/os/
   distro_chroot: centos-stream-9-$arch
+  linux_firmware_rpm: linux-firmware-automotive
   distro_repos:
     - id: baseos
       baseurl: $distro_baseurl/BaseOS/$arch/os/

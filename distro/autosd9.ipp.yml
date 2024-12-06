@@ -9,7 +9,6 @@ mpp-vars:
   osname: centos
   uefi_vendor: centos
   kernel_package: kernel-automotive
-  linux_firmware_rpm: linux-firmware
   release_rpm: centos-release-autosd
   distro_repos:
     - id: autosd
