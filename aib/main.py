@@ -358,11 +358,12 @@ def rewrite_manifest(manifest, path):
             make_embed_path_abs(stage, path)
 
     # Also, we need to inject some workarounds in the rootfs stage
-    if rootfs:
-        # See comment in kernel_cmdline_stage variable
-        rootfs.get("stages", []).insert(
-            0, {"mpp-eval": "kernel_cmdline_stage"}
-        )
+    if rootfs and "stages" in rootfs:
+        rootfs["stages"] = [
+            # See comment in kernel_cmdline_stage variable
+            {"mpp-eval": "kernel_cmdline_stage"},
+            {"mpp-eval": "init_passwd_stage"},
+        ] + rootfs.get("stages", [])
 
 
 def strip_ext(path):
