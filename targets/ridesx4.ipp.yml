@@ -18,8 +18,11 @@ mpp-vars:
   aboot_dtb_file: "qcom/sa8775p-ride.dtb"
   image_size: 17179824128
   #use_tuned_realtime: true
+  target_repos:
+    - id: qcom-board-support
+      baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/qcom-board-support/$distro_chroot/
+      priority: 1
   target_rpms:
-    - aboot-deploy
     - stmmac-mac-generator
   image_enabled_services:
     mpp-join:
