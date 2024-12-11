@@ -580,8 +580,6 @@ mpp-vars:
     - greenboot-status
     - mpp-if: not use_aboot
       then: greenboot-rpm-ostree-grub2
-    - mpp-if: name == 'developer'
-      then: ostree-compliance-mode
     - skopeo  # Needed for upgrading from an OCI remove image
 
   package_mode_rpms:
