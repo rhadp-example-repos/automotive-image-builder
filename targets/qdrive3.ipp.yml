@@ -17,12 +17,10 @@ mpp-vars:
   target_rpms:
     - aboot-deploy
     - aquantia-mac-generator
-    - stmmac-mac-generator
   image_enabled_services:
     mpp-join:
       - mpp-eval: image_enabled_services
       - - aquantia-mac-generator.service
-      - - stmmac-mac-generator.service
   kernel_opts:
     mpp-join:
       - mpp-eval: kernel_opts
