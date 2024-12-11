@@ -6,6 +6,10 @@ mpp-vars:
     - from: input://extra-tree/lib/ostree-boot/efi/
       to: mount://root/boot/efi/
   rpi4_use_uefi: false
+  target_repos:
+    - id: rpi-board-support
+      baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/rpi-board-support/$distro_chroot/
+      priority: 1
   target_rpms:
     - pi4-firmware-blob
     - pi_resize
@@ -20,7 +24,4 @@ mpp-vars:
       - mpp-eval: dracut_force_drivers
       - - simplefb
   partition_label: dos
-  target_repos:
-    - id: cs9-rpi4-fw
-      baseurl: https://download.copr.fedorainfracloud.org/results/alexl/cs9-rpi4-fw/centos-stream-9-aarch64/
 pipelines: []
