@@ -14,8 +14,11 @@ mpp-vars:
   aboot_base: "0x1208800"
   aboot_dtb_file: "qcom/sa8540p-ride.dtb"
   image_size: 10737373184
+  target_repos:
+    - id: qcom-board-support
+      baseurl: https://download.copr.fedorainfracloud.org/results/@centos-automotive-sig/qcom-board-support/$distro_chroot/
+      priority: 1
   target_rpms:
-    - aboot-deploy
     - aquantia-mac-generator
     - stmmac-mac-generator
   image_enabled_services:
