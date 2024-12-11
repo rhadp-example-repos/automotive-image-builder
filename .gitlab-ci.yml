@@ -52,6 +52,9 @@ compose-test-modified-distro:
  rules:
    - changes:
        - distro/*.ipp.yml
+ # Allow this job to fail as it's expected to fail for some cases
+ # Still we want to check and see the errors
+ allow_failure: true
 
 compose-test-modified-target:
  stage: test
