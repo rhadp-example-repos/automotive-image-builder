@@ -323,7 +323,6 @@ mpp-vars:
     - zstd
 
   base_rpms:
-    - e2fsprogs
     - efibootmgr
     - glibc-langpack-en
     - hostname
