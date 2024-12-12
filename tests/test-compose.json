@@ -19,7 +19,8 @@
                 },
                 {
                     "value": "abootqemu",
-                    "arch-is": "aarch64"
+                    "arch-is": "aarch64",
+                    "distro-is": ["cs9"]
                 }
               ],
     "defines": [
