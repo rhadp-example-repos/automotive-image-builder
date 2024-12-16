@@ -33,6 +33,7 @@ class Runner:
             "--privileged",
             "--workdir",
             os.path.realpath(os.getcwd()),
+            "--read-only=false",
         ]
         for v in sorted(self.volumes):
             podman_args.append("-v")
