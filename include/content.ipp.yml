@@ -188,6 +188,11 @@ mpp-vars:
 
       [Install]
       WantedBy=default.target
+  nmstate_bootcheck:
+    mpp-format-string: |
+      ip {static_ip} {static_ip_prefixlen}
+      default_gw {static_gw}
+      nameserver {static_dns}
 
 pipelines:
   # Some variables need to be written to files, do that here
@@ -360,6 +365,19 @@ pipelines:
             - from:
                 mpp-format-string: input://inlinefile/{embedded['main-nmstate.service']}
               to: tree:///main-nmstate.service
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: nmstate.bootcheck
+              text: $nmstate_bootcheck
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['nmstate.bootcheck']}
+              to: tree:///nmstate.bootcheck
       - type: org.osbuild.copy
         inputs:
           inlinefile:

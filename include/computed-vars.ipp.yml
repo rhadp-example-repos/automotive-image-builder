@@ -80,6 +80,13 @@ mpp-vars:
     mpp-join:
       - mpp-eval: distro_debug_repos
 
+  image_repo_ids:
+    mpp-eval: "[repo['id'] for repo in image_repos]"
+
+  # auto-boot-check is just available in the automotive sig for now
+  have_boot_check:
+    mpp-eval: "'automotive' in image_repo_ids"
+
   # Backwards compatibility by checking if the deprecated kernel_rpm variable is set
   kernel_core_package:
     mpp-if: locals().get('kernel_rpm')
@@ -327,6 +334,8 @@ mpp-vars:
           then: var.mount
         - mpp-if: use_static_ip
           then: main-nmstate.service
+        - mpp-if: use_static_ip and have_boot_check
+          then: auto-boot-check.service
         - mpp-if: use_tuned_realtime
           then: tuned.service
         - mpp-if: selinux_booleans
@@ -531,6 +540,10 @@ mpp-vars:
       then:
         from: input://extra-tree/main-nmstate.service
         to: tree:///usr/lib/systemd/system/main-nmstate.service
+    - mpp-if: use_static_ip and have_boot_check
+      then:
+        from: input://extra-tree/nmstate.bootcheck
+        to: tree:///usr/lib/boot-check.d/nmstate.conf
     - mpp-if: use_tuned_realtime
       then:
         from: input://extra-tree/realtime-variables.conf
@@ -613,6 +626,8 @@ mpp-vars:
           then: tuned-profiles-realtime
         - mpp-if: use_static_ip
           then: nmstate
+        - mpp-if: use_static_ip and have_boot_check
+          then: auto-boot-check
         - mpp-if: not use_static_ip
           then: NetworkManager
         - mpp-if: use_bluechi_agent
