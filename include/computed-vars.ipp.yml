@@ -65,6 +65,21 @@ mpp-vars:
     then:
       mpp-eval: use_sbl
 
+  image_repos:
+    mpp-join:
+      - mpp-eval: distro_repos
+      - mpp-eval: target_repos
+  build_repos:
+    mpp-join:
+      - mpp-eval: distro_repos
+      - mpp-eval: target_build_repos
+  image_devel_repos:
+    mpp-join:
+      - mpp-eval: distro_devel_repos
+  image_debug_repos:
+    mpp-join:
+      - mpp-eval: distro_debug_repos
+
   # Backwards compatibility by checking if the deprecated kernel_rpm variable is set
   kernel_core_package:
     mpp-if: locals().get('kernel_rpm')
@@ -536,21 +551,6 @@ mpp-vars:
       then:
         from: input://extra-tree/qm-autosd.conf
         to: tree:////usr/share/containers/systemd/qm.container.d/10-autosd.conf
-
-  image_repos:
-    mpp-join:
-      - mpp-eval: distro_repos
-      - mpp-eval: target_repos
-  build_repos:
-    mpp-join:
-      - mpp-eval: distro_repos
-      - mpp-eval: target_build_repos
-  image_devel_repos:
-    mpp-join:
-      - mpp-eval: distro_devel_repos
-  image_debug_repos:
-    mpp-join:
-      - mpp-eval: distro_debug_repos
 
   build_rpms:
     mpp-join:
