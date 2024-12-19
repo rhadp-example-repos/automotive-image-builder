@@ -273,7 +273,10 @@ def parse_args(args, base_dir):
         help="Path to store osbuild manifest",
     )
     parser_build.add_argument(
-        "--cache-max-size", action="store", type=str, help="Max cache size"
+        # We set the default size to 2GB, which allows about two copies
+        # of the build pipeline.
+        "--cache-max-size", action="store", default="2GB",
+        type=str, help="Max cache size"
     )
     parser_build.add_argument(
         "--osbuild-arg",
