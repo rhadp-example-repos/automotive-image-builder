@@ -334,6 +334,8 @@ def main():
                         help=f"Share directory using virtiofs")
     parser.add_argument("--ip", default=None,
                         help=f"IP address of that the VM is configured for, defaults to: 10.0.2.15")
+    parser.add_argument("--network", default="10.0.2.0/24",
+                        help=f"Network IP range to use, defaults to: 10.0.2.0/24")
     parser.add_argument("image", type=str, help="The image to boot")
     parser.add_argument('extra_args', nargs=argparse.REMAINDER, metavar="...", help="extra qemu arguments")
 
@@ -472,7 +474,7 @@ def main():
         net_dev = "virtio-net-device"
     qemu_args += [
         "-device", f"{net_dev},netdev=n0,mac={macstr}",
-        "-netdev", "user,id=n0,net=10.0.2.0/24," + guestfwds + ",".join(fwds),
+        "-netdev", f"user,id=n0,net={args.network}," + guestfwds + ",".join(fwds),
     ]
 
     if args.nographics:
