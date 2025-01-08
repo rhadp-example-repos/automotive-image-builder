@@ -1,5 +1,6 @@
 workflow:
   rules:
+    - if: '$CI_PIPELINE_SOURCE == "web"'
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
     - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS'
       when: never
@@ -17,6 +18,7 @@ include:
 stages:
   - pre
   - test
+  - container
   - deploy
   - trigger
 
@@ -130,6 +132,41 @@ pages:
     - generate-schema-doc files/manifest_schema.yml public/simple_manifest.html
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
+
+container-latest:
+  stage: container
+  image: quay.io/buildah/stable:latest
+  interruptible: true
+  parallel:
+    matrix:
+      - ARCH: [amd64, arm64]
+  tags:
+    - saas-linux-small-${ARCH}
+  variables:
+    IMAGE: quay.io/centos-sig-automotive/automotive-image-builder
+    TAG: latest
+  script:
+    - buildah bud -f Containerfile -t "$IMAGE:$TAG-$ARCH" .
+    - buildah login -u "$CONTAINER_REGISTRY_USER" -p "$CONTAINER_REGISTRY_PASSWORD" quay.io
+    - buildah push "$IMAGE:$TAG-$ARCH"
+    - echo "MANIFEST=$IMAGE:$TAG" > container.env
+  artifacts:
+    reports:
+      dotenv: container.env
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
+    - if: $CI_PIPELINE_SOURCE == "web"
+
+container-latest-manifest:
+  stage: deploy
+  image: quay.io/buildah/stable:latest
+  script:
+    - buildah login -u "$CONTAINER_REGISTRY_USER" -p "$CONTAINER_REGISTRY_PASSWORD" quay.io
+    - buildah manifest create $MANIFEST $MANIFEST-{amd64,arm64}
+    - buildah manifest push $MANIFEST docker://$MANIFEST
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
+    - if: $CI_PIPELINE_SOURCE == "web"
 
 trigger-pipeline:
   rules:
