@@ -7,6 +7,7 @@ import os
 import platform
 import json
 import tempfile
+import shutil
 
 import yaml
 
@@ -18,6 +19,7 @@ from .simple import ManifestLoader
 from . import exceptions
 from . import AIBParameters
 from . import log
+from . import vmhelper
 
 
 def extract_comment_header(path):
@@ -140,6 +142,7 @@ def parse_args(args, base_dir):
         default=[],
         help="Add include directory",
     )
+    parser.add_argument("--vm", default=False, action="store_true")
     parser.set_defaults(func=no_subcommand)
     subparsers = parser.add_subparsers(help="sub-command help")
 
@@ -273,7 +276,13 @@ def parse_args(args, base_dir):
         help="Path to store osbuild manifest",
     )
     parser_build.add_argument(
-        "--cache-max-size", action="store", type=str, help="Max cache size"
+        # We set the default size to 2GB, which allows about two copies
+        # of the build pipeline.
+        "--cache-max-size",
+        action="store",
+        default="2GB",
+        type=str,
+        help="Max cache size",
     )
     parser_build.add_argument(
         "--osbuild-arg",
@@ -539,6 +548,7 @@ def _build(args, tmpdir, runner):
     cmdline = ["osbuild"]
 
     outputdir = os.path.join(builddir, "image_output")
+    os.makedirs(outputdir, exist_ok=True)
     cmdline += [
         "--store",
         os.path.join(builddir, "osbuild_store"),
@@ -557,20 +567,86 @@ def _build(args, tmpdir, runner):
         cmdline += ["--cache-max-size=" + args.cache_max_size]
 
     has_repo = False
+    exports = []
+    # Rewrite exports according to export_data
     for exp in args.export:
         data = get_export_data(exp)
         exp = data.get("export_arg", exp)
+        exports.append(exp)
         if exp == "ostree-commit":
             has_repo = True
-        cmdline += ["--export", exp]
 
     # If ostree repo was specified, also export it if needed
     if not has_repo and args.ostree_repo:
-        cmdline += ["--export", "ostree-commit"]
+        exports += ["ostree-commit"]
 
-    cmdline += [osbuild_manifest]
+    if args.vm:
+        # Download sources on host, using no exports
 
-    runner.run(cmdline, use_sudo=True, use_container=True)
+        cmdline += [osbuild_manifest]
+        runner.run(cmdline, use_sudo=True, use_container=True)
+
+        # Now do the build in the vm
+
+        shutil.copyfile(
+            osbuild_manifest, os.path.join(builddir, "manifest.json")
+        )
+
+        with open(osbuild_manifest) as f:
+            d = json.load(f)
+            curl_items = d.get("sources", {}).get("org.osbuild.curl", {})
+            curl_files = curl_items.get("items", {}).keys()
+            with open(os.path.join(builddir, "manifest.files"), "w") as f2:
+                f2.write("\n".join(curl_files))
+
+        kernel = f"aibvm-{args.arch}.vmlinux"
+        rootimg = f"aibvm-{args.arch}.qcow2"
+
+        # TODO: Should these be in builddir?
+        var_image = os.path.join(builddir, f"aibvm-var-{args.arch}.qcow2")
+        escaped_image = args.container_image_name.replace("/", "_")
+        container_file = os.path.join(
+            builddir, f"aibvm-{escaped_image}-{args.arch}.tar"
+        )
+
+        if not os.path.isfile(var_image):
+            vmhelper.mk_var(var_image)
+
+        if not os.path.isfile(container_file):
+            vmhelper.get_container(
+                container_file, args.arch, args.container_image_name
+            )
+
+        output_tar = os.path.join(builddir, "output.tar")
+        try:
+            # Ensure no leftover from earlier build
+            os.remove(output_tar)
+        except OSError:
+            pass
+
+        res = vmhelper.run_vm(
+            args.arch,
+            kernel,
+            rootimg,
+            var_image,
+            container_file,
+            builddir,
+            os.path.join(args.base_dir, "files/aibvm-run"),
+            "4G",
+            args.container_image_name,
+            f"EXPORTS={','.join(exports)}",
+        )
+        if res != 0:
+            sys.exit(1)  # vm will have printed the error
+
+        runner.run(["tar", "xvf", output_tar, "-C", outputdir], use_sudo=True)
+    else:
+        for exp in exports:
+            cmdline += ["--export", exp]
+
+        cmdline += [osbuild_manifest]
+
+        runner.run(cmdline, use_sudo=True, use_container=True)
 
     if args.ostree_repo:
         repodir = os.path.join(outputdir, "ostree-commit/repo")

@@ -35,6 +35,7 @@ Tool to build (and run) automotive images
 %doc README.md
 %{_bindir}/automotive-image-builder
 %{_bindir}/automotive-image-runner
+%{_bindir}/automotive-image-vm
 %{_prefix}/lib/automotive-image-builder
 
 %changelog
