@@ -117,7 +117,7 @@ def parse_args(args, base_dir):
         help="Use containerized build",
     )
     container_image_name_default = (
-        "quay.io/centos-sig-automotive/automotive-osbuild"
+        "quay.io/centos-sig-automotive/automotive-image-builder"
     )
     parser.add_argument(
         "--container-image-name",
