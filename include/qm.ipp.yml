@@ -150,7 +150,7 @@ pipelines:
         options:
           path: auto/symlink
           product:
-            name: /usr/share/rpm /var/lib/rpm
+            name: ../../usr/share/rpm /var/lib/rpm
 
       - type: org.osbuild.locale
         options:
