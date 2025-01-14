@@ -37,6 +37,10 @@ mpp-vars:
 
   denylist_rpms: []
 
+  fusa_denylist_modules:
+    - fat
+    - vfat
+
   timezone: UTC
   locale: en_US.UTF-8
   hostname: localhost
