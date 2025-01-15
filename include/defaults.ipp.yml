@@ -40,6 +40,14 @@ mpp-vars:
   fusa_denylist_modules:
     - fat
     - vfat
+    - nfs
+    - nfs_layout_nfsv41_files
+    - nfsv3
+    - nfsv4
+    - nfs_layout_flexfiles
+    - nfs_acl
+    - nfsd
+    - blocklayoutdriver
 
   timezone: UTC
   locale: en_US.UTF-8
