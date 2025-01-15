@@ -304,6 +304,12 @@ mpp-vars:
 
   osbuild_toml_rpm:
 
+  fusa_denylist_rpms:
+    - e2fsprogs
+    - dosfstools
+    - xfsprogs
+    - erofs-utils
+
   build_rpms:
     - dnf
     - dosfstools

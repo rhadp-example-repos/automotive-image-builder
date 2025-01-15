@@ -131,6 +131,12 @@ mpp-vars:
   use_separate_var:
     mpp-eval: has_partition_table and use_separate_var
   _dash_escape: "\\x2d"
+  denylist_rpms:
+    mpp-join:
+      - mpp-eval: denylist_rpms
+      - mpp-if: use_fusa
+        then:
+          mpp-eval: fusa_denylist_rpms
   denylist_modules:
     mpp-join:
       - mpp-eval: denylist_modules
