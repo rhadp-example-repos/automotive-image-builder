@@ -248,6 +248,12 @@ def parse_args(args, base_dir):
     format_parser.add_argument(
         "--ostree-repo", action="store", type=str, help="Path to ostree repo"
     )
+    format_parser.add_argument(
+        "--dump-variables",
+        default=False,
+        action="store_true",
+        help="Dump variables that would be used when building and exit.",
+    )
 
     parser_compose = subparsers.add_parser(
         "compose", help="Compose osbuild manifest", parents=[format_parser]
@@ -405,6 +411,9 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
         # This is a leftover for backwards compatibilty:
         "image_type": "ostree" if args.mode == "image" else "regular",
     }
+
+    if args.dump_variables:
+        defines["print_variables"] = True
 
     defines["exports"] = args.export if args.export else []
 
