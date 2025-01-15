@@ -35,6 +35,8 @@ mpp-vars:
   # Denylist => omit from initrd, configure modprobe to denylist
   denylist_modules: []
 
+  denylist_rpms: []
+
   timezone: UTC
   locale: en_US.UTF-8
   hostname: localhost
@@ -275,11 +277,11 @@ mpp-vars:
 
   # Timestamps, etc
   image_uuid:
-    mpp-eval: (str(__import__('uuid').uuid4()))
+    mpp-eval: (str(_uuid.uuid4()))
   timestamp:
-    mpp-eval: (__import__('datetime').datetime.now().timestamp())
+    mpp-eval: (_datetime.datetime.now().timestamp())
   build_timestamp:
-    mpp-eval: (str(__import__('datetime').datetime.fromtimestamp(timestamp)))
+    mpp-eval: (str(_datetime.datetime.fromtimestamp(timestamp)))
 
   # These are overridden by the distro file
   distro_repos: []
@@ -301,6 +303,12 @@ mpp-vars:
   arch_build_rpms: []
 
   osbuild_toml_rpm:
+
+  fusa_denylist_rpms:
+    - e2fsprogs
+    - dosfstools
+    - xfsprogs
+    - erofs-utils
 
   build_rpms:
     - dnf

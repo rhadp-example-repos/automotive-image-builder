@@ -1,5 +1,19 @@
 version: '2'
 
+mpp-vars:
+  _sys:
+    mpp-eval: "__import__('sys')"
+  _uuid:
+    mpp-eval: "__import__('uuid')"
+  _json:
+    mpp-eval: "__import__('json')"
+  _datetime:
+    mpp-eval: "__import__('datetime')"
+  _printerr:
+    mpp-eval: "lambda errstr: print('Error: ' + errstr, file=_sys.stderr)"
+  _error:
+    mpp-eval: "lambda errstr:(_printerr(errstr), _sys.exit(1))"
+
 pipelines:
   - mpp-import-pipelines:
       path: defaults.ipp.yml

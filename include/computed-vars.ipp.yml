@@ -11,29 +11,29 @@ mpp-vars:
 
   # Compute dynamic uuids if requested
   rootfs_uuid:
-    mpp-eval: (rootfs_uuid if static_uuids else str(__import__('uuid').uuid4()))
+    mpp-eval: (rootfs_uuid if static_uuids else str(_uuid.uuid4()))
   bootfs_uuid:
-    mpp-eval: (bootfs_uuid if static_uuids else str(__import__('uuid').uuid4()))
+    mpp-eval: (bootfs_uuid if static_uuids else str(_uuid.uuid4()))
   parttab_uuid:
-    mpp-eval: (parttab_uuid if static_uuids else str(__import__('uuid').uuid4()))
+    mpp-eval: (parttab_uuid if static_uuids else str(_uuid.uuid4()))
   efipart_uuid:
-    mpp-eval: (efipart_uuid if static_uuids else str(__import__('uuid').uuid4()))
+    mpp-eval: (efipart_uuid if static_uuids else str(_uuid.uuid4()))
   bootpart_uuid:
-    mpp-eval: (bootpart_uuid if static_uuids else str(__import__('uuid').uuid4()))
+    mpp-eval: (bootpart_uuid if static_uuids else str(_uuid.uuid4()))
   varpart_uuid:
-    mpp-eval: (varpart_uuid if static_uuids else str(__import__('uuid').uuid4()))
+    mpp-eval: (varpart_uuid if static_uuids else str(_uuid.uuid4()))
   abootpart_uuid_a:
-    mpp-eval: (abootpart_uuid_a if static_uuids else str(__import__('uuid').uuid4()))
+    mpp-eval: (abootpart_uuid_a if static_uuids else str(_uuid.uuid4()))
   abootpart_uuid_b:
-    mpp-eval: (abootpart_uuid_b if static_uuids else str(__import__('uuid').uuid4()))
+    mpp-eval: (abootpart_uuid_b if static_uuids else str(_uuid.uuid4()))
   vbmetapart_uuid_a:
-    mpp-eval: (vbmetapart_uuid_a if static_uuids else str(__import__('uuid').uuid4()))
+    mpp-eval: (vbmetapart_uuid_a if static_uuids else str(_uuid.uuid4()))
   vbmetapart_uuid_b:
-    mpp-eval: (vbmetapart_uuid_b if static_uuids else str(__import__('uuid').uuid4()))
+    mpp-eval: (vbmetapart_uuid_b if static_uuids else str(_uuid.uuid4()))
   rootpart_uuid:
-    mpp-eval: (rootpart_uuid if static_uuids else str(__import__('uuid').uuid4()))
+    mpp-eval: (rootpart_uuid if static_uuids else str(_uuid.uuid4()))
   luks_uuid:
-    mpp-eval: (luks_uuid if static_uuids else str(__import__('uuid').uuid4()))
+    mpp-eval: (luks_uuid if static_uuids else str(_uuid.uuid4()))
 
   # Derive these from use_boot
   use_aboot:
@@ -131,6 +131,12 @@ mpp-vars:
   use_separate_var:
     mpp-eval: has_partition_table and use_separate_var
   _dash_escape: "\\x2d"
+  denylist_rpms:
+    mpp-join:
+      - mpp-eval: denylist_rpms
+      - mpp-if: use_fusa
+        then:
+          mpp-eval: fusa_denylist_rpms
   denylist_modules:
     mpp-join:
       - mpp-eval: denylist_modules
@@ -638,11 +644,11 @@ mpp-vars:
           then: qm
 
   _debug_output:
-    mpp-eval: "locals().get('print_variables') and print( __import__('json').dumps({k: v for k, v in locals().items() if not k.startswith('_')}, default=lambda o: '<not serializable>', sort_keys=True, indent=2))"
+    mpp-eval: "locals().get('print_variables') and print( _json.dumps({k: v for k, v in locals().items() if not k.startswith('_')}, default=lambda o: '<not serializable>', sort_keys=True, indent=2))"
 
   _debug_check_arch:
     mpp-if: "target_supported_arches and arch not in target_supported_arches"
     then:
-      mpp-eval: "print(f'target {target} not supported on arch {arch}') or  __import__('sys').exit(1)"
+      mpp-eval: "_error(f'target {target} not supported on arch {arch}')"
 
 pipelines: []
