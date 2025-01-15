@@ -35,6 +35,8 @@ mpp-vars:
   # Denylist => omit from initrd, configure modprobe to denylist
   denylist_modules: []
 
+  denylist_rpms: []
+
   timezone: UTC
   locale: en_US.UTF-8
   hostname: localhost

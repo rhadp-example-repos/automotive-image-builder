@@ -24,6 +24,8 @@ mpp-vars:
         mpp-eval: luks_passphrase
 
 pipelines:
+  - mpp-if: "_error(f'Rootfs contains denied rpms: {space.join(denied)}') if (denied := [rpm for rpm in denylist_rpms if rpm in rpms['rootfs']]) else False"
+
   - name: image
     build: name:build
     stages:

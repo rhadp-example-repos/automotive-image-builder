@@ -2,6 +2,7 @@ version: '2'
 
 mpp-vars:
   newline: "\n"
+  space: " "
 
   # We use a static base /etc/passwd to avoid dynamic uid allocations
   # resulting in different uids in different builds.
