@@ -1,0 +1,63 @@
+#!/bin/bash
+
+if [ ! -f duffy.session ]; then
+echo "Retrieving an AWS instance"
+set +x
+duffy client \
+ request-session \
+ pool=metal-ec2-c5n-centos-9s-x86_64,quantity=1 > duffy.session
+fi
+
+set -x
+
+ip=$(jq '.session.nodes[].data.provision.public_ipaddress' duffy.session)
+ip=$(echo $ip | sed -e 's|"||g')
+echo "IP address: $ip"
+session_id=$(jq '.session.id' duffy.session)
+session_id=$(echo $session_id | sed -e 's|"||g')
+echo "Session: $session_id"
+
+ssh \
+    -o " UserKnownHostsFile=/dev/null" \
+    -o "StrictHostKeyChecking no" \
+    -o "IdentitiesOnly=yes" \
+    -i automotive_sig.ssh \
+    root@$ip << EOF
+cat > run.sh << EO
+set -x
+mkdir -p /dev/shm/docs
+cd /dev/shm/docs
+dnf install -y git rpm-build make
+dnf copr enable -y @centos-automotive-sig/osbuild-auto
+git clone https://gitlab.com/CentOS/automotive/src/automotive-image-builder.git
+cd automotive-image-builder
+git checkout $CI_COMMIT_REF_NAME
+make rpm_dev
+dnf localinstall -y automotive-image-builder-*.noarch.rpm
+curl -o test_all.sh \
+  "https://gitlab.com/CentOS/automotive/sig-docs/-/raw/main/demos/test_all.sh?ref_type=heads"
+# Better safe than sorry, ensure we don't install aib if we didn't manage before
+sed -i -e 's|dnf install -y git osbuild-auto automotive-image-builder |dnf install -y git osbuild-auto |' test_all.sh
+time bash test_all.sh
+EO
+bash run.sh
+EOF
+
+success=$?
+echo $success
+
+scp -r \
+    -o " UserKnownHostsFile=/dev/null" \
+    -o "StrictHostKeyChecking no" \
+    -o "IdentitiesOnly=yes" \
+    -i automotive_sig.ssh \
+    root@$ip:/dev/shm/docs/automotive-image-builder/sig-docs/demos/logs/ .
+echo $?
+
+echo "Closing session: $session_id"
+set +x
+duffy client \
+ retire-session $session_id
+rm duffy.session
+
+exit $success

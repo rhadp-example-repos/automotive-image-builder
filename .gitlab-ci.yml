@@ -181,3 +181,26 @@ trigger-pipeline:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: never
     - !reference [.trigger-template, rules]
+
+
+build_doc_demos:
+  stage: test
+  image: python:3.11
+  before_script:
+    - apt-get update
+    - apt-get install -y jq less
+    - mkdir -p ~/.config
+    - 'echo "client:" > ~/.config/duffy'
+    - 'echo "  url: https://duffy.ci.centos.org/api/v1" >> ~/.config/duffy'
+    - 'echo "  auth:" >> ~/.config/duffy'
+    - 'echo "    name:" $duffy_name >> ~/.config/duffy'
+    - 'echo "    key:" $duffy_key >> ~/.config/duffy'
+    - base64 -d $ssh_key > automotive_sig.ssh
+    - chmod 600 automotive_sig.ssh
+  script:
+    - pip install "duffy[client]"
+    - sh tests/run_aws.sh
+  artifacts:
+    paths:
+      - logs
+    when: always
