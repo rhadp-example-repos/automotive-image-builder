@@ -1,7 +1,7 @@
 # Automotive image builder
 
 Automotive image builder is a tool to create various kinds of OS images based on CentOS derived
-OSes. The images can support package-based mode (called "package") as well as image-based mode
+distributions. The images can support package-based mode (called "package") as well as image-based mode
 (called "image").
 
 The main tool is called `automotive-image-builder`, and the basic operation it does is called
@@ -11,29 +11,67 @@ json file is a precise build instruction for how to build an image with osbuild 
 specific software that was chosen during the compose. For example, the version of selected packages
 and container images is chosen during the compose.
 
-For example, to build a qcow2 image you can run:
+To build a qcow2 image you can run:
 
 ```shell
- $ automotive-image-builder compose --distro cs9 --mode package --target qemu my-image.mpp.yml osbuild.json
+ $ automotive-image-builder compose --distro cs9 --mode package --target qemu my-image.aib.yml osbuild.json
  $ sudo osbuild --store osbuild_store --output-directory output --export qcow2 osbuild.json
 ```
 
 You can also combine these two in one command:
 
 ```shell
- $ automotive-image-builder build --distro cs9 --mode package --target qemu --export qcow2 my-image.mpp.yml osbuild.json
+ $ automotive-image-builder build --distro cs9 --mode package --target qemu --export qcow2 my-image.aib.yml osbuild.json
 ```
 
 These will first compose the osbuild.json file, and then build it and export the "qcow2" output,
-which will end up in the "output" directory (in particular as `output/qcow2/disk.qcow2`). You an then
-run it using:
+which will end up in the "output" directory (in particular as `output/qcow2/disk.qcow2`). Qcow images
+are typically run in a virtual machine, which you can easily do using:
 
 ```shell
  $ automotive-image-runner  output/qcow2/disk.qcow2
 ```
 
-The sample-images repository (https://gitlab.com/CentOS/automotive/sample-images) has a lot of
-example images, as well as some tools that makes it easy to build those images.
+Note: when running `automotive-image-builder build` it is very helpful
+to pass also the option `--build-dir some/dir`, as that will then store intermediate data, such as downloaded
+rpms between runs, which saves a lot of time.
+
+## Manifests
+
+automotive-image-builder supports two types of image manifests. The
+default manifest uses the extension `.aib.yml` and is a high-level,
+declarative YAML-based format.
+
+A example of such a manifest looks like this:
+```yaml
+name: image-with-vim
+
+content:
+  rpms:
+    - vim
+```
+
+
+You can find detailed schema documentation for the manifest syntax
+[here](https://centos.gitlab.io/automotive/src/automotive-image-builder/simple_manifest.html).
+
+You can also experiment with the example manifests in the [examples](examples) directory:
+
+```shell
+$ automotive-image-builder build --export qcow2 examples/simple.aib.yml example.qcow2
+$ automotive-image-runner example.qcow2
+```
+
+The sample-images repository
+(https://gitlab.com/CentOS/automotive/sample-images) has a larger set
+of functional examples.
+
+There is also support for a lowlevel manifest file format, with extension `.mpp.yml`. This is
+a format closer to the osbuild imperative format, and writing such files requires deeper
+knowledge of how osbuild works, as well as the internals of automotive-image-builder. This
+is used internally to implement the higher level manifest format, but it is also available
+to the end user. However, we don't recommend using this format as it is quite hard to use
+and not well documented.
 
 ## Controlling the image built
 
@@ -57,18 +95,6 @@ When composing (or building) a manifest there are some core options that control
   with your custom ones by putting them in a directory called "/some/dir/distro" and passing
   `--include /some/dir` on the argument list.
 
-Additionally, there a a variety of variables supported that modifies how the manifest works. These
-can be defined either in your manifest using the "mpp-var" block at the top, or by specifying them
-on the command-line like this:
-
-* `--define VAR=VALUE`: Sets the variable to the specified value, which is a yaml value.
-
-* `--define-file PATH`: Loads variables from a yaml dict in a file, where the keys are variable names.
-
-* `--extend-define VAR=VALUE`: Similar to `--define`, but this is only useable for list-based variable
-  and will extend the list already in the variable (or start a new list if it is unset). This
-  support specifying either a list value or just a plain item value.
-
 When the manifest has been composed, the generated osbuild json file can contain several types of
 things that can be build. For example, it can generate both raw image files and qcow2 files. When
 building you need to the `--export` option to select what you want to build. The available exports
@@ -84,11 +110,26 @@ are:
 * `ostree-oci-image`: An oci image wrapping the ostree commit from ostree-commit
 * `rpmlist`: A json file listing all the rpms used in the image
 
-## Commonly used variables
+## Manifest variables
+
+The low-level manifest format supports a variety of variables that you can set in the manifest file, or
+on the command line. In the high-level manifests, these are automatically set based on the options in
+the manifest and the target/distro/mode that you choose, although it can sometimes be useful to
+modify these variables on the command line during development and testing.
+
+To modify these variables on the command line, you can use the following options:
+
+* `--define VAR=VALUE`: Sets the variable to the specified value, which is a yaml value.
+
+* `--define-file PATH`: Loads variables from a yaml dict in a file, where the keys are variable names.
+
+* `--extend-define VAR=VALUE`: Similar to `--define`, but this is only useable for list-based variable
+  and will extend the list already in the variable (or start a new list if it is unset). This
+  support specifying either a list value or just a plain item value.
 
 Here are some commonly used variable supported and what they mean:
 
-* `use_qm`: If this is true, then the support for the qm partion is included in the image, see below for details
+* `use_qm`: If this is true, then the support for the qm partion is included in the image
 * `qm_memory_max`: Set the maximum memory that can be used by the QM partition (see MemoryMax systemd option for format)
 * `use_bluechi_agent`: If this is true, then the support for bluechi-agent is included and configured in the host and (if enabled) in the qm partition
 * `use_bluechi_controller`: If this is true, then the support for bluechi-controller is included and configured in the host
@@ -107,102 +148,46 @@ Here are some commonly used variable supported and what they mean:
 * `bluechi_controller_allowed_node_names`: A list of node names accepted by the bluechi controller
 * `use_debug`: If set to true, a lot more debugging info will be shown during boot
 
-## Manifests
-
-A manifest is a yaml file that describes a set of pipelines. Each pipeline is a set of stages that
-are run in order to produce a result. The input to each stage can depend on the output of other
-pipelines. When building a manifest the "export" option defines what pipeline (and its dependencies)
-to build.
-
-The most basic pipeline that all end user manifest need to supply is called "rootfs" and contains
-stages that set up the basic content of the image. These typically start with installing a set of
-rpm packages, and then doing some additional steps like enabling systemd units, creating users and
-installing containers.
-
-On top of the rootfs pipeline, `automotive-image-builder` adds its own standard pipelines that are
-used during the build. These includes the final pipelines that are used for the export, but also
-intermediate ones as well as the "build" pipeline which is used when building the other pipelines.
-
-Here is an example small manifest file: [example.mpp.yml](example.mpp.yml), you can build and run it it using:
-
-```shell
-$ automotive-image-builder build --export qcow2 example.mpp.yml example.qcow2
-$ automotive-image-runnter example.qcow2
-```
-
-
 ## Using qm
 
 `automotive-image-builder` supports the [QM](https://github.com/containers/qm/tree/main) package for
-isolating quality-managed code in a separate partition. When this is used, two pipelines are built,
-one the regular one and for the qm partition, called `qm_rootfs`. In the final image the qm root
+isolating quality-managed code in a separate partition. When you enable qm, OSBuild builds two pipelines -
+one for the regular filesystem, and one for the qm partition. In the final image the qm root
 filesystem will be accessible under `/usr/share/qm/rootfs`.
 
-The `qm_rootfs` pipeline must start with the contents of the automatic `qm_rootfs_base` pipeline, which
-contains the basic stuff needed for the qm partion, and then it can do any further changes that are
-necessary, like installing container images. This pipeline would start like this:
+For example, use the following manifest to install and run httpd in the qm partition:
 
 ```yaml
-- name: qm_rootfs
-  build: name:build
-  stages:
-  - type: org.osbuild.copy
-    inputs:
-      tree:
-        type: org.osbuild.tree
-        origin: org.osbuild.pipeline
-        references:
-          - name:qm_rootfs_base
-    options:
-      paths:
-        - from: input://tree/
-          to: tree:///
+name: qm-example
+content:
+  rpms:
+    - curl
+qm:
+  content:
+    rpms:
+      - httpd
+    systemd:
+      enabled_services:
+        - httpd.service
 ```
-
-Additionally, the manfest can set the `qm_extra_rpms` variable in the `mpp-vars` dict to add
-additional rpms to be installed in the `qm_rootfs_base` pipeline, on top of the basic stuff
-that is installed there.
 
 ## Embedding containers in images
 
-It is possible to embed container images in the images which are automatically available to podman
-in the image. To do this, you need to set the `use_containers_extra_store` variable to `true`, and
-then add a stage like this to the rootfs (or `qm_rootfs`) pipeline:
+You can embed container images in the operating system image. These images are automatically
+available to podman in the running system. For example, use the following manifest to
+pull the CentOS Stream 9 container image into the operating system:
 
 ```yaml
-  - type: org.osbuild.skopeo
-    inputs:
-      images:
-        type: org.osbuild.containers
-        origin: org.osbuild.source
-        mpp-resolve-images:
-          images:
-            - source: registry.gitlab.com/centos/automotive/sample-images/demo/auto-apps
-              tag: latest
-              name: localhost/auto-apps
-    options:
-      destination:
-        type: containers-storage
-        storage-path:
-          mpp-eval: containers_extra_store
+name: embed-container
+content:
+  rpms:
+    - podman
+  container_images:
+    - source: quay.io/centos/centos
+      tag: stream9
 ```
 
-This can then be run from the image. We recommend using a [quadlet
-.container](https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html) file to start the
-container from systemd. One can be installed like this:
-
-```yaml
-  - type: org.osbuild.copy
-    inputs:
-      inlinefile1:
-        type: org.osbuild.files
-        origin: org.osbuild.source
-        mpp-embed:
-          id: example.container
-          path: files/example.container
-    options:
-      paths:
-      - from:
-          mpp-format-string: input://inlinefile1/{embedded[example.container']}
-        to: tree:///etc/containers/systemd/example.container
-```
+You can then configure these containers to run automatically in the system by using a
+[quadlet.container](https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html) file
+to start the container from systemd. You can view an example configuration in the
+[examples/container.aib.yml](examples/container.aib.yml) file.
