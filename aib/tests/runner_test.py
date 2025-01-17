@@ -54,9 +54,7 @@ def test_run_args_container(shutil_mock, subprocess_mock, args):
     shutil_which = MagicMock(retrun_value="podman")
     subprocess_mock.run = subprocess_run
     shutil_mock.which = shutil_which
-    args = AIBParameters(
-        parse_args(args, base_dir=BASE_DIR), base_dir=BASE_DIR
-    )
+    args = AIBParameters(parse_args(args, base_dir=BASE_DIR), base_dir=BASE_DIR)
     runner = Runner(args)
 
     cmd = ["touch", "example_container"]
@@ -82,9 +80,7 @@ def test_run_args_container_non_root(shutil_mock, subprocess_mock, args):
     shutil_which = MagicMock(retrun_value="podman")
     subprocess_mock.run = subprocess_run
     shutil_mock.which = shutil_which
-    args = AIBParameters(
-        parse_args(args, base_dir=BASE_DIR), base_dir=BASE_DIR
-    )
+    args = AIBParameters(parse_args(args, base_dir=BASE_DIR), base_dir=BASE_DIR)
     runner = Runner(args)
 
     cmd = ["touch", "example_user"]
@@ -110,18 +106,12 @@ def test_run_args_sudo(shutil_mock, subprocess_mock, args):
     shutil_which = MagicMock(retrun_value="podman")
     subprocess_mock.run = subprocess_run
     shutil_mock.which = shutil_which
-    args = AIBParameters(
-        parse_args(args, base_dir=BASE_DIR), base_dir=BASE_DIR
-    )
+    args = AIBParameters(parse_args(args, base_dir=BASE_DIR), base_dir=BASE_DIR)
     runner = Runner(args)
 
     cmd = ["touch", "example_sudo"]
     runner.run(cmd, use_sudo=True)
-    expected = (
-        AnyListContaining("sudo")
-        if vars(args.args).get("sudo", False)
-        else cmd
-    )
+    expected = AnyListContaining("sudo") if vars(args.args).get("sudo", False) else cmd
     subprocess_run.assert_called_once_with(expected, check=True)
 
 

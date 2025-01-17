@@ -33,9 +33,7 @@ class YamlOrderedLoader(yaml.Loader):
         data.update(value)
 
 
-yaml.add_constructor(
-    "tag:yaml.org,2002:map", YamlOrderedLoader.construct_yaml_map
-)
+yaml.add_constructor("tag:yaml.org,2002:map", YamlOrderedLoader.construct_yaml_map)
 
 
 def yaml_load_ordered(source):

@@ -150,25 +150,19 @@ def parse_args(args, base_dir):
         "list-dist", help="list available distributions"
     )
     parser_list_dist.set_defaults(func=list_dist)
-    parser_list_dist.add_argument(
-        "--quiet", default=False, action="store_true"
-    )
+    parser_list_dist.add_argument("--quiet", default=False, action="store_true")
 
     parser_list_target = subparsers.add_parser(
         "list-targets", help="list available targets"
     )
     parser_list_target.set_defaults(func=list_targets)
-    parser_list_target.add_argument(
-        "--quiet", default=False, action="store_true"
-    )
+    parser_list_target.add_argument("--quiet", default=False, action="store_true")
 
     parser_list_export = subparsers.add_parser(
         "list-exports", help="list available exports"
     )
     parser_list_export.set_defaults(func=list_exports)
-    parser_list_export.add_argument(
-        "--quiet", default=False, action="store_true"
-    )
+    parser_list_export.add_argument("--quiet", default=False, action="store_true")
 
     format_parser = argparse.ArgumentParser(add_help=False)
     format_parser.add_argument(
@@ -258,18 +252,14 @@ def parse_args(args, base_dir):
     parser_compose = subparsers.add_parser(
         "compose", help="Compose osbuild manifest", parents=[format_parser]
     )
-    parser_compose.add_argument(
-        "manifest", type=str, help="Source manifest file"
-    )
+    parser_compose.add_argument("manifest", type=str, help="Source manifest file")
     parser_compose.add_argument("out", type=str, help="Output osbuild json")
     parser_compose.set_defaults(func=compose)
 
     parser_listrpms = subparsers.add_parser(
         "list-rpms", help="List rpms", parents=[format_parser]
     )
-    parser_listrpms.add_argument(
-        "manifest", type=str, help="Source manifest file"
-    )
+    parser_listrpms.add_argument("manifest", type=str, help="Source manifest file")
     parser_listrpms.set_defaults(func=listrpms)
 
     parser_build = subparsers.add_parser(
@@ -326,9 +316,7 @@ def parse_args(args, base_dir):
         help="Don't use sudo to start programs",
     )
 
-    parser_build.add_argument(
-        "manifest", type=str, help="Source manifest file"
-    )
+    parser_build.add_argument("manifest", type=str, help="Source manifest file")
     parser_build.add_argument("out", type=str, help="Output path")
     parser_build.set_defaults(func=build)
 
@@ -420,9 +408,7 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
     if args.simple_manifest:
         loader = ManifestLoader(defines)
 
-        loader.load(
-            args.simple_manifest, os.path.dirname(args.simple_manifest)
-        )
+        loader.load(args.simple_manifest, os.path.dirname(args.simple_manifest))
 
     if args.ostree_repo:
         runner.add_volume_for(args.ostree_repo)
@@ -443,9 +429,7 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
             with open(df) as f:
                 file_defines = yaml_load_ordered(f)
             if not isinstance(file_defines, dict):
-                raise exceptions.DefineFileError(
-                    "Define file must be yaml dict"
-                )
+                raise exceptions.DefineFileError("Define file must be yaml dict")
             for k, v in file_defines.items():
                 defines[k] = v
         except yaml.parser.ParserError as e:
@@ -480,9 +464,7 @@ def create_osbuild_manifest(args, tmpdir, out, runner):
         "mpp-vars": manifest.get("mpp-vars", {}),
     }
 
-    rewritten_manifest_path = os.path.join(
-        tmpdir, "manifest-variables.ipp.yml"
-    )
+    rewritten_manifest_path = os.path.join(tmpdir, "manifest-variables.ipp.yml")
     with open(rewritten_manifest_path, "w") as f:
         yaml.dump(variables_manifest, f, sort_keys=False)
 
@@ -516,9 +498,7 @@ def extract_rpmlist_json(osbuild_manifest):
         if p.get("name") == "rpmlist":
             rpmlist = p
             break
-    inline_digest = list(
-        rpmlist["stages"][0]["inputs"]["inlinefile"]["references"]
-    )[0]
+    inline_digest = list(rpmlist["stages"][0]["inputs"]["inlinefile"]["references"])[0]
 
     inline_items = d["sources"]["org.osbuild.inline"]["items"]
     data_b64 = inline_items[inline_digest]["data"]
@@ -597,9 +577,7 @@ def _build(args, tmpdir, runner):
 
         # Now do the build in the vm
 
-        shutil.copyfile(
-            osbuild_manifest, os.path.join(builddir, "manifest.json")
-        )
+        shutil.copyfile(osbuild_manifest, os.path.join(builddir, "manifest.json"))
 
         with open(osbuild_manifest) as f:
             d = json.load(f)
@@ -622,9 +600,7 @@ def _build(args, tmpdir, runner):
             vmhelper.mk_var(var_image)
 
         if not os.path.isfile(container_file):
-            vmhelper.get_container(
-                container_file, args.arch, args.container_image_name
-            )
+            vmhelper.get_container(container_file, args.arch, args.container_image_name)
 
         output_tar = os.path.join(builddir, "output.tar")
         try:
@@ -697,9 +673,7 @@ def no_subcommand(_args, _tmpdir, _runner):
 
 def main():
     base_dir = os.path.realpath(sys.argv[1])
-    args = AIBParameters(
-        args=parse_args(sys.argv[2:], base_dir), base_dir=base_dir
-    )
+    args = AIBParameters(args=parse_args(sys.argv[2:], base_dir), base_dir=base_dir)
 
     if args.verbose:
         log.setLevel("DEBUG")

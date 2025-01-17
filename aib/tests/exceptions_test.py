@@ -37,9 +37,7 @@ def test_rewrite_manifest():
 
 def test_missing_export():
     with pytest.raises(SystemExit) as argparse_err:
-        AIBParameters(
-            args=parse_args(["build", "out"], BASE_DIR), base_dir=BASE_DIR
-        )
+        AIBParameters(args=parse_args(["build", "out"], BASE_DIR), base_dir=BASE_DIR)
     assert argparse_err.value.code == 2
 
 
