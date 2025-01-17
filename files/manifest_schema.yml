@@ -60,11 +60,12 @@ $defs:
         description: The name to use for the container image when embedded (if not set, same as source)
         type: string
       containers-transport:
-        description: "The containers transport from which to copy the container."
+        description: "The containers transport from which to copy the container. (fusa: containers-storage is not allowed with fusa)"
         type: string
-        default: docker
         enum:
           - docker
+          - containers-storage
+        noFusa:
           - containers-storage
       index:
         description: "If set to true, also install the related manifest-list for the image."
