@@ -209,6 +209,22 @@ class QMContents(Contents):
     def set_defines(self):
         Contents.set_defines(self)
 
+def extend_with_default(validator_class):
+    validate_properties = validator_class.VALIDATORS["properties"]
+
+    def set_defaults(validator, properties, instance, schema):
+        for property, subschema in properties.items():
+            if isinstance(subschema, dict) and "default" in subschema:
+                instance.setdefault(property, subschema["default"])
+
+        for error in validate_properties(validator, properties, instance, schema):
+            yield error
+
+    return jsonschema.validators.extend(
+        validator_class,
+        {"properties": set_defaults},
+    )
+
 
 class ManifestLoader:
     def __init__(self, defines):
@@ -217,14 +233,17 @@ class ManifestLoader:
         self.defines = defines
 
         # Note: Draft7 is what osbuild uses, and is available in rhel9
+        base_cls = jsonschema.Draft7Validator
+        validator_cls = extend_with_default(base_cls)
+
         with open(
             os.path.join(self.aib_basedir, "files/manifest_schema.yml"),
             mode="r",
         ) as file:
             self.aib_schema = yaml.load(file, yaml.SafeLoader)
-            jsonschema.Draft7Validator.check_schema(self.aib_schema)
+            base_cls.check_schema(self.aib_schema)
 
-        self.validator = jsonschema.Draft7Validator(self.aib_schema)
+        self.validator = validator_cls(self.aib_schema)
 
     def set(self, key, value):
         if (isinstance(value, list) or isinstance(value, dict)) and len(value) == 0:

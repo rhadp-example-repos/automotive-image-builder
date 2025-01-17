@@ -500,6 +500,8 @@ properties:
   network:
     description: Define the Network setup, which can be of two types, `dynamic` or `static`, the default is dynamic
     $ref: "#/$defs/network"
+    default:
+      dynamic: {}
   image:
     description: Configure global options for the image.
     $ref: "#/$defs/image"
