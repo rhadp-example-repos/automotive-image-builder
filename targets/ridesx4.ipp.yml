@@ -36,7 +36,13 @@ mpp-vars:
         - pd_ignore_unused
         - acpi=off
         - net.naming-scheme=v252
+      - - mpp-if: is_autoinit_supported and use_autoinit
+          then: rd.modules-load=ufs-qcom,qcom_geni_serial
   dracut_drivers: []
+  dracut_add_drivers:
+    - ufs-qcom
+    - qcom-geni-se
+    - qcom_geni_serial
   dracut_omit_drivers:
     mpp-join:
       - mpp-eval: dracut_omit_drivers
