@@ -336,6 +336,8 @@ def main():
                         help=f"IP address of that the VM is configured for, defaults to: 10.0.2.15")
     parser.add_argument("--network", default="10.0.2.0/24",
                         help=f"Network IP range to use, defaults to: 10.0.2.0/24")
+    parser.add_argument("--serial-socket",
+                        help=f"Unix socket to redirect serial output to")
     parser.add_argument("image", type=str, help="The image to boot")
     parser.add_argument('extra_args', nargs=argparse.REMAINDER, metavar="...", help="extra qemu arguments")
 
@@ -564,6 +566,9 @@ def main():
             "-numa", "node,memdev=mem"
         ]
         print(f"Sharing directory {args.sharedir}, mount using 'mount -t virtiofs host /mnt'")
+
+    if args.serial_socket:
+        qemu_args += ["-serial", f"unix:{args.serial_socket},server=on"]
 
     qemu_args += args.extra_args
 
