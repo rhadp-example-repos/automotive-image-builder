@@ -1,0 +1,29 @@
+#!/usr/bin/expect -f
+
+# Example expect script to use with automotive-image-runner
+# --serial-socket=$path, pass $path as argument.
+
+if {$argc == 0} {
+    send_user "No serial socket path given\n"
+    exit
+}
+
+set SERIAL [lindex $argv 0]
+
+# longer timeout (30 sec)
+set timeout 30
+
+spawn socat - UNIX-CONNECT:$SERIAL
+
+expect login:
+send_user foobar
+send "root\n"
+expect Password:
+send "password\n"
+expect "#"
+send "stty rows 0 cols 0\n"
+expect "#"
+send "systemctl status --no-pager\n"
+expect "#"
+send "shutdown now\n"
+expect eof
