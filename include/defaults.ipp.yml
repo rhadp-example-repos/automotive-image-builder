@@ -147,7 +147,6 @@ mpp-vars:
   qm_pipeline: qm_rootfs
   use_tuned_realtime: false
   tuned_realtime_isolcpus: "2-N"
-  use_initoverlayfs: false
   use_testpart: false
   use_ostree: false
   is_autoinit_supported: true
@@ -268,12 +267,6 @@ mpp-vars:
   efipart_dos_type: 'ef'
   efipart_bootable: false
   distro_gpg_keys: ""
-
-  initoverlayfs_bootfstype: "ext4"
-  initoverlayfs_builder: "dracut -M -o \"initoverlayfs fcoe\""
-  initoverlayfs_initrd_builder: "dracut -M -o \"initoverlayfs fcoe\""
-  initoverlayfs_erofs_compression: ""
-  initoverlayfs_bootfs_hint: ""
 
   # Timestamps, etc
   image_uuid:
