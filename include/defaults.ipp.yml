@@ -98,8 +98,8 @@ mpp-vars:
   bootpart_size: 614400
   abootpart_size: 131072 # 64M
   vbmetapart_size: 128 # 64K
-  use_separate_var: false
-  varpart_relative_size: 0.3 # /var size as relative of image size (unless varpart_size is set)
+  varpart_relative_size: 0 # /var size as relative of image size (unless varpart_size is set)
+  qm_varpart_relative_size: 0 # /var/qm size as relative of image size (unless qm_varpart_size is set)
   extra_parts: []            # Extra partitions to add to image
 
   # Network setup
@@ -169,6 +169,7 @@ mpp-vars:
     efipart: 68b2905b-df3e-4fb3-80fa-49d1e773aa33
     bootpart: 61b2905b-df3e-4fb3-80fa-49d1e773aa32
     varpart: 10475e3e-9356-11ee-b5b9-305a3ae2477d
+    qm_varpart: c36a70ca-8827-4e0e-977e-7179ccfe0e65
     abootpart_a: 1dd3a986-997c-0c48-1d1b-b0d0399f3153
     abootpart_b: 45105095-3847-4657-51f2-2a0144550453
     vbmetapart_a: da91d469-09b3-ce43-795e-3b86f3735143

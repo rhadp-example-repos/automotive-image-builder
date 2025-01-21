@@ -40,6 +40,19 @@ mpp-vars:
 
       [Install]
       RequiredBy=local-fs.target
+  qm_var_mount:
+    mpp-format-string: |
+      [Unit]
+      Before=local-fs.target
+      After=blockdev@dev-disk-by\\x2duuid-{qm_varpart_uuid.replace("-", _dash_escape)}.target
+
+      [Mount]
+      What=/dev/disk/by-uuid/$qm_varpart_uuid
+      Where=/var/qm
+      Type=ext4
+
+      [Install]
+      RequiredBy=local-fs.target
   # We use this instead of org.osbuild.selinux.config so we can chose custom values for the policy (like automotive)
   selinux_conf:
     mpp-format-string: |
@@ -258,6 +271,19 @@ pipelines:
             - from:
                 mpp-format-string: input://inlinefile/{embedded['var.mount']}
               to: tree:///var.mount
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: var-qm.mount
+              text: $qm_var_mount
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['var-qm.mount']}
+              to: tree:///var-qm.mount
       - type: org.osbuild.copy
         inputs:
           inlinefile:

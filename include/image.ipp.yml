@@ -88,7 +88,7 @@ pipelines:
                 uuid:
                   mpp-eval: bootfs_uuid
                 label: boot
-          - mpp-if: use_separate_var
+          - mpp-if: _use_separate_var and _varpart_size > 0
             then:
               type: org.osbuild.mkfs.ext4
               devices:
@@ -98,6 +98,16 @@ pipelines:
                 uuid:
                   mpp-eval: varpart_uuid
                 label: var
+          - mpp-if: _qm_use_separate_var and _qm_varpart_size > 0
+            then:
+              type: org.osbuild.mkfs.ext4
+              devices:
+                device:
+                  mpp-eval: image_loopdev['qm_var']
+              options:
+                uuid:
+                  mpp-eval: qm_varpart_uuid
+                label: qm_var
         - mpp-if: use_luks
           then:
             - type: org.osbuild.luks2.format
@@ -199,9 +209,13 @@ pipelines:
                 then:
                   mpp-eval: image_loopdev['vbmeta_b']
               var:
-                mpp-if: use_separate_var
+                mpp-if: _use_separate_var and _varpart_size > 0
                 then:
                   mpp-eval: image_loopdev['var']
+              qm_var:
+                mpp-if: _qm_use_separate_var and _qm_varpart_size > 0
+                then:
+                  mpp-eval: image_loopdev['qm_var']
               root:
                 mpp-eval: root_dev
               root-raw:
@@ -217,12 +231,18 @@ pipelines:
                 type: org.osbuild.ext4
                 source: root
                 target: /
-              - mpp-if: use_separate_var
+              - mpp-if: _use_separate_var and _varpart_size > 0
                 then:
                   name: var
                   type: org.osbuild.ext4
                   source: var
                   target: /var
+              - mpp-if: _qm_use_separate_var and _qm_varpart_size > 0
+                then:
+                  name: qm_var
+                  type: org.osbuild.ext4
+                  source: qm_var
+                  target: /var/qm
               - mpp-if: use_bootpart
                 then:
                   name: boot

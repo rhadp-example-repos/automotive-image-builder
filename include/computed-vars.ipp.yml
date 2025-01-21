@@ -5,9 +5,15 @@ version: '2'
 # things that depend on what was set in that.
 
 mpp-vars:
-  # If no absolute size is set, compute the relative size
-  varpart_size:
+  # Note: setting [qm_]varpart_size to -1 means "use externel image with the given uuid"
+  _varpart_size:
     mpp-eval: locals().get('varpart_size', int(int(image_size) * varpart_relative_size / 512))
+  _use_separate_var:
+    mpp-eval: _varpart_size != 0
+  _qm_varpart_size:
+    mpp-eval: locals().get('qm_varpart_size', int(int(image_size) * qm_varpart_relative_size / 512))
+  _qm_use_separate_var:
+    mpp-eval: use_qm and _qm_varpart_size != 0
 
   # Compute dynamic uuids if requested, but allow override
   _compute_uuid:
@@ -24,6 +30,8 @@ mpp-vars:
     mpp-eval: _compute_uuid('bootpart')
   varpart_uuid:
     mpp-eval: _compute_uuid('varpart')
+  qm_varpart_uuid:
+    mpp-eval: _compute_uuid('qm_varpart')
   abootpart_a_uuid:
     mpp-eval: _compute_uuid('abootpart_a')
   abootpart_b_uuid:
@@ -128,10 +136,6 @@ mpp-vars:
     mpp-eval: use_bluechi_controller or locals().get('use_bluechi')
   use_ostree:
     mpp-eval: use_ostree or image_mode == 'image'
-  has_partition_table:
-    mpp-eval: any(ext in exports for ext in ['image', 'simg', 'qcow2'])
-  use_separate_var:
-    mpp-eval: has_partition_table and use_separate_var
   _dash_escape: "\\x2d"
   denylist_rpms:
     mpp-join:
@@ -191,7 +195,7 @@ mpp-vars:
     mpp-join:
       - mpp-eval: extra_image_copy
       - mpp-eval: locals().get('extra_image_copy_' + image_mode, [])
-      - - mpp-if: use_ostree and use_separate_var
+      - - mpp-if: use_ostree and _use_separate_var
           then:
             from: input://tree/ostree/deploy/$osname/var/
             to: mount://root/var/
@@ -338,8 +342,10 @@ mpp-vars:
           then: boot-efi.mount
         - mpp-if: use_bootpart
           then: boot.mount
-        - mpp-if: use_separate_var
+        - mpp-if: _use_separate_var
           then: var.mount
+        - mpp-if: _qm_use_separate_var
+          then: var-qm.mount
         - mpp-if: use_static_ip
           then: main-nmstate.service
         - mpp-if: use_static_ip and have_boot_check
@@ -569,10 +575,14 @@ mpp-vars:
       then:
         from: input://extra-tree/boot-efi.mount
         to: tree:////usr/lib/systemd/system/boot-efi.mount
-    - mpp-if: use_separate_var
+    - mpp-if: _use_separate_var
       then:
         from: input://extra-tree/var.mount
         to: tree:////usr/lib/systemd/system/var.mount
+    - mpp-if: _qm_use_separate_var
+      then:
+        from: input://extra-tree/var-qm.mount
+        to: tree:////usr/lib/systemd/system/var-qm.mount
     - mpp-if: use_qm
       then:
         from: input://extra-tree/qm-automotive.conf

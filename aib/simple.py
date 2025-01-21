@@ -283,24 +283,35 @@ class ManifestLoader:
         partitions = image.get("partitions", {})
         for k in partitions:
             part = partitions[k]
-            if k == "var":  # Separate /var partition
-                self.set("use_separate_var", True)
+            if k in ["var", "var_qm"]:
+                if k == "var":
+                    prefix = ""
+                    mountpoint = "/var"
+                else:
+                    prefix = "qm_"
+                    mountpoint = "/var/qm"
+
                 if "size" in part:
                     var_size = part.get("size")
                     var_size = parse_size(var_size)
                     if image_size and var_size >= image_size:
-                        print("Error: /var can't be larger than image")
+                        print(f"Error: {mountpoint} can't be larger than image")
                         sys.exit(1)
-                    self.set("varpart_size", var_size / 512)
-                else:
+                    self.set(prefix + "varpart_size", int(var_size / 512))
+                elif "relative_size" in part:
                     rel_var_size = part.get("relative_size")
                     if rel_var_size < 0 or rel_var_size >= 1:
                         print(
-                            "Error: Invalida relative var size, "
-                            "must be between 0 and 1"
+                            f"Error: Invalid relative size for {mountpoint}, must be between 0 and 1"
                         )
                         sys.exit(1)
-                    self.set("varpart_relative_size", rel_var_size)
+                    self.set(prefix + "varpart_relative_size", rel_var_size)
+                elif "external" in part and part["external"]:
+                    self.set(prefix + "varpart_size", -1)
+
+                if "uuid" in part:
+                    self.set(prefix + "varpart_uuid", part.get("uuid"))
+
             else:  # Non /var
                 if "size" in part:
                     part_size = parse_size(part["size"])
