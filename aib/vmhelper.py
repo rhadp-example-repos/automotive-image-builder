@@ -75,9 +75,7 @@ def create_vm_image(base_dir, arch, dest_image, dest_kernel):
         )
 
         erofs_file = os.path.join(tmpdir, "rootfs.erofs")
-        runcmd(
-            ["mkfs.erofs", erofs_file, rootfsdir], stdout=subprocess.DEVNULL
-        )
+        runcmd(["mkfs.erofs", erofs_file, rootfsdir], stdout=subprocess.DEVNULL)
 
         runcmd(
             [
@@ -113,9 +111,7 @@ def mk_var(path):
             f.seek(128 * 1024 * 1024 * 1024)
             f.truncate()
         runcmd(["mkfs", "-q", "-t", "ext4", rawfile])
-        runcmd(
-            ["qemu-img", "convert", "-f", "raw", "-O", "qcow2", rawfile, path]
-        )
+        runcmd(["qemu-img", "convert", "-f", "raw", "-O", "qcow2", rawfile, path])
 
 
 def get_container(path, arch, container):

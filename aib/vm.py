@@ -39,9 +39,7 @@ def run_command(args):
         vmhelper.mk_var(var_image)
 
     if not os.path.isfile(container_file):
-        vmhelper.get_container(
-            container_file, args.arch, args.container_image_name
-        )
+        vmhelper.get_container(container_file, args.arch, args.container_image_name)
 
     with tempfile.TemporaryDirectory(prefix="aibvm") as tmpdir:
         run_script = os.path.join(tmpdir, "run")
@@ -82,9 +80,7 @@ def main():
     create_parser.set_defaults(func=create_command)
 
     run_parser = subparsers.add_parser("run", help="Run vm")
-    container_image_name_default = (
-        "quay.io/centos-sig-automotive/automotive-osbuild"
-    )
+    container_image_name_default = "quay.io/centos-sig-automotive/automotive-osbuild"
     run_parser.add_argument(
         "--container-image-name",
         action="store",
@@ -92,9 +88,7 @@ def main():
         default=container_image_name_default,
         help=f"Container image name (default: {container_image_name_default})",
     )
-    run_parser.add_argument(
-        "--memory", default="2G", help="Memory size (default 2G)"
-    )
+    run_parser.add_argument("--memory", default="2G", help="Memory size (default 2G)")
     run_parser.add_argument(
         "--sharedir", action="store", help="Share directory using virtiofs"
     )

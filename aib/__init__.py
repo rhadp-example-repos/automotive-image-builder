@@ -18,11 +18,7 @@ class AIBParameters:
 
     @cached_property
     def build_dir(self):
-        return (
-            os.path.expanduser(self.args.build_dir)
-            if self.args.build_dir
-            else None
-        )
+        return os.path.expanduser(self.args.build_dir) if self.args.build_dir else None
 
     def func(self, tmpdir, runner):
         return self.args.func(self, tmpdir, runner)

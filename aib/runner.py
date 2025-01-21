@@ -52,10 +52,7 @@ class Runner:
 
     @property
     def conman(self):
-        if (
-            shutil.which("podman") is None
-            and shutil.which("docker") is not None
-        ):
+        if shutil.which("podman") is None and shutil.which("docker") is not None:
             return "docker"
         return "podman"
 
@@ -84,10 +81,7 @@ class Runner:
         capture_output=False,
     ):
         if use_container and self.container:
-            cmdline = (
-                self._add_container_cmd(use_non_root_user_in_container)
-                + cmdline
-            )
+            cmdline = self._add_container_cmd(use_non_root_user_in_container) + cmdline
 
         if use_sudo and self.sudo:
             allowed_env_vars = [
