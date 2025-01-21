@@ -86,13 +86,13 @@ build-image-x86-job:
   image: quay.io/centos-sig-automotive/automotive-osbuild
   stage: test
   script:
-    - ./automotive-image-builder build --mode=image --export qcow2 example.mpp.yml example.qcow2
+    - ./automotive-image-builder build --mode=image --export qcow2 examples/lowlevel.mpp.yml lowlevel.qcow2
 
 build-package-x86-job:
   image: quay.io/centos-sig-automotive/automotive-osbuild
   stage: test
   script:
-    - ./automotive-image-builder build --mode=package --export image example.mpp.yml example.img
+    - ./automotive-image-builder build --mode=package --export image examples/lowlevel.mpp.yml lowlevel.img
 
 packit-srpm-build:
   image: quay.io/packit/packit
