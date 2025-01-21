@@ -67,7 +67,7 @@ $defs:
           - docker
           - containers-storage
       index:
-        description: "Is set to true, also install the related manifest-list for the image."
+        description: "If set to true, also install the related manifest-list for the image."
         type: boolean
 
   add_file:
@@ -98,7 +98,7 @@ $defs:
           - path
           - url
       - additionalProperties: false
-        description: Add file with inline data
+        description: Create file from inline data
         properties:
           path:
             description: The absolute destination pathname of the added file.
