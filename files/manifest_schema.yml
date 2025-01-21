@@ -58,7 +58,7 @@ definitions:
       name:
         description: The name to use for the container image when embedded (if not set, same as source)
         type: string
-      container-transport:
+      containers-transport:
         type: string
       index:
         type: string
