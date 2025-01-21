@@ -32,8 +32,11 @@ mpp-vars:
   kernel_loglevel: 4
   # Extra kernel modules loaded at boot
   load_modules: []
-  # Denylist => omit from initrd, configure modprobe to denylist
+  # Denylist => remove these modules from image
   denylist_modules: []
+  # Allowlist => Remove all modules except the listed and their dependencies
+  # Note: This defaults to null for disabled, because empty list means remove all modules
+  allowlist_modules: null
 
   denylist_rpms: []
 
