@@ -1,6 +1,6 @@
 $schema: https://json-schema.org/draft-07/schema
 $id: manifest.yaml
-definitions:
+$defs:
   abs_path:
     type: string
     pattern: "^\\/?(?!\\.\\.)((?!\\/\\.\\.\\/).)+$"
@@ -36,7 +36,7 @@ definitions:
         description: The id to use for this repo in the configuration
         type: string
       baseurl:
-        description: The url to the repo
+        description: The url to the repo, or a pathname to a local repository
         type: string
 
   container_image:
@@ -47,11 +47,12 @@ definitions:
       - source
     properties:
       source:
-        description: The container image name, for example quay.io/fedora/fedora
+        description: The container image name, for example `quay.io/fedora/fedora`.
         type: string
       tag:
-        description: The tag to use in the repositoyr (typically defaults to latest)
+        description: The tag to use in the repository
         type: string
+        default: latest
       digest:
         description: Use a specific version of the image specified by digest
         type: string
@@ -59,47 +60,58 @@ definitions:
         description: The name to use for the container image when embedded (if not set, same as source)
         type: string
       containers-transport:
+        description: "The containers transport from which to copy the container."
         type: string
+        default: docker
+        enum:
+          - docker
+          - containers-storage
       index:
-        type: string
+        description: "If set to true, also install the related manifest-list for the image."
+        type: boolean
 
   add_file:
-    dscription: A file to add to the partition
     type: object
     oneOf:
       - additionalProperties: false
+        description: Add local file
         required:
           - path
+          - source_path
         properties:
           path:
-            description: The absolute pathname of the file to add to the image partition
-            $ref: "#/definitions/abs_path"
+            description: The absolute destination pathname of the added file.
+            $ref: "#/$defs/abs_path"
           source_path:
             description: The local (absolute or relative to manifest) path of the file to add
-            $ref: "#/definitions/path"
+            $ref: "#/$defs/path"
       - additionalProperties: false
-        required:
-          - path
+        description: Add file from a http url
         properties:
           path:
-            description: The absolute pathname of the file to add to the image partition
-            $ref: "#/definitions/abs_path"
+            description: The absolute destination pathname of the added file.
+            $ref: "#/$defs/abs_path"
           url:
             description: The url of the file to add
             type: string
-      - additionalProperties: false
         required:
           - path
+          - url
+      - additionalProperties: false
+        description: Create file from inline data
         properties:
           path:
-            description: The absolute pathname of the file to add to the image partition
-            $ref: "#/definitions/abs_path"
+            description: The absolute destination pathname of the added file.
+            $ref: "#/$defs/abs_path"
           text:
             description: Embedded text content to use for the added file
             type: string
+        required:
+          - path
+          - text
 
   remove_file:
-    dscription: Remove a file from the partition
+    description: Remove an installed file
     type: object
     additionalProperties: false
     required:
@@ -107,10 +119,10 @@ definitions:
     properties:
       path:
         description: The absolute pathname of the file to remove
-        $ref: "#/definitions/abs_path"
+        $ref: "#/$defs/abs_path"
 
   chown_file:
-    dscription: Change file owner
+    description: Change owner and/or group of installed files
     type: object
     additionalProperties: false
     anyOf:
@@ -123,11 +135,11 @@ definitions:
     properties:
       path:
         description: The absolute pathname of the file to change
-        $ref: "#/definitions/abs_path"
+        $ref: "#/$defs/abs_path"
       user:
-        $ref: "#/definitions/user"
+        $ref: "#/$defs/user"
       group:
-        $ref: "#/definitions/group"
+        $ref: "#/$defs/group"
       recursive:
         description: Change ownership recursively
         type: boolean
@@ -143,7 +155,7 @@ definitions:
     properties:
       path:
         description: The absolute pathname of the file to change
-        $ref: "#/definitions/abs_path"
+        $ref: "#/$defs/abs_path"
       mode:
         description: Symbolic or numeric octal mode
         type: string
@@ -152,7 +164,7 @@ definitions:
         type: boolean
 
   make_dir:
-    dscription: Create a directory in the partition
+    dscription: Create a directory
     type: object
     additionalProperties: false
     required:
@@ -160,7 +172,7 @@ definitions:
     properties:
       path:
         description: The absolute pathname of the directory to create
-        $ref: "#/definitions/abs_path"
+        $ref: "#/$defs/abs_path"
       mode:
         type: number
       parents:
@@ -175,12 +187,15 @@ definitions:
     additionalProperties: false
     properties:
       rpms:
-        description: A list of rpms to add to the partition
+        description: |
+          A list of rpms to install. The packages will be installed from the default repositores, but can be extended with the enable_repos and repos options.
+
+          The package names can optionally contain version, but otherwise the repo priorities and available versions will be used to chose a version.
         type: array
         items:
           type: string
       enable_repos:
-        description: Enable predefined repos (debug, devel)
+        description: Enable named predefined default repos which are not on by default.
         type: array
         items:
           type: string
@@ -191,43 +206,45 @@ definitions:
         description: A list of additional dnf repositories to use when installing packages
         type: array
         items:
-          $ref: "#/definitions/repo"
+          $ref: "#/$defs/repo"
       container_images:
         description: A list of container images to embedd into the image
         type: array
         items:
-          $ref: "#/definitions/container_image"
+          $ref: "#/$defs/container_image"
       add_files:
+        description: Add regular files (inline or from local file / url) to the image
         type: array
         items:
-          $ref: "#/definitions/add_file"
+          $ref: "#/$defs/add_file"
       chmod_files:
         type: array
         items:
-          $ref: "#/definitions/chmod_file"
+          $ref: "#/$defs/chmod_file"
       chown_files:
         type: array
         items:
-          $ref: "#/definitions/chown_file"
+          $ref: "#/$defs/chown_file"
       remove_files:
         type: array
         items:
-          $ref: "#/definitions/remove_file"
+          $ref: "#/$defs/remove_file"
       make_dirs:
         type: array
         items:
-          $ref: "#/definitions/make_dir"
+          $ref: "#/$defs/make_dir"
       systemd:
+        description: Configure what systemd services are to be running other than the default ones.
         type: object
         additionalProperties: false
         properties:
           enabled_services:
-            description: Systemd services to enable
+            description: List of systemd services to enable
             type: array
             items:
               type: string
           disabled_services:
-            description: Systemd services to disable
+            description: List of systemd services to disable
             type: array
             items:
               type: string
@@ -238,21 +255,27 @@ definitions:
     description: Use static network setup
     properties:
       ip:
+        description: The ip address for this node, for example `10.0.2.15`.
         type: string
       ip_prefixlen:
+        description: The ip prefix length for the local network, for example `24` for a `255.255.255.0` netmask.
         type: number
       gateway:
+        description: The ip address of the default gateway
         type: string
       dns:
+        description: The ip address of the name server to use
         type: string
       iface:
+        description: The hardware interface name to setup for the static ip at boot (for example `eth0`)
         type: string
       load_module:
+        description: Optional name of a kernel module to load at boot for the network support
         type: string
 
   dynamic_network:
     type: object
-    description: Use network manager for dynamic network setup
+    description: Use network manager for dynamic network setup, currently has no options
 
   network:
     description: What type of network setup to use, default is dynamic
@@ -261,12 +284,12 @@ definitions:
         additionalProperties: false
         properties:
           dynamic:
-            $ref: "#/definitions/dynamic_network"
+            $ref: "#/$defs/dynamic_network"
       - type: object
         additionalProperties: false
         properties:
           static:
-            $ref: "#/definitions/static_network"
+            $ref: "#/$defs/static_network"
 
   image:
     description: Image and disk options
@@ -278,7 +301,8 @@ definitions:
         type: string
         pattern: "^[0-9]+ +(kB|KiB|MB|MiB|GB|GiB|TB|TiB)$"
       selinux_mode:
-        description: The selinux mode (enforcing or permissive), default is enforcing
+        description: The selinux mode (enforcing or permissive)
+        default: enforcing
         type: string
         enum:
           - enforcing
@@ -287,6 +311,7 @@ definitions:
         description: The name of the selinux policy to use
         type: string
       partitions:
+        description: Disk partition details, like sizes.
         type: object
         additionalProperties: false
         patternProperties:
@@ -300,6 +325,7 @@ definitions:
                 pattern: "^[0-9]+ +(kB|KiB|MB|MiB|GB|GiB|TB|TiB)$"
           var:
             type: object
+            description: Use separate partition for /var
             oneOf:
               - additionalProperties: false
                 properties:
@@ -309,9 +335,11 @@ definitions:
               - additionalProperties: false
                 properties:
                   size:
-                    description: Size of /var partition in bytest (with suffix)
+                    description: Size of /var partition in bytes (with suffix)
                     type: string
+                    pattern: "^[0-9]+ +(kB|KiB|MB|MiB|GB|GiB|TB|TiB)$"
       hostname:
+        description: The network hostname
         type: string
       osname:
         description: The name of the os used, as used by OSTree
@@ -327,7 +355,7 @@ definitions:
     properties:
       content:
         description: The content to add to the qm partition
-        $ref: "#/definitions/partition"
+        $ref: "#/$defs/partition"
       memory_limit:
         type: object
         additionalProperties: false
@@ -375,14 +403,14 @@ definitions:
         description: Keys are usernames, values are objects giving user info.
         patternProperties:
           "^[A-Za-z0-9_.][A-Za-z0-9_.-]{0,31}$":
-            $ref: "#/definitions/add_user"
+            $ref: "#/$defs/add_user"
       groups:
         additionalProperties: false
         type: object
         description: Keys are group, values are objects giving group info.
         patternProperties:
           "^[A-Za-z0-9_.][A-Za-z0-9_.-]{0,31}$":
-            $ref: "#/definitions/add_group"
+            $ref: "#/$defs/add_group"
 
   kernel:
     description: Kernel options
@@ -460,7 +488,7 @@ definitions:
 type: object
 additionalProperties: false
 title: Manifest
-description: File format specifing how to build an image
+description: The automotive-image-builder format describes how to build an OS image, with options like what content (files, packages, containers) to install as well as detailed configuration options.
 required:
   - name
 properties:
@@ -468,23 +496,23 @@ properties:
     description: The name of the manifest
     type: string
   version:
-    description: The version of the manifest
+    description: The version of the manifest. If set, this is used as the "os version" in the ostree commit and will be available as IMAGE_VERSION in /etc/build-info.
     type: string
   content:
-    description: The content to add to the rootfs partition
-    $ref: "#/definitions/partition"
+    description: The content to add to the rootfs, such as packages, files and container images, and systemd services.
+    $ref: "#/$defs/partition"
   qm:
-    description: Define the qm partitions
-    $ref: "#/definitions/qm"
+    description: If this section is included then a separate QM partion will be created in the image with the defined content.
+    $ref: "#/$defs/qm"
   network:
-    description: Network setup, can be 'dynamic' or 'static'
-    $ref: "#/definitions/network"
+    description: Define the Network setup, which can be of two types, `dynamic` or `static`, the default is dynamic
+    $ref: "#/$defs/network"
   image:
-    description: Image and Disk setup
-    $ref: "#/definitions/image"
+    description: Configure global options for the image.
+    $ref: "#/$defs/image"
   auth:
-    description: Authentication setup
-    $ref: "#/definitions/auth"
+    description: Configuration related to users, group and authentications.
+    $ref: "#/$defs/auth"
   kernel:
     description: Kernel options
-    $ref: "#/definitions/kernel"
+    $ref: "#/$defs/kernel"
