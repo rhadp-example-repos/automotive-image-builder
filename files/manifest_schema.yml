@@ -276,6 +276,7 @@ $defs:
   dynamic_network:
     type: object
     description: Use network manager for dynamic network setup, currently has no options
+    additionalProperties: false
 
   network:
     type: object
