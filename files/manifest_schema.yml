@@ -288,7 +288,6 @@ $defs:
         $ref: "#/$defs/dynamic_network"
 
   image:
-    description: Image and disk options
     type: object
     additionalProperties: false
     properties:
@@ -345,7 +344,6 @@ $defs:
         type: string
 
   qm:
-    description: QM partition options
     type: object
     additionalProperties: false
     properties:
@@ -408,7 +406,6 @@ $defs:
             $ref: "#/$defs/add_group"
 
   kernel:
-    description: Kernel options
     type: object
     additionalProperties: false
     properties:
