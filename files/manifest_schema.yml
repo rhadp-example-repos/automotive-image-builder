@@ -278,18 +278,14 @@ $defs:
     description: Use network manager for dynamic network setup, currently has no options
 
   network:
-    description: What type of network setup to use, default is dynamic
-    oneOf:
-      - type: object
-        additionalProperties: false
-        properties:
-          dynamic:
-            $ref: "#/$defs/dynamic_network"
-      - type: object
-        additionalProperties: false
-        properties:
-          static:
-            $ref: "#/$defs/static_network"
+    type: object
+    additionalProperties: false
+    maxProperties: 1
+    properties:
+      static:
+        $ref: "#/$defs/static_network"
+      dynamic:
+        $ref: "#/$defs/dynamic_network"
 
   image:
     description: Image and disk options
@@ -367,20 +363,19 @@ $defs:
             description: MemoryHigh for QM partition (see systemd.resource-control manpage)
             type: string
   auth:
-    description: Authentication options
     type: object
     additionalProperties: false
     properties:
       root_password:
+        type:
+          - string
+          - "null"
         description: Roots's encrypted password, as returned by crypt(3), or nothing to disable
-        oneOf:
-          - type: string
-          - type: "null"
       root_ssh_key:
         description: Roots's ssh key, or nothing to disable
-        oneOf:
-          - type: string
-          - type: "null"
+        type:
+          - string
+          - "null"
       sshd_config:
         description: Configuration of ssh daemon
         type: object
