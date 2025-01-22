@@ -367,6 +367,9 @@ class ManifestLoader:
             except yaml.YAMLError as exc:
                 raise exceptions.ManifestParseError(manifest_basedir) from exc
 
+        self._load(manifest, path, manifest_basedir)
+
+    def _load(self, manifest, path, manifest_basedir):
         errors = sorted(self.validator.iter_errors(manifest), key=lambda e: e.path)
         if errors:
             raise exceptions.SimpleManifestParseError(path, errors)
