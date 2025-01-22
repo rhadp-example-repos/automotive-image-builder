@@ -31,6 +31,8 @@ mpp-vars:
         - pd_ignore_unused
         - clk_ignore_unused
         - acpi=off
+      - - mpp-if: is_autoinit_supported and use_autoinit
+          then: rd.modules-load=ufs-qcom,qcom_geni_serial
   dracut_drivers:
     mpp-join:
       - mpp-eval: dracut_drivers
