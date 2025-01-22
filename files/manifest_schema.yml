@@ -146,7 +146,7 @@ $defs:
         default: false
 
   chmod_file:
-    dscription: Change file permissions
+    description: Change file permissions
     type: object
     additionalProperties: false
     required:
@@ -164,7 +164,7 @@ $defs:
         type: boolean
 
   make_dir:
-    dscription: Create a directory
+    description: Create a directory
     type: object
     additionalProperties: false
     required:
