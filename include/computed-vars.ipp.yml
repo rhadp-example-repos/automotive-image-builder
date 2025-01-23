@@ -9,31 +9,33 @@ mpp-vars:
   varpart_size:
     mpp-eval: locals().get('varpart_size', int(int(image_size) * varpart_relative_size / 512))
 
-  # Compute dynamic uuids if requested
+  # Compute dynamic uuids if requested, but allow override
+  _compute_uuid:
+    mpp-eval: "lambda key: locals().get(key + '_uuid', default_uuids[key] if static_uuids else str(_uuid.uuid4()))"
   rootfs_uuid:
-    mpp-eval: (rootfs_uuid if static_uuids else str(_uuid.uuid4()))
+    mpp-eval: _compute_uuid('rootfs')
   bootfs_uuid:
-    mpp-eval: (bootfs_uuid if static_uuids else str(_uuid.uuid4()))
+    mpp-eval: _compute_uuid('bootfs')
   parttab_uuid:
-    mpp-eval: (parttab_uuid if static_uuids else str(_uuid.uuid4()))
+    mpp-eval: _compute_uuid('parttab')
   efipart_uuid:
-    mpp-eval: (efipart_uuid if static_uuids else str(_uuid.uuid4()))
+    mpp-eval: _compute_uuid('efipart')
   bootpart_uuid:
-    mpp-eval: (bootpart_uuid if static_uuids else str(_uuid.uuid4()))
+    mpp-eval: _compute_uuid('bootpart')
   varpart_uuid:
-    mpp-eval: (varpart_uuid if static_uuids else str(_uuid.uuid4()))
-  abootpart_uuid_a:
-    mpp-eval: (abootpart_uuid_a if static_uuids else str(_uuid.uuid4()))
-  abootpart_uuid_b:
-    mpp-eval: (abootpart_uuid_b if static_uuids else str(_uuid.uuid4()))
-  vbmetapart_uuid_a:
-    mpp-eval: (vbmetapart_uuid_a if static_uuids else str(_uuid.uuid4()))
-  vbmetapart_uuid_b:
-    mpp-eval: (vbmetapart_uuid_b if static_uuids else str(_uuid.uuid4()))
+    mpp-eval: _compute_uuid('varpart')
+  abootpart_a_uuid:
+    mpp-eval: _compute_uuid('abootpart_a')
+  abootpart_b_uuid:
+    mpp-eval: _compute_uuid('abootpart_b')
+  vbmetapart_a_uuid:
+    mpp-eval: _compute_uuid('vbmetapart_a')
+  vbmetapart_b_uuid:
+    mpp-eval: _compute_uuid('vbmetapart_b')
   rootpart_uuid:
-    mpp-eval: (rootpart_uuid if static_uuids else str(_uuid.uuid4()))
+    mpp-eval: _compute_uuid('rootpart')
   luks_uuid:
-    mpp-eval: (luks_uuid if static_uuids else str(_uuid.uuid4()))
+    mpp-eval: _compute_uuid('luks')
 
   # Derive these from use_boot
   use_aboot:

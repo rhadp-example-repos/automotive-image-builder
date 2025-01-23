@@ -38,7 +38,7 @@ mpp-define-image:
               name: boot_a
               size: $abootpart_size
               type: 20117F86-E985-4357-B9EE-374BC1D8487D # Android boot v2
-              uuid: $abootpart_uuid_a
+              uuid: $abootpart_a_uuid
               attrs:
                 mpp-eval: active_gpt_attrs
           - mpp-if: use_abootpart
@@ -47,7 +47,7 @@ mpp-define-image:
               name: boot_b
               size: $abootpart_size
               type: 20117F86-E985-4357-B9EE-374BC1D8487D # Android boot v2
-              uuid: $abootpart_uuid_b
+              uuid: $abootpart_b_uuid
               attrs:
                 mpp-eval: inactive_gpt_attrs
           - mpp-if: use_vbmetapart
@@ -56,7 +56,7 @@ mpp-define-image:
               name: vbmeta_a
               size: $vbmetapart_size
               type: 20117F86-E985-4357-B9EE-374BC1D8487D # Android boot v2
-              uuid: $vbmetapart_uuid_a
+              uuid: $vbmetapart_a_uuid
               attrs:
                 mpp-eval: active_gpt_attrs
           - mpp-if: use_vbmetapart
@@ -65,7 +65,7 @@ mpp-define-image:
               name: vbmeta_b
               size: $vbmetapart_size
               type: 20117F86-E985-4357-B9EE-374BC1D8487D # Android boot v2
-              uuid: $vbmetapart_uuid_b
+              uuid: $vbmetapart_b_uuid
               attrs:
                 mpp-eval: inactive_gpt_attrs
         - mpp-if: use_testpart
