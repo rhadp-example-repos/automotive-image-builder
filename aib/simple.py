@@ -210,21 +210,70 @@ class QMContents(Contents):
         Contents.set_defines(self)
 
 
+def validateNoFusa(validator, noFusa, instance, schema):
+    # For objects, noFusa means we disallow the named properties
+    if validator.is_type(instance, "object"):
+        for prop in noFusa:
+            if prop in instance:
+                message = (
+                    f"With --fusa, property '{prop}' is not allowed in {instance!r}"
+                )
+                yield jsonschema.ValidationError(message)
+
+    # For values, noFusa means we don't allow any of the listed values
+    if validator.is_type(instance, "string") or validator.is_type(instance, "number"):
+        for value in noFusa:
+            if instance == value:
+                message = (
+                    f"With --fusa, value '{value}'  is not allowed in {instance!r}"
+                )
+                yield jsonschema.ValidationError(message)
+
+
+def extend_with_default(validator_class):
+    validate_properties = validator_class.VALIDATORS["properties"]
+
+    def set_defaults(validator, properties, instance, schema):
+        for property, subschema in properties.items():
+            if isinstance(subschema, dict) and "default" in subschema:
+                instance.setdefault(property, subschema["default"])
+
+        for error in validate_properties(validator, properties, instance, schema):
+            yield error
+
+    return jsonschema.validators.extend(
+        validator_class,
+        {"properties": set_defaults},
+    )
+
+
 class ManifestLoader:
     def __init__(self, defines):
         self.aib_basedir = defines["_basedir"]
         self.workdir = defines["_workdir"]
         self.defines = defines
+        fusa = defines["use_fusa"]
 
         # Note: Draft7 is what osbuild uses, and is available in rhel9
+        base_cls = jsonschema.Draft7Validator
+        validator_cls = base_cls
+        if fusa:
+            validator_cls = jsonschema.validators.extend(
+                base_cls,
+                validators={
+                    "noFusa": validateNoFusa,
+                },
+            )
+        validator_cls = extend_with_default(validator_cls)
+
         with open(
             os.path.join(self.aib_basedir, "files/manifest_schema.yml"),
             mode="r",
         ) as file:
             self.aib_schema = yaml.load(file, yaml.SafeLoader)
-            jsonschema.Draft7Validator.check_schema(self.aib_schema)
+            base_cls.check_schema(self.aib_schema)
 
-        self.validator = jsonschema.Draft7Validator(self.aib_schema)
+        self.validator = validator_cls(self.aib_schema)
 
     def set(self, key, value):
         if (isinstance(value, list) or isinstance(value, dict)) and len(value) == 0:
@@ -318,6 +367,9 @@ class ManifestLoader:
             except yaml.YAMLError as exc:
                 raise exceptions.ManifestParseError(manifest_basedir) from exc
 
+        self._load(manifest, path, manifest_basedir)
+
+    def _load(self, manifest, path, manifest_basedir):
         errors = sorted(self.validator.iter_errors(manifest), key=lambda e: e.path)
         if errors:
             raise exceptions.SimpleManifestParseError(path, errors)

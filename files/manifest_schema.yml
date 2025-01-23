@@ -60,11 +60,12 @@ $defs:
         description: The name to use for the container image when embedded (if not set, same as source)
         type: string
       containers-transport:
-        description: "The containers transport from which to copy the container."
+        description: "The containers transport from which to copy the container. (fusa: containers-storage is not allowed with fusa)"
         type: string
-        default: docker
         enum:
           - docker
+          - containers-storage
+        noFusa:
           - containers-storage
       index:
         description: "If set to true, also install the related manifest-list for the image."
@@ -146,7 +147,7 @@ $defs:
         default: false
 
   chmod_file:
-    dscription: Change file permissions
+    description: Change file permissions
     type: object
     additionalProperties: false
     required:
@@ -164,7 +165,7 @@ $defs:
         type: boolean
 
   make_dir:
-    dscription: Create a directory
+    description: Create a directory
     type: object
     additionalProperties: false
     required:
@@ -276,23 +277,19 @@ $defs:
   dynamic_network:
     type: object
     description: Use network manager for dynamic network setup, currently has no options
+    additionalProperties: false
 
   network:
-    description: What type of network setup to use, default is dynamic
-    oneOf:
-      - type: object
-        additionalProperties: false
-        properties:
-          dynamic:
-            $ref: "#/$defs/dynamic_network"
-      - type: object
-        additionalProperties: false
-        properties:
-          static:
-            $ref: "#/$defs/static_network"
+    type: object
+    additionalProperties: false
+    maxProperties: 1
+    properties:
+      static:
+        $ref: "#/$defs/static_network"
+      dynamic:
+        $ref: "#/$defs/dynamic_network"
 
   image:
-    description: Image and disk options
     type: object
     additionalProperties: false
     properties:
@@ -349,7 +346,6 @@ $defs:
         type: string
 
   qm:
-    description: QM partition options
     type: object
     additionalProperties: false
     properties:
@@ -367,20 +363,19 @@ $defs:
             description: MemoryHigh for QM partition (see systemd.resource-control manpage)
             type: string
   auth:
-    description: Authentication options
     type: object
     additionalProperties: false
     properties:
       root_password:
+        type:
+          - string
+          - "null"
         description: Roots's encrypted password, as returned by crypt(3), or nothing to disable
-        oneOf:
-          - type: string
-          - type: "null"
       root_ssh_key:
         description: Roots's ssh key, or nothing to disable
-        oneOf:
-          - type: string
-          - type: "null"
+        type:
+          - string
+          - "null"
       sshd_config:
         description: Configuration of ssh daemon
         type: object
@@ -413,7 +408,6 @@ $defs:
             $ref: "#/$defs/add_group"
 
   kernel:
-    description: Kernel options
     type: object
     additionalProperties: false
     properties:
@@ -507,6 +501,8 @@ properties:
   network:
     description: Define the Network setup, which can be of two types, `dynamic` or `static`, the default is dynamic
     $ref: "#/$defs/network"
+    default:
+      dynamic: {}
   image:
     description: Configure global options for the image.
     $ref: "#/$defs/image"
