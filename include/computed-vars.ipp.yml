@@ -142,6 +142,9 @@ mpp-vars:
       - mpp-eval: denylist_modules
       - mpp-if: use_fusa
         then:
+          mpp-eval: fusa_denylist_modules
+      - mpp-if: use_fusa
+        then:
           mpp-eval: target_fusa_denylist_modules
   dracut_modules:
     mpp-join:
