@@ -11,7 +11,7 @@ import shutil
 
 import yaml
 
-from .utils import yaml_load_ordered
+from .utils import yaml_load_ordered, extract_comment_header
 from .exports import export, EXPORT_DATAS, get_export_data
 from .runner import Runner
 from .ostree import OSTree
@@ -20,40 +20,6 @@ from . import exceptions
 from . import AIBParameters
 from . import log
 from . import vmhelper
-
-
-def extract_comment_header(path):
-    lines = []
-    with open(path, mode="r") as file:
-        for line in file:
-            line = line.strip()
-            if line[0] != "#":
-                break
-            lines.append(line[1:])
-
-    # Unindent
-    min_indent = -1
-    for line in lines:
-        indent = 0
-        for c in line:
-            if c == " ":
-                indent = indent + 1
-            else:
-                if min_indent < 0:
-                    min_indent = indent
-                else:
-                    min_indent = min(indent, min_indent)
-                break
-
-    if min_indent > 0:
-        for i in range(len(lines)):
-            lines[i] = lines[i][min_indent:]
-
-    # Remove trailing empty lines
-    while len(lines) > 0 and lines[-1] == "":
-        lines.pop()
-
-    return "\n".join(lines)
 
 
 def list_ipp_items(args, item_type):
@@ -70,7 +36,8 @@ def list_ipp_items(args, item_type):
             print(d)
         else:
             path = items[d]
-            header = extract_comment_header(path)
+            with open(path, mode="r") as file:
+                header = extract_comment_header(file)
             paras = header.split("\n\n")
             first_para = paras[0].replace("\n", " ")
             print(f"{d} - {first_para}")
