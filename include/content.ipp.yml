@@ -96,7 +96,7 @@ mpp-vars:
       [etc]
       { "transient=true" if use_transient_etc else "" }
       [composefs]
-      enabled={"maybe" if not use_composefs else "signed" if use_composefs_signed else "yes" }
+      enabled={"maybe" if not use_composefs else "signed" if use_composefs_signed else "verity" }
   build_info:
     mpp-format-string: |
       RELEASE="{release_name}"
