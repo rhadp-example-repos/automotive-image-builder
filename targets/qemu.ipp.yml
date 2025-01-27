@@ -3,7 +3,8 @@ version: '2'
 mpp-vars:
   use_autoinit: true
   static_ip_iface: "enp0s2"
-  static_ip_module: "virtio_net"
+  static_ip_modules:
+    - "virtio_net"
   consoles:
     mpp-if: arch == 'aarch64'
     then: "ttyAMA0 tty0"

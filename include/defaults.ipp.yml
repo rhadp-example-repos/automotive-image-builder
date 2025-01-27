@@ -121,7 +121,7 @@ mpp-vars:
   static_gw: "10.0.2.2"
   static_dns: "10.0.2.3"
   static_ip_iface: ""
-  static_ip_module: ""
+  static_ip_modules: []
   static_ip_uuid: 6fb8f75a-7fde-4906-a51e-a70e56c58742
 
   # These are available for end users, not used internally

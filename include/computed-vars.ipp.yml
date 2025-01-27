@@ -167,8 +167,9 @@ mpp-vars:
           - erofs
           - overlay
           - loop
-      - - mpp-if: use_static_ip and static_ip_module
-          then: $static_ip_module
+      - mpp-if: use_static_ip and static_ip_modules
+        then:
+          mpp-eval: $static_ip_modules
   dracut_omit_modules:
     mpp-join:
       - mpp-eval: dracut_omit_modules
@@ -177,8 +178,9 @@ mpp-vars:
   load_modules:
     mpp-join:
       - mpp-eval: load_modules
-      - - mpp-if: use_static_ip and static_ip_module
-          then: $static_ip_module
+      - mpp-if: use_static_ip and static_ip_modules
+        then:
+          mpp-eval: $static_ip_modules
   auto_modules_conf:
     mpp-format-string: |
       {newline.join(load_modules)}
@@ -210,7 +212,7 @@ mpp-vars:
       - mpp-if: use_luks and luks_auto_unlock
         then:
           - /usr/.auto-unlock-key
-      - mpp-if: use_static_ip and static_ip_module
+      - mpp-if: use_static_ip and static_ip_modules
         then:
           - /usr/lib/modules-load.d/auto-modules.conf
   kernel_opts:
