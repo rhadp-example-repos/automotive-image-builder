@@ -167,6 +167,8 @@ mpp-vars:
           - erofs
           - overlay
           - loop
+      - - mpp-if: use_static_ip and static_ip_module
+          then: $static_ip_module
   dracut_omit_modules:
     mpp-join:
       - mpp-eval: dracut_omit_modules
@@ -208,6 +210,9 @@ mpp-vars:
       - mpp-if: use_luks and luks_auto_unlock
         then:
           - /usr/.auto-unlock-key
+      - mpp-if: use_static_ip and static_ip_module
+        then:
+          - /usr/lib/modules-load.d/auto-modules.conf
   kernel_opts:
     mpp-join:
       - - rw

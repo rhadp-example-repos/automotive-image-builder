@@ -201,7 +201,8 @@ mpp-vars:
     mpp-format-string: |
       [Unit]
       After=systemd-modules-load.service
-      Before=systemd-udevd.service
+      Requires=sys-subsystem-net-devices-{static_ip_iface}.device
+      After=sys-subsystem-net-devices-{static_ip_iface}.device
       DefaultDependencies=no
 
       [Service]
