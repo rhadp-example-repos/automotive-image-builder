@@ -1,0 +1,28 @@
+#!/usr/bin/bash
+
+export AIB=${AIB:-`pwd`/automotive-image-builder}
+export TESTDIR=${TESTDIR:-`pwd`/tests}
+export OUTDIR=${OUTDIR:-`pwd`/_testdir}
+
+RES=0
+
+mkdir -p $OUTDIR
+export BUILDDIR=$OUTDIR/build
+export RUNDIR=$OUTDIR/run
+
+for casefile in $TESTDIR/integration/*.sh; do
+    case=$(basename $casefile .sh)
+    echo =========== $case ============
+
+    cd $OUTDIR
+    rm -rf $RUNDIR
+    mkdir $RUNDIR
+    cd $RUNDIR
+
+    if ! bash -x -e $casefile; then
+       echo FAILED
+       RES=1
+    fi
+done
+
+exit $RES
