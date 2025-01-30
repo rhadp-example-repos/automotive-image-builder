@@ -190,6 +190,8 @@ mpp-vars:
       - mpp-eval: selinux_booleans
       - - mpp-if: selinux_secure_mode
           then: secure_mode_policyload=true
+      - - mpp-if: use_fusa
+          then: deny_ptrace=true
   # This file only exists to satisfy the upstream tuned realtime profile,
   # which fails to apply if these values are undefined.
   # Changing this will not reflect in boot-time cmdline options for tuned,
