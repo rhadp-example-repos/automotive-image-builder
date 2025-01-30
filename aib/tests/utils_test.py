@@ -36,3 +36,11 @@ class TestExtractCommentsHeader(unittest.TestCase):
 
         res = utils.extract_comment_header(StringIO(data))
         self.assertEqual(res, "foo\n indented")
+
+        data = """#empty lines
+        #
+        #
+        some other text
+        """
+        res = utils.extract_comment_header(StringIO(data))
+        self.assertEqual(res, "empty lines")
