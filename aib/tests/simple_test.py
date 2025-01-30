@@ -1,14 +1,10 @@
 import pytest
 import unittest
-from unittest.mock import MagicMock, patch
 
 import aib
 from aib.simple import (
     without,
     parse_size,
-    Contents,
-    QMContents,
-    ExtraInclude,
     ManifestLoader,
 )
 
