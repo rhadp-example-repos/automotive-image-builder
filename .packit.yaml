@@ -12,15 +12,15 @@ srpm_build_deps:
   - rpm-build
 
 actions: &common_actions
-    post-upstream-clone:
-      - bash -c 'git config --global --add safe.directory $(pwd)'
-      - bash -c '.copr/build-rpm.sh --generate-spec .copr/dev.spec'
+  post-upstream-clone:
+    - bash -c 'git config --global --add safe.directory $(pwd)'
+    - bash -c '.copr/build-rpm.sh --generate-spec .copr/dev.spec'
 
-    get-current-version:
-      - bash -c 'grep "^VERSION" Makefile | sed -e "s:^VERSION=::g"'
+  get-current-version:
+    - bash -c 'grep "^VERSION" Makefile | sed -e "s:^VERSION=::g"'
 
-    create-archive:
-      - bash -c '.copr/build-rpm.sh --build-source .copr/dev.spec --print-source-path'
+  create-archive:
+    - bash -c '.copr/build-rpm.sh --build-source .copr/dev.spec --print-source-path'
 
 jobs:
   - job: copr_build
