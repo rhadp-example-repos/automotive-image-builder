@@ -1,4 +1,3 @@
-import pytest
 import unittest
 import collections
 from io import StringIO

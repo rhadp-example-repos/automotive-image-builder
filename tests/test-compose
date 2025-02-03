@@ -13,11 +13,13 @@ tests_dir = os.path.dirname(os.path.realpath(tests))
 with open(tests) as f:
     tests = json.load(f)
 
+
 def convert_elem(elem):
     res = elem
     if isinstance(elem, str):
-        res = { "value": elem }
+        res = {"value": elem}
     return res
+
 
 def convert_list(elem):
     res = []
@@ -27,6 +29,7 @@ def convert_list(elem):
     else:
         res.append(convert_elem(elem))
     return res
+
 
 default_manifest = tests["default-manifest"]
 arches = convert_list(tests["arch"])
@@ -43,26 +46,30 @@ if len(sys.argv) > 3:
         distros = [convert_elem("cs9")]
         arches = [convert_elem("aarch64")]
     else:
-        print(f"Unrecognized mode: {sys.argv[2]}. Please use one of ['distro', 'target']")
+        print(
+            f"Unrecognized mode: {sys.argv[2]}. Please use one of ['distro', 'target']"
+        )
         sys.exit(1)
 modes = convert_list(tests["mode"])
 defines = convert_list(tests["defines"])
+
 
 def collect_args(elms, arg):
     res = []
     for elm in elms:
         if arg in elm:
             v = elm[arg]
-            if not v in res:
+            if v not in res:
                 res.append(v)
     return res
+
 
 def collect_list_args(elms, arg):
     res = []
     for elm in elms:
         if arg in elm:
             v = elm[arg]
-            if not v in res:
+            if v not in res:
                 res.extend(v)
     return res
 
@@ -70,17 +77,19 @@ def collect_list_args(elms, arg):
 def filter_by_arch(elms, arch):
     arch_is = collect_args(elms, "arch-is")
     if arch_is:
-        return not arch in arch_is
+        return arch not in arch_is
     return False
+
 
 def filter_by_distro(elms, distro):
     distro_is = collect_list_args(elms, "distro-is")
-    if distro_is and not distro in distro_is:
+    if distro_is and distro not in distro_is:
         return True
     distro_is_not = collect_list_args(elms, "distro-is-not")
     if distro_is_not and distro in distro_is_not:
         return True
     return False
+
 
 to_run = []
 for distro in distros:
@@ -94,22 +103,37 @@ for distro in distros:
                     if filter_by_distro(elms, distro["value"]):
                         continue
 
-                    args = [ "--distro", distro["value"], "--arch", arch["value"], "--target", target["value"], "--mode", mode["value"]]
+                    args = [
+                        "--distro",
+                        distro["value"],
+                        "--arch",
+                        arch["value"],
+                        "--target",
+                        target["value"],
+                        "--mode",
+                        mode["value"],
+                    ]
                     if define["value"]:
                         args += ["--define", define["value"]]
 
                     # Make json reproducible
-                    args += ["--define", "timestamp=1",
-                             "--define", "build_timestamp=1",
-                             "--define", "image_uuid=ffffffff-ffff-ffff-ffff-ffffffffffff"
-                             ]
+                    args += [
+                        "--define",
+                        "timestamp=1",
+                        "--define",
+                        "build_timestamp=1",
+                        "--define",
+                        "image_uuid=ffffffff-ffff-ffff-ffff-ffffffffffff",
+                    ]
 
                     manifests = collect_args(elms, "manifest")
                     if manifests:
                         for m in manifests:
                             to_run.append(args + [os.path.join(tests_dir, m)])
                     else:
-                        to_run.append(args + [os.path.join(tests_dir, default_manifest)])
+                        to_run.append(
+                            args + [os.path.join(tests_dir, default_manifest)]
+                        )
 
 os.makedirs(".test", exist_ok=True)
 
@@ -124,13 +148,13 @@ for i, args in enumerate(to_run):
         subprocess.run(cmdline, check=True)
     except subprocess.CalledProcessError:
         print("*** Failed to compose, exiting ***")
-        sys.exit(1) # cmd will have printed the error
+        sys.exit(1)  # cmd will have printed the error
 
     with open(file) as f:
         try:
             manifest_data = json.load(f)
         except json.decoder.JSONDecodeError as e:
-            print (f"Invalid generated json manifest  '{file}': " + str(e))
+            print(f"Invalid generated json manifest  '{file}': " + str(e))
             print("*** Failed to validate, exiting ***")
             sys.exit(1)
 
@@ -144,6 +168,6 @@ for i, args in enumerate(to_run):
         res = json.loads(stdout)
         print(res["title"])
         for e in res["errors"]:
-            print(e["message"], " at ",e["path"])
+            print(e["message"], " at ", e["path"])
         print("*** Failed to validate, exiting ***")
-        sys.exit(1) # cmd will have printed the error
+        sys.exit(1)  # cmd will have printed the error
