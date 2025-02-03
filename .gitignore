@@ -8,3 +8,4 @@ __pycache__
 .tox
 .coverage
 report.xml
+.pre-commit-config.yaml

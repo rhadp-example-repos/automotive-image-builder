@@ -120,7 +120,7 @@ elif [ $BUILD_SOURCE = true ] && [ $BUILD_BINARY = false ]; then
   rpmbuild --define "_topdir $(pwd)/.rpmbuild" -bs .rpmbuild/SPECS/$PACKAGE_NAME.spec
 fi
 
-#Copy spec file to the output_dir 
+#Copy spec file to the output_dir
 cp -f .rpmbuild/SPECS/$PACKAGE_NAME.spec "$OUTPUT_DIR"
 
 #Copy rpm packages to the output_dir
