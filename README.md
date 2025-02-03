@@ -142,7 +142,7 @@ Here are some commonly used variable supported and what they mean:
 * `static_gw`: The default gateway ip
 * `static_dns`: The dns server ip
 * `static_ip_iface`: The network interface name
-* `static_ip_module`: The network driver kernel module to load (if any)
+* `static_ip_modules`: The network driver kernel modules to load (if any)
 * `bluechi_controller_host_ip`: The IP address of the bluechi controller (used by bluechi-agents)
 * `bluechi_nodename`: The node name of the bluechi-agent on the image (qm agent gets "qm." prepended to name)
 * `bluechi_controller_allowed_node_names`: A list of node names accepted by the bluechi controller
