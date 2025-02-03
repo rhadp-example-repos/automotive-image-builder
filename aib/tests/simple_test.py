@@ -37,6 +37,14 @@ def test_parse_string(s, res):
     assert parse_size(s) == res
 
 
+def test_parse_unsupported_string():
+    """
+    Cover negative case for parse_string
+    """
+    with pytest.raises(TypeError):
+        parse_size("2Kg")
+
+
 class TestManifestLoader(unittest.TestCase):
     def load_manifest(self, manifest, use_fusa=False):
         defines = {
