@@ -8,9 +8,9 @@ mpp-vars:
   use_abl: false
   use_efi_runtime: false
   target_fusa_denylist_modules:
-    - ufs_renesas
+    - ufs-renesas
     - at24
-    - pcie_rcar_gen4
+    - pcie-rcar-gen4
   static_ip_modules:
     - gpio-rcar
     - marvell10g
