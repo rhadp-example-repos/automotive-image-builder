@@ -29,9 +29,11 @@ mkdir -p /dev/shm/docs
 cd /dev/shm/docs
 dnf install -y git rpm-build make
 dnf copr enable -y @centos-automotive-sig/osbuild-auto
-git clone https://gitlab.com/CentOS/automotive/src/automotive-image-builder.git
+git clone ${CI_REPOSITORY_URL}
 cd automotive-image-builder
-git checkout $CI_COMMIT_REF_NAME
+git fetch origin ${CI_MERGE_REQUEST_REF_PATH}
+git checkout FETCH_HEAD
+git show -s
 make rpm_dev
 dnf localinstall -y automotive-image-builder-*.noarch.rpm
 curl -o test_all.sh \

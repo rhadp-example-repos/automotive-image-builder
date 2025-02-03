@@ -11,12 +11,12 @@ from aib.main import rewrite_manifest
          "stages": [
              {"inputs": {'root_extra_content': {'mpp-embed': {'id': 'aefb4c0',
                                                               'path': 'files/relative/path/file1.txt'},
-                                                  'origin': 'org.osbuild.source',
-                                                  'type': 'org.osbuild.files'},
-                        },
+                                                'origin': 'org.osbuild.source',
+                                                'type': 'org.osbuild.files'},
+                         },
               "options": {'paths': [{'from': {'mpp-format-string': "input://root_extra_content/{embedded['aefb4c0']}"},
                                      'to': 'tree:///etc/destination/file1.conf'}]}
-             },
+              },
          ]},
         {"name": "qm_rootfs"}
     ]}, [
@@ -26,12 +26,12 @@ from aib.main import rewrite_manifest
              {'mpp-eval': 'init_passwd_stage'},
              {"inputs": {'root_extra_content': {'mpp-embed': {'id': 'aefb4c0',
                                                               'path': '/new/absolute/path/files/relative/path/file1.txt'},
-                                                  'origin': 'org.osbuild.source',
-                                                  'type': 'org.osbuild.files'},
-                        },
+                                                'origin': 'org.osbuild.source',
+                                                'type': 'org.osbuild.files'},
+                         },
               "options": {'paths': [{'from': {'mpp-format-string': "input://root_extra_content/{embedded['aefb4c0']}"},
                                      'to': 'tree:///etc/destination/file1.conf'}]}
-             },
+              },
          ]},
         {"name": "qm_rootfs"},
     ], id="rootfs-single-relative"),
@@ -48,12 +48,12 @@ from aib.main import rewrite_manifest
                                                                 'path': 'files/relative/path/file2.txt'},
                                                   'origin': 'org.osbuild.source',
                                                   'type': 'org.osbuild.files'},
-                        },
+                         },
               "options": {'paths': [{'from': {'mpp-format-string': "input://root_extra_content_0/{embedded['aefb4c0']}"},
                                      'to': 'tree:///etc/destination/file1.conf'},
                                     {'from': {'mpp-format-string': "input://root_extra_content_1/{embedded['6e3b505']}"},
                                      'to': 'tree:///etc/destination/file2.conf'}]}
-             },
+              },
          ]},
         {"name": "qm_rootfs"}
     ]}, [
@@ -69,12 +69,12 @@ from aib.main import rewrite_manifest
                                                                 'path': '/new/absolute/path/files/relative/path/file2.txt'},
                                                   'origin': 'org.osbuild.source',
                                                   'type': 'org.osbuild.files'}
-                        },
+                         },
               "options": {'paths': [{'from': {'mpp-format-string': "input://root_extra_content_0/{embedded['aefb4c0']}"},
                                      'to': 'tree:///etc/destination/file1.conf'},
                                     {'from': {'mpp-format-string': "input://root_extra_content_1/{embedded['6e3b505']}"},
                                      'to': 'tree:///etc/destination/file2.conf'}]}
-             },
+              },
          ]},
         {"name": "qm_rootfs"},
     ], id="rootfs-multiple-relative"),
@@ -86,17 +86,17 @@ from aib.main import rewrite_manifest
                                                                 'path': '/files/absolute/path/file1.txt'},
                                                   'origin': 'org.osbuild.source',
                                                   'type': 'org.osbuild.files'},
-                        
+
                          'root_extra_content_1': {'mpp-embed': {'id': '6e3b505',
                                                                 'path': '../files/relative/path/file2.txt'},
                                                   'origin': 'org.osbuild.source',
                                                   'type': 'org.osbuild.files'},
-                        },
+                         },
               "options": {'paths': [{'from': {'mpp-format-string': "input://root_extra_content_0/{embedded['aefb4c0']}"},
                                      'to': 'tree:///etc/destination/file1.conf'},
                                     {'from': {'mpp-format-string': "input://root_extra_content_1/{embedded['6e3b505']}"},
                                      'to': 'tree:///etc/destination/file2.conf'}]}
-             },
+              },
          ]},
         {"name": "qm_rootfs"}
     ]}, [
@@ -108,16 +108,16 @@ from aib.main import rewrite_manifest
                                                                 'path': '/files/absolute/path/file1.txt'},
                                                   'origin': 'org.osbuild.source',
                                                   'type': 'org.osbuild.files'},
-                        'root_extra_content_1': {'mpp-embed': {'id': '6e3b505',
+                         'root_extra_content_1': {'mpp-embed': {'id': '6e3b505',
                                                                 'path': '/new/absolute/files/relative/path/file2.txt'},
                                                   'origin': 'org.osbuild.source',
                                                   'type': 'org.osbuild.files'}
-                        },
+                         },
               "options": {'paths': [{'from': {'mpp-format-string': "input://root_extra_content_0/{embedded['aefb4c0']}"},
                                      'to': 'tree:///etc/destination/file1.conf'},
                                     {'from': {'mpp-format-string': "input://root_extra_content_1/{embedded['6e3b505']}"},
                                      'to': 'tree:///etc/destination/file2.conf'}]}
-             },
+              },
          ]},
         {"name": "qm_rootfs"},
     ], id="rootfs-last-relative"),
@@ -128,25 +128,25 @@ from aib.main import rewrite_manifest
          "stages": [
              {"inputs": {'qm_extra_content': {'mpp-embed': {'id': '292759f',
                                                             'path': '../files/relative/path/file1.txt'},
-                                                  'origin': 'org.osbuild.source',
-                                                  'type': 'org.osbuild.files'},
-                        },
+                                              'origin': 'org.osbuild.source',
+                                              'type': 'org.osbuild.files'},
+                         },
               "options": {'paths': [{'from': {'mpp-format-string': "input://qm_extra_content/{embedded['292759f']}"},
                                      'to': 'tree:///etc/destination/file1.conf'}]}
-             },
+              },
          ]}
     ]}, [
         {"name": "rootfs"},
         {"name": "qm_rootfs",
          "stages": [
              {"inputs": {'qm_extra_content': {'mpp-embed': {'id': '292759f',
-                                                                'path': '/new/absolute/files/relative/path/file1.txt'},
-                                                  'origin': 'org.osbuild.source',
-                                                  'type': 'org.osbuild.files'},
-                        },
+                                                            'path': '/new/absolute/files/relative/path/file1.txt'},
+                                              'origin': 'org.osbuild.source',
+                                              'type': 'org.osbuild.files'},
+                         },
               "options": {'paths': [{'from': {'mpp-format-string': "input://qm_extra_content/{embedded['292759f']}"},
                                      'to': 'tree:///etc/destination/file1.conf'}]}
-             },
+              },
          ]}
     ], id="qm-rootfs-single-relative"),
     # A path not as part of an `mpp-embed` stage shall not be changed.
@@ -158,10 +158,10 @@ from aib.main import rewrite_manifest
              {"inputs": {'qm_extra_content': {'path': '../files/relative/path/file1.txt',
                                               'origin': 'org.osbuild.source',
                                               'type': 'org.osbuild.files'},
-                        },
+                         },
               "options": {'paths': [{'from': {'mpp-format-string': "input://qm_extra_content/{embedded['292759f']}"},
                                      'to': 'tree:///etc/destination/file1.conf'}]}
-             },
+              },
          ]}
     ]}, [
         {"name": "rootfs"},
@@ -170,10 +170,10 @@ from aib.main import rewrite_manifest
              {"inputs": {'qm_extra_content': {'path': '../files/relative/path/file1.txt',
                                               'origin': 'org.osbuild.source',
                                               'type': 'org.osbuild.files'},
-                        },
+                         },
               "options": {'paths': [{'from': {'mpp-format-string': "input://qm_extra_content/{embedded['292759f']}"},
                                      'to': 'tree:///etc/destination/file1.conf'}]}
-             },
+              },
          ]},
     ], id="qm-rootfs-relative-unchanged"),
     # The rootfs pipelines has empty stages declared, so appends 'kernel_cmdline_stage'.

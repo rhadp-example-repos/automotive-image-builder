@@ -1,14 +1,10 @@
 import pytest
 import unittest
-from unittest.mock import MagicMock, patch
 
 import aib
 from aib.simple import (
     without,
     parse_size,
-    Contents,
-    QMContents,
-    ExtraInclude,
     ManifestLoader,
 )
 
@@ -39,6 +35,14 @@ def test_without(orig, key, res):
 )
 def test_parse_string(s, res):
     assert parse_size(s) == res
+
+
+def test_parse_unsupported_string():
+    """
+    Cover negative case for parse_string
+    """
+    with pytest.raises(TypeError):
+        parse_size("2Kg")
 
 
 class TestManifestLoader(unittest.TestCase):

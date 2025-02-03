@@ -307,7 +307,8 @@ class ManifestLoader:
             self.set_from("static_gw", static, "gateway")
             self.set_from("static_dns", static, "dns")
             self.set_from("static_ip_iface", static, "iface")
-            self.set_from("static_ip_module", static, "load_module")
+            if "load_module" in static:
+                self.set("static_ip_modules", [static["load_module"]])
 
     def handle_auth(self, auth):
         # Always override to disable by default
