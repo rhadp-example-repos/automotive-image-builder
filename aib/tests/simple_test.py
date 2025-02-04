@@ -154,3 +154,22 @@ class TestManifestLoader(unittest.TestCase):
                     },
                 }
             )
+
+    def test_handle_image_invalid_rel_size_negative(self):
+        """
+        Validate that partition negative relative partition size fails the parser check.
+        """
+        with pytest.raises(aib.exceptions.SimpleManifestParseError):
+            self.load_manifest(
+                {
+                    "name": "foo",
+                    "image": {
+                        "image_size": "1kB",
+                        "partitions": {
+                            "var": {
+                                "relative_size": -1,
+                            }
+                        },
+                    },
+                }
+            )

@@ -348,7 +348,7 @@ class ManifestLoader:
                     self.set(prefix + "varpart_size", int(var_size / 512))
                 elif "relative_size" in part:
                     rel_var_size = part.get("relative_size")
-                    if rel_var_size < 0 or rel_var_size >= 1:
+                    if rel_var_size >= 1:
                         raise exceptions.InvalidMountRelSize(mountpoint)
                     self.set(prefix + "varpart_relative_size", rel_var_size)
                 elif "external" in part and part["external"]:
