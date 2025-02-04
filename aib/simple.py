@@ -209,7 +209,7 @@ class QMContents(Contents):
         Contents.set_defines(self)
 
 
-def validateNoFusa(validator, noFusa, instance, schema):
+def validateNoFusa(validator, noFusa, instance, _schema):
     # For objects, noFusa means we disallow the named properties
     if validator.is_type(instance, "object"):
         for prop in noFusa:
