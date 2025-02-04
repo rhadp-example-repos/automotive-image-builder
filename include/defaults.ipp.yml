@@ -83,7 +83,7 @@ mpp-vars:
 
   # Root authentication info, please change password
   root_password: $6$xoLqEUz0cGGJRx01$H3H/bFm0myJPULNMtbSsOFd/2BnHqHkMD92Sfxd.EKM9hXTWSmELG8cf205l6dktomuTcgKGGtGDgtvHVXSWU.
-  root_ssh_key: ""
+  root_ssh_keys: []
   ssh_permit_root_login: false                  # Only used by aws target
   ssh_permit_password_auth: false               # Not used by a-i-b
 

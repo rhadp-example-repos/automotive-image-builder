@@ -38,10 +38,10 @@ pipelines:
                     mpp-if: root_password
                     then:
                       mpp-eval: root_password
-                  key:
-                    mpp-if: root_ssh_key
+                  keys:
+                    mpp-if: root_ssh_keys
                     then:
-                      mpp-eval: root_ssh_key
+                      mpp-eval: root_ssh_keys
           - type: org.osbuild.systemd
             options:
               enabled_services:

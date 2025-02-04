@@ -48,10 +48,10 @@ pipelines:
                     mpp-if: root_password
                     then:
                       mpp-eval: root_password
-                  key:
-                    mpp-if: root_ssh_key
+                  keys:
+                    mpp-if: root_ssh_keys
                     then:
-                      mpp-eval: root_ssh_key
+                      mpp-eval: root_ssh_keys
           - mpp-if: use_composefs
             then:
               type: org.osbuild.copy
@@ -382,8 +382,8 @@ pipelines:
         options:
           users:
             root:
-              key:
-                mpp-eval: root_ssh_key
+              keys:
+                mpp-eval: root_ssh_keys
       - type: org.osbuild.ostree.selinux
         options:
           deployment:
