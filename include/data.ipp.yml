@@ -53,7 +53,7 @@ mpp-vars:
     root:x:0:
     sgx:x:996:
     ssh_keys:x:101:
-    sshd:x:74:74:Privilege-separated SSH:/var/empty/sshd:/usr/sbin/nologin
+    sshd:x:74:
     sys:x:3:
     systemd-coredump:x:997:
     systemd-journal:x:190:
