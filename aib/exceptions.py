@@ -54,3 +54,19 @@ class UnsupportedExport(AIBException):
 
     def __str__(self):
         return f"Unsupported export '{self.export}'"
+
+
+class InvalidMountSize(AIBException):
+    def __init__(self, mountpoint):
+        self.mountpoint = mountpoint
+
+    def __str__(self):
+        return f"{self.mountpoint} can't be larger than image"
+
+
+class InvalidMountRelSize(AIBException):
+    def __init__(self, mountpoint):
+        self.mountpoint = mountpoint
+
+    def __str__(self):
+        return f"Invalid relative size for {self.mountpoint}, must be between 0 and 1"

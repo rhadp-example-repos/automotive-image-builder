@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import os
-import sys
 import yaml
 import re
 
@@ -210,7 +209,7 @@ class QMContents(Contents):
         Contents.set_defines(self)
 
 
-def validateNoFusa(validator, noFusa, instance, schema):
+def validateNoFusa(validator, noFusa, instance, _schema):
     # For objects, noFusa means we disallow the named properties
     if validator.is_type(instance, "object"):
         for prop in noFusa:
@@ -345,16 +344,12 @@ class ManifestLoader:
                     var_size = part.get("size")
                     var_size = parse_size(var_size)
                     if image_size and var_size >= image_size:
-                        print(f"Error: {mountpoint} can't be larger than image")
-                        sys.exit(1)
+                        raise exceptions.InvalidMountSize(mountpoint)
                     self.set(prefix + "varpart_size", int(var_size / 512))
                 elif "relative_size" in part:
                     rel_var_size = part.get("relative_size")
-                    if rel_var_size < 0 or rel_var_size >= 1:
-                        print(
-                            f"Error: Invalid relative size for {mountpoint}, must be between 0 and 1"
-                        )
-                        sys.exit(1)
+                    if rel_var_size >= 1:
+                        raise exceptions.InvalidMountRelSize(mountpoint)
                     self.set(prefix + "varpart_relative_size", rel_var_size)
                 elif "external" in part and part["external"]:
                     self.set(prefix + "varpart_size", -1)

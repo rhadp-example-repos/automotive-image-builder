@@ -116,3 +116,60 @@ class TestManifestLoader(unittest.TestCase):
         self.assertEqual(len(containers), 1)
         self.assertIn("tag", containers[0])
         self.assertEqual(containers[0]["tag"], "latest")
+
+    def test_handle_image_invalid_size(self):
+        """
+        Validate that partition size equal (or greater) that the image size fails.
+        """
+        with pytest.raises(aib.exceptions.InvalidMountSize):
+            self.load_manifest(
+                {
+                    "name": "foo",
+                    "image": {
+                        "image_size": "1kB",
+                        "partitions": {
+                            "var": {
+                                "size": "1kB",
+                            }
+                        },
+                    },
+                }
+            )
+
+    def test_handle_image_invalid_rel_size(self):
+        """
+        Validate that partition relative size of 1.0 fails.
+        """
+        with pytest.raises(aib.exceptions.InvalidMountRelSize):
+            self.load_manifest(
+                {
+                    "name": "foo",
+                    "image": {
+                        "image_size": "1kB",
+                        "partitions": {
+                            "var": {
+                                "relative_size": 1.0,
+                            }
+                        },
+                    },
+                }
+            )
+
+    def test_handle_image_invalid_rel_size_negative(self):
+        """
+        Validate that partition negative relative partition size fails the parser check.
+        """
+        with pytest.raises(aib.exceptions.SimpleManifestParseError):
+            self.load_manifest(
+                {
+                    "name": "foo",
+                    "image": {
+                        "image_size": "1kB",
+                        "partitions": {
+                            "var": {
+                                "relative_size": -1,
+                            }
+                        },
+                    },
+                }
+            )
