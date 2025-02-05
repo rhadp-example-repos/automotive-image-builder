@@ -474,7 +474,13 @@ pipelines:
               - name:raw-image-tree
         options:
           filename: rootfs.tar
-          root-node: omit
+          root-node:
+            mpp-if: not tar_paths
+            then: omit
+          paths:
+            mpp-if: tar_paths
+            then:
+              mpp-eval: tar_paths
 
   - name: rpmlist
     runner: org.osbuild.centos9

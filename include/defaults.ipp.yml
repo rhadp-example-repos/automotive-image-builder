@@ -49,6 +49,7 @@ mpp-vars:
   locale: en_US.UTF-8
   hostname: localhost
 
+  tar_paths: []
   use_containers_extra_store: false
   container_subuid: 2500000000:1500000000
   container_subgid: 2500000000:1500000000
