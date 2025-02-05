@@ -425,11 +425,13 @@ $defs:
           - string
           - "null"
         description: Roots's encrypted password, as returned by crypt(3), or nothing to disable
-      root_ssh_key:
-        description: Roots's ssh key, or nothing to disable
+      root_ssh_keys:
+        description: Roots's ssh keys, or nothing to disable
         type:
-          - string
+          - array
           - "null"
+        item:
+          type: string
       sshd_config:
         description: Configuration of ssh daemon
         type: object
