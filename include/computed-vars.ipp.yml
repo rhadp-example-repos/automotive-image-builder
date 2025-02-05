@@ -242,6 +242,7 @@ mpp-vars:
           - ignore_loglevel
           - earlycon
           - schedstats=enable
+          - panic=0
           # Configure the DMA unmap operations to invalidate IOMMU hardware TLBs synchronously.
           # This can catch some issues, however there is a performance penalty associated with
           # this option, so only enable this for debug builds.
