@@ -351,7 +351,7 @@ mpp-vars:
         - mpp-if: use_bluechi_controller
           then: bluechi-controller.service
         - rcu-normal.service
-        - mpp-if: use_efipart
+        - mpp-if: use_efipart and not use_fusa
           then: boot-efi.mount
         - mpp-if: use_bootpart
           then: boot.mount
@@ -584,7 +584,7 @@ mpp-vars:
       then:
         from: input://extra-tree/boot.mount
         to: tree:////usr/lib/systemd/system/boot.mount
-    - mpp-if: use_efipart
+    - mpp-if: use_efipart and not use_fusa
       then:
         from: input://extra-tree/boot-efi.mount
         to: tree:////usr/lib/systemd/system/boot-efi.mount
