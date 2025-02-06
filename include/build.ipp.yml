@@ -1,108 +1,109 @@
 version: '2'
 
-mpp-define-image:
-  size: $image_size
-  table:
-    uuid: $parttab_uuid
-    label: $partition_label
-    partitions:
-      mpp-join:
-        - - mpp-if: use_sblpart
+mpp-define-images:
+  - id: image
+    size: $image_size
+    table:
+      uuid: $parttab_uuid
+      label: $partition_label
+      partitions:
+        mpp-join:
+          - - mpp-if: use_sblpart
+              then:
+                id: sbl
+                name: sbl
+                size: $sblpart_size
+                type:
+                  mpp-eval: "'00000000-0000-0000-0000-000000000000' if partition_label == 'gpt' else '0'"
+            - mpp-if: use_efipart
+              then:
+                id: efi
+                name: efi
+                size: $efipart_size
+                type:
+                  mpp-eval: "'C12A7328-F81F-11D2-BA4B-00A0C93EC93B' if partition_label == 'gpt' else '$efipart_dos_type'"
+                uuid: $efipart_uuid
+                bootable:
+                  mpp-eval: efipart_bootable
+            - mpp-if: use_bootpart
+              then:
+                id: boot
+                name: boot
+                size: $bootpart_size
+                type:
+                  mpp-eval: "'0FC63DAF-8483-4772-8E79-3D69D8477DE4' if partition_label == 'gpt' else '83'"
+                uuid: $bootpart_uuid
+            - mpp-if: use_abootpart
+              then:
+                id: boot_a
+                name: boot_a
+                size: $abootpart_size
+                type: 20117F86-E985-4357-B9EE-374BC1D8487D # Android boot v2
+                uuid: $abootpart_a_uuid
+                attrs:
+                  mpp-eval: active_gpt_attrs
+            - mpp-if: use_abootpart
+              then:
+                id: boot_b
+                name: boot_b
+                size: $abootpart_size
+                type: 20117F86-E985-4357-B9EE-374BC1D8487D # Android boot v2
+                uuid: $abootpart_b_uuid
+                attrs:
+                  mpp-eval: inactive_gpt_attrs
+            - mpp-if: use_vbmetapart
+              then:
+                id: vbmeta_a
+                name: vbmeta_a
+                size: $vbmetapart_size
+                type: 20117F86-E985-4357-B9EE-374BC1D8487D # Android boot v2
+                uuid: $vbmetapart_a_uuid
+                attrs:
+                  mpp-eval: active_gpt_attrs
+            - mpp-if: use_vbmetapart
+              then:
+                id: vbmeta_b
+                name: vbmeta_b
+                size: $vbmetapart_size
+                type: 20117F86-E985-4357-B9EE-374BC1D8487D # Android boot v2
+                uuid: $vbmetapart_b_uuid
+                attrs:
+                  mpp-eval: inactive_gpt_attrs
+          - mpp-if: use_testpart
             then:
-              id: sbl
-              name: sbl
-              size: $sblpart_size
-              type:
-                mpp-eval: "'00000000-0000-0000-0000-000000000000' if partition_label == 'gpt' else '0'"
-          - mpp-if: use_efipart
-            then:
-              id: efi
-              name: efi
-              size: $efipart_size
-              type:
-                mpp-eval: "'C12A7328-F81F-11D2-BA4B-00A0C93EC93B' if partition_label == 'gpt' else '$efipart_dos_type'"
-              uuid: $efipart_uuid
-              bootable:
-                mpp-eval: efipart_bootable
-          - mpp-if: use_bootpart
-            then:
-              id: boot
-              name: boot
-              size: $bootpart_size
-              type:
-                mpp-eval: "'0FC63DAF-8483-4772-8E79-3D69D8477DE4' if partition_label == 'gpt' else '83'"
-              uuid: $bootpart_uuid
-          - mpp-if: use_abootpart
-            then:
-              id: boot_a
-              name: boot_a
-              size: $abootpart_size
-              type: 20117F86-E985-4357-B9EE-374BC1D8487D # Android boot v2
-              uuid: $abootpart_a_uuid
-              attrs:
-                mpp-eval: active_gpt_attrs
-          - mpp-if: use_abootpart
-            then:
-              id: boot_b
-              name: boot_b
-              size: $abootpart_size
-              type: 20117F86-E985-4357-B9EE-374BC1D8487D # Android boot v2
-              uuid: $abootpart_b_uuid
-              attrs:
-                mpp-eval: inactive_gpt_attrs
-          - mpp-if: use_vbmetapart
-            then:
-              id: vbmeta_a
-              name: vbmeta_a
-              size: $vbmetapart_size
-              type: 20117F86-E985-4357-B9EE-374BC1D8487D # Android boot v2
-              uuid: $vbmetapart_a_uuid
-              attrs:
-                mpp-eval: active_gpt_attrs
-          - mpp-if: use_vbmetapart
-            then:
-              id: vbmeta_b
-              name: vbmeta_b
-              size: $vbmetapart_size
-              type: 20117F86-E985-4357-B9EE-374BC1D8487D # Android boot v2
-              uuid: $vbmetapart_b_uuid
-              attrs:
-                mpp-eval: inactive_gpt_attrs
-        - mpp-if: use_testpart
-          then:
-            mpp-eval: _test_partitions
-        - mpp-eval: extra_parts
-        - - mpp-if: _use_separate_var and _varpart_size > 0
-            then:
-              id: var
-              name: var
-              size:
-                mpp-eval: _varpart_size
-              type:
-                mpp-eval: "'0FC63DAF-8483-4772-8E79-3D69D8477DE4' if partition_label == 'gpt' else '83'"
-              uuid: $varpart_uuid
-          - mpp-if: _qm_use_separate_var and _qm_varpart_size > 0
-            then:
-              id: qm_var
-              name: qm_var
-              size:
-                mpp-eval: _qm_varpart_size
-              type:
-                mpp-eval: "'0FC63DAF-8483-4772-8E79-3D69D8477DE4' if partition_label == 'gpt' else '83'"
-              uuid: $qm_varpart_uuid
-          - mpp-if: use_aboot
-            then:
-              id: $aboot_partlabel
-              name: $aboot_partlabel
-              type:
-                mpp-eval: "'0FC63DAF-8483-4772-8E79-3D69D8477DE4' if partition_label == 'gpt' else '83'"
-              uuid: $rootpart_uuid
-            else:
-              id: root
-              name: root
-              type:
-                mpp-eval: "'0FC63DAF-8483-4772-8E79-3D69D8477DE4' if partition_label == 'gpt' else '83'"
-              uuid: $rootpart_uuid
+              mpp-eval: _test_partitions
+          - mpp-eval: extra_parts
+          - - mpp-if: _use_separate_var and _varpart_size > 0
+              then:
+                id: var
+                name: var
+                size:
+                  mpp-eval: _varpart_size
+                type:
+                  mpp-eval: "'0FC63DAF-8483-4772-8E79-3D69D8477DE4' if partition_label == 'gpt' else '83'"
+                uuid: $varpart_uuid
+            - mpp-if: _qm_use_separate_var and _qm_varpart_size > 0
+              then:
+                id: qm_var
+                name: qm_var
+                size:
+                  mpp-eval: _qm_varpart_size
+                type:
+                  mpp-eval: "'0FC63DAF-8483-4772-8E79-3D69D8477DE4' if partition_label == 'gpt' else '83'"
+                uuid: $qm_varpart_uuid
+            - mpp-if: use_aboot
+              then:
+                id: $aboot_partlabel
+                name: $aboot_partlabel
+                type:
+                  mpp-eval: "'0FC63DAF-8483-4772-8E79-3D69D8477DE4' if partition_label == 'gpt' else '83'"
+                uuid: $rootpart_uuid
+              else:
+                id: root
+                name: root
+                type:
+                  mpp-eval: "'0FC63DAF-8483-4772-8E79-3D69D8477DE4' if partition_label == 'gpt' else '83'"
+                uuid: $rootpart_uuid
 pipelines:
   - name: build
     runner: org.osbuild.centos9
