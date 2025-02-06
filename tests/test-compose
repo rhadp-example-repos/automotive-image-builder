@@ -119,11 +119,7 @@ for distro in distros:
                     # Make json reproducible
                     args += [
                         "--define",
-                        "timestamp=1",
-                        "--define",
-                        "build_timestamp=1",
-                        "--define",
-                        "image_uuid=ffffffff-ffff-ffff-ffff-ffffffffffff",
+                        "reproducible_image=true",
                     ]
 
                     manifests = collect_args(elms, "manifest")

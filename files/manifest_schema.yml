@@ -484,6 +484,11 @@ $defs:
       loglevel:
         description: Use a kernel log level
         type: integer
+      remove_modules:
+        description: Remove kernel modules (and dependendices) from image
+        type: array
+        item:
+          type: string
 
   add_group:
     type: object

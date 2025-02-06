@@ -36,8 +36,12 @@ test-compose:
 test-unit:
 	pytest aib/tests
 
+.PHONY: test-integration
+test-integration:
+	tests/test-integration
+
 .PHONY: test
-test: test-compose test-unit yamllint
+test: test-compose test-unit test-integration yamllint
 
 rpm:
 	./.copr/build-rpm.sh -bb automotive-image-builder.spec.in

@@ -323,6 +323,7 @@ class ManifestLoader:
         self.set_from("kernel_loglevel", kernel, "loglevel")
         self.set_from("use_debug", kernel, "debug_logging")
         self.set_from("simple_kernel_opts", kernel, "cmdline")
+        self.set_from("denylist_modules", kernel, "remove_modules")
 
     def handle_image(self, image):
         image_size = image.get("image_size")

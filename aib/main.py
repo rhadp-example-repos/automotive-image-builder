@@ -517,7 +517,16 @@ def _build(args, tmpdir, runner):
 
     if args.build_dir:
         # Cache stuff between builds
-        cmdline += ["--checkpoint", "build"]
+        cmdline += [
+            "--checkpoint",
+            "build",
+            "--checkpoint",
+            "qm_rootfs_base",
+            "--checkpoint",
+            "qm_rootfs",
+            "--checkpoint",
+            "data",
+        ]
 
     if args.cache_max_size:
         cmdline += ["--cache-max-size=" + args.cache_max_size]
