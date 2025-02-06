@@ -1,4 +1,4 @@
-VERSION=0.4.0
+VERSION=$(shell python3 aib/version.py)
 
 PREFIX=/usr
 BINDIR=$(PREFIX)/bin

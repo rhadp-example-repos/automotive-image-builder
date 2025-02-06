@@ -16,6 +16,7 @@ from .exports import export, EXPORT_DATAS, get_export_data
 from .runner import Runner
 from .ostree import OSTree
 from .simple import ManifestLoader
+from .version import __version__
 from . import exceptions
 from . import AIBParameters
 from . import log
@@ -77,6 +78,9 @@ def parse_args(args, base_dir):
     isRoot = os.getuid() == 0
     parser = argparse.ArgumentParser(
         prog="automotive-image-builder", description="Build automotive images"
+    )
+    parser.add_argument(
+        "--version", action="version", version=f"%(prog)s {__version__}"
     )
     parser.add_argument("--verbose", default=False, action="store_true")
     parser.add_argument(

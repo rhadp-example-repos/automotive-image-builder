@@ -75,9 +75,9 @@ fi
 
 [ "${#POSITIONAL_ARGS[@]}" -gt 0 ] || fatal "missing parameters"
 
-if [ -z "$PACKAGE_VERSION" ] && [ -f ./Makefile ]
+if [ -z "$PACKAGE_VERSION" ] && [ -f ./aib/version.py ]
 then
-  PACKAGE_VERSION=$(grep "^VERSION" Makefile | sed -e "s:^VERSION=::g")
+  PACKAGE_VERSION=$(python3 ./aib/version.py)
 fi
 
 if [ $GENERATE_SPEC = true ] || [ $BUILD_SOURCE = true ]
