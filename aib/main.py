@@ -248,13 +248,6 @@ def parse_args(args, base_dir):
         help="Max cache size",
     )
     parser_build.add_argument(
-        "--osbuild-arg",
-        action="append",
-        type=str,
-        default=[],
-        help="Add custom osbuild arg",
-    )
-    parser_build.add_argument(
         "--export",
         action="append",
         type=str,
@@ -511,9 +504,6 @@ def _build(args, tmpdir, runner):
         "--output-directory",
         outputdir,
     ]
-
-    for arg in args.osbuild_arg:
-        cmdline += [arg]
 
     if args.build_dir:
         # Cache stuff between builds
