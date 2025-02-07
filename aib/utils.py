@@ -71,3 +71,12 @@ def extract_comment_header(file):
         lines.pop()
 
     return "\n".join(lines)
+
+
+def get_osbuild_version(runner, use_container):
+    osbuild_version = runner.run(
+        ["/usr/bin/osbuild", "--version"],
+        use_container=use_container,
+        capture_output=True,
+    )
+    return int(osbuild_version.split()[-1])
