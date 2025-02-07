@@ -17,7 +17,7 @@ actions: &common_actions
     - bash -c '.copr/build-rpm.sh --generate-spec .copr/dev.spec'
 
   get-current-version:
-    - bash -c 'grep "^VERSION" Makefile | sed -e "s:^VERSION=::g"'
+    - python3 ./aib/version.py
 
   create-archive:
     - bash -c '.copr/build-rpm.sh --build-source .copr/dev.spec --print-source-path'
