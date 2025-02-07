@@ -9,6 +9,7 @@ Source0:        automotive-image-builder-%{version}.tar.gz
 
 BuildArch:	noarch
 BuildRequires:  make
+Requires:       android-tools
 Requires:       osbuild
 Requires:       osbuild-auto
 Requires:       osbuild-luks2

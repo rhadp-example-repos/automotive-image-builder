@@ -29,13 +29,14 @@ mkdir -p /dev/shm/docs
 cd /dev/shm/docs
 dnf install -y git rpm-build make
 dnf copr enable -y @centos-automotive-sig/osbuild-auto
+rpm --import https://www.centos.org/keys/RPM-GPG-KEY-CentOS-SIG-Automotive
 git clone ${CI_REPOSITORY_URL}
 cd automotive-image-builder
 git fetch origin ${CI_MERGE_REQUEST_REF_PATH}
 git checkout FETCH_HEAD
 git show -s
 make rpm_dev
-dnf localinstall -y automotive-image-builder-*.noarch.rpm
+dnf --repofrompath autosig,"https://mirror.stream.centos.org/SIGs/9-stream/automotive/$(uname -m)/packages-main/" localinstall -y automotive-image-builder-*.noarch.rpm
 curl -o test_all.sh \
   "https://gitlab.com/CentOS/automotive/sig-docs/-/raw/main/demos/test_all.sh?ref_type=heads"
 # Better safe than sorry, ensure we don't install aib if we didn't manage before
