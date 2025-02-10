@@ -4,7 +4,7 @@ mpp-vars:
   image_loopdev:
     mpp-eval: "{p.id: { 'type': 'org.osbuild.loopback', 'options': {'filename': 'disk.img', 'start': p.start, 'size': p.size}}  for p in image.layout.partitions}"
   image_loopdev_locked:
-    mpp-eval: "{p.id: { 'type': 'org.osbuild.loopback', 'options': {'filename': 'disk.img', 'start': p.start, 'size': p.size, 'lock': True}}  for p in image.layout.partitions}"
+    mpp-eval: "{id: {**image_loopdev[id], 'lock': True} for id in image_loopdev.keys()}"
   # Either the raw root partition, or the root logical volume
   root_dev:
     mpp-if: use_luks

@@ -38,6 +38,9 @@ $defs:
       baseurl:
         description: The url to the repo, or a pathname to a local repository
         type: string
+      priority:
+        description: The priority of the repo
+        type: integer
 
   container_image:
     description: A container image reference to install
