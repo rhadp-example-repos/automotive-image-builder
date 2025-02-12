@@ -72,8 +72,12 @@ list_tar_modules () {
     list_tar $1 | grep "usr/lib/modules/.*/kernel/.*.ko" | xargs basename -a | sed s/.ko.*//
 }
 
+trybuild() {
+     $AIB build --cache $OUTDIR/dnf-cache --build-dir $BUILDDIR --define reproducible_image=true "$@" > build.log
+}
+
 build() {
-   if ! $AIB build --cache $OUTDIR/dnf-cache --build-dir $BUILDDIR --define reproducible_image=true "$@" > build.log; then
+   if ! trybuild "$@"; then
       echo FAILED to build image
       tail -n 50 build.log
       exit 1
