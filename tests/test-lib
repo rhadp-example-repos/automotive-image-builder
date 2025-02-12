@@ -72,8 +72,11 @@ list_tar_modules () {
     list_tar $1 | grep "usr/lib/modules/.*/kernel/.*.ko" | xargs basename -a | sed s/.ko.*//
 }
 
+# Some default options that make builds faster, override if problematic
+FAST_OPTIONS="--define sign_kernel_modules=false"
+
 trybuild() {
-     $AIB build --cache $OUTDIR/dnf-cache --build-dir $BUILDDIR --define reproducible_image=true "$@" > build.log
+     $AIB build --cache $OUTDIR/dnf-cache --build-dir $BUILDDIR $FAST_OPTIONS --define reproducible_image=true "$@" > build.log
 }
 
 build() {
@@ -83,3 +86,4 @@ build() {
       exit 1
    fi
 }
+
