@@ -1,7 +1,7 @@
 source $TESTDIR/test-lib
 
 cat <<EOF >test.aib.yml
-name: denylist_rpms
+name: denylist_modules
 kernel:
   remove_modules:
     - nfs
