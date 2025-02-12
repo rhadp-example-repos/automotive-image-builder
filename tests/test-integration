@@ -10,16 +10,18 @@ mkdir -p $OUTDIR
 export BUILDDIR=$OUTDIR/build
 export RUNDIR=$OUTDIR/run
 
-for casefile in $TESTDIR/integration/*.sh; do
-    case=$(basename $casefile .sh)
-    echo =========== $case ============
+ALL_TESTS=`cd $TESTDIR/integration; echo *.sh`
+
+TESTS=${TESTS:-$ALL_TESTS}
+for casefile in $TESTS; do
+    echo =========== $casefile ============
 
     cd $OUTDIR
     rm -rf $RUNDIR
     mkdir $RUNDIR
     cd $RUNDIR
 
-    if ! bash -x -e $casefile; then
+    if ! bash -x -e $TESTDIR/integration/$casefile; then
        echo FAILED
        RES=1
     fi
