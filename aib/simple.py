@@ -368,6 +368,11 @@ class ManifestLoader:
         self.set_from("selinux_mode", image, "selinux_mode")
         self.set_from("selinux_policy", image, "selinux_policy")
 
+    def handle_experimental(self, experimental):
+        internal_defines = experimental.get("internal_defines", {})
+        for k in internal_defines:
+            self.set(k, internal_defines[k])
+
     def load(self, path, manifest_basedir):
         with open(path, mode="r") as f:
             try:
@@ -398,6 +403,7 @@ class ManifestLoader:
         self.handle_auth(manifest.get("auth", {}))
         self.handle_kernel(manifest.get("kernel", {}))
         self.handle_image(manifest.get("image", {}))
+        self.handle_experimental(manifest.get("experimental", {}))
 
         # Write out extra_include mpp file for file content
         extra_include_path = os.path.join(self.workdir, "extra-include.ipp.yml")
