@@ -316,6 +316,7 @@ mpp-vars:
     - dosfstools
     - e2fsprogs
     - erofs-utils
+    - libbpf
     - xfsprogs
 
   build_rpms:
