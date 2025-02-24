@@ -28,7 +28,6 @@ set -x
 mkdir -p /dev/shm/docs
 cd /dev/shm/docs
 dnf install -y git rpm-build make
-dnf copr enable -y @centos-automotive-sig/osbuild-auto
 rpm --import https://www.centos.org/keys/RPM-GPG-KEY-CentOS-SIG-Automotive
 git clone ${CI_REPOSITORY_URL}
 cd automotive-image-builder
