@@ -11,6 +11,7 @@ mpp-vars:
   uefi_vendor: redhat
   kernel_package: kernel-automotive
   release_rpm: redhat-release
+  selinux_policy: automotive
   distro_repos:
     - id: rhivos
       baseurl: $distro_baseurl/RHIVOS/$arch/os/
