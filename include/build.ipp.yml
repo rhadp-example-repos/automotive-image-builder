@@ -99,13 +99,13 @@ mpp-vars:
       mpp-eval: "'0FC63DAF-8483-4772-8E79-3D69D8477DE4' if partition_label == 'gpt' else '83'"
     uuid: $varpart_uuid
   separate_qm_var_partition:
-    id: var
-    name: var
+    id: qm_var
+    name: qm_var
     size:
-      mpp-eval: _varpart_size
+      mpp-eval: _qm_varpart_size
     type:
       mpp-eval: "'0FC63DAF-8483-4772-8E79-3D69D8477DE4' if partition_label == 'gpt' else '83'"
-    uuid: $varpart_uuid
+    uuid: $qm_varpart_uuid
   separate_var_partitions:
     - mpp-if: _use_separate_var and _varpart_size > 0
       then:
