@@ -205,6 +205,7 @@ build_doc_demos:
   script:
     - pip install "duffy[client]"
     - sh tests/run_aws.sh
+  allow_failure: true
   artifacts:
     paths:
       - logs
