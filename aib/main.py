@@ -327,9 +327,10 @@ def rewrite_manifest(manifest, path):
     # Also, we need to inject some workarounds in the rootfs stage
     if rootfs and "stages" in rootfs:
         rootfs["stages"] = [
+            {"mpp-eval": "init_rootfs_dirs_stage"},
             # See comment in kernel_cmdline_stage variable
             {"mpp-eval": "kernel_cmdline_stage"},
-            {"mpp-eval": "init_passwd_stage"},
+            {"mpp-eval": "init_rootfs_files_stage"},
         ] + rootfs.get("stages", [])
 
 

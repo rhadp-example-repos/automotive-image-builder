@@ -222,6 +222,7 @@ pipelines:
         options:
           paths:
             - path: /etc
+            - path: /etc/selinux
       - type: org.osbuild.copy
         inputs:
           inlinefile:
@@ -236,6 +237,12 @@ pipelines:
             mpp-embed:
               id: group
               text: $base_group
+          inlinefile3:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: selinux.conf
+              text: $selinux_conf
         options:
           paths:
             - from:
@@ -244,3 +251,6 @@ pipelines:
             - from:
                 mpp-format-string: input://inlinefile2/{embedded['group']}
               to: tree:///etc/group
+            - from:
+                mpp-format-string: input://inlinefile3/{embedded['selinux.conf']}
+              to: tree:///etc/selinux/config
