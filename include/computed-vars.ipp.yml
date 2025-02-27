@@ -610,7 +610,8 @@ mpp-vars:
       - mpp-eval: distro_build_rpms
       - mpp-eval: arch_build_rpms
       - mpp-eval: target_build_rpms
-      - - mpp-if: use_luks
+      - - selinux-policy-$selinux_policy
+        - mpp-if: use_luks
           then: cryptsetup
         - mpp-if: use_luks
           then: lvm2
@@ -653,6 +654,7 @@ mpp-vars:
           - dracut-automotive
       - - $release_rpm
         - $kernel_rpm
+        - selinux-policy-$selinux_policy
         - mpp-if: linux_firmware_rpm
           then: $linux_firmware_rpm
         - mpp-if: use_luks
