@@ -22,8 +22,9 @@ from aib.main import rewrite_manifest
     ]}, [
         {"name": "rootfs",
          "stages": [
+             {'mpp-eval': 'init_rootfs_dirs_stage'},
              {'mpp-eval': 'kernel_cmdline_stage'},
-             {'mpp-eval': 'init_passwd_stage'},
+             {'mpp-eval': 'init_rootfs_files_stage'},
              {"inputs": {'root_extra_content': {'mpp-embed': {'id': 'aefb4c0',
                                                               'path': '/new/absolute/path/files/relative/path/file1.txt'},
                                                 'origin': 'org.osbuild.source',
@@ -59,8 +60,9 @@ from aib.main import rewrite_manifest
     ]}, [
         {"name": "rootfs",
          "stages": [
+             {'mpp-eval': 'init_rootfs_dirs_stage'},
              {'mpp-eval': 'kernel_cmdline_stage'},
-             {'mpp-eval': 'init_passwd_stage'},
+             {'mpp-eval': 'init_rootfs_files_stage'},
              {"inputs": {'root_extra_content_0': {'mpp-embed': {'id': 'aefb4c0',
                                                                 'path': '/new/absolute/files/relative/path/file1.txt'},
                                                   'origin': 'org.osbuild.source',
@@ -102,8 +104,9 @@ from aib.main import rewrite_manifest
     ]}, [
         {"name": "rootfs",
          "stages": [
+             {'mpp-eval': 'init_rootfs_dirs_stage'},
              {'mpp-eval': 'kernel_cmdline_stage'},
-             {'mpp-eval': 'init_passwd_stage'},
+             {'mpp-eval': 'init_rootfs_files_stage'},
              {"inputs": {'root_extra_content_0': {'mpp-embed': {'id': 'aefb4c0',
                                                                 'path': '/files/absolute/path/file1.txt'},
                                                   'origin': 'org.osbuild.source',
@@ -181,8 +184,9 @@ from aib.main import rewrite_manifest
         {"name": "rootfs", "stages": []},
         {"name": "qm_rootfs"},
     ]}, [
-        {"name": "rootfs", "stages": [{"mpp-eval": "kernel_cmdline_stage"},
-                                      {'mpp-eval': 'init_passwd_stage'},
+        {"name": "rootfs", "stages": [{'mpp-eval': 'init_rootfs_dirs_stage'},
+                                      {"mpp-eval": "kernel_cmdline_stage"},
+                                      {'mpp-eval': 'init_rootfs_files_stage'},
                                       ]},
         {"name": "qm_rootfs"},
     ], id="adds-kernel-cmdline-stage"),
