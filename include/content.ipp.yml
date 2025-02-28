@@ -212,6 +212,13 @@ mpp-vars:
       ip {static_ip} {static_ip_prefixlen}
       default_gw {static_gw}
       nameserver {static_dns}
+  qm_bootcheck:
+    mpp-format-string: |
+      container_checksum qm {_boot_check_qm_digest}
+  bootcheck_dropin:
+    mpp-format-string: |
+      [Unit]
+      {"After=qm.service" if _boot_check_qm_digest else ""}
 
 pipelines:
   # Some variables need to be written to files, do that here
@@ -397,6 +404,32 @@ pipelines:
             - from:
                 mpp-format-string: input://inlinefile/{embedded['nmstate.bootcheck']}
               to: tree:///nmstate.bootcheck
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: qm.bootcheck
+              text: $qm_bootcheck
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['qm.bootcheck']}
+              to: tree:///qm.bootcheck
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: bootcheck.conf
+              text: $bootcheck_dropin
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['bootcheck.conf']}
+              to: tree:///bootcheck.conf
       - type: org.osbuild.copy
         inputs:
           inlinefile:
