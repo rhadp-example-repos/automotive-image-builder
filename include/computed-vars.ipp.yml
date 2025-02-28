@@ -97,6 +97,9 @@ mpp-vars:
   have_boot_check:
     mpp-eval: "'automotive' in image_repo_ids"
 
+  want_boot_check:
+    mpp-eval: use_static_ip
+
   # Backwards compatibility by checking if the deprecated kernel_rpm variable is set
   kernel_core_package:
     mpp-if: locals().get('kernel_rpm')
@@ -383,7 +386,7 @@ mpp-vars:
           then: var-qm.mount
         - mpp-if: use_static_ip
           then: main-nmstate.service
-        - mpp-if: use_static_ip and have_boot_check
+        - mpp-if: want_boot_check and have_boot_check
           then: auto-boot-check.service
         - mpp-if: use_tuned_realtime
           then: tuned.service
@@ -684,7 +687,7 @@ mpp-vars:
           then: tuned-profiles-realtime
         - mpp-if: use_static_ip
           then: nmstate
-        - mpp-if: use_static_ip and have_boot_check
+        - mpp-if: want_boot_check and have_boot_check
           then: auto-boot-check
         - mpp-if: not use_static_ip
           then: NetworkManager
