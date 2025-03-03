@@ -10,6 +10,7 @@ mpp-vars:
   uefi_vendor: centos
   kernel_package: kernel-automotive
   release_rpm: centos-release-autosd
+  selinux_policy: automotive
   distro_repos:
     - id: autosd
       baseurl: $distro_baseurl/AutoSD/$arch/os/
