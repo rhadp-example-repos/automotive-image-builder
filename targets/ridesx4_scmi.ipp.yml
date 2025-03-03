@@ -1,0 +1,12 @@
+# A target for the QC RIDESX4 board flashed with recent firmware using SCMI for
+# drivers resources.
+#
+# This is currently being developed downstream as out-of-tree modules and
+# device-tree.
+version: '2'
+# To derive and override mpp vars we move the overrides to an include file
+pipelines:
+  - mpp-import-pipelines:
+      path: ridesx4.ipp.yml
+  - mpp-import-pipelines:
+      path: _ridesx4_scmi.ipp.yml
