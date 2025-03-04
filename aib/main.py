@@ -167,7 +167,7 @@ def parse_args(args, base_dir):
         "--distro",
         action="store",
         type=str,
-        default="cs9",
+        default="autosd9-sig",
         help="Build for this distro specification",
     )
     format_parser.add_argument(
