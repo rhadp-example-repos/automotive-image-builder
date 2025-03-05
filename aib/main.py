@@ -37,11 +37,17 @@ def list_ipp_items(args, item_type):
             print(d)
         else:
             path = items[d]
-            with open(path, mode="r") as file:
-                header = extract_comment_header(file)
-            paras = header.split("\n\n")
-            first_para = paras[0].replace("\n", " ")
-            print(f"{d} - {first_para}")
+            if os.path.islink(path):
+                target = os.readlink(path)
+                alias = os.path.basename(target).removesuffix(".ipp.yml")
+                desc = f"Alias of '{alias}'"
+            else:
+                with open(path, mode="r") as file:
+                    header = extract_comment_header(file)
+                paras = header.split("\n\n")
+                desc = paras[0].replace("\n", " ")
+
+            print(f"{d} - {desc}")
 
 
 def list_dist(args, _tmpdir, _runner):
