@@ -546,12 +546,23 @@ $defs:
         description: Force this user to change their password on first login
         type: boolean
 
+  experimental:
+    type: object
+    additionalProperties: false
+    properties:
+      internal_defines:
+        additionalProperties: true
+        description: Internal OSBuild MPP defines
+        type: object
+
 type: object
 additionalProperties: false
 title: Manifest
 description: The automotive-image-builder format describes how to build an OS image, with options like what content (files, packages, containers) to install as well as detailed configuration options.
 required:
   - name
+noFusa:
+  - experimental
 properties:
   name:
     description: The name of the manifest
@@ -579,3 +590,6 @@ properties:
   kernel:
     description: Kernel options
     $ref: "#/$defs/kernel"
+  experimental:
+    description: Experimental options. Unsupported, may change over time without warning.
+    $ref: "#/$defs/experimental"
