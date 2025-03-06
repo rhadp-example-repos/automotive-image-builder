@@ -331,6 +331,7 @@ mpp-vars:
     - python3
     - python3-pyyaml
     - python3-mako
+    - qemu-img
     - rpm-ostree
     - selinux-policy-targeted
     - skopeo

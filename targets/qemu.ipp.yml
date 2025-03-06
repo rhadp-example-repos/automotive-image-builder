@@ -9,8 +9,6 @@ mpp-vars:
     mpp-if: arch == 'aarch64'
     then: "ttyAMA0 tty0"
     else: "ttyS0 tty0"
-  target_build_rpms:
-    - qemu-img
   dracut_drivers:
     mpp-join:
       - mpp-eval: dracut_drivers
