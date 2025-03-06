@@ -43,7 +43,7 @@ if len(sys.argv) > 3:
         arches = [convert_elem("aarch64")]
     elif sys.argv[2] == "target":
         targets = convert_list(sys.argv[3].split())
-        distros = [convert_elem("cs9")]
+        distros = [convert_elem("autosd9-sig")]
         arches = [convert_elem("aarch64")]
     else:
         print(

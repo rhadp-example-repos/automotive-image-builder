@@ -1,6 +1,6 @@
 {
     "default-manifest": "test.mpp.yml",
-    "distro": ["cs9", "autosd"],
+    "distro": ["autosd9-latest-sig", "autosd9"],
     "arch": [ "x86_64", "aarch64" ],
     "mode": [ "image", "package" ],
     "target": [ "qemu",
@@ -20,7 +20,7 @@
                 {
                     "value": "abootqemu",
                     "arch-is": "aarch64",
-                    "distro-is": ["cs9"]
+                    "distro-is": ["autosd9-latest-sig"]
                 }
               ],
     "defines": [
