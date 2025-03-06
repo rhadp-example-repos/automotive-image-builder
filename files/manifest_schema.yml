@@ -419,6 +419,9 @@ $defs:
           high:
             description: MemoryHigh for QM partition (see systemd.resource-control manpage)
             type: string
+      container_checksum:
+        description: Optional container digest that is validated at boot
+        type: string
   auth:
     type: object
     additionalProperties: false
