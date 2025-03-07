@@ -348,7 +348,6 @@ mpp-vars:
     - hostname
     - passwd
     - rootfiles
-    - selinux-policy-$selinux_policy
     - systemd-udev
     - dracut-config-generic
     - grub2-tools-minimal
