@@ -438,6 +438,15 @@ mpp-vars:
                 Install:
                   WantedBy:
                     - multi-user.target
+        - type: org.osbuild.sysctld
+          options:
+            filename: automotive.conf
+            config:
+              mpp-join:
+                - mpp-eval: systemctl_options
+                - mpp-if: use_fusa
+                  then:
+                    mpp-eval: fusa_systemctl_options
         - type: org.osbuild.systemd
           options:
             disabled_services:
