@@ -197,7 +197,10 @@ mpp-vars:
     mpp-eval: image_mode == 'image'
   selinux_booleans: []
   kernel_opts: []
-  systemctl_options: []
+  systemctl_options:
+    # Disable unprivileged eBPF
+    - key: kernel.unprivileged_bpf_disabled
+      value: '1'
   fusa_systemctl_options:
     # Disable net.core.busy_poll by setting it to 0
     - key: net.core.busy_poll

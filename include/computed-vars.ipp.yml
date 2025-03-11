@@ -301,8 +301,6 @@ mpp-vars:
         - rcupdate.rcu_expedited=1
         # Disable all cgroups v1 interfaces
         - cgroup_no_v1=named,all
-        # Disable unprivileged eBPF
-        - sysctl.kernel.unprivileged_bpf_disabled=1
   # For some reasons we need to create the /etc/kernel/cmdline before installing
   # packages or the dracut image doesn't pick it up. We insert this automatically
   # first in rootfs to avoid users having to care about this weirdness.
