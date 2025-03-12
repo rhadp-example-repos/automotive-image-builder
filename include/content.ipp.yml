@@ -94,6 +94,7 @@ mpp-vars:
       enabled={"maybe" if not use_composefs else "signed" if use_composefs_signed else "verity" }
   build_info:
     mpp-format-string: |
+      DISTRO="{distro_name}"
       RELEASE="{release_name}"
       UUID="{image_uuid}"
       TIMESTAMP="{build_timestamp}"
