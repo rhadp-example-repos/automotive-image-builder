@@ -197,6 +197,19 @@ mpp-vars:
     mpp-eval: image_mode == 'image'
   selinux_booleans: []
   kernel_opts: []
+  systemctl_options:
+    # Disable unprivileged eBPF
+    - key: kernel.unprivileged_bpf_disabled
+      value: '1'
+  fusa_systemctl_options:
+    # Disable net.core.busy_poll by setting it to 0
+    - key: net.core.busy_poll
+      value: '0'
+    # disable multicast forwarding on the system
+    - key: net.ipv4.conf.all.mc_forwarding
+      value: '0'
+    - key: net.ipv4.conf.default.mc_forwarding
+      value: '0'
   dracut_modules: []
   dracut_add_modules:
     - base
