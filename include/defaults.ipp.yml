@@ -98,6 +98,7 @@ mpp-vars:
   # Memory limits for the QM container (if used)
   qm_memory_max: infinity
   qm_memory_high: infinity
+  qm_cpu_weight: idle
 
   # Image size and layout
   image_size: '8589934592'    # Total size of image, in bytes (as string)
