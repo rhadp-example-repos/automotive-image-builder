@@ -240,7 +240,7 @@ def parse_args(args, base_dir):
     parser_listrpms.set_defaults(func=listrpms)
 
     parser_build = subparsers.add_parser(
-        "build", help="Compose osbuild manifest", parents=[format_parser]
+        "build", help="Compose and build osbuild manifest", parents=[format_parser]
     )
     parser_build.add_argument(
         "--osbuild-manifest",
