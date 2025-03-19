@@ -225,7 +225,6 @@ mpp-vars:
     - udev-rules
     - usrmount
   dracut_omit_modules:
-    - bash
     - i18n
     - lunmask
     - mdraid
