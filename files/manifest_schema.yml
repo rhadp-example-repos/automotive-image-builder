@@ -419,6 +419,15 @@ $defs:
           high:
             description: MemoryHigh for QM partition (see systemd.resource-control manpage)
             type: string
+      cpu_weight:
+        description: CPUWeight for the QM partition (see systemd.resource-control manpage)
+        oneOf:
+          - type: string
+            enum:
+              - idle
+          - type: integer
+            minimum: 1
+            maximum: 100
       container_checksum:
         description: Optional container digest that is validated at boot
         type: string

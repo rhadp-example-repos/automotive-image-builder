@@ -133,6 +133,7 @@ mpp-vars:
       [Service]
       MemoryMax={ qm_memory_max }
       MemoryHigh={ qm_memory_high }
+      CPUWeight={ qm_cpu_weight }
 
       [Container]
       { f"Volume={bluechi_controller_socket}:{bluechi_controller_socket}"
