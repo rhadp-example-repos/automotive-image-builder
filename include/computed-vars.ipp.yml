@@ -370,6 +370,9 @@ mpp-vars:
     mpp-if: use_qm
     then: "qm"
     else: "empty"
+  ld_so_cache_protected:
+    mpp-if: use_fusa
+    then: true
   image_enabled_services:
     mpp-join:
       - mpp-eval: image_enabled_services
@@ -398,6 +401,8 @@ mpp-vars:
           then: tuned.service
         - mpp-if: selinux_booleans
           then: selinux-bools.service
+        - mpp-if: ld_so_cache_protected
+          then: etc-ld.so.cache.mount
   image_extra_stages:
     mpp-join:
       - mpp-eval: target_extra_image_stages
@@ -647,6 +652,10 @@ mpp-vars:
       then:
         from: input://extra-tree/var-qm.mount
         to: tree:////usr/lib/systemd/system/var-qm.mount
+    - mpp-if: ld_so_cache_protected
+      then:
+        from: input://extra-tree/etc-ld.so.cache.mount
+        to: tree:///usr/lib/systemd/system/etc-ld.so.cache.mount
     - mpp-if: use_qm
       then:
         from: input://extra-tree/qm-automotive.conf

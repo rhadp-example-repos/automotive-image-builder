@@ -53,6 +53,19 @@ mpp-vars:
 
       [Install]
       RequiredBy=local-fs.target
+  etc_ld_so_cache_mount:
+    mpp-format-string: |
+      [Unit]
+      Before=local-fs.target
+
+      [Mount]
+      What=/etc/ld.so.cache
+      Where=/etc/ld.so.cache
+      Type=none
+      Options=ro,bind
+
+      [Install]
+      RequiredBy=local-fs.target
   containers_conf:
     mpp-format-string: |
       [containers]
@@ -289,6 +302,19 @@ pipelines:
             - from:
                 mpp-format-string: input://inlinefile/{embedded['var-qm.mount']}
               to: tree:///var-qm.mount
+      - type: org.osbuild.copy
+        inputs:
+          inlinefile:
+            type: org.osbuild.files
+            origin: org.osbuild.source
+            mpp-embed:
+              id: etc-ld.so.cache.mount
+              text: $etc_ld_so_cache_mount
+        options:
+          paths:
+            - from:
+                mpp-format-string: input://inlinefile/{embedded['etc-ld.so.cache.mount']}
+              to: tree:///etc-ld.so.cache.mount
       - type: org.osbuild.copy
         inputs:
           inlinefile:
