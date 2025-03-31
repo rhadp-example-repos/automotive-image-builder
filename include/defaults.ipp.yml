@@ -296,6 +296,7 @@ mpp-vars:
   efipart_dos_type: 'ef'
   efipart_bootable: false
   distro_gpg_keys: ""
+  ld_so_cache_protected: false
 
   # Timestamps, etc
   reproducible_image: false
